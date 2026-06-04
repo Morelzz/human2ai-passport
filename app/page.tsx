@@ -1,65 +1,72 @@
-import Image from "next/image";
+import Link from "next/link";
+import { createServerClient } from "@/lib/supabase";
+import { Tier } from "@/lib/types";
+import AvatarCard from "./AvatarCard";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = createServerClient();
+  const { data } = await supabase
+    .from("avatars")
+    .select("handle, alias, portrait_url, tier, usage_count, revoked_at")
+    .eq("is_demo", true)
+    .order("consent_start");
+
+  const avatars = data ?? [];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
+      {/* Nav */}
+      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)" }} />
+          <span style={{ fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+        <Link href="/verify" style={{ color: "#00A896", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 999, padding: "0.4rem 1rem" }}>
+          Verifica un contenuto →
+        </Link>
+      </nav>
+
+      {/* Hero */}
+      <section style={{ textAlign: "center", padding: "5rem 1.5rem 3rem" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(107,33,232,0.1)", border: "1px solid rgba(107,33,232,0.25)", borderRadius: 999, padding: "0.3rem 0.9rem", marginBottom: "1.5rem" }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B21E8" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span style={{ color: "#6B21E8", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em" }}>REGISTRO VOLTI — DATI DEMO</span>
+        </div>
+
+        <h1 style={{ fontSize: "clamp(2.2rem, 6vw, 4rem)", fontWeight: 800, lineHeight: 1.1, margin: "0 auto 1.25rem", maxWidth: 700 }}>
+          Il tuo volto è{" "}
+          <span style={{ color: "#6B21E8" }}>un diritto</span>.
+          <br />
+          Ora è{" "}
+          <span style={{ color: "#00A896" }}>verificabile</span>.
+        </h1>
+
+        <p style={{ color: "#6b7280", fontSize: "1.1rem", maxWidth: 520, margin: "0 auto 2.5rem", lineHeight: 1.7 }}>
+          Human2AI è il registro fidato delle identità AI consenzienti.
+          Ogni volto ha un token. Ogni token è verificabile da chiunque.
+        </p>
+      </section>
+
+      {/* Griglia avatar */}
+      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 1.5rem 6rem" }}>
+        <p style={{ color: "#374151", fontSize: "0.75rem", letterSpacing: "0.12em", marginBottom: "1.5rem" }}>
+          {avatars.length} AVATAR NEL REGISTRO
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+          {avatars.map((av) => (
+            <AvatarCard
+              key={av.handle}
+              handle={av.handle}
+              alias={av.alias}
+              portrait_url={av.portrait_url}
+              tier={av.tier as Tier}
+              usage_count={av.usage_count}
+              revoked_at={av.revoked_at}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          ))}
         </div>
-      </main>
+      </section>
     </div>
   );
 }

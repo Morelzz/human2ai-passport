@@ -1,1 +1,70 @@
-@AGENTS.md
+# CLAUDE.md — Contesto di progetto HUMAN2AI
+
+> Questo file viene letto automaticamente da Claude Code a ogni sessione.
+> È la fonte di verità su cosa stiamo costruendo e come.
+
+## Cosa stiamo costruendo ADESSO
+
+Il **Registro Volti / Avatar Passport** — il primo modulo atterrabile di Human2AI.
+NON stiamo costruendo tutta la piattaforma. Stiamo costruendo UNA cosa, fatta bene:
+
+> Un registro pubblico dove una persona reale rivendica il proprio volto, dichiara
+> come può essere usato, e **chiunque può verificarlo** tramite un token.
+
+Questo è il seme della "SIAE dei volti": prima diventiamo il *registro dei diritti*,
+poi (in trimestri futuri) ci aggiungiamo generazione, royalty ed enforcement.
+
+Spec completa del modulo: vedi `docs/AVATAR_PASSPORT_SPEC.md`.
+
+## Cos'è Human2AI (contesto, NON da costruire ora)
+
+Human2AI è il **filtro obbligatorio di tutela umana** che sta prima di ogni generazione
+di un essere umano. Tesi: in futuro generare un umano senza diritto d'immagine sarà
+impossibile; chi genera deve passare da un catalogo di persone reali consenzienti, che
+vengono pagate. Posizionamento: "il registro fidato delle identità AI consenzienti".
+NON è un generatore di immagini — i motori (Higgsfield, HeyGen, ElevenLabs) sono terze
+parti invisibili. Human2AI è la tutela dell'umano + i binari di diritti e pagamenti.
+
+## Stack tecnico (deciso — non cambiare senza chiedere)
+
+- **Framework:** Next.js (App Router) + TypeScript
+- **Styling:** Tailwind CSS
+- **Backend/DB:** Supabase (Postgres + Auth) — credenziali SOLO in variabili d'ambiente lato server
+- **Deploy:** Vercel (più avanti)
+- **Hashing token:** SHA-256 via Web Crypto API / Node crypto (nessuna libreria esterna pesante)
+
+Mantieni il progetto **monorepo singolo, semplice**. Niente over-engineering. Questo è un MVP
+che deve girare, non una cattedrale.
+
+## Palette e identità visiva (estetica "Obsidian Intelligence")
+
+- Sfondo profondo / dark-first
+- Deep Violet `#6B21E8`
+- Crimson Empathy `#B8005C`
+- Precision Teal `#00A896`
+- Estetica: premium, elegante, avanguardia, futuristica. ZERO aspetto "giocattolo" o marketing generico.
+- Riferimento di mood: Apple Vision Pro (pulizia, profondità, vetro).
+
+## Regole NON NEGOZIABILI (guardrail)
+
+1. **Mai dati biometrici o personali on-chain.** Vincolo GDPR assoluto. Se in futuro si ancora
+   qualcosa su blockchain, va SOLO l'hash anonimo, mai foto/volti/documenti.
+2. **Il consenso è una timeline, non uno stato fisso.** Un avatar è "autorizzato dal–al",
+   con eventuale "revocato dal X". La revoca è PROSPETTICA (blocca il futuro, non cancella il passato).
+3. **Privacy by default.** Nessuna vendita di dati, mai. I dati sensibili stanno lato server.
+4. **Onestà sui livelli.** SPARK/SHAPE = "ispirato a" (no fedeltà 1:1). SOUL/HUMAN = identity-locked.
+5. **Credenziali API e segreti** sempre e solo in `.env.local` (mai committati, mai nel client).
+
+## Convenzioni di lavoro
+
+- Spiega sempre brevemente cosa stai per fare prima di farlo.
+- Procedi a piccoli passi verificabili; dopo ogni step, dimmi cosa testare.
+- Codice commentato in italiano dove aiuta la comprensione.
+- Usa dati DEMO finché non si decide di passare ai 15 avatar reali.
+- Prima di scelte architetturali importanti, fermati e chiedi.
+
+## Stato attuale
+
+- Progetto nuovo. Da inizializzare.
+- 15 avatar reali già scansionati su Higgsfield Soul (NON ancora caricati — useremo demo).
+- Primo obiettivo: Avatar Passport pubblico + verifica token, popolato con dati demo.

@@ -1,26 +1,39 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Palette Obsidian Intelligence */
+  --color-obsidian:    #0a0a0f;
+  --color-obsidian-2:  #12121a;
+  --color-obsidian-3:  #1c1c28;
+  --color-violet:      #6B21E8;
+  --color-violet-light:#8b47f0;
+  --color-crimson:     #B8005C;
+  --color-crimson-light:#e0006f;
+  --color-teal:        #00A896;
+  --color-teal-light:  #00d4be;
+
+  --color-background:  var(--color-obsidian);
+  --color-foreground:  #f0f0f5;
+  --color-muted:       #6b7280;
+  --color-border:      rgba(255,255,255,0.08);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: #0a0a0f;
+  color: #f0f0f5;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #0a0a0f;
+  color: #f0f0f5;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
