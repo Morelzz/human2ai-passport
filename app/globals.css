@@ -37,3 +37,81 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Strato cinematografico "Obsidian Intelligence" — elegante, sobrio.
+   Profondità e respiro, non fuochi d'artificio. Mobile-first.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Sfondo a bagliori profondi, fisso, con drift lentissimo (quasi impercettibile). */
+.cine-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 18% -5%, rgba(107,33,232,0.20), transparent 70%),
+    radial-gradient(45% 40% at 95% 8%, rgba(184,0,92,0.12), transparent 70%),
+    radial-gradient(75% 55% at 50% 112%, rgba(0,168,150,0.10), transparent 72%);
+  /* Entrata che si assesta una volta sola: cinematico senza repaint perpetuo. */
+  animation: cine-in 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes cine-in {
+  from { transform: translate3d(0, 2.5%, 0) scale(1.08); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
+}
+
+/* Grana cinematografica finissima sopra ogni cosa. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Vetro (glassmorphism) leggero. */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+.glass-hover:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-3px);
+}
+
+/* Entrata fade-up — solo CSS, stagger via `animation-delay` inline. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: reveal-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes reveal-up {
+  to { opacity: 1; transform: none; }
+}
+
+/* Testo a gradiente brand (per le parole-chiave del manifesto). */
+.text-gradient {
+  background: linear-gradient(120deg, #8b47f0 0%, #B8005C 60%, #00A896 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Nav responsive: sotto i 720px nascondi i link secondari e stringi il padding.
+   Logo, account/accesso e CTA di verifica restano sempre raggiungibili. */
+@media (max-width: 720px) {
+  .site-nav { padding-left: 1.1rem !important; padding-right: 1.1rem !important; }
+  .nav-secondary { display: none !important; }
+}
+
+/* Rispetto totale di chi preferisce meno movimento. */
+@media (prefers-reduced-motion: reduce) {
+  .cine-bg { animation: none; opacity: 1; }
+  .reveal { animation: none; opacity: 1; transform: none; }
+  .glass-hover:hover { transform: none; }
+}

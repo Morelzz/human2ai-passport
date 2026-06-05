@@ -19,6 +19,7 @@ export function Logo({ size = 28 }: { size?: number }) {
 export function Nav({ breadcrumb, right }: { breadcrumb?: string; right?: ReactNode }) {
   return (
     <nav
+      className="site-nav"
       style={{
         borderBottom: `1px solid ${colors.border}`,
         padding: "1rem 2rem",
