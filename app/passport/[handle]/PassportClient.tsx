@@ -10,13 +10,14 @@ interface Props {
   status: "ATTIVO" | "REVOCATO";
   tier: { label: string; color: string; bg: string; description: string };
   tokenShort: string;
+  ownerVerified?: boolean;
 }
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-export default function PassportClient({ avatar, events, status, tier, tokenShort }: Props) {
+export default function PassportClient({ avatar, events, status, tier, tokenShort, ownerVerified }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyToken() {
@@ -59,9 +60,17 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           {/* Info */}
           <div style={{ flex: 1, minWidth: 200 }}>
             {/* Badge Verified */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(0,168,150,0.12)", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 999, padding: "0.25rem 0.75rem", marginBottom: "0.75rem" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A896" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-              <span style={{ color: "#00A896", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em" }}>HUMAN2AI VERIFIED</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.75rem" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(0,168,150,0.12)", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 999, padding: "0.25rem 0.75rem" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A896" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                <span style={{ color: "#00A896", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em" }}>HUMAN2AI VERIFIED</span>
+              </div>
+              {ownerVerified && (
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.25rem 0.75rem" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B21E8" strokeWidth="3"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span style={{ color: "#6B21E8", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em" }}>PERSONA REALE VERIFICATA</span>
+                </div>
+              )}
             </div>
 
             <h1 style={{ fontSize: "1.75rem", fontWeight: 700, margin: "0 0 0.25rem", lineHeight: 1.2 }}>{avatar.alias}</h1>

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
+import { createServerClient } from "@/lib/supabase";
 import LogoutButton from "./LogoutButton";
 
 const ROLE_LABEL: Record<string, string> = {
@@ -30,6 +31,19 @@ export default async function AccountPage() {
 
   const role = profile?.role ?? "buyer";
   const kyc = KYC_LABEL[profile?.kyc_status ?? "none"];
+
+  // Avatar del creatore (se esiste)
+  let myAvatar: string | null = null;
+  if (role === "seller") {
+    const admin = createServerClient();
+    const { data: av } = await admin
+      .from("avatars")
+      .select("handle")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+    myAvatar = av?.handle ?? null;
+  }
+  const isVerifiedSeller = role === "seller" && profile?.kyc_status === "approved";
 
   return (
     <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
@@ -74,9 +88,27 @@ export default async function AccountPage() {
           )}
         </div>
 
+        {role === "seller" && (
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO AVATAR</p>
+            {myAvatar ? (
+              <Link href={`/passport/${myAvatar}`} style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#f0f0f5", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
+                Vai al tuo passport pubblico →
+              </Link>
+            ) : isVerifiedSeller ? (
+              <Link href="/account/avatar" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+                Crea il tuo avatar nel registro
+              </Link>
+            ) : (
+              <p style={{ color: "#6b7280", fontSize: "0.82rem", margin: 0, lineHeight: 1.6 }}>
+                Verifica prima la tua identità per poter creare il tuo avatar.
+              </p>
+            )}
+          </div>
+        )}
+
         <p style={{ color: "#374151", fontSize: "0.78rem", lineHeight: 1.6, marginTop: "2rem" }}>
           Il tuo profilo è protetto: solo tu puoi vederlo e modificarlo.
-          La verifica identità arriverà nel prossimo modulo.
         </p>
       </section>
     </div>

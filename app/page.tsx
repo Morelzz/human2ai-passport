@@ -8,7 +8,6 @@ export default async function Home() {
   const { data } = await supabase
     .from("avatars")
     .select("handle, alias, portrait_url, tier, usage_count, revoked_at")
-    .eq("is_demo", true)
     .order("consent_start");
 
   const avatars = data ?? [];

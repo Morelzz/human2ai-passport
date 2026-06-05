@@ -29,6 +29,17 @@ export default async function PassportPage({ params }: Props) {
   const consentEvents: ConsentEvent[] = events ?? [];
   const av: Avatar = avatar as Avatar;
 
+  // Creatore verificato? (avatar con proprietario il cui KYC è approvato)
+  let ownerVerified = false;
+  if (avatar.owner_id) {
+    const { data: ownerProfile } = await supabase
+      .from("profiles")
+      .select("kyc_status")
+      .eq("id", avatar.owner_id)
+      .single();
+    ownerVerified = ownerProfile?.kyc_status === "approved";
+  }
+
   const status = av.revoked_at ? "REVOCATO" : "ATTIVO";
   const tier = TIER_CONFIG[av.tier];
   const tokenShort = truncateToken(av.token_hash);
@@ -40,6 +51,7 @@ export default async function PassportPage({ params }: Props) {
       status={status}
       tier={tier}
       tokenShort={tokenShort}
+      ownerVerified={ownerVerified}
     />
   );
 }

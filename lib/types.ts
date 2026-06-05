@@ -32,6 +32,12 @@ export interface ConsentEvent {
   occurred_at: string;
 }
 
+// Categorie d'uso selezionabili in fase di onboarding
+export const CATEGORIES = [
+  "Business", "Luxury", "Travel", "Fashion", "Beauty", "Sport",
+  "Entertainment", "Food", "Lifestyle", "Healthcare", "Politics", "Alcohol",
+] as const;
+
 export const TIER_CONFIG: Record<Tier, { label: string; color: string; bg: string; description: string }> = {
   SPARK:  { label: "SPARK",  color: "#9ca3af", bg: "rgba(156,163,175,0.15)", description: "Ispirato a" },
   SHAPE:  { label: "SHAPE",  color: "#00A896", bg: "rgba(0,168,150,0.15)",   description: "Somiglianza stilizzata" },
