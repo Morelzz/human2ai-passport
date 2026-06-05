@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { ROYALTY_PER_GEN_CENTS } from "@/lib/wallet";
+import { generateWithHiggsfield } from "@/lib/higgsfield";
 
 export async function POST(request: Request) {
   const auth = await createAuthClient();
@@ -19,13 +20,28 @@ export async function POST(request: Request) {
   // Rivalida: l'avatar esiste, è SOUL e ha consenso attivo
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents")
+    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents, soul_ref")
     .eq("handle", handle)
     .maybeSingle();
 
   if (!avatar) return NextResponse.json({ error: "Avatar inesistente" }, { status: 404 });
   if (avatar.revoked_at) return NextResponse.json({ error: "Consenso revocato: generazione bloccata" }, { status: 403 });
   if (avatar.tier !== "SOUL") return NextResponse.json({ error: "Solo avatar SOUL sono generabili in questa fase" }, { status: 403 });
+
+  // Bridge verso il motore (Higgsfield Soul) — terza parte invisibile, solo lato server.
+  let engineResult;
+  try {
+    engineResult = await generateWithHiggsfield({
+      avatarId: avatar.id,
+      soulRef: avatar.soul_ref ?? null,
+      prompt,
+    });
+  } catch {
+    return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
+  }
+  if (engineResult.status !== "completed") {
+    return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
+  }
 
   // Credenziale d'uscita: hash anonimo (nessun dato biometrico) — seme del C2PA
   const genId = crypto.randomUUID();
@@ -42,6 +58,8 @@ export async function POST(request: Request) {
     prompt,
     royalty_cents: ROYALTY_PER_GEN_CENTS,
     certificate,
+    image_url: engineResult.imageUrl,
+    engine_ref: engineResult.generationRef,
   });
 
   // Accredita royalty + incrementa utilizzi (accumulo, non payout)
@@ -58,5 +76,6 @@ export async function POST(request: Request) {
     certificate,
     royalty_cents: ROYALTY_PER_GEN_CENTS,
     alias: avatar.alias,
+    image_url: engineResult.imageUrl,
   });
 }

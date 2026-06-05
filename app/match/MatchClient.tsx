@@ -22,7 +22,7 @@ interface MatchResponse {
   results?: MatchAvatar[];
 }
 
-interface GenResult { certificate: string; royalty_cents: number; alias: string; }
+interface GenResult { certificate: string; royalty_cents: number; alias: string; image_url?: string; }
 
 export default function MatchClient() {
   const [prompt, setPrompt] = useState("");
@@ -152,6 +152,10 @@ export default function MatchClient() {
                         ) : (
                           <div style={{ marginTop: "1.2rem", background: "#0a0a0f", border: "1px solid rgba(0,168,150,0.25)", borderRadius: 12, padding: "1.2rem" }}>
                             <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.5rem" }}>✓ Generazione certificata</p>
+                            {gen.image_url && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={gen.image_url} alt="output generato" style={{ width: "100%", maxWidth: 240, borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", marginBottom: "0.8rem", background: "#1c1c28" }} />
+                            )}
                             <p style={{ color: "#6b7280", fontSize: "0.82rem", lineHeight: 1.6, margin: "0 0 0.8rem" }}>
                               {gen.alias} ha ricevuto una royalty di{" "}
                               <strong style={{ color: "#f0f0f5" }}>{(gen.royalty_cents / 100).toFixed(2)} €</strong> (ad accumulo).
