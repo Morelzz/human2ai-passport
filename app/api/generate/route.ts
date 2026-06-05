@@ -4,6 +4,7 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { grossForCategory, splitRoyalty } from "@/lib/wallet";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
+import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
 
 export async function POST(request: Request) {
   const auth = await createAuthClient();
@@ -17,6 +18,9 @@ export async function POST(request: Request) {
   // Retro-compatibilità: accetta anche il vecchio campo "prompt".
   const scene = String(body?.scene ?? body?.prompt ?? "").trim();
   const category = body?.category ? String(body.category).trim() : null;
+  // Modello di generazione (default Soul 2.0) e stile (solo Soul ID).
+  const model = isValidModel(body?.model) ? body.model : DEFAULT_MODEL;
+  const styleId = body?.styleId && isValidStyle(String(body.styleId)) ? String(body.styleId) : null;
   if (!handle) return NextResponse.json({ error: "Avatar mancante" }, { status: 400 });
 
   const admin = createServerClient();
@@ -50,6 +54,8 @@ export async function POST(request: Request) {
       avatarId: avatar.id,
       soulRef: avatar.soul_ref ?? null,
       prompt: buildGenerationPrompt(scene),
+      model,
+      styleId: model === "soul-id" ? styleId : null,
     });
   } catch {
     return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
 import { formatEur } from "@/lib/wallet";
+import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 
 // --- Opzioni dell'identikit (chip cliccabili) ---
 const GENDERS = [
@@ -65,6 +66,11 @@ export default function MatchClient() {
   const [generatingHandle, setGeneratingHandle] = useState<string | null>(null);
   const [genByHandle, setGenByHandle] = useState<Record<string, GenResult>>({});
 
+  // Impostazioni di generazione: modello (qualità) + stile (solo Soul ID)
+  const [model, setModel] = useState<SoulModel>(DEFAULT_MODEL);
+  const [styleId, setStyleId] = useState("");
+  const modelSupportsStyles = SOUL_MODELS.find((m) => m.id === model)?.supportsStyles ?? false;
+
   // toggle: ri-cliccando una chip già attiva la deselezioni
   const toggle = (cur: string, v: string, set: (s: string) => void) => set(cur === v ? "" : v);
 
@@ -103,7 +109,13 @@ export default function MatchClient() {
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ handle, category: category || null, scene: sceneByHandle[handle] ?? "" }),
+      body: JSON.stringify({
+        handle,
+        category: category || null,
+        scene: sceneByHandle[handle] ?? "",
+        model,
+        styleId: modelSupportsStyles ? (styleId || null) : null,
+      }),
     });
     const json = await res.json();
     setGeneratingHandle(null);
@@ -217,6 +229,35 @@ export default function MatchClient() {
                                 Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — garantito dal Soul.
                               </p>
                             </div>
+
+                            {/* Modello (qualità) */}
+                            <div style={{ marginTop: "1rem" }}>
+                              <span style={{ color: "#9ca3af", fontSize: "0.72rem", fontWeight: 600, display: "block", marginBottom: "0.5rem" }}>Modello</span>
+                              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                                {SOUL_MODELS.map((m) => (
+                                  <Chip key={m.id} active={model === m.id} onClick={() => setModel(m.id)}>
+                                    {m.label} · {m.quality}
+                                  </Chip>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Stile (solo Soul ID) */}
+                            {modelSupportsStyles && (
+                              <div style={{ marginTop: "0.9rem" }}>
+                                <span style={{ color: "#9ca3af", fontSize: "0.72rem", fontWeight: 600, display: "block", marginBottom: "0.5rem" }}>
+                                  Stile <span style={{ color: "#374151", fontWeight: 400 }}>· opzionale</span>
+                                </span>
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
+                                  {SOUL_STYLES.map((s) => (
+                                    <Chip key={s.id} active={styleId === s.id} onClick={() => setStyleId(styleId === s.id ? "" : s.id)}>
+                                      {s.label}
+                                    </Chip>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
                             <button onClick={() => generate(avatar.handle)} disabled={generating}
                               style={{ width: "100%", marginTop: "1rem", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: generating ? "default" : "pointer" }}>
                               {generating ? "Generazione…" : "Genera con questo avatar"}

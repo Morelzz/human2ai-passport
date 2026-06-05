@@ -11,12 +11,18 @@ import crypto from "crypto";
 // Il resto della piattaforma usa SOLO generateWithHiggsfield(): cambiando modalità
 // non si tocca nient'altro (match, certificato, royalty restano identici).
 
+import type { SoulModel } from "@/lib/soul-models";
+
 export interface HiggsfieldInput {
   avatarId: string;
   // Riferimento del soggetto reale sul motore (es. id del modello Soul addestrato).
   // Per gli avatar demo può essere null: il mock genera comunque un placeholder.
   soulRef: string | null;
   prompt: string;
+  // Modello di generazione (default Soul 2.0). Tutti identity-locked.
+  model?: SoulModel;
+  // Stile Soul (solo per Soul ID v1): id di uno stile dal catalogo.
+  styleId?: string | null;
 }
 
 export interface HiggsfieldResult {
@@ -81,27 +87,52 @@ async function generateLive(input: HiggsfieldInput): Promise<HiggsfieldResult> {
     throw new Error("soulRef mancante: questo avatar non ha un modello Soul collegato");
   }
 
+  const model = input.model ?? "soul-v2";
+
+  // --- Soul 2.0 (client v2): endpoint higgsfield-ai/soul/v2/standard, 2k ---
+  // Il volto reale arriva da soul_id; nessuno stile (il modello ha la sua resa).
+  if (model === "soul-v2") {
+    const { createHiggsfieldClient } = await import("@higgsfield/client/v2");
+    const client = createHiggsfieldClient({ apiKey, apiSecret });
+    const res = await client.subscribe("higgsfield-ai/soul/v2/standard", {
+      input: {
+        prompt: input.prompt,
+        soul_id: input.soulRef,
+        quality: "2k",
+        aspect_ratio: "3:4", // ritratto verticale
+      },
+      withPolling: true,
+    });
+    const ref = res.request_id;
+    if (res.status !== "completed") {
+      return { engine: "higgsfield-soul", mode: "live", generationRef: ref, status: "failed", imageUrl: "" };
+    }
+    const url = res.images?.[0]?.url ?? "";
+    return { engine: "higgsfield-soul", mode: "live", generationRef: ref, status: url ? "completed" : "failed", imageUrl: url };
+  }
+
+  // --- Soul ID (client v1): /v1/text2image/soul, 1080p, stili applicabili ---
   const { HiggsfieldClient } = await import("@higgsfield/client");
   const client = new HiggsfieldClient({ apiKey, apiSecret });
 
   // Soul text-to-image con il riferimento del volto reale (custom_reference_id).
-  // withPolling: l'SDK attende il completamento prima di restituire il JobSet.
-  const jobSet = await client.generate(
-    "/v1/text2image/soul",
-    {
-      prompt: input.prompt,
-      custom_reference_id: input.soulRef,
-      width_and_height: "1536x2048", // ritratto verticale
-      quality: "1080p",
-      batch_size: 1,
-    },
-    { withPolling: true }
-  );
-
-  if (jobSet.isNsfw) {
-    return { engine: "higgsfield-soul", mode: "live", generationRef: jobSet.id, status: "failed", imageUrl: "" };
+  const params: Record<string, unknown> = {
+    prompt: input.prompt,
+    custom_reference_id: input.soulRef,
+    width_and_height: "1536x2048", // ritratto verticale
+    quality: "1080p",
+    batch_size: 1,
+  };
+  // Stile artistico opzionale (mantiene comunque l'identità dal Soul).
+  if (input.styleId) {
+    params.style_id = input.styleId;
+    params.style_strength = 0.8;
   }
-  if (!jobSet.isCompleted) {
+
+  // withPolling: l'SDK attende il completamento prima di restituire il JobSet.
+  const jobSet = await client.generate("/v1/text2image/soul", params, { withPolling: true });
+
+  if (jobSet.isNsfw || !jobSet.isCompleted) {
     return { engine: "higgsfield-soul", mode: "live", generationRef: jobSet.id, status: "failed", imageUrl: "" };
   }
 
