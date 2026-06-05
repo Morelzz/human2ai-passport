@@ -94,12 +94,16 @@ async function generateLive(input: HiggsfieldInput): Promise<HiggsfieldResult> {
   if (model === "soul-v2") {
     const { createHiggsfieldClient } = await import("@higgsfield/client/v2");
     const client = createHiggsfieldClient({ apiKey, apiSecret });
+    // Identità garantita da custom_reference_id (il Soul addestrato), forza piena.
+    // resolution: '720p'|'1080p' (NON "quality/2k"). enhance_prompt off per non driftare.
     const res = await client.subscribe("higgsfield-ai/soul/v2/standard", {
       input: {
         prompt: input.prompt,
-        soul_id: input.soulRef,
-        quality: "2k",
+        custom_reference_id: input.soulRef,
+        custom_reference_strength: 1,
+        resolution: "1080p",
         aspect_ratio: "3:4", // ritratto verticale
+        enhance_prompt: false,
       },
       withPolling: true,
     });
