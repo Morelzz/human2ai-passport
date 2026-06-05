@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CATEGORIES, IDENTITY_KIT, IDENTITY_LABELS, TIER_CONFIG, Tier } from "@/lib/types";
+import { page, colors } from "@/lib/ui";
+import { Nav } from "@/app/Nav";
 
 const TIERS: Tier[] = ["SPARK", "SHAPE", "SOUL", "HUMAN"];
 
-export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string }) {
+export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: { defaultAlias: string; isEnterprise?: boolean }) {
   const router = useRouter();
   const [handle, setHandle] = useState("");
   const [alias, setAlias] = useState(defaultAlias);
@@ -58,10 +60,8 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
   }
 
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem" }}>
-        <Link href="/account" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>← Torna all&apos;account</Link>
-      </nav>
+    <div style={page}>
+      <Nav right={<Link href="/account" style={{ color: colors.muted, fontSize: "0.85rem", textDecoration: "none" }}>← Torna all&apos;account</Link>} />
 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
         {consentUrl ? (
@@ -82,10 +82,13 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
           </div>
         ) : (
         <>
-        <h1 style={{ fontSize: "1.7rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Crea il tuo avatar</h1>
+        <h1 style={{ fontSize: "1.7rem", fontWeight: 800, margin: "0 0 0.5rem" }}>
+          {isEnterprise ? "Onboarda un avatar" : "Crea il tuo avatar"}
+        </h1>
         <p style={{ color: "#6b7280", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
-          Entrerai nel registro pubblico con un token verificabile. La revoca sarà
-          sempre possibile e prospettica (blocca gli usi futuri, non il passato).
+          {isEnterprise
+            ? "Inserisci i dati della persona. Dopo la creazione riceverai un link da farle aprire per il consenso; poi l'avatar passa alla revisione dei nostri operatori prima di andare live."
+            : "Entrerai nel registro pubblico con un token verificabile. La revoca sarà sempre possibile e prospettica (blocca gli usi futuri, non il passato)."}
         </p>
 
         <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
@@ -157,7 +160,7 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
           {error && <p style={{ color: "#B8005C", fontSize: "0.85rem", margin: 0 }}>{error}</p>}
 
           <button type="submit" disabled={loading} style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
-            {loading ? "Creazione…" : "Crea avatar e firma il consenso"}
+            {loading ? "Creazione…" : isEnterprise ? "Crea avatar e genera link di consenso" : "Crea avatar e firma il consenso"}
           </button>
         </form>
         </>

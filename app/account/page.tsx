@@ -8,11 +8,13 @@ import { Nav } from "@/app/Nav";
 import LogoutButton from "./LogoutButton";
 import PayoutButton from "./PayoutButton";
 import SoulActivate from "./SoulActivate";
+import OrgAvatars, { OrgAvatar } from "./OrgAvatars";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
   seller: "Creatore",
   admin: "Admin",
+  enterprise: "Agenzia",
 };
 
 const KYC_LABEL: Record<string, { text: string; color: string }> = {
@@ -65,6 +67,18 @@ export default async function AccountPage() {
     }
   }
   const isVerifiedSeller = role === "seller" && profile?.kyc_status === "approved";
+
+  // Organizzazioni (Enterprise): tutti gli avatar onboardati dall'agenzia.
+  let orgAvatars: OrgAvatar[] = [];
+  if (role === "enterprise") {
+    const adminOrg = createServerClient();
+    const { data: list } = await adminOrg
+      .from("avatars")
+      .select("handle, alias, verification_status, person_consented_at, consent_token, soul_ref, royalty_accrued_cents, usage_count")
+      .eq("owner_id", user.id)
+      .order("created_at", { ascending: false });
+    orgAvatars = (list ?? []) as OrgAvatar[];
+  }
 
   // Contenuti acquistati dall'utente (generazioni commerciali = quelle col certificato).
   const admin2 = createServerClient();
@@ -129,6 +143,8 @@ export default async function AccountPage() {
             </Link>
           </>
         )}
+
+        {role === "enterprise" && <OrgAvatars avatars={orgAvatars} />}
 
         {role === "seller" && (
           <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>

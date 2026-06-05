@@ -14,19 +14,24 @@ export default async function NewAvatarPage() {
     .eq("id", user.id)
     .single();
 
-  // Solo creatori verificati
-  if (profile?.role !== "seller" || profile?.kyc_status !== "approved") {
+  const isEnterprise = profile?.role === "enterprise";
+
+  // Possono creare: creatori privati verificati (KYC) oppure organizzazioni.
+  if (!isEnterprise && (profile?.role !== "seller" || profile?.kyc_status !== "approved")) {
     redirect("/account");
   }
 
-  // Se ha già un avatar, manda al suo passport
-  const admin = createServerClient();
-  const { data: existing } = await admin
-    .from("avatars")
-    .select("handle")
-    .eq("owner_id", user.id)
-    .maybeSingle();
-  if (existing) redirect(`/passport/${existing.handle}`);
+  // Vincolo 1:1 SOLO per i privati: se ha già un avatar, manda al suo passport.
+  // Le organizzazioni possono crearne molti, quindi non vengono reindirizzate.
+  if (!isEnterprise) {
+    const admin = createServerClient();
+    const { data: existing } = await admin
+      .from("avatars")
+      .select("handle")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+    if (existing) redirect(`/passport/${existing.handle}`);
+  }
 
-  return <NewAvatarClient defaultAlias={profile?.full_name ?? ""} />;
+  return <NewAvatarClient defaultAlias={isEnterprise ? "" : (profile?.full_name ?? "")} isEnterprise={isEnterprise} />;
 }
