@@ -1,0 +1,145 @@
+{
+  "name": "Human2AI",
+  "aesthetic": "Obsidian Intelligence",
+  "groups": [
+    {
+      "group": "Brand",
+      "colors": [
+        {
+          "name": "Deep Violet",
+          "role": "Primario",
+          "hex": "#6B21E8",
+          "rgb": "rgb(107, 33, 232)",
+          "hsl": "hsl(262, 81%, 52%)"
+        },
+        {
+          "name": "Crimson Empathy",
+          "role": "Secondario",
+          "hex": "#B8005C",
+          "rgb": "rgb(184, 0, 92)",
+          "hsl": "hsl(330, 100%, 36%)"
+        },
+        {
+          "name": "Precision Teal",
+          "role": "Accento",
+          "hex": "#00A896",
+          "rgb": "rgb(0, 168, 150)",
+          "hsl": "hsl(174, 100%, 33%)"
+        }
+      ]
+    },
+    {
+      "group": "Brand · varianti",
+      "colors": [
+        {
+          "name": "Violet Light",
+          "role": "Hover/link",
+          "hex": "#8B47F0",
+          "rgb": "rgb(139, 71, 240)",
+          "hsl": "hsl(264, 85%, 61%)"
+        },
+        {
+          "name": "Teal Bright",
+          "role": "Gradiente",
+          "hex": "#00D4BE",
+          "rgb": "rgb(0, 212, 190)",
+          "hsl": "hsl(174, 100%, 42%)"
+        },
+        {
+          "name": "Crimson Bright",
+          "role": "Gradiente",
+          "hex": "#E0006F",
+          "rgb": "rgb(224, 0, 111)",
+          "hsl": "hsl(330, 100%, 44%)"
+        },
+        {
+          "name": "Signal Green",
+          "role": "Stato attivo",
+          "hex": "#00C864",
+          "rgb": "rgb(0, 200, 100)",
+          "hsl": "hsl(150, 100%, 39%)"
+        }
+      ]
+    },
+    {
+      "group": "Superfici (Obsidian)",
+      "colors": [
+        {
+          "name": "Obsidian Base",
+          "role": "Sfondo",
+          "hex": "#0A0A0F",
+          "rgb": "rgb(10, 10, 15)",
+          "hsl": "hsl(240, 20%, 5%)"
+        },
+        {
+          "name": "Obsidian Panel",
+          "role": "Pannello",
+          "hex": "#0D0D14",
+          "rgb": "rgb(13, 13, 20)",
+          "hsl": "hsl(240, 21%, 6%)"
+        },
+        {
+          "name": "Obsidian Card",
+          "role": "Card",
+          "hex": "#12121A",
+          "rgb": "rgb(18, 18, 26)",
+          "hsl": "hsl(240, 18%, 9%)"
+        },
+        {
+          "name": "Obsidian Raised",
+          "role": "Rilievo",
+          "hex": "#1C1C28",
+          "rgb": "rgb(28, 28, 40)",
+          "hsl": "hsl(240, 18%, 13%)"
+        }
+      ]
+    },
+    {
+      "group": "Testo & neutrali",
+      "colors": [
+        {
+          "name": "Text Primary",
+          "role": "Testo",
+          "hex": "#F0F0F5",
+          "rgb": "rgb(240, 240, 245)",
+          "hsl": "hsl(240, 20%, 95%)"
+        },
+        {
+          "name": "Text Secondary",
+          "role": "Testo 2",
+          "hex": "#9CA3AF",
+          "rgb": "rgb(156, 163, 175)",
+          "hsl": "hsl(218, 11%, 65%)"
+        },
+        {
+          "name": "Text Muted",
+          "role": "Attenuato",
+          "hex": "#6B7280",
+          "rgb": "rgb(107, 114, 128)",
+          "hsl": "hsl(220, 9%, 46%)"
+        },
+        {
+          "name": "Text Faint",
+          "role": "Tenue",
+          "hex": "#374151",
+          "rgb": "rgb(55, 65, 81)",
+          "hsl": "hsl(217, 19%, 27%)"
+        },
+        {
+          "name": "Text Disabled",
+          "role": "Disabilitato",
+          "hex": "#4B5563",
+          "rgb": "rgb(75, 85, 99)",
+          "hsl": "hsl(215, 14%, 34%)"
+        },
+        {
+          "name": "Teal Ink",
+          "role": "Su teal",
+          "hex": "#06231F",
+          "rgb": "rgb(6, 35, 31)",
+          "hsl": "hsl(172, 71%, 8%)"
+        }
+      ]
+    }
+  ]
+}

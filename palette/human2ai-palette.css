@@ -1,0 +1,19 @@
+:root {
+  --h2ai-deep-violet: #6B21E8;
+  --h2ai-crimson-empathy: #B8005C;
+  --h2ai-precision-teal: #00A896;
+  --h2ai-violet-light: #8B47F0;
+  --h2ai-teal-bright: #00D4BE;
+  --h2ai-crimson-bright: #E0006F;
+  --h2ai-signal-green: #00C864;
+  --h2ai-obsidian-base: #0A0A0F;
+  --h2ai-obsidian-panel: #0D0D14;
+  --h2ai-obsidian-card: #12121A;
+  --h2ai-obsidian-raised: #1C1C28;
+  --h2ai-text-primary: #F0F0F5;
+  --h2ai-text-secondary: #9CA3AF;
+  --h2ai-text-muted: #6B7280;
+  --h2ai-text-faint: #374151;
+  --h2ai-text-disabled: #4B5563;
+  --h2ai-teal-ink: #06231F;
+}
