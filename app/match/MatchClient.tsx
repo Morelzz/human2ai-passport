@@ -307,7 +307,12 @@ export default function MatchClient() {
                             </div>
 
                             <p style={{ color: "#374151", fontSize: "0.68rem", letterSpacing: "0.04em", margin: "0 0 0.3rem" }}>CREDENZIALE D&apos;USCITA (hash anonimo)</p>
-                            <code style={{ display: "block", color: "#6B21E8", fontSize: "0.7rem", wordBreak: "break-all", fontFamily: "monospace" }}>{gen.certificate}</code>
+                            <code style={{ display: "block", color: "#6B21E8", fontSize: "0.7rem", wordBreak: "break-all", fontFamily: "monospace", marginBottom: "0.9rem" }}>{gen.certificate}</code>
+                            {gen.certificate && (
+                              <a href={`/api/content/${gen.certificate}`} style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "rgba(0,168,150,0.12)", border: "1px solid rgba(0,168,150,0.3)", color: "#00A896", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none" }}>
+                                Scarica con provenienza →
+                              </a>
+                            )}
                           </div>
                         )}
                       </div>

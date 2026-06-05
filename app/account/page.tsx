@@ -224,8 +224,8 @@ export default async function AccountPage() {
                       <p style={{ color: "#374151", fontSize: "0.7rem", margin: "0 0 0.5rem" }}>
                         {g.category ?? "—"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
                       </p>
-                      {g.image_url && (
-                        <a href={g.image_url} target="_blank" rel="noreferrer" style={{ display: "block", textAlign: "center", padding: "0.4rem", borderRadius: 8, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
+                      {g.image_url && g.certificate && (
+                        <a href={`/api/content/${g.certificate}`} style={{ display: "block", textAlign: "center", padding: "0.4rem", borderRadius: 8, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
                           Scarica
                         </a>
                       )}

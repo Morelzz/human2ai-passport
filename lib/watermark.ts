@@ -33,3 +33,27 @@ export async function watermarkPreview(imageUrl: string): Promise<string> {
   const out = await watermarkBuffer(imageUrl);
   return `data:image/jpeg;base64,${out.toString("base64")}`;
 }
+
+// Imprime la provenienza nei metadati EXIF dell'immagine commerciale (seme C2PA):
+// il certificato e l'URL di verifica viaggiano col file. Restituisce JPEG.
+export async function embedProvenance(
+  imageUrl: string,
+  info: { certificate: string; alias: string; verifyUrl: string }
+): Promise<Buffer> {
+  const resp = await fetch(imageUrl);
+  if (!resp.ok) throw new Error("download immagine fallito");
+  const buf = Buffer.from(await resp.arrayBuffer());
+
+  const desc = `Generato via Human2AI con consenso. Avatar: ${info.alias}. Certificato: ${info.certificate}. Verifica: ${info.verifyUrl}`;
+  return sharp(buf)
+    .withExif({
+      IFD0: {
+        ImageDescription: desc,
+        Copyright: "Human2AI — contenuto certificato, persona reale consenziente",
+        Artist: info.alias,
+        Software: "Human2AI",
+      },
+    })
+    .jpeg({ quality: 95 })
+    .toBuffer();
+}
