@@ -64,6 +64,22 @@ export default async function AccountPage() {
   }
   const isVerifiedSeller = role === "seller" && profile?.kyc_status === "approved";
 
+  // Contenuti acquistati dall'utente (generazioni commerciali = quelle col certificato).
+  const admin2 = createServerClient();
+  const { data: gens } = await admin2
+    .from("generations")
+    .select("id, certificate, image_url, royalty_cents, gross_cents, category, created_at, avatars(alias, handle)")
+    .eq("buyer_id", user.id)
+    .not("certificate", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(12);
+  type MyGen = {
+    id: string; certificate: string | null; image_url: string | null;
+    gross_cents: number | null; category: string | null; created_at: string;
+    avatars: { alias: string; handle: string } | { alias: string; handle: string }[] | null;
+  };
+  const myGenerations: MyGen[] = (gens ?? []) as MyGen[];
+
   return (
     <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
       <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -182,6 +198,39 @@ export default async function AccountPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {myGenerations.length > 0 && (
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>I MIEI CONTENUTI</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "1rem" }}>
+              {myGenerations.map((g) => {
+                const av = Array.isArray(g.avatars) ? g.avatars[0] : g.avatars;
+                return (
+                  <div key={g.id} style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                    {g.image_url && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={g.image_url} alt="contenuto" style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", background: "#1c1c28", display: "block" }} />
+                    )}
+                    <div style={{ padding: "0.7rem 0.8rem" }}>
+                      <p style={{ color: "#f0f0f5", fontSize: "0.82rem", fontWeight: 600, margin: "0 0 0.15rem" }}>{av?.alias ?? "—"}</p>
+                      <p style={{ color: "#374151", fontSize: "0.7rem", margin: "0 0 0.5rem" }}>
+                        {g.category ?? "—"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
+                      </p>
+                      {g.image_url && (
+                        <a href={g.image_url} target="_blank" rel="noreferrer" style={{ display: "block", textAlign: "center", padding: "0.4rem", borderRadius: 8, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
+                          Scarica
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+              Ogni contenuto è certificato e la persona reale è stata remunerata.
+            </p>
           </div>
         )}
 
