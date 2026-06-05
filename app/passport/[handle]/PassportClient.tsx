@@ -225,6 +225,13 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           </p>
         </div>
 
+        {/* Segnala abuso — pilastro enforcement */}
+        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+          <Link href={`/report?handle=${encodeURIComponent(avatar.handle)}`} style={{ color: "#6b7280", fontSize: "0.8rem", textDecoration: "none" }}>
+            Questo avatar non rappresenta una persona consenziente? <span style={{ color: "#B8005C", fontWeight: 600 }}>Segnala abuso</span>
+          </Link>
+        </div>
+
       </main>
     </div>
   );

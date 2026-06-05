@@ -159,9 +159,19 @@ export default function VerifyClient() {
                 </p>
               )}
 
-              <Link href={`/passport/${result.handle}`} style={{ display: "inline-block", marginTop: "1.25rem", color: "#6B21E8", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 8, padding: "0.4rem 0.9rem" }}>
-                Vai al Passport →
-              </Link>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
+                <Link href={`/passport/${result.handle}`} style={{ display: "inline-block", color: "#6B21E8", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 8, padding: "0.4rem 0.9rem" }}>
+                  Vai al Passport →
+                </Link>
+                <Link
+                  href={result.type === "content"
+                    ? `/report?cert=${encodeURIComponent(token.trim())}`
+                    : `/report?handle=${encodeURIComponent(result.handle ?? "")}`}
+                  style={{ color: "#6b7280", fontSize: "0.82rem", textDecoration: "none" }}
+                >
+                  Segnala abuso
+                </Link>
+              </div>
             </>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
