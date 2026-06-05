@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
-import { formatEur } from "@/lib/wallet";
+import { formatEur, grossForCategory } from "@/lib/wallet";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 
 // --- Opzioni dell'identikit (chip cliccabili) ---
@@ -40,13 +40,15 @@ interface MatchResponse {
 }
 
 interface GenResult {
-  certificate: string;
+  mode: "preview" | "commercial";
   alias: string;
-  image_url?: string;
-  category: string | null;
-  gross_cents: number;
-  fee_cents: number;
-  royalty_cents: number; // netto avatar
+  image_url?: string;   // commerciale: URL pulito
+  image_data?: string;  // anteprima: data-URL watermarkato
+  certificate?: string;
+  category?: string | null;
+  gross_cents?: number;
+  fee_cents?: number;
+  royalty_cents?: number; // netto avatar
 }
 
 export default function MatchClient() {
@@ -103,7 +105,7 @@ export default function MatchClient() {
     setResult(json);
   }
 
-  async function generate(handle: string) {
+  async function generate(handle: string, mode: "preview" | "commercial") {
     setGeneratingHandle(handle);
     setError(null);
     const res = await fetch("/api/generate", {
@@ -111,6 +113,7 @@ export default function MatchClient() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         handle,
+        mode,
         category: category || null,
         scene: sceneByHandle[handle] ?? "",
         model,
@@ -122,6 +125,8 @@ export default function MatchClient() {
     if (!res.ok) { setError(json.error ?? "Errore"); return; }
     setGenByHandle((m) => ({ ...m, [handle]: json }));
   }
+
+  const priceLabel = formatEur(grossForCategory(category || null));
 
   return (
     <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
@@ -258,14 +263,38 @@ export default function MatchClient() {
                               </div>
                             )}
 
-                            <button onClick={() => generate(avatar.handle)} disabled={generating}
-                              style={{ width: "100%", marginTop: "1rem", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: generating ? "default" : "pointer" }}>
-                              {generating ? "Generazione…" : "Genera con questo avatar"}
-                            </button>
+                            <div style={{ display: "flex", gap: "0.6rem", marginTop: "1rem" }}>
+                              <button onClick={() => generate(avatar.handle, "preview")} disabled={generating}
+                                style={{ flex: 1, padding: "0.8rem", borderRadius: 10, border: "1px solid rgba(255,255,255,0.14)", background: generating ? "#1c1c28" : "transparent", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", cursor: generating ? "default" : "pointer" }}>
+                                {generating ? "…" : "Anteprima gratis"}
+                              </button>
+                              <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
+                                style={{ flex: 1, padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: generating ? "default" : "pointer" }}>
+                                {generating ? "Generazione…" : `Genera · ${priceLabel}`}
+                              </button>
+                            </div>
+                            <p style={{ color: "#374151", fontSize: "0.68rem", margin: "0.6rem 0 0", lineHeight: 1.5 }}>
+                              L&apos;anteprima è watermarkata e non commerciale (nessuna royalty). La versione a pagamento è pulita, con certificato e royalty a {avatar.alias}.
+                            </p>
                             <Link href={`/passport/${avatar.handle}`} style={{ display: "block", textAlign: "center", marginTop: "0.6rem", padding: "0.75rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#f0f0f5", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                               Vedi il passport →
                             </Link>
                           </>
+                        ) : gen.mode === "preview" ? (
+                          <div style={{ marginTop: "1.2rem", background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "1.2rem" }}>
+                            <p style={{ color: "#9ca3af", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.8rem" }}>👁 Anteprima · non commerciale</p>
+                            {gen.image_data && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={gen.image_data} alt="anteprima" style={{ width: "100%", maxWidth: 280, borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", marginBottom: "1rem", background: "#1c1c28" }} />
+                            )}
+                            <p style={{ color: "#6b7280", fontSize: "0.82rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
+                              Watermark e risoluzione ridotta. Nessuna royalty a {gen.alias}. Per la versione pulita, con certificato e royalty, genera quella commerciale.
+                            </p>
+                            <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
+                              style={{ width: "100%", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: generating ? "default" : "pointer" }}>
+                              {generating ? "Generazione…" : `Genera versione commerciale · ${priceLabel}`}
+                            </button>
+                          </div>
                         ) : (
                           <div style={{ marginTop: "1.2rem", background: "#0a0a0f", border: "1px solid rgba(0,168,150,0.25)", borderRadius: 12, padding: "1.2rem" }}>
                             <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.8rem" }}>✓ Generazione certificata</p>
@@ -276,10 +305,10 @@ export default function MatchClient() {
 
                             {/* Breakdown economico */}
                             <div style={{ background: "#12121a", borderRadius: 10, padding: "0.9rem 1rem", marginBottom: "0.9rem" }}>
-                              <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents)} dim />
-                              <EuroRow label="Fee piattaforma" value={`− ${formatEur(gen.fee_cents)}`} dim />
+                              <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
+                              <EuroRow label="Fee piattaforma" value={`− ${formatEur(gen.fee_cents ?? 0)}`} dim />
                               <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "0.6rem 0" }} />
-                              <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents)} highlight />
+                              <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents ?? 0)} highlight />
                             </div>
 
                             <p style={{ color: "#374151", fontSize: "0.68rem", letterSpacing: "0.04em", margin: "0 0 0.3rem" }}>CREDENZIALE D&apos;USCITA (hash anonimo)</p>

@@ -5,6 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { grossForCategory, splitRoyalty } from "@/lib/wallet";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
 import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
+import { watermarkPreview } from "@/lib/watermark";
 
 export async function POST(request: Request) {
   const auth = await createAuthClient();
@@ -21,6 +22,8 @@ export async function POST(request: Request) {
   // Modello di generazione (default Soul 2.0) e stile (solo Soul ID).
   const model = isValidModel(body?.model) ? body.model : DEFAULT_MODEL;
   const styleId = body?.styleId && isValidStyle(String(body.styleId)) ? String(body.styleId) : null;
+  // Modalità: 'preview' (watermark, gratis, no royalty) o 'commercial' (paga + royalty + certificato).
+  const isPreview = body?.mode === "preview";
   if (!handle) return NextResponse.json({ error: "Avatar mancante" }, { status: 400 });
 
   const admin = createServerClient();
@@ -36,8 +39,9 @@ export async function POST(request: Request) {
   if (avatar.revoked_at) return NextResponse.json({ error: "Consenso revocato: generazione bloccata" }, { status: 403 });
   if (avatar.tier !== "SOUL") return NextResponse.json({ error: "Solo avatar SOUL sono generabili in questa fase" }, { status: 403 });
 
-  // Guardrail consenso: se è indicata una categoria d'uso, deve essere autorizzata.
-  if (category) {
+  // Guardrail consenso: solo per uso COMMERCIALE la categoria dev'essere autorizzata.
+  // L'anteprima watermarkata è discovery non commerciale: non vincola la categoria.
+  if (!isPreview && category) {
     if (avatar.excluded_categories?.includes(category)) {
       return NextResponse.json({ error: `"${avatar.alias}" ha escluso la categoria ${category}` }, { status: 403 });
     }
@@ -56,6 +60,7 @@ export async function POST(request: Request) {
       prompt: buildGenerationPrompt(scene),
       model,
       styleId: model === "soul-id" ? styleId : null,
+      preview: isPreview,
     });
   } catch {
     return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
@@ -64,6 +69,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
   }
 
+  // --- ANTEPRIMA: watermark impresso, nessuna royalty, nessun certificato ---
+  // Il client riceve SOLO il data-URL watermarkato; l'URL pulito resta lato server.
+  if (isPreview) {
+    let imageData: string;
+    try {
+      imageData = await watermarkPreview(engineResult.imageUrl);
+    } catch {
+      return NextResponse.json({ error: "Anteprima non riuscita" }, { status: 502 });
+    }
+    // Registra l'anteprima (per il conteggio del free trial), senza economia.
+    await admin.from("generations").insert({
+      avatar_id: avatar.id,
+      buyer_id: user.id,
+      prompt: scene,
+      mode: "preview",
+      gross_cents: 0,
+      fee_cents: 0,
+      royalty_cents: 0,
+      image_url: engineResult.imageUrl, // archivio interno, NON esposto al client
+      engine_ref: engineResult.generationRef,
+    });
+    return NextResponse.json({ ok: true, mode: "preview", alias: avatar.alias, image_data: imageData });
+  }
+
+  // --- COMMERCIALE ---
   // Economia: prezzo lordo per categoria, diviso in fee piattaforma + netto avatar.
   const gross = grossForCategory(category);
   const { gross_cents, fee_cents, net_cents } = splitRoyalty(gross);
@@ -82,6 +112,7 @@ export async function POST(request: Request) {
     buyer_id: user.id,
     prompt: scene,
     category,
+    mode: "commercial",
     gross_cents,
     fee_cents,
     royalty_cents: net_cents, // netto accreditato all'avatar
@@ -101,6 +132,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     ok: true,
+    mode: "commercial",
     certificate,
     alias: avatar.alias,
     image_url: engineResult.imageUrl,

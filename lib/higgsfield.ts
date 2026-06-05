@@ -23,6 +23,8 @@ export interface HiggsfieldInput {
   model?: SoulModel;
   // Stile Soul (solo per Soul ID v1): id di uno stile dal catalogo.
   styleId?: string | null;
+  // Anteprima: risoluzione ridotta (il watermark si applica a valle).
+  preview?: boolean;
 }
 
 export interface HiggsfieldResult {
@@ -101,7 +103,7 @@ async function generateLive(input: HiggsfieldInput): Promise<HiggsfieldResult> {
         prompt: input.prompt,
         custom_reference_id: input.soulRef,
         custom_reference_strength: 1,
-        resolution: "1080p",
+        resolution: input.preview ? "720p" : "1080p",
         aspect_ratio: "3:4", // ritratto verticale
         enhance_prompt: false,
       },
@@ -124,7 +126,7 @@ async function generateLive(input: HiggsfieldInput): Promise<HiggsfieldResult> {
     prompt: input.prompt,
     custom_reference_id: input.soulRef,
     width_and_height: "1536x2048", // ritratto verticale
-    quality: "1080p",
+    quality: input.preview ? "720p" : "1080p",
     batch_size: 1,
   };
   // Stile artistico opzionale (mantiene comunque l'identità dal Soul).
