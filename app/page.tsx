@@ -21,9 +21,14 @@ export default async function Home() {
           <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)" }} />
           <span style={{ fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
         </div>
-        <Link href="/verify" style={{ color: "#00A896", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 999, padding: "0.4rem 1rem" }}>
-          Verifica un contenuto →
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link href="/login" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
+            Accedi
+          </Link>
+          <Link href="/verify" style={{ color: "#00A896", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 999, padding: "0.4rem 1rem" }}>
+            Verifica un contenuto →
+          </Link>
+        </div>
       </nav>
 
       {/* Hero */}
