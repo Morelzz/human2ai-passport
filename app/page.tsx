@@ -44,6 +44,9 @@ export default async function Home() {
           <Link href="/pricing" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
             Prezzi
           </Link>
+          <Link href="/trasparenza" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
+            Trasparenza
+          </Link>
           {firstName ? (
             <Link href="/account" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "#f0f0f5", fontSize: "0.85rem", textDecoration: "none", background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.4rem 0.9rem", fontWeight: 600 }}>
               <span style={{ width: 18, height: 18, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)", flexShrink: 0 }} />
