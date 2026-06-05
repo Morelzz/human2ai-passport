@@ -18,7 +18,9 @@ export default function VerifyPage() {
         <div style={{ marginBottom: "2rem" }}>
           <h1 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "0.5rem" }}>Verifica un contenuto</h1>
           <p style={{ color: "#6b7280", lineHeight: 1.6 }}>
-            Incolla il token di verifica di un avatar Human2AI per confermare che il consenso è valido e tracciare a quale persona reale appartiene.
+            Incolla il <strong style={{ color: "#9ca3af" }}>token di un avatar</strong> o il
+            <strong style={{ color: "#9ca3af" }}> certificato di un contenuto generato</strong>: confermiamo
+            il consenso e a quale persona reale appartiene.
           </p>
         </div>
         <VerifyClient />

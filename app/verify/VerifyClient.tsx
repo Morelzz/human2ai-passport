@@ -5,12 +5,15 @@ import Link from "next/link";
 
 interface VerifyResult {
   valid: boolean;
+  type?: "avatar" | "content";
   alias?: string;
   handle?: string;
   tier?: string;
   status?: string;
   consent_start?: string;
   revoked_at?: string | null;
+  generated_at?: string;
+  category?: string | null;
 }
 
 function formatDate(d: string) {
@@ -41,12 +44,12 @@ export default function VerifyClient() {
       {/* Input */}
       <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", marginBottom: "1rem" }}>
         <label style={{ display: "block", color: "#6b7280", fontSize: "0.75rem", letterSpacing: "0.1em", marginBottom: "0.75rem" }}>
-          TOKEN DI VERIFICA
+          TOKEN AVATAR O CERTIFICATO CONTENUTO
         </label>
         <textarea
           value={token}
           onChange={e => setToken(e.target.value)}
-          placeholder="Incolla qui il token SHA-256 completo..."
+          placeholder="Incolla il token dell'avatar o il certificato (SHA-256)..."
           rows={3}
           style={{
             width: "100%",
@@ -80,7 +83,7 @@ export default function VerifyClient() {
             transition: "opacity 0.2s",
           }}
         >
-          {loading ? "Verifica in corso..." : "Verifica token"}
+          {loading ? "Verifica in corso..." : "Verifica"}
         </button>
       </div>
 
@@ -99,10 +102,29 @@ export default function VerifyClient() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00A896" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <div>
-                  <p style={{ color: "#00A896", fontWeight: 700, fontSize: "1rem", margin: 0 }}>Token VALIDO</p>
-                  <p style={{ color: "#6b7280", fontSize: "0.8rem", margin: 0 }}>Consenso verificato nel registro Human2AI</p>
+                  <p style={{ color: "#00A896", fontWeight: 700, fontSize: "1rem", margin: 0 }}>
+                    {result.type === "content" ? "Contenuto VERIFICATO" : "Token VALIDO"}
+                  </p>
+                  <p style={{ color: "#6b7280", fontSize: "0.8rem", margin: 0 }}>
+                    {result.type === "content"
+                      ? "Generato tramite Human2AI da una persona reale consenziente"
+                      : "Consenso verificato nel registro Human2AI"}
+                  </p>
                 </div>
               </div>
+
+              {result.type === "content" && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem", paddingBottom: "1rem", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div>
+                    <p style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>GENERATO IL</p>
+                    <p style={{ color: "#f0f0f5", fontWeight: 600, margin: 0 }}>{result.generated_at ? formatDate(result.generated_at) : "—"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.08em", marginBottom: "0.25rem" }}>CATEGORIA D&apos;USO</p>
+                    <p style={{ color: "#f0f0f5", fontWeight: 600, margin: 0 }}>{result.category ?? "—"}</p>
+                  </div>
+                </div>
+              )}
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                 <div>
@@ -130,6 +152,13 @@ export default function VerifyClient() {
                 )}
               </div>
 
+              {result.type === "content" && result.status === "REVOCATO" && (
+                <p style={{ color: "#B8005C", fontSize: "0.78rem", lineHeight: 1.5, margin: "1rem 0 0", background: "rgba(184,0,92,0.06)", border: "1px solid rgba(184,0,92,0.25)", borderRadius: 8, padding: "0.7rem 0.9rem" }}>
+                  Il consenso è stato revocato <strong>dopo</strong> questa generazione. La revoca è prospettica:
+                  blocca gli usi futuri, mentre questo contenuto resta tracciato e attribuito.
+                </p>
+              )}
+
               <Link href={`/passport/${result.handle}`} style={{ display: "inline-block", marginTop: "1.25rem", color: "#6B21E8", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 8, padding: "0.4rem 0.9rem" }}>
                 Vai al Passport →
               </Link>
@@ -140,8 +169,8 @@ export default function VerifyClient() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B8005C" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </div>
               <div>
-                <p style={{ color: "#B8005C", fontWeight: 700, fontSize: "1rem", margin: 0 }}>Token NON VALIDO</p>
-                <p style={{ color: "#6b7280", fontSize: "0.8rem", margin: 0 }}>Questo token non corrisponde ad alcun avatar nel registro.</p>
+                <p style={{ color: "#B8005C", fontWeight: 700, fontSize: "1rem", margin: 0 }}>NON VALIDO</p>
+                <p style={{ color: "#6b7280", fontSize: "0.8rem", margin: 0 }}>Questo codice non corrisponde a nessun avatar né contenuto nel registro.</p>
               </div>
             </div>
           )}
