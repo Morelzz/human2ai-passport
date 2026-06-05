@@ -1,0 +1,31 @@
+import { notFound } from "next/navigation";
+import { createServerClient } from "@/lib/supabase";
+import ConsentClient from "./ConsentClient";
+
+interface Props {
+  params: Promise<{ token: string }>;
+}
+
+// Pagina pubblica: la persona apre il link e conferma il consenso in prima persona.
+export default async function ConsentPage({ params }: Props) {
+  const { token } = await params;
+  const admin = createServerClient();
+
+  const { data: avatar } = await admin
+    .from("avatars")
+    .select("alias, gender, age_range, ethnicity, approved_categories, person_consented_at")
+    .eq("consent_token", token)
+    .maybeSingle();
+
+  if (!avatar) notFound();
+
+  return (
+    <ConsentClient
+      token={token}
+      alias={avatar.alias}
+      identity={[avatar.gender, avatar.age_range, avatar.ethnicity].filter(Boolean).join(" · ")}
+      categories={avatar.approved_categories ?? []}
+      alreadyConsented={!!avatar.person_consented_at}
+    />
+  );
+}

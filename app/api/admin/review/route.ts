@@ -20,7 +20,7 @@ export async function GET() {
   const admin = createServerClient();
   const { data } = await admin
     .from("avatars")
-    .select("id, handle, alias, gender, age_range, ethnicity, hair_color, created_at, org_id")
+    .select("id, handle, alias, gender, age_range, ethnicity, hair_color, created_at, org_id, person_consented_at")
     .eq("verification_status", "pending_review")
     .order("created_at", { ascending: true });
 
@@ -38,8 +38,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Parametri non validi" }, { status: 400 });
   }
 
-  const status = action === "approve" ? "approved" : "rejected";
   const admin = createServerClient();
+
+  // Non si può approvare un avatar senza il consenso confermato dalla persona.
+  if (action === "approve") {
+    const { data: av } = await admin.from("avatars").select("person_consented_at").eq("id", avatarId).maybeSingle();
+    if (!av?.person_consented_at) {
+      return NextResponse.json({ error: "La persona non ha ancora confermato il consenso" }, { status: 400 });
+    }
+  }
+
+  const status = action === "approve" ? "approved" : "rejected";
   const { error } = await admin.from("avatars").update({ verification_status: status }).eq("id", avatarId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

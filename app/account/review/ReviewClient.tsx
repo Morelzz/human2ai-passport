@@ -12,6 +12,7 @@ interface PendingAvatar {
   ethnicity: string | null;
   hair_color: string | null;
   created_at: string;
+  person_consented_at: string | null;
 }
 
 export default function ReviewClient() {
@@ -82,17 +83,23 @@ export default function ReviewClient() {
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div style={{ fontWeight: 700, fontSize: "1.02rem" }}>{a.alias}</div>
                   <div style={{ color: "#6b7280", fontSize: "0.8rem", marginBottom: "0.4rem" }}>@{a.handle}</div>
-                  <div style={{ color: "#374151", fontSize: "0.76rem" }}>
+                  <div style={{ color: "#374151", fontSize: "0.76rem", marginBottom: "0.4rem" }}>
                     {[a.gender, a.age_range, a.ethnicity, a.hair_color].filter(Boolean).join(" · ") || "—"}
                   </div>
+                  {a.person_consented_at ? (
+                    <span style={{ color: "#00A896", fontSize: "0.72rem", fontWeight: 700 }}>● consenso persona confermato</span>
+                  ) : (
+                    <span style={{ color: "#B8005C", fontSize: "0.72rem", fontWeight: 700 }}>● in attesa del consenso della persona</span>
+                  )}
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button onClick={() => decide(a.id, "reject")} disabled={busy === a.id}
                     style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "1px solid rgba(184,0,92,0.4)", background: "transparent", color: "#B8005C", fontWeight: 700, fontSize: "0.82rem", cursor: busy === a.id ? "default" : "pointer" }}>
                     Rifiuta
                   </button>
-                  <button onClick={() => decide(a.id, "approve")} disabled={busy === a.id}
-                    style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "none", background: busy === a.id ? "#374151" : "#00A896", color: "#06231f", fontWeight: 800, fontSize: "0.82rem", cursor: busy === a.id ? "default" : "pointer" }}>
+                  <button onClick={() => decide(a.id, "approve")} disabled={busy === a.id || !a.person_consented_at}
+                    title={!a.person_consented_at ? "La persona non ha ancora confermato il consenso" : ""}
+                    style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "none", background: busy === a.id || !a.person_consented_at ? "#374151" : "#00A896", color: busy === a.id || !a.person_consented_at ? "#6b7280" : "#06231f", fontWeight: 800, fontSize: "0.82rem", cursor: busy === a.id || !a.person_consented_at ? "not-allowed" : "pointer" }}>
                     {busy === a.id ? "…" : "Approva"}
                   </button>
                 </div>

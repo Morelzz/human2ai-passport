@@ -17,6 +17,8 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
   const [kit, setKit] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [consentUrl, setConsentUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const kitComplete = (Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).every((f) => kit[f]);
 
@@ -45,6 +47,12 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
       setLoading(false);
       return;
     }
+    // Enterprise: l'avatar è in attesa del consenso della persona -> mostra il link.
+    if (json.consent_url) {
+      setConsentUrl(json.consent_url);
+      setLoading(false);
+      return;
+    }
     router.push(`/passport/${json.handle}`);
     router.refresh();
   }
@@ -56,6 +64,24 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
       </nav>
 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+        {consentUrl ? (
+          <div style={{ background: "#12121a", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 18, padding: "2rem" }}>
+            <p style={{ color: "#00A896", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>✓ Avatar creato — in attesa del consenso</p>
+            <p style={{ color: "#6b7280", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.2rem" }}>
+              Condividi questo link con la persona. Solo lei, aprendolo, conferma il consenso.
+              Dopo la conferma, l&apos;avatar passa alla revisione dei nostri operatori.
+            </p>
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+              <code style={{ flex: 1, minWidth: 200, background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "0.6rem 0.8rem", color: "#8b47f0", fontSize: "0.78rem", wordBreak: "break-all" }}>{consentUrl}</code>
+              <button type="button" onClick={() => { navigator.clipboard.writeText(consentUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
+                style={{ padding: "0.6rem 1rem", borderRadius: 8, border: "1px solid rgba(107,33,232,0.3)", background: "rgba(107,33,232,0.12)", color: copied ? "#00A896" : "#8b47f0", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
+                {copied ? "✓ Copiato" : "Copia"}
+              </button>
+            </div>
+            <Link href="/account" style={{ display: "inline-block", marginTop: "1.5rem", color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>← Torna all&apos;account</Link>
+          </div>
+        ) : (
+        <>
         <h1 style={{ fontSize: "1.7rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Crea il tuo avatar</h1>
         <p style={{ color: "#6b7280", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
           Entrerai nel registro pubblico con un token verificabile. La revoca sarà
@@ -134,6 +160,8 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
             {loading ? "Creazione…" : "Crea avatar e firma il consenso"}
           </button>
         </form>
+        </>
+        )}
       </section>
     </div>
   );

@@ -107,6 +107,8 @@ export async function POST(request: Request) {
   const consentStart = new Date().toISOString().slice(0, 10);
   const tokenHash = computeTokenHash(id, consentStart, validApproved);
   const portraitUrl = `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(handle)}&backgroundColor=6B21E8`;
+  // Enterprise: token per il consenso "persona-nel-loop" (link da condividere).
+  const consentToken = isEnterprise ? crypto.randomBytes(24).toString("hex") : null;
 
   const { error: insErr } = await admin.from("avatars").insert({
     id,
@@ -135,6 +137,7 @@ export async function POST(request: Request) {
     is_demo: false,
     // Gate: privato verificato -> live subito; org -> attende la revisione operatori.
     verification_status: isEnterprise ? "pending_review" : "approved",
+    consent_token: consentToken,
   });
 
   if (insErr) {
@@ -144,9 +147,11 @@ export async function POST(request: Request) {
   await admin.from("consent_events").insert({
     avatar_id: id,
     event_type: "GRANTED",
-    detail: "Consenso iniziale (onboarding creatore)",
+    detail: isEnterprise ? "Onboarding avviato dall'organizzazione (in attesa del consenso della persona)" : "Consenso iniziale (onboarding creatore)",
     occurred_at: consentStart,
   });
 
-  return NextResponse.json({ handle });
+  // Per le org: link tokenizzato che la persona deve aprire per confermare il consenso.
+  const consentUrl = consentToken ? `${new URL(request.url).origin}/consent/${consentToken}` : null;
+  return NextResponse.json({ handle, consent_url: consentUrl });
 }
