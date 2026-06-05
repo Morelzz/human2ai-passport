@@ -39,6 +39,9 @@ export default async function Home() {
           <Link href="/match" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
             Trova un volto
           </Link>
+          <Link href="/pricing" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
+            Prezzi
+          </Link>
           {firstName ? (
             <Link href="/account" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "#f0f0f5", fontSize: "0.85rem", textDecoration: "none", background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.4rem 0.9rem", fontWeight: 600 }}>
               <span style={{ width: 18, height: 18, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)", flexShrink: 0 }} />
@@ -62,18 +65,26 @@ export default async function Home() {
           <span style={{ color: "#6B21E8", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em" }}>REGISTRO VOLTI — DATI DEMO</span>
         </div>
 
-        <h1 style={{ fontSize: "clamp(2.2rem, 6vw, 4rem)", fontWeight: 800, lineHeight: 1.1, margin: "0 auto 1.25rem", maxWidth: 700 }}>
+        <h1 style={{ fontSize: "clamp(2.2rem, 6vw, 4rem)", fontWeight: 800, lineHeight: 1.1, margin: "0 auto 1.25rem", maxWidth: 720 }}>
           Il tuo volto è{" "}
-          <span style={{ color: "#6B21E8" }}>un diritto</span>.
+          <span style={{ color: "#00A896" }}>tuo</span>.
           <br />
-          Ora è{" "}
-          <span style={{ color: "#00A896" }}>verificabile</span>.
+          <span style={{ color: "#6B21E8" }}>Verificabile, autorizzato, pagato.</span>
         </h1>
 
-        <p style={{ color: "#6b7280", fontSize: "1.1rem", maxWidth: 520, margin: "0 auto 2.5rem", lineHeight: 1.7 }}>
-          Human2AI è il registro fidato delle identità AI consenzienti.
-          Ogni volto ha un token. Ogni token è verificabile da chiunque.
+        <p style={{ color: "#6b7280", fontSize: "1.1rem", maxWidth: 560, margin: "0 auto 2rem", lineHeight: 1.7 }}>
+          Human2AI è il registro fidato delle identità AI consenzienti. Ogni volto ha un
+          token verificabile, ogni uso passa dal consenso, e ogni generazione paga la persona reale.
         </p>
+
+        <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
+          <Link href="/match" style={{ background: "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", textDecoration: "none", borderRadius: 10, padding: "0.8rem 1.5rem" }}>
+            Trova un volto
+          </Link>
+          <Link href="/pricing" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.9rem", textDecoration: "none", borderRadius: 10, padding: "0.8rem 1.5rem" }}>
+            Vedi i prezzi
+          </Link>
+        </div>
       </section>
 
       {/* Griglia avatar */}
