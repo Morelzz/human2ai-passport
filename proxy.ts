@@ -1,9 +1,10 @@
-// Middleware: aggiorna la sessione Supabase a ogni richiesta,
+// Proxy (ex middleware): aggiorna la sessione Supabase a ogni richiesta,
 // rinfrescando i cookie del token così la sessione resta valida.
+// Rinominato da middleware.ts a proxy.ts per la convenzione Next.js 16.
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
