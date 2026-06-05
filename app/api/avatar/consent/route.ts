@@ -5,6 +5,7 @@ import { CATEGORIES } from "@/lib/types";
 
 type Action =
   | { type: "revoke_all" }
+  | { type: "reactivate" }
   | { type: "remove_category"; category: string }
   | { type: "add_category"; category: string }
   | { type: "add_excluded"; category: string }
@@ -40,6 +41,19 @@ export async function POST(request: Request) {
       avatar_id: avatar.id,
       event_type: "REVOKED",
       detail: "Revoca totale (kill-switch creatore)",
+      occurred_at: today,
+    });
+    return NextResponse.json({ ok: true });
+  }
+
+  if (action.type === "reactivate") {
+    if (!avatar.revoked_at) return NextResponse.json({ error: "Già attivo" }, { status: 409 });
+    // Riattivazione: il futuro torna disponibile, il passato resta nella timeline
+    await admin.from("avatars").update({ revoked_at: null }).eq("id", avatar.id);
+    await admin.from("consent_events").insert({
+      avatar_id: avatar.id,
+      event_type: "GRANTED",
+      detail: "Riattivazione consenso",
       occurred_at: today,
     });
     return NextResponse.json({ ok: true });

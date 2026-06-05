@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Avatar, ConsentEvent } from "@/lib/types";
+import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 
 interface Props {
   avatar: Avatar;
@@ -91,6 +91,22 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
                 <span style={{ display: "inline-block", background: "rgba(184,0,92,0.12)", border: "1px solid rgba(184,0,92,0.4)", color: "#B8005C", borderRadius: 999, padding: "0.3rem 1rem", fontWeight: 700, fontSize: "0.85rem", letterSpacing: "0.08em" }}>✕ REVOCATO</span>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Identity kit — metadati strutturali immutabili */}
+        <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.75rem", letterSpacing: "0.1em", margin: 0 }}>IDENTITY KIT</p>
+            <span style={{ fontSize: "0.62rem", fontWeight: 700, color: "#6B21E8", background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.1rem 0.5rem", letterSpacing: "0.04em" }}>IMMUTABILE</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "1rem" }}>
+            {(Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).map((field) => (
+              <div key={field}>
+                <p style={{ color: "#6b7280", fontSize: "0.7rem", letterSpacing: "0.03em", margin: "0 0 0.2rem" }}>{IDENTITY_LABELS[field]}</p>
+                <p style={{ color: "#f0f0f5", fontSize: "0.9rem", fontWeight: 600, margin: 0, textTransform: "capitalize" }}>{avatar[field] ?? "—"}</p>
+              </div>
+            ))}
           </div>
         </div>
 

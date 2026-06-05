@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { PAYOUT_THRESHOLD_CENTS, formatEur } from "@/lib/wallet";
 import LogoutButton from "./LogoutButton";
+import PayoutButton from "./PayoutButton";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -34,14 +36,18 @@ export default async function AccountPage() {
 
   // Avatar del creatore (se esiste)
   let myAvatar: string | null = null;
+  let royaltyCents = 0;
+  let usageCount = 0;
   if (role === "seller") {
     const admin = createServerClient();
     const { data: av } = await admin
       .from("avatars")
-      .select("handle")
+      .select("handle, royalty_accrued_cents, usage_count")
       .eq("owner_id", user.id)
       .maybeSingle();
     myAvatar = av?.handle ?? null;
+    royaltyCents = av?.royalty_accrued_cents ?? 0;
+    usageCount = av?.usage_count ?? 0;
   }
   const isVerifiedSeller = role === "seller" && profile?.kyc_status === "approved";
 
@@ -109,6 +115,28 @@ export default async function AccountPage() {
                 Verifica prima la tua identità per poter creare il tuo avatar.
               </p>
             )}
+          </div>
+        )}
+
+        {role === "seller" && myAvatar && (
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO WALLET</p>
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.3rem" }}>
+              <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>Royalty accumulate</span>
+              <span style={{ color: "#00A896", fontSize: "1.5rem", fontWeight: 800 }}>{formatEur(royaltyCents)}</span>
+            </div>
+            <p style={{ color: "#374151", fontSize: "0.78rem", margin: "0 0 1.2rem" }}>{usageCount} utilizzi totali</p>
+
+            {/* Barra verso la soglia di payout */}
+            <div style={{ height: 8, background: "#12121a", borderRadius: 999, overflow: "hidden", marginBottom: "0.5rem" }}>
+              <div style={{ height: "100%", width: `${Math.min(100, (royaltyCents / PAYOUT_THRESHOLD_CENTS) * 100)}%`, background: "linear-gradient(90deg,#6B21E8,#00A896)" }} />
+            </div>
+            <p style={{ color: "#6b7280", fontSize: "0.76rem", margin: "0 0 1.2rem" }}>
+              Soglia payout: {formatEur(PAYOUT_THRESHOLD_CENTS)}
+            </p>
+
+            <PayoutButton eligible={royaltyCents >= PAYOUT_THRESHOLD_CENTS} amount={formatEur(royaltyCents)} />
           </div>
         )}
 

@@ -3,16 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/types";
+import { CATEGORIES, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 
 interface Props {
   handle: string;
   approved: string[];
   excluded: string[];
   revokedAt: string | null;
+  kit: Record<keyof typeof IDENTITY_KIT, string | null>;
 }
 
-export default function ConsentClient({ handle, approved, excluded, revokedAt }: Props) {
+export default function ConsentClient({ handle, approved, excluded, revokedAt, kit }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,14 +50,39 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt }:
           <Link href={`/passport/${handle}`} style={{ color: "#6B21E8" }}>Vedi il passport →</Link>
         </p>
 
+        {/* Identity kit — immutabile, fissato alla creazione */}
+        <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", margin: "0 0 0.3rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.78rem", letterSpacing: "0.06em", margin: 0 }}>IDENTITY KIT</p>
+            <span style={{ fontSize: "0.62rem", fontWeight: 700, color: "#6B21E8", background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.1rem 0.5rem", letterSpacing: "0.04em" }}>IMMUTABILE</span>
+          </div>
+          <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1.2rem", lineHeight: 1.5 }}>
+            Le caratteristiche strutturali dell&apos;avatar, fissate alla creazione. Rappresentano la persona reale e non sono modificabili.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.9rem" }}>
+            {(Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).map((field) => (
+              <div key={field}>
+                <p style={{ color: "#6b7280", fontSize: "0.68rem", letterSpacing: "0.03em", margin: "0 0 0.2rem" }}>{IDENTITY_LABELS[field]}</p>
+                <p style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 600, margin: 0, textTransform: "capitalize" }}>{kit[field] ?? "—"}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {error && <p style={{ color: "#B8005C", fontSize: "0.85rem" }}>{error}</p>}
 
         {revokedAt ? (
           <div style={{ background: "rgba(184,0,92,0.08)", border: "1px solid rgba(184,0,92,0.3)", borderRadius: 16, padding: "1.5rem" }}>
             <p style={{ color: "#B8005C", fontWeight: 700, margin: "0 0 0.4rem" }}>Consenso revocato</p>
-            <p style={{ color: "#6b7280", fontSize: "0.85rem", margin: 0 }}>
+            <p style={{ color: "#6b7280", fontSize: "0.85rem", margin: "0 0 1.2rem", lineHeight: 1.6 }}>
               Dal {new Date(revokedAt).toLocaleDateString("it-IT")} il tuo avatar è escluso da ogni nuovo utilizzo.
+              Puoi riattivare il consenso: il futuro torna disponibile, ma la cronologia
+              della revoca resta registrata.
             </p>
+            <button disabled={busy} onClick={() => { if (confirm("Riattivare il consenso? Il tuo avatar tornerà utilizzabile da oggi.")) act({ type: "reactivate" }); }}
+              style={{ padding: "0.7rem 1.2rem", borderRadius: 10, border: "none", background: busy ? "#374151" : "linear-gradient(135deg,#6B21E8,#00A896)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+              Riattiva il consenso
+            </button>
           </div>
         ) : (
           <>

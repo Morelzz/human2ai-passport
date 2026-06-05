@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES, TIER_CONFIG, Tier } from "@/lib/types";
+import { CATEGORIES, IDENTITY_KIT, IDENTITY_LABELS, TIER_CONFIG, Tier } from "@/lib/types";
 
 const TIERS: Tier[] = ["SPARK", "SHAPE", "SOUL", "HUMAN"];
 
@@ -14,8 +14,11 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
   const [tier, setTier] = useState<Tier>("SOUL");
   const [approved, setApproved] = useState<string[]>([]);
   const [excluded, setExcluded] = useState<string[]>([]);
+  const [kit, setKit] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const kitComplete = (Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).every((f) => kit[f]);
 
   function toggle(list: string[], setList: (v: string[]) => void, cat: string, otherList: string[], setOther: (v: string[]) => void) {
     if (list.includes(cat)) {
@@ -28,12 +31,13 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!kitComplete) { setError("Completa tutti i campi dell'identity kit"); return; }
     setError(null);
     setLoading(true);
     const res = await fetch("/api/avatar/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ handle, alias, tier, approved_categories: approved, excluded_categories: excluded }),
+      body: JSON.stringify({ handle, alias, tier, approved_categories: approved, excluded_categories: excluded, ...kit }),
     });
     const json = await res.json();
     if (!res.ok) {
@@ -70,6 +74,32 @@ export default function NewAvatarClient({ defaultAlias }: { defaultAlias: string
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.35rem 0 0" }}>
               human2ai…/passport/<strong>{handle || "tuo-handle"}</strong>
             </p>
+          </div>
+
+          {/* Identity kit — immutabile dopo la creazione */}
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
+            <p style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Identity kit</p>
+            <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1.2rem", lineHeight: 1.5 }}>
+              Le caratteristiche strutturali dell&apos;avatar. Si fissano ora e <strong>non saranno più modificabili</strong>: rappresentano la persona reale.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {(Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).map((field) => (
+                <div key={field}>
+                  <label style={{ ...lbl, marginBottom: "0.4rem" }}>{IDENTITY_LABELS[field]}</label>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                    {IDENTITY_KIT[field].map((opt) => {
+                      const on = kit[field] === opt;
+                      return (
+                        <button key={opt} type="button" onClick={() => setKit({ ...kit, [field]: opt })}
+                          style={{ padding: "0.3rem 0.7rem", borderRadius: 999, fontSize: "0.76rem", fontWeight: 600, cursor: "pointer", background: on ? "rgba(107,33,232,0.15)" : "#12121a", color: on ? "#fff" : "#6b7280", border: `1px solid ${on ? "#6B21E8" : "rgba(255,255,255,0.08)"}` }}>
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div>

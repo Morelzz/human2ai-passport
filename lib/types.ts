@@ -11,7 +11,13 @@ export interface Avatar {
   age_range: string | null;
   ethnicity: string | null;
   hair_color: string | null;
+  eye_color: string | null;
   body_type: string | null;
+  height: string | null;
+  facial_hair: string | null;
+  glasses: string | null;
+  tattoos: string | null;
+  language: string | null;
   approved_categories: string[];
   excluded_categories: string[];
   consent_start: string;
@@ -31,6 +37,35 @@ export interface ConsentEvent {
   detail: string | null;
   occurred_at: string;
 }
+
+// Identity kit: metadati strutturali, fissati alla creazione e IMMUTABILI.
+export const IDENTITY_KIT = {
+  gender: ["uomo", "donna"],
+  age_range: ["18-25", "25-35", "35-45", "45-55", "55+"],
+  ethnicity: ["caucasico", "afroamericano", "asiatico", "sud-asiatico", "latino", "mediorientale", "africano", "misto"],
+  hair_color: ["neri", "castani", "biondi", "biondo platino", "rossi", "grigi", "bianchi", "rasati", "blu", "rosa", "viola", "verdi", "multicolore"],
+  eye_color: ["marroni", "neri", "azzurri", "verdi", "grigi", "nocciola"],
+  body_type: ["slim", "atletico", "normale", "curvy", "robusto"],
+  height: ["bassa", "media", "alta"],
+  facial_hair: ["nessuna", "barba", "barba incolta", "baffi", "pizzetto"],
+  glasses: ["no", "occhiali da vista", "occhiali da sole"],
+  tattoos: ["nessuno", "visibili"],
+  language: ["italiano", "inglese", "spagnolo", "francese", "tedesco", "altro"],
+} as const;
+
+export const IDENTITY_LABELS: Record<keyof typeof IDENTITY_KIT, string> = {
+  gender: "Genere",
+  age_range: "Età",
+  ethnicity: "Etnia / carnagione",
+  hair_color: "Capelli",
+  eye_color: "Occhi",
+  body_type: "Corporatura",
+  height: "Statura",
+  facial_hair: "Peli del viso",
+  glasses: "Occhiali",
+  tattoos: "Tatuaggi",
+  language: "Lingua",
+};
 
 // Categorie d'uso selezionabili in fase di onboarding
 export const CATEGORIES = [

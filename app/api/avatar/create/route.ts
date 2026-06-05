@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { computeTokenHash } from "@/lib/token";
-import { CATEGORIES, Tier } from "@/lib/types";
+import { CATEGORIES, IDENTITY_KIT, Tier } from "@/lib/types";
 
 const TIERS: Tier[] = ["SPARK", "SHAPE", "SOUL", "HUMAN"];
 const HANDLE_RE = /^[a-z0-9-]{3,30}$/;
@@ -51,6 +51,19 @@ export async function POST(request: Request) {
   const approved: string[] = Array.isArray(body.approved_categories) ? body.approved_categories : [];
   const excluded: string[] = Array.isArray(body.excluded_categories) ? body.excluded_categories : [];
 
+  // Identity kit (immutabile)
+  const gender = String(body.gender ?? "");
+  const ageRange = String(body.age_range ?? "");
+  const ethnicity = String(body.ethnicity ?? "");
+  const hairColor = String(body.hair_color ?? "");
+  const eyeColor = String(body.eye_color ?? "");
+  const bodyType = String(body.body_type ?? "");
+  const height = String(body.height ?? "");
+  const facialHair = String(body.facial_hair ?? "");
+  const glasses = String(body.glasses ?? "");
+  const tattoos = String(body.tattoos ?? "");
+  const language = String(body.language ?? "");
+
   if (!HANDLE_RE.test(handle)) {
     return NextResponse.json({ error: "Handle non valido (3-30 caratteri: a-z, 0-9, trattino)" }, { status: 400 });
   }
@@ -59,6 +72,18 @@ export async function POST(request: Request) {
   }
   if (!TIERS.includes(tier)) {
     return NextResponse.json({ error: "Livello non valido" }, { status: 400 });
+  }
+
+  // Tutti i campi dell'identity kit sono obbligatori e devono essere tra le opzioni valide
+  const kit: Record<string, string> = {
+    gender, age_range: ageRange, ethnicity, hair_color: hairColor, eye_color: eyeColor, body_type: bodyType,
+    height, facial_hair: facialHair, glasses, tattoos, language,
+  };
+  for (const [field, value] of Object.entries(kit)) {
+    const allowed = IDENTITY_KIT[field as keyof typeof IDENTITY_KIT] as readonly string[];
+    if (!allowed.includes(value)) {
+      return NextResponse.json({ error: `Identity kit incompleto o non valido: ${field}` }, { status: 400 });
+    }
   }
   const validApproved = approved.filter((c) => (CATEGORIES as readonly string[]).includes(c));
   const validExcluded = excluded.filter((c) => (CATEGORIES as readonly string[]).includes(c));
@@ -85,6 +110,17 @@ export async function POST(request: Request) {
     alias,
     portrait_url: portraitUrl,
     tier,
+    gender,
+    age_range: ageRange,
+    ethnicity,
+    hair_color: hairColor,
+    eye_color: eyeColor,
+    body_type: bodyType,
+    height,
+    facial_hair: facialHair,
+    glasses,
+    tattoos,
+    language,
     approved_categories: validApproved,
     excluded_categories: validExcluded,
     consent_start: consentStart,
