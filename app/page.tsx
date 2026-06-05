@@ -52,8 +52,9 @@ export default async function Home() {
         <ClosingCTA />
 
         <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] px-5 py-8 sm:px-8">
-          <div className="flex items-center gap-2.5">
-            <span className="h-5 w-5 rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)]" />
+          <div className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-shield.png" alt="" aria-hidden className="h-7 w-7 object-contain opacity-80 [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
             <span className="text-xs font-bold tracking-[0.15em] text-muted">HUMAN2AI</span>
           </div>
           <div className="flex flex-wrap gap-5">

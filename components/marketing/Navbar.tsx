@@ -28,8 +28,9 @@ export function Navbar({ firstName }: { firstName: string | null }) {
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-obsidian/70 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2.5">
-          <span className="h-7 w-7 shrink-0 rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)]" />
+        <Link href="/" className="flex items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-shield.png" alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
           <span className="text-sm font-bold tracking-[0.15em]">HUMAN2AI</span>
         </Link>
 
