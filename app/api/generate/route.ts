@@ -106,7 +106,9 @@ export async function POST(request: Request) {
     .digest("hex");
 
   // Registra la generazione con il dettaglio economico.
-  await admin.from("generations").insert({
+  // IMPORTANTE: la royalty si accredita SOLO se il record è stato salvato, per non
+  // far divergere generations e royalty_accrued_cents (coerenza del percorso pagamenti).
+  const { error: genErr } = await admin.from("generations").insert({
     id: genId,
     avatar_id: avatar.id,
     buyer_id: user.id,
@@ -120,6 +122,9 @@ export async function POST(request: Request) {
     image_url: engineResult.imageUrl,
     engine_ref: engineResult.generationRef,
   });
+  if (genErr) {
+    return NextResponse.json({ error: "Generazione non registrata: riprova" }, { status: 500 });
+  }
 
   // Accredita la royalty NETTA + incrementa utilizzi (accumulo, non payout).
   await admin

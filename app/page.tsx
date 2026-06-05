@@ -89,6 +89,28 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Come funziona — il loop della tesi */}
+      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 1.5rem 4rem" }}>
+        <p style={{ color: "#374151", fontSize: "0.75rem", letterSpacing: "0.12em", marginBottom: "1.5rem", textAlign: "center" }}>COME FUNZIONA</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+          {[
+            { n: "01", t: "Consenso", d: "Una persona reale rivendica il proprio volto, verifica l'identità e dichiara gli usi autorizzati.", c: "#6B21E8" },
+            { n: "02", t: "Generazione", d: "Chi crea sceglie un volto consenziente. Senza consenso, niente generazione.", c: "#B8005C" },
+            { n: "03", t: "Royalty", d: "Ogni generazione paga la persona reale: royalty all'80%, accumulo e payout.", c: "#00A896" },
+            { n: "04", t: "Certificato", d: "Ogni contenuto esce con un token verificabile da chiunque, sempre.", c: "#6B21E8" },
+          ].map((s) => (
+            <div key={s.n} style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.4rem" }}>
+              <span style={{ color: s.c, fontSize: "0.8rem", fontWeight: 800, letterSpacing: "0.1em" }}>{s.n}</span>
+              <p style={{ color: "#f0f0f5", fontSize: "1rem", fontWeight: 700, margin: "0.5rem 0 0.4rem" }}>{s.t}</p>
+              <p style={{ color: "#6b7280", fontSize: "0.83rem", lineHeight: 1.55, margin: 0 }}>{s.d}</p>
+            </div>
+          ))}
+        </div>
+        <p style={{ color: "#6b7280", fontSize: "0.85rem", textAlign: "center", margin: "1.5rem 0 0" }}>
+          Hai un&apos;immagine generata? <Link href="/verify" style={{ color: "#00A896", textDecoration: "none", fontWeight: 600 }}>Verifica il suo certificato →</Link>
+        </p>
+      </section>
+
       {/* Griglia avatar */}
       <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 1.5rem 6rem" }}>
         <p style={{ color: "#374151", fontSize: "0.75rem", letterSpacing: "0.12em", marginBottom: "1.5rem" }}>
