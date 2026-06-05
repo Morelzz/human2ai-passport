@@ -5,6 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { PAYOUT_THRESHOLD_CENTS, formatEur } from "@/lib/wallet";
 import LogoutButton from "./LogoutButton";
 import PayoutButton from "./PayoutButton";
+import SoulActivate from "./SoulActivate";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -36,6 +37,7 @@ export default async function AccountPage() {
 
   // Avatar del creatore (se esiste)
   let myAvatar: string | null = null;
+  let soulActive = false;
   let royaltyCents = 0;
   let usageCount = 0;
   let payouts: { id: string; amount_cents: number; status: string; created_at: string }[] = [];
@@ -43,10 +45,11 @@ export default async function AccountPage() {
     const admin = createServerClient();
     const { data: av } = await admin
       .from("avatars")
-      .select("id, handle, royalty_accrued_cents, usage_count")
+      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count")
       .eq("owner_id", user.id)
       .maybeSingle();
     myAvatar = av?.handle ?? null;
+    soulActive = !!av?.soul_ref;
     royaltyCents = av?.royalty_accrued_cents ?? 0;
     usageCount = av?.usage_count ?? 0;
     if (av?.id) {
@@ -108,7 +111,19 @@ export default async function AccountPage() {
           <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO AVATAR</p>
             {myAvatar ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+                {/* Stato del Soul */}
+                {soulActive ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00A896", display: "inline-block" }} />
+                    <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 700 }}>Soul attivo — il tuo avatar è generabile</span>
+                  </div>
+                ) : (
+                  <div style={{ background: "#0a0a0f", border: "1px solid rgba(107,33,232,0.25)", borderRadius: 12, padding: "1.1rem" }}>
+                    <p style={{ color: "#8b47f0", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.8rem" }}>ATTIVA IL TUO SOUL</p>
+                    <SoulActivate />
+                  </div>
+                )}
                 <Link href={`/passport/${myAvatar}`} style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#f0f0f5", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                   Vai al tuo passport pubblico →
                 </Link>

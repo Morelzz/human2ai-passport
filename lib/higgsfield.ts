@@ -167,3 +167,34 @@ export async function listSoulIds(): Promise<SoulIdItem[]> {
 export async function generateWithHiggsfield(input: HiggsfieldInput): Promise<HiggsfieldResult> {
   return mode() === "live" ? generateLive(input) : generateMock(input);
 }
+
+// --- Creazione di un Soul ID dalle foto reali della persona -----------------
+// Carica le foto sulla CDN del motore, poi addestra il Soul (custom reference).
+// Costo reale ~20 crediti: lo paga la piattaforma (acquisizione, vedi roadmap).
+export interface SoulPhoto {
+  buffer: Buffer;
+  format: "jpeg" | "png" | "webp";
+}
+
+export async function createSoulFromImages(name: string, photos: SoulPhoto[]): Promise<{ id: string } | null> {
+  const apiKey = process.env.HIGGSFIELD_API_KEY;
+  const apiSecret = process.env.HIGGSFIELD_API_SECRET;
+  if (!apiKey || !apiSecret) {
+    throw new Error("HIGGSFIELD_API_KEY / HIGGSFIELD_API_SECRET mancanti");
+  }
+
+  const { HiggsfieldClient, InputImageType } = await import("@higgsfield/client");
+  const client = new HiggsfieldClient({ apiKey, apiSecret });
+
+  // 1. Upload delle foto sulla CDN del motore -> URL utilizzabili.
+  const inputImages: { type: typeof InputImageType.IMAGE_URL; image_url: string }[] = [];
+  for (const p of photos) {
+    const url = await client.uploadImage(p.buffer, p.format);
+    inputImages.push({ type: InputImageType.IMAGE_URL, image_url: url });
+  }
+
+  // 2. Addestra il Soul (withPolling: attende il completamento).
+  const soul = await client.createSoulId({ name, input_images: inputImages }, true);
+  if (!soul.isCompleted) return null;
+  return { id: soul.id };
+}
