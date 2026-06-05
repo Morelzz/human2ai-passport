@@ -11,13 +11,14 @@ interface Props {
   tier: { label: string; color: string; bg: string; description: string };
   tokenShort: string;
   ownerVerified?: boolean;
+  galleryCount?: number;
 }
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-export default function PassportClient({ avatar, events, status, tier, tokenShort, ownerVerified }: Props) {
+export default function PassportClient({ avatar, events, status, tier, tokenShort, ownerVerified, galleryCount = 0 }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyToken() {
@@ -93,6 +94,23 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             </div>
           </div>
         </div>
+
+        {/* Repertorio — esempi generati da questo Soul (watermarkati) */}
+        {galleryCount > 0 && (
+          <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.75rem", letterSpacing: "0.1em", margin: "0 0 1rem" }}>REPERTORIO — ESEMPI GENERATI</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "0.75rem" }}>
+              {Array.from({ length: galleryCount }).map((_, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`}
+                  style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "#1c1c28" }} />
+              ))}
+            </div>
+            <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.8rem 0 0", lineHeight: 1.5 }}>
+              Immagini generate dal Soul reale di {avatar.alias}, watermarkate. Le generazioni commerciali sono pulite e certificate.
+            </p>
+          </div>
+        )}
 
         {/* Identity kit — metadati strutturali immutabili */}
         <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.5rem" }}>

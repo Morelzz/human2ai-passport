@@ -1,11 +1,10 @@
 import sharp from "sharp";
 
-// Applica un watermark "impresso nei pixel" a un'immagine di anteprima e
-// restituisce un data-URL JPEG. L'URL pulito del motore NON viene mai esposto
-// al client per le anteprime: il compratore riceve solo questa versione protetta.
-export async function watermarkPreview(imageUrl: string): Promise<string> {
+// Applica un watermark "impresso nei pixel" e restituisce i byte JPEG.
+// L'URL pulito del motore NON viene mai esposto al client: solo questa versione protetta.
+export async function watermarkBuffer(imageUrl: string): Promise<Buffer> {
   const resp = await fetch(imageUrl);
-  if (!resp.ok) throw new Error("download immagine anteprima fallito");
+  if (!resp.ok) throw new Error("download immagine fallito");
   const buf = Buffer.from(await resp.arrayBuffer());
 
   const img = sharp(buf);
@@ -23,10 +22,14 @@ export async function watermarkPreview(imageUrl: string): Promise<string> {
     <rect width="${w}" height="${h}" fill="url(#wm)"/>
   </svg>`;
 
-  const out = await img
+  return img
     .composite([{ input: Buffer.from(svg), blend: "over" }])
     .jpeg({ quality: 80 })
     .toBuffer();
+}
 
+// Variante data-URL (usata dalla generazione anteprima inline).
+export async function watermarkPreview(imageUrl: string): Promise<string> {
+  const out = await watermarkBuffer(imageUrl);
   return `data:image/jpeg;base64,${out.toString("base64")}`;
 }

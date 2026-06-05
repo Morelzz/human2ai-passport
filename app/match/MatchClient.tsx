@@ -29,7 +29,7 @@ interface Attrs {
   age_max: number | null;
 }
 
-interface MatchAvatar { handle: string; alias: string; portrait_url: string | null; tier: Tier; reasons: string[]; }
+interface MatchAvatar { handle: string; alias: string; portrait_url: string | null; tier: Tier; reasons: string[]; gallery_count: number; }
 
 interface MatchResponse {
   matched: boolean;
@@ -216,6 +216,22 @@ export default function MatchClient() {
                           Affinità: {avatar.reasons.join(" · ")}
                         </p>
 
+                        {/* Galleria/repertorio: cosa produce questo Soul (campioni watermarkati) */}
+                        {avatar.gallery_count > 0 && (
+                          <div style={{ marginTop: "1.2rem" }}>
+                            <span style={{ color: "#9ca3af", fontSize: "0.72rem", fontWeight: 600, display: "block", marginBottom: "0.5rem" }}>
+                              Repertorio <span style={{ color: "#374151", fontWeight: 400 }}>· esempi generati da questo volto</span>
+                            </span>
+                            <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.3rem" }}>
+                              {Array.from({ length: avatar.gallery_count }).map((_, i) => (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`}
+                                  style={{ height: 150, width: 112, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "#1c1c28", flexShrink: 0 }} />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
                         {!gen ? (
                           <>
                             {/* Passo 2 — SCENA: direzione artistica libera */}
@@ -263,38 +279,17 @@ export default function MatchClient() {
                               </div>
                             )}
 
-                            <div style={{ display: "flex", gap: "0.6rem", marginTop: "1rem" }}>
-                              <button onClick={() => generate(avatar.handle, "preview")} disabled={generating}
-                                style={{ flex: 1, padding: "0.8rem", borderRadius: 10, border: "1px solid rgba(255,255,255,0.14)", background: generating ? "#1c1c28" : "transparent", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", cursor: generating ? "default" : "pointer" }}>
-                                {generating ? "…" : "Anteprima gratis"}
-                              </button>
-                              <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                                style={{ flex: 1, padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: generating ? "default" : "pointer" }}>
-                                {generating ? "Generazione…" : `Genera · ${priceLabel}`}
-                              </button>
-                            </div>
+                            <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
+                              style={{ width: "100%", marginTop: "1rem", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: generating ? "default" : "pointer" }}>
+                              {generating ? "Generazione…" : `Genera la tua scena · ${priceLabel}`}
+                            </button>
                             <p style={{ color: "#374151", fontSize: "0.68rem", margin: "0.6rem 0 0", lineHeight: 1.5 }}>
-                              L&apos;anteprima è watermarkata e non commerciale (nessuna royalty). La versione a pagamento è pulita, con certificato e royalty a {avatar.alias}.
+                              Output pulito, full-res, con certificato e royalty a {avatar.alias}.
                             </p>
                             <Link href={`/passport/${avatar.handle}`} style={{ display: "block", textAlign: "center", marginTop: "0.6rem", padding: "0.75rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#f0f0f5", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                               Vedi il passport →
                             </Link>
                           </>
-                        ) : gen.mode === "preview" ? (
-                          <div style={{ marginTop: "1.2rem", background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "1.2rem" }}>
-                            <p style={{ color: "#9ca3af", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.8rem" }}>👁 Anteprima · non commerciale</p>
-                            {gen.image_data && (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={gen.image_data} alt="anteprima" style={{ width: "100%", maxWidth: 280, borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", marginBottom: "1rem", background: "#1c1c28" }} />
-                            )}
-                            <p style={{ color: "#6b7280", fontSize: "0.82rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
-                              Watermark e risoluzione ridotta. Nessuna royalty a {gen.alias}. Per la versione pulita, con certificato e royalty, genera quella commerciale.
-                            </p>
-                            <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                              style={{ width: "100%", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: generating ? "default" : "pointer" }}>
-                              {generating ? "Generazione…" : `Genera versione commerciale · ${priceLabel}`}
-                            </button>
-                          </div>
                         ) : (
                           <div style={{ marginTop: "1.2rem", background: "#0a0a0f", border: "1px solid rgba(0,168,150,0.25)", borderRadius: 12, padding: "1.2rem" }}>
                             <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.8rem" }}>✓ Generazione certificata</p>
