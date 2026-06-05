@@ -23,8 +23,20 @@ export async function POST() {
     return NextResponse.json({ error: "Soglia di payout non raggiunta" }, { status: 400 });
   }
 
-  // Azzeramento accumulo dopo il payout
+  // Registra il payout nel ledger (audit trail). Rail finto: provider 'mock', stato 'paid'.
+  // Quando arriverà Stripe Connect, qui si crea il transfer e si salva provider_ref.
+  const { data: payout, error: payoutErr } = await admin
+    .from("payouts")
+    .insert({ avatar_id: avatar.id, amount_cents: accrued, status: "paid", provider: "mock" })
+    .select("id")
+    .single();
+
+  if (payoutErr) {
+    return NextResponse.json({ error: "Registrazione payout non riuscita" }, { status: 502 });
+  }
+
+  // Azzeramento accumulo solo DOPO aver registrato il payout
   await admin.from("avatars").update({ royalty_accrued_cents: 0 }).eq("id", avatar.id);
 
-  return NextResponse.json({ ok: true, paid_cents: accrued });
+  return NextResponse.json({ ok: true, paid_cents: accrued, payout_id: payout.id });
 }

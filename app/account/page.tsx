@@ -38,16 +38,26 @@ export default async function AccountPage() {
   let myAvatar: string | null = null;
   let royaltyCents = 0;
   let usageCount = 0;
+  let payouts: { id: string; amount_cents: number; status: string; created_at: string }[] = [];
   if (role === "seller") {
     const admin = createServerClient();
     const { data: av } = await admin
       .from("avatars")
-      .select("handle, royalty_accrued_cents, usage_count")
+      .select("id, handle, royalty_accrued_cents, usage_count")
       .eq("owner_id", user.id)
       .maybeSingle();
     myAvatar = av?.handle ?? null;
     royaltyCents = av?.royalty_accrued_cents ?? 0;
     usageCount = av?.usage_count ?? 0;
+    if (av?.id) {
+      const { data: ledger } = await admin
+        .from("payouts")
+        .select("id, amount_cents, status, created_at")
+        .eq("avatar_id", av.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      payouts = ledger ?? [];
+    }
   }
   const isVerifiedSeller = role === "seller" && profile?.kyc_status === "approved";
 
@@ -137,6 +147,26 @@ export default async function AccountPage() {
             </p>
 
             <PayoutButton eligible={royaltyCents >= PAYOUT_THRESHOLD_CENTS} amount={formatEur(royaltyCents)} />
+
+            {/* Storico payout (ledger tracciabile) */}
+            {payouts.length > 0 && (
+              <div style={{ marginTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "1.2rem" }}>
+                <p style={{ color: "#6b7280", fontSize: "0.76rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>STORICO PAYOUT</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {payouts.map((p) => (
+                    <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ color: "#6b7280", fontSize: "0.8rem" }}>
+                        {new Date(p.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
+                      </span>
+                      <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span style={{ color: "#00A896", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" }}>{p.status}</span>
+                        <span style={{ color: "#f0f0f5", fontSize: "0.88rem", fontWeight: 700 }}>{formatEur(p.amount_cents)}</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

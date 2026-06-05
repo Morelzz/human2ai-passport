@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { TIER_CONFIG, Tier } from "@/lib/types";
+import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
+import { formatEur } from "@/lib/wallet";
 
 interface Attrs {
   gender: string | null;
@@ -10,7 +11,6 @@ interface Attrs {
   hair_color: string | null;
   age_min: number | null;
   age_max: number | null;
-  category: string | null;
 }
 
 interface MatchAvatar { handle: string; alias: string; portrait_url: string | null; tier: Tier; reasons: string[]; }
@@ -18,17 +18,31 @@ interface MatchAvatar { handle: string; alias: string; portrait_url: string | nu
 interface MatchResponse {
   matched: boolean;
   attrs: Attrs;
+  category: string | null;
   reason?: string;
   results?: MatchAvatar[];
 }
 
-interface GenResult { certificate: string; royalty_cents: number; alias: string; image_url?: string; }
+interface GenResult {
+  certificate: string;
+  alias: string;
+  image_url?: string;
+  category: string | null;
+  gross_cents: number;
+  fee_cents: number;
+  royalty_cents: number; // netto avatar
+}
 
 export default function MatchClient() {
+  // Passo 1 — CHI: identità + categoria d'uso (consenso deliberato)
   const [prompt, setPrompt] = useState("");
+  const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MatchResponse | null>(null);
+
+  // Passo 2 — SCENA: direzione artistica libera, per ogni avatar trovato
+  const [sceneByHandle, setSceneByHandle] = useState<Record<string, string>>({});
   const [generatingHandle, setGeneratingHandle] = useState<string | null>(null);
   const [genByHandle, setGenByHandle] = useState<Record<string, GenResult>>({});
 
@@ -41,7 +55,7 @@ export default function MatchClient() {
     const res = await fetch("/api/match", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({ prompt, category: category || null }),
     });
     const json = await res.json();
     setLoading(false);
@@ -55,7 +69,7 @@ export default function MatchClient() {
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ handle, prompt }),
+      body: JSON.stringify({ handle, category: category || null, scene: sceneByHandle[handle] ?? "" }),
     });
     const json = await res.json();
     setGeneratingHandle(null);
@@ -74,21 +88,37 @@ export default function MatchClient() {
       </nav>
 
       <section style={{ maxWidth: 600, margin: "0 auto", padding: "3rem 1.5rem" }}>
-        <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Trova un volto reale</h1>
+        <span style={{ color: "#6B21E8", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>PASSO 1 — CHI</span>
+        <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Trova un volto reale</h1>
         <p style={{ color: "#6b7280", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
-          Descrivi l&apos;essere umano che ti serve. Cercheremo nel registro un avatar
-          reale e consenziente. Se nessuno corrisponde, la richiesta viene bloccata —
-          non si genera mai un umano senza una persona reale dietro.
+          Descrivi <strong style={{ color: "#9ca3af" }}>la persona</strong> (genere, etnia, capelli, età) e scegli
+          la categoria d&apos;uso. Cercheremo nel registro un avatar reale e consenziente.
+          La <em>scena</em> la dirigi dopo: l&apos;identità è garantita dal volto, non dalle parole.
         </p>
 
         <form onSubmit={search} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Es. una donna giapponese giovane per una campagna beauty"
-            rows={3}
+            placeholder="Es. un uomo italiano sui 30 anni, capelli castani"
+            rows={2}
             style={{ width: "100%", padding: "0.9rem", borderRadius: 12, background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", color: "#f0f0f5", fontSize: "0.95rem", outline: "none", resize: "vertical", fontFamily: "inherit" }}
           />
+          <div>
+            <label style={{ color: "#6b7280", fontSize: "0.78rem", display: "block", marginBottom: "0.4rem" }}>
+              Categoria d&apos;uso <span style={{ color: "#374151" }}>(determina prezzo e consenso)</span>
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              style={{ width: "100%", padding: "0.8rem", borderRadius: 10, background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", color: category ? "#f0f0f5" : "#6b7280", fontSize: "0.9rem", outline: "none", fontFamily: "inherit" }}
+            >
+              <option value="">Nessuna categoria specifica</option>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c} style={{ color: "#000" }}>{c}</option>
+              ))}
+            </select>
+          </div>
           <button type="submit" disabled={loading} style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
             {loading ? "Analisi in corso…" : "Cerca avatar affine"}
           </button>
@@ -98,15 +128,15 @@ export default function MatchClient() {
 
         {result && (
           <div style={{ marginTop: "2rem" }}>
-            {/* Attributi estratti */}
+            {/* Criteri di identità + categoria scelta */}
             <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "1.2rem", marginBottom: "1.2rem" }}>
-              <p style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>ATTRIBUTI ESTRATTI DAL PROMPT</p>
+              <p style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>CRITERI DI RICERCA</p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                 <Attr label="Genere" v={result.attrs.gender} />
                 <Attr label="Etnia" v={result.attrs.ethnicity} />
                 <Attr label="Capelli" v={result.attrs.hair_color} />
                 <Attr label="Età" v={result.attrs.age_min ? `${result.attrs.age_min}-${result.attrs.age_max}` : null} />
-                <Attr label="Categoria" v={result.attrs.category} />
+                <Attr label="Categoria" v={result.category} />
               </div>
             </div>
 
@@ -139,10 +169,27 @@ export default function MatchClient() {
                         <p style={{ color: "#374151", fontSize: "0.75rem", margin: "1rem 0 0" }}>
                           Affinità: {avatar.reasons.join(" · ")}
                         </p>
+
                         {!gen ? (
                           <>
+                            {/* Passo 2 — SCENA: direzione artistica libera */}
+                            <div style={{ marginTop: "1.2rem" }}>
+                              <label style={{ color: "#6B21E8", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", display: "block", marginBottom: "0.5rem" }}>
+                                PASSO 2 — SCENA / DIREZIONE
+                              </label>
+                              <textarea
+                                value={sceneByHandle[avatar.handle] ?? ""}
+                                onChange={(e) => setSceneByHandle((m) => ({ ...m, [avatar.handle]: e.target.value }))}
+                                placeholder="Es. che balla in spiaggia al tramonto, luce dorata, look estivo, 35mm"
+                                rows={2}
+                                style={{ width: "100%", padding: "0.8rem", borderRadius: 10, background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.08)", color: "#f0f0f5", fontSize: "0.9rem", outline: "none", resize: "vertical", fontFamily: "inherit" }}
+                              />
+                              <p style={{ color: "#374151", fontSize: "0.68rem", margin: "0.5rem 0 0", lineHeight: 1.5 }}>
+                                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — garantito dal Soul.
+                              </p>
+                            </div>
                             <button onClick={() => generate(avatar.handle)} disabled={generating}
-                              style={{ width: "100%", marginTop: "1.2rem", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: generating ? "default" : "pointer" }}>
+                              style={{ width: "100%", marginTop: "1rem", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: generating ? "default" : "pointer" }}>
                               {generating ? "Generazione…" : "Genera con questo avatar"}
                             </button>
                             <Link href={`/passport/${avatar.handle}`} style={{ display: "block", textAlign: "center", marginTop: "0.6rem", padding: "0.75rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#f0f0f5", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
@@ -151,15 +198,20 @@ export default function MatchClient() {
                           </>
                         ) : (
                           <div style={{ marginTop: "1.2rem", background: "#0a0a0f", border: "1px solid rgba(0,168,150,0.25)", borderRadius: 12, padding: "1.2rem" }}>
-                            <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.5rem" }}>✓ Generazione certificata</p>
+                            <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.8rem" }}>✓ Generazione certificata</p>
                             {gen.image_url && (
                               // eslint-disable-next-line @next/next/no-img-element
-                              <img src={gen.image_url} alt="output generato" style={{ width: "100%", maxWidth: 240, borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", marginBottom: "0.8rem", background: "#1c1c28" }} />
+                              <img src={gen.image_url} alt="output generato" style={{ width: "100%", maxWidth: 280, borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", marginBottom: "1rem", background: "#1c1c28" }} />
                             )}
-                            <p style={{ color: "#6b7280", fontSize: "0.82rem", lineHeight: 1.6, margin: "0 0 0.8rem" }}>
-                              {gen.alias} ha ricevuto una royalty di{" "}
-                              <strong style={{ color: "#f0f0f5" }}>{(gen.royalty_cents / 100).toFixed(2)} €</strong> (ad accumulo).
-                            </p>
+
+                            {/* Breakdown economico */}
+                            <div style={{ background: "#12121a", borderRadius: 10, padding: "0.9rem 1rem", marginBottom: "0.9rem" }}>
+                              <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents)} dim />
+                              <EuroRow label="Fee piattaforma" value={`− ${formatEur(gen.fee_cents)}`} dim />
+                              <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "0.6rem 0" }} />
+                              <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents)} highlight />
+                            </div>
+
                             <p style={{ color: "#374151", fontSize: "0.68rem", letterSpacing: "0.04em", margin: "0 0 0.3rem" }}>CREDENZIALE D&apos;USCITA (hash anonimo)</p>
                             <code style={{ display: "block", color: "#6B21E8", fontSize: "0.7rem", wordBreak: "break-all", fontFamily: "monospace" }}>{gen.certificate}</code>
                           </div>
@@ -187,6 +239,15 @@ function Attr({ label, v }: { label: string; v: string | null }) {
     <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "0.4rem 0.7rem" }}>
       <span style={{ color: "#374151", fontSize: "0.68rem" }}>{label}: </span>
       <span style={{ color: v ? "#f0f0f5" : "#374151", fontSize: "0.78rem", fontWeight: 600 }}>{v ?? "—"}</span>
+    </div>
+  );
+}
+
+function EuroRow({ label, value, dim, highlight }: { label: string; value: string; dim?: boolean; highlight?: boolean }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "0.15rem 0" }}>
+      <span style={{ color: dim ? "#6b7280" : "#9ca3af", fontSize: "0.82rem" }}>{label}</span>
+      <span style={{ color: highlight ? "#00A896" : "#9ca3af", fontSize: highlight ? "1.05rem" : "0.85rem", fontWeight: highlight ? 800 : 600 }}>{value}</span>
     </div>
   );
 }

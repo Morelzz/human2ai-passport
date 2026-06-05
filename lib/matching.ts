@@ -1,36 +1,35 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { CATEGORIES } from "@/lib/types";
 
-// Attributi estratti dal prompt del compratore.
+// Attributi di IDENTITÀ estratti dal prompt del compratore.
+// NB: la categoria d'uso NON viene più inferita dal testo (inquinava il match):
+// arriva come scelta esplicita dal menu, vedi /api/match.
 export interface PromptAttributes {
   gender: "uomo" | "donna" | null;
   ethnicity: string | null;
   hair_color: string | null;
   age_min: number | null;
   age_max: number | null;
-  category: string | null;
 }
 
-// --- 1. Estrazione attributi via Claude API ---
+// --- 1. Estrazione attributi via Claude API (solo identità) ---
 export async function extractAttributes(prompt: string): Promise<PromptAttributes> {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
-  const system = `Sei un estrattore di attributi per un registro di volti umani.
-Dato il prompt di un cliente che descrive l'essere umano che vuole generare,
-estrai SOLO questi campi e rispondi ESCLUSIVAMENTE con JSON valido, nient'altro:
+  const system = `Sei un estrattore di attributi FISICI per un registro di volti umani.
+Dato il prompt di un cliente che descrive la PERSONA che vuole generare,
+estrai SOLO le caratteristiche identitarie e rispondi ESCLUSIVAMENTE con JSON valido, nient'altro:
 {
   "gender": "uomo" | "donna" | null,
   "ethnicity": stringa breve in italiano (es. "giapponese","italiana","afroamericano") | null,
   "hair_color": stringa breve in italiano (es. "neri","castani","biondi","rossi","grigi","rasati") | null,
   "age_min": numero intero | null,
-  "age_max": numero intero | null,
-  "category": una tra [${CATEGORIES.join(", ")}] | null
+  "age_max": numero intero | null
 }
 Regole:
-- Se un attributo non è deducibile, usa null. NON inferire un attributo solo perché plausibile: estrai SOLO ciò che è esplicitamente richiesto nel prompt.
-- "giovane" ~ 20-30, "adulto" ~ 30-45, "maturo/anziano" ~ 50+. Stima un range sensato.
-- category: scegli la più pertinente all'uso descritto (es. campagna beauty -> Beauty).
-- Non inventare attributi non presenti o impliciti nel prompt.`;
+- Estrai SOLO attributi fisici della persona. IGNORA del tutto azioni, ambientazioni,
+  scene o usi commerciali (es. "che balla in spiaggia", "per una campagna"): non sono identità.
+- Se un attributo non è deducibile, usa null. NON inferire ciò che non è esplicito.
+- "giovane" ~ 20-30, "adulto" ~ 30-45, "maturo/anziano" ~ 50+. Stima un range sensato.`;
 
   const res = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
@@ -54,7 +53,6 @@ Regole:
     hair_color: parsed.hair_color ? String(parsed.hair_color).toLowerCase() : null,
     age_min: typeof parsed.age_min === "number" ? parsed.age_min : null,
     age_max: typeof parsed.age_max === "number" ? parsed.age_max : null,
-    category: parsed.category && (CATEGORIES as readonly string[]).includes(parsed.category) ? parsed.category : null,
   };
 }
 
@@ -90,20 +88,20 @@ function fuzzyEq(a: string, b: string): boolean {
 // Modello a filtro rigido: l'avatar è un match SOLO se soddisfa OGNI attributo
 // esplicitamente richiesto. Gli attributi NON richiesti vengono ignorati del tutto
 // (es. "uomo caucasico capelli neri" -> tutti, a prescindere dagli occhi/corporatura).
-export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes): MatchResult {
+export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes, category: string | null): MatchResult {
   const reasons: string[] = [];
   let score = 0;
 
-  // Vincolo categoria/consenso (hard)
-  if (attrs.category) {
-    if (av.excluded_categories?.includes(attrs.category)) {
-      return { score: 0, allowed: false, reasons: [`categoria "${attrs.category}" esclusa dal consenso`] };
+  // Vincolo categoria/consenso (hard) — la categoria è scelta esplicitamente dal menu.
+  if (category) {
+    if (av.excluded_categories?.includes(category)) {
+      return { score: 0, allowed: false, reasons: [`categoria "${category}" esclusa dal consenso`] };
     }
-    if (!av.approved_categories?.includes(attrs.category)) {
-      return { score: 0, allowed: false, reasons: [`categoria "${attrs.category}" non consentita`] };
+    if (!av.approved_categories?.includes(category)) {
+      return { score: 0, allowed: false, reasons: [`categoria "${category}" non consentita`] };
     }
     score += 1;
-    reasons.push(`categoria ${attrs.category}`);
+    reasons.push(`categoria ${category}`);
   }
 
   if (attrs.gender) {
@@ -143,10 +141,10 @@ export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes): MatchR
   return { score, allowed: true, reasons };
 }
 
-// Numero di attributi esplicitamente richiesti nel prompt.
-export function specifiedCount(attrs: PromptAttributes): number {
+// Numero di criteri esplicitamente richiesti (identità + categoria scelta).
+export function specifiedCount(attrs: PromptAttributes, category: string | null): number {
   let n = 0;
-  if (attrs.category) n++;
+  if (category) n++;
   if (attrs.gender) n++;
   if (attrs.ethnicity) n++;
   if (attrs.hair_color) n++;

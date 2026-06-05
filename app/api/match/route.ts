@@ -11,11 +11,13 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => null);
   const prompt = String(body?.prompt ?? "").trim();
+  // Categoria d'uso scelta esplicitamente dal menu (consenso deliberato, non inferito).
+  const category = body?.category ? String(body.category).trim() : null;
   if (prompt.length < 5) {
     return NextResponse.json({ error: "Descrivi meglio cosa cerchi" }, { status: 400 });
   }
 
-  // 1. Estrai attributi dal prompt
+  // 1. Estrai gli attributi di IDENTITÀ dal prompt (la scena/uso non conta qui)
   let attrs;
   try {
     attrs = await extractAttributes(prompt);
@@ -23,13 +25,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Errore nell'analisi del prompt" }, { status: 502 });
   }
 
-  // Serve almeno un attributo concreto, altrimenti la ricerca è troppo vaga
-  if (specifiedCount(attrs) === 0) {
+  // Serve almeno un criterio concreto, altrimenti la ricerca è troppo vaga
+  if (specifiedCount(attrs, category) === 0) {
     return NextResponse.json({
       matched: false,
       attrs,
+      category,
       results: [],
-      reason: "Descrivi almeno una caratteristica (genere, etnia, capelli, età o uso).",
+      reason: "Descrivi almeno una caratteristica (genere, etnia, capelli, età) o scegli una categoria d'uso.",
     });
   }
 
@@ -41,9 +44,9 @@ export async function POST(request: Request) {
     .eq("tier", "SOUL")
     .is("revoked_at", null);
 
-  // 3. Filtro rigido: tieni SOLO chi soddisfa TUTTI gli attributi richiesti
+  // 3. Filtro rigido: tieni SOLO chi soddisfa TUTTI i criteri richiesti
   const matches = (candidates ?? [])
-    .map((av) => ({ av, result: scoreAvatar(av, attrs) }))
+    .map((av) => ({ av, result: scoreAvatar(av, attrs, category) }))
     .filter((x) => x.result.allowed)
     .sort((a, b) => b.result.score - a.result.score);
 
@@ -52,6 +55,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       matched: false,
       attrs,
+      category,
       results: [],
       reason: "Nessun avatar reale e consenziente corrisponde a questa richiesta.",
     });
@@ -60,6 +64,7 @@ export async function POST(request: Request) {
   return NextResponse.json({
     matched: true,
     attrs,
+    category,
     results: matches.map((m) => ({
       handle: m.av.handle,
       alias: m.av.alias,

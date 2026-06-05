@@ -31,6 +31,21 @@ function mode(): "mock" | "live" {
   return process.env.HIGGSFIELD_MODE === "live" ? "live" : "mock";
 }
 
+// Costruisce il prompt di generazione dalla SOLA scena/direzione artistica.
+// Principio: l'identità del volto è garantita dal Soul (custom_reference_id), quindi
+// il prompt NON deve descrivere la persona — solo cosa fa, dove, con che luce e stile.
+// Questo rende la generazione molto più versatile: scena totalmente libera.
+// Se la scena è vuota, ripiega su un ritratto neutro di qualità.
+export function buildGenerationPrompt(scene: string): string {
+  const s = scene.trim();
+  if (!s) {
+    return "professional portrait, soft studio lighting, looking at camera, high detail";
+  }
+  // Scaffolding fotografico leggero, aggiunto solo se l'utente non l'ha già specificato.
+  const hasQuality = /\b(8k|4k|hd|detail|sharp|cinematic|photoreal|realistic|lighting|bokeh|lens|mm)\b/i.test(s);
+  return hasQuality ? s : `${s}, cinematic lighting, high detail, photorealistic`;
+}
+
 // --- MOCK (offline) ---------------------------------------------------------
 // Output deterministico: stesso avatar+prompt -> stessa immagine placeholder.
 // Simula un piccolo ritardo come farebbe l'API reale.
