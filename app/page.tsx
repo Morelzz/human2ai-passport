@@ -21,6 +21,9 @@ export default async function Home() {
           <span style={{ fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link href="/match" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
+            Trova un volto
+          </Link>
           <Link href="/login" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
             Accedi
           </Link>
