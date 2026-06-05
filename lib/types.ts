@@ -28,6 +28,8 @@ export interface Avatar {
   royalty_accrued_cents: number;
   is_demo: boolean;
   created_at: string;
+  verification_status?: string;
+  org_id?: string | null;
 }
 
 export interface ConsentEvent {

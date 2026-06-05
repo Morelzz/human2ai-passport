@@ -123,6 +123,12 @@ export default async function AccountPage() {
           )}
         </div>
 
+        {role === "admin" && (
+          <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+            Coda di revisione operatori →
+          </Link>
+        )}
+
         {role === "seller" && (
           <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO AVATAR</p>

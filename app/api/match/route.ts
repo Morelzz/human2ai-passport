@@ -46,12 +46,13 @@ export async function POST(request: Request) {
   const admin = createServerClient();
   const { data: candidates } = await admin
     .from("avatars")
-    .select("handle, alias, portrait_url, tier, gender, ethnicity, hair_color, age_range, approved_categories, excluded_categories")
+    .select("*")
     .eq("tier", "SOUL")
     .is("revoked_at", null);
 
-  // 3. Filtro rigido: tieni SOLO chi soddisfa TUTTI i criteri richiesti
+  // 3. Filtro rigido: SOLO avatar verificati (gate) che soddisfano TUTTI i criteri
   const matches = (candidates ?? [])
+    .filter((av) => (av.verification_status ?? "approved") === "approved")
     .map((av) => ({ av, result: scoreAvatar(av, attrs, category) }))
     .filter((x) => x.result.allowed)
     .sort((a, b) => b.result.score - a.result.score);

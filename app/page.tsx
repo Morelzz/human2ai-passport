@@ -8,10 +8,12 @@ export default async function Home() {
   const supabase = createServerClient();
   const { data } = await supabase
     .from("avatars")
-    .select("handle, alias, portrait_url, tier, usage_count, revoked_at")
+    .select("*")
     .order("consent_start");
 
-  const avatars = data ?? [];
+  // Gate: solo avatar approvati nel registro pubblico (default 'approved' se la
+  // colonna non esiste ancora -> nessuna rottura prima della migrazione).
+  const avatars = (data ?? []).filter((a) => (a.verification_status ?? "approved") === "approved");
 
   // Sessione: se l'utente è loggato, esponiamo il suo account nella nav.
   const auth = await createAuthClient();

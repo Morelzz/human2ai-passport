@@ -23,22 +23,27 @@ export async function POST(request: Request) {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "seller") {
-    return NextResponse.json({ error: "Solo gli account Creatore possono creare un avatar" }, { status: 403 });
+  // Le organizzazioni (Enterprise) onboardano più avatar; i privati uno solo.
+  const isEnterprise = profile?.role === "enterprise";
+  if (profile?.role !== "seller" && !isEnterprise) {
+    return NextResponse.json({ error: "Solo Creatori o organizzazioni possono creare un avatar" }, { status: 403 });
   }
-  if (profile?.kyc_status !== "approved") {
+  // Il privato verifica sé stesso (KYC); l'org passa dalla revisione operatori.
+  if (!isEnterprise && profile?.kyc_status !== "approved") {
     return NextResponse.json({ error: "Devi prima verificare la tua identità (KYC)" }, { status: 403 });
   }
 
   const admin = createServerClient();
 
-  // 3. Un creatore = un avatar (per ora)
-  const { count } = await admin
-    .from("avatars")
-    .select("id", { count: "exact", head: true })
-    .eq("owner_id", user.id);
-  if ((count ?? 0) > 0) {
-    return NextResponse.json({ error: "Hai già un avatar nel registro" }, { status: 409 });
+  // 3. Vincolo 1:1 SOLO per i privati. Le organizzazioni possono averne molti.
+  if (!isEnterprise) {
+    const { count } = await admin
+      .from("avatars")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", user.id);
+    if ((count ?? 0) > 0) {
+      return NextResponse.json({ error: "Hai già un avatar nel registro" }, { status: 409 });
+    }
   }
 
   // 4. Validazione input
@@ -128,6 +133,8 @@ export async function POST(request: Request) {
     usage_count: 0,
     royalty_accrued_cents: 0,
     is_demo: false,
+    // Gate: privato verificato -> live subito; org -> attende la revisione operatori.
+    verification_status: isEnterprise ? "pending_review" : "approved",
   });
 
   if (insErr) {

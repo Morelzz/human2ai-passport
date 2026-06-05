@@ -20,6 +20,8 @@ export default async function PassportPage({ params }: Props) {
     .single();
 
   if (error || !avatar) notFound();
+  // Gate: i passport non ancora approvati non sono pubblici.
+  if ((avatar.verification_status ?? "approved") !== "approved") notFound();
 
   const { data: events } = await supabase
     .from("consent_events")
