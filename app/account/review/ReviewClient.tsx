@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { page, colors } from "@/lib/ui";
+import { Nav } from "@/app/Nav";
 
 interface PendingAvatar {
   id: string;
@@ -51,14 +53,8 @@ export default function ReviewClient() {
   }
 
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-          <div style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)" }} />
-          <span style={{ color: "#f0f0f5", fontSize: "0.8rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
-        </Link>
-        <Link href="/account" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>Account</Link>
-      </nav>
+    <div style={page}>
+      <Nav right={<Link href="/account" style={{ color: colors.muted, fontSize: "0.85rem", textDecoration: "none" }}>Account</Link>} />
 
       <section style={{ maxWidth: 760, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <span style={{ color: "#B8005C", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>

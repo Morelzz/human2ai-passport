@@ -1,0 +1,43 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { colors, gradient } from "@/lib/ui";
+
+// Logo Human2AI (cerchio gradiente + wordmark). Link alla home.
+export function Logo({ size = 28 }: { size?: number }) {
+  return (
+    <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
+      <div style={{ width: size, height: size, borderRadius: "50%", background: gradient, flexShrink: 0 }} />
+      <span style={{ color: colors.text, fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
+    </Link>
+  );
+}
+
+// Barra di navigazione condivisa.
+// - `breadcrumb`: etichetta dopo il logo (pagine interne, es. "Verifica token", "@mario-r").
+// - `right`: contenuto a destra (link/CTA; la home passa la nav completa session-aware).
+// Senza "use client": utilizzabile sia in server che in client component.
+export function Nav({ breadcrumb, right }: { breadcrumb?: string; right?: ReactNode }) {
+  return (
+    <nav
+      style={{
+        borderBottom: `1px solid ${colors.border}`,
+        padding: "1rem 2rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: right ? "space-between" : "flex-start",
+        gap: "0.75rem",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <Logo />
+        {breadcrumb && (
+          <>
+            <span style={{ color: colors.faint }}>/</span>
+            <span style={{ color: colors.muted, fontSize: "0.85rem" }}>{breadcrumb}</span>
+          </>
+        )}
+      </div>
+      {right && <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>{right}</div>}
+    </nav>
+  );
+}

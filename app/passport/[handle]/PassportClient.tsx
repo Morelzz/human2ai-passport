@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
+import { page } from "@/lib/ui";
+import { Nav } from "@/app/Nav";
 
 interface Props {
   avatar: Avatar;
@@ -30,16 +32,8 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
   const royaltyEur = (avatar.royalty_accrued_cents / 100).toFixed(2);
 
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      {/* Nav */}
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)", flexShrink: 0 }} />
-          <span style={{ color: "#f0f0f5", fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 600 }}>HUMAN2AI</span>
-        </Link>
-        <span style={{ color: "#374151", marginLeft: "0.5rem" }}>/</span>
-        <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>@{avatar.handle}</span>
-      </nav>
+    <div style={page}>
+      <Nav breadcrumb={`@${avatar.handle}`} />
 
       <main style={{ maxWidth: 800, margin: "0 auto", padding: "3rem 1.5rem" }}>
 

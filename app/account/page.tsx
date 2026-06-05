@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { PAYOUT_THRESHOLD_CENTS, formatEur } from "@/lib/wallet";
+import { page } from "@/lib/ui";
+import { Nav } from "@/app/Nav";
 import LogoutButton from "./LogoutButton";
 import PayoutButton from "./PayoutButton";
 import SoulActivate from "./SoulActivate";
@@ -81,14 +83,8 @@ export default async function AccountPage() {
   const myGenerations: MyGen[] = (gens ?? []) as MyGen[];
 
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-          <div style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)" }} />
-          <span style={{ color: "#f0f0f5", fontSize: "0.8rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
-        </Link>
-        <LogoutButton />
-      </nav>
+    <div style={page}>
+      <Nav right={<LogoutButton />} />
 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem", flexWrap: "wrap", margin: "0 0 0.4rem" }}>

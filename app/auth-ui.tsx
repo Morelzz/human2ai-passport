@@ -1,7 +1,8 @@
 "use client";
 
 // Componenti UI condivisi tra /login e /signup.
-import Link from "next/link";
+import { colors } from "@/lib/ui";
+import { Logo } from "@/app/Nav";
 
 export const labelStyle: React.CSSProperties = {
   display: "block",
@@ -51,12 +52,11 @@ export function submitStyle(loading: boolean): React.CSSProperties {
 
 export function Shell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-      <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none", marginBottom: "2rem" }}>
-        <div style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)" }} />
-        <span style={{ color: "#f0f0f5", fontSize: "0.8rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
-      </Link>
-      <div style={{ width: "100%", maxWidth: 380, background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: "2rem" }}>
+    <div style={{ background: colors.bg, minHeight: "100vh", color: colors.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
+      <div style={{ marginBottom: "2rem" }}>
+        <Logo size={26} />
+      </div>
+      <div style={{ width: "100%", maxWidth: 380, background: colors.panel, border: `1px solid ${colors.border}`, borderRadius: 18, padding: "2rem" }}>
         <h1 style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0 0 1.5rem" }}>{title}</h1>
         {children}
       </div>
