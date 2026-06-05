@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase";
+import { createAuthClient } from "@/lib/supabase-auth";
 import { Tier } from "@/lib/types";
 import AvatarCard from "./AvatarCard";
 
@@ -11,6 +12,20 @@ export default async function Home() {
     .order("consent_start");
 
   const avatars = data ?? [];
+
+  // Sessione: se l'utente è loggato, esponiamo il suo account nella nav.
+  const auth = await createAuthClient();
+  const { data: { user } } = await auth.auth.getUser();
+  let firstName: string | null = null;
+  if (user) {
+    const { data: profile } = await auth
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .single();
+    const full = profile?.full_name || user.email || "";
+    firstName = full ? String(full).trim().split(/\s+/)[0] : "Account";
+  }
 
   return (
     <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
@@ -24,9 +39,16 @@ export default async function Home() {
           <Link href="/match" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
             Trova un volto
           </Link>
-          <Link href="/login" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
-            Accedi
-          </Link>
+          {firstName ? (
+            <Link href="/account" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "#f0f0f5", fontSize: "0.85rem", textDecoration: "none", background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.4rem 0.9rem", fontWeight: 600 }}>
+              <span style={{ width: 18, height: 18, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)", flexShrink: 0 }} />
+              {firstName}
+            </Link>
+          ) : (
+            <Link href="/login" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
+              Accedi
+            </Link>
+          )}
           <Link href="/verify" style={{ color: "#00A896", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 999, padding: "0.4rem 1rem" }}>
             Verifica un contenuto →
           </Link>
