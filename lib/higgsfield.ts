@@ -73,7 +73,13 @@ async function generateLive(input: HiggsfieldInput): Promise<HiggsfieldResult> {
   // withPolling: l'SDK attende il completamento prima di restituire il JobSet.
   const jobSet = await client.generate(
     "/v1/text2image/soul",
-    { prompt: input.prompt, custom_reference_id: input.soulRef },
+    {
+      prompt: input.prompt,
+      custom_reference_id: input.soulRef,
+      width_and_height: "1536x2048", // ritratto verticale
+      quality: "1080p",
+      batch_size: 1,
+    },
     { withPolling: true }
   );
 

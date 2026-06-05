@@ -65,22 +65,20 @@ try {
     inputImages.push({ type: "image_url", image_url: url });
   }
 
-  console.log(`Creo il Soul "${soulName}" e attendo il training (~qualche minuto)...`);
+  // Creo SENZA polling: ottengo subito l'ID (il training continua sul server).
+  console.log(`Creo il Soul "${soulName}"...`);
   const soul = await client.createSoulId(
     { name: soulName, input_images: inputImages },
-    true // withPolling: attende il completamento del training
+    false
   );
-
-  if (soul.isFailed) {
-    console.error(`Training fallito (id=${soul.id}, status=${soul.status}).`);
-    process.exit(1);
-  }
 
   console.log("\n=== SOUL CREATO ===");
   console.log(`Nome:   ${soul.name}`);
-  console.log(`Status: ${soul.status}`);
   console.log(`ID:     ${soul.id}`);
+  console.log(`Status: ${soul.status}`);
   console.log("\nIncolla questo ID nel campo `soul_ref` dell'avatar su Supabase.");
+  console.log("Il training prosegue sul server (qualche minuto). Controlla lo stato con:");
+  console.log("  node --env-file=.env.local scripts/list-soul-ids.mjs");
 } catch (e) {
   console.error("Errore Higgsfield:", e?.message ?? e);
   process.exit(1);
