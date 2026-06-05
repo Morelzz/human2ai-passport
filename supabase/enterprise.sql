@@ -8,6 +8,10 @@ alter table avatars add column if not exists verification_status text not null d
 alter table avatars add column if not exists org_id uuid;
 create index if not exists avatars_verification_idx on avatars(verification_status);
 
+-- Ruolo 'enterprise' (agenzie) ammesso nei profili.
+alter table profiles drop constraint if exists profiles_role_check;
+alter table profiles add constraint profiles_role_check check (role in ('buyer','seller','admin','enterprise'));
+
 -- Organizzazioni (agenzie) — Enterprise. KYB a parte dal KYC individuale.
 create table if not exists organizations (
   id         uuid primary key default gen_random_uuid(),
