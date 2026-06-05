@@ -5,6 +5,21 @@ import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
 import { formatEur } from "@/lib/wallet";
 
+// --- Opzioni dell'identikit (chip cliccabili) ---
+const GENDERS = [
+  { v: "uomo", l: "Uomo" },
+  { v: "donna", l: "Donna" },
+];
+const AGE_BANDS = [
+  { l: "18-25", min: 18, max: 25 },
+  { l: "26-35", min: 26, max: 35 },
+  { l: "36-45", min: 36, max: 45 },
+  { l: "46-60", min: 46, max: 60 },
+  { l: "60+", min: 60, max: 99 },
+];
+const HAIRS = ["Neri", "Castani", "Biondi", "Rossi", "Grigi", "Rasati"];
+const ETHNICITIES = ["Italiana", "Giapponese", "Cinese", "Indiana", "Nigeriana", "Afroamericana", "Caucasica", "Latina", "Araba"];
+
 interface Attrs {
   gender: string | null;
   ethnicity: string | null;
@@ -34,9 +49,13 @@ interface GenResult {
 }
 
 export default function MatchClient() {
-  // Passo 1 — CHI: identità + categoria d'uso (consenso deliberato)
-  const [prompt, setPrompt] = useState("");
+  // Passo 1 — CHI: identikit (chip) + categoria d'uso
+  const [gender, setGender] = useState("");
+  const [ageIdx, setAgeIdx] = useState<number | null>(null);
+  const [hair, setHair] = useState("");
+  const [ethnicity, setEthnicity] = useState("");
   const [category, setCategory] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MatchResponse | null>(null);
@@ -46,8 +65,23 @@ export default function MatchClient() {
   const [generatingHandle, setGeneratingHandle] = useState<string | null>(null);
   const [genByHandle, setGenByHandle] = useState<Record<string, GenResult>>({});
 
+  // toggle: ri-cliccando una chip già attiva la deselezioni
+  const toggle = (cur: string, v: string, set: (s: string) => void) => set(cur === v ? "" : v);
+
   async function search(e: React.FormEvent) {
     e.preventDefault();
+    const band = ageIdx != null ? AGE_BANDS[ageIdx] : null;
+    if (!gender && !ethnicity && !hair && !band && !category) {
+      setError("Seleziona almeno una caratteristica o una categoria d'uso.");
+      return;
+    }
+    const identity = {
+      gender: gender || null,
+      ethnicity: ethnicity || null,
+      hair_color: hair || null,
+      age_min: band ? band.min : null,
+      age_max: band ? band.max : null,
+    };
     setLoading(true);
     setError(null);
     setResult(null);
@@ -55,7 +89,7 @@ export default function MatchClient() {
     const res = await fetch("/api/match", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, category: category || null }),
+      body: JSON.stringify({ identity, category: category || null }),
     });
     const json = await res.json();
     setLoading(false);
@@ -87,40 +121,47 @@ export default function MatchClient() {
         <Link href="/account" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>Account</Link>
       </nav>
 
-      <section style={{ maxWidth: 600, margin: "0 auto", padding: "3rem 1.5rem" }}>
+      <section style={{ maxWidth: 620, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <span style={{ color: "#6B21E8", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>PASSO 1 — CHI</span>
-        <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Trova un volto reale</h1>
+        <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Componi l&apos;identikit</h1>
         <p style={{ color: "#6b7280", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
-          Descrivi <strong style={{ color: "#9ca3af" }}>la persona</strong> (genere, etnia, capelli, età) e scegli
-          la categoria d&apos;uso. Cercheremo nel registro un avatar reale e consenziente.
-          La <em>scena</em> la dirigi dopo: l&apos;identità è garantita dal volto, non dalle parole.
+          Seleziona le caratteristiche della <strong style={{ color: "#9ca3af" }}>persona</strong> e la categoria d&apos;uso.
+          Cercheremo nel registro un avatar reale e consenziente. La <em>scena</em> la dirigi dopo.
         </p>
 
-        <form onSubmit={search} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Es. un uomo italiano sui 30 anni, capelli castani"
-            rows={2}
-            style={{ width: "100%", padding: "0.9rem", borderRadius: 12, background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", color: "#f0f0f5", fontSize: "0.95rem", outline: "none", resize: "vertical", fontFamily: "inherit" }}
-          />
-          <div>
-            <label style={{ color: "#6b7280", fontSize: "0.78rem", display: "block", marginBottom: "0.4rem" }}>
-              Categoria d&apos;uso <span style={{ color: "#374151" }}>(determina prezzo e consenso)</span>
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              style={{ width: "100%", padding: "0.8rem", borderRadius: 10, background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", color: category ? "#f0f0f5" : "#6b7280", fontSize: "0.9rem", outline: "none", fontFamily: "inherit" }}
-            >
-              <option value="">Nessuna categoria specifica</option>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c} style={{ color: "#000" }}>{c}</option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" disabled={loading} style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
-            {loading ? "Analisi in corso…" : "Cerca avatar affine"}
+        <form onSubmit={search} style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
+          <ChipGroup label="Genere">
+            {GENDERS.map((g) => (
+              <Chip key={g.v} active={gender === g.v} onClick={() => toggle(gender, g.v, setGender)}>{g.l}</Chip>
+            ))}
+          </ChipGroup>
+
+          <ChipGroup label="Età">
+            {AGE_BANDS.map((b, i) => (
+              <Chip key={b.l} active={ageIdx === i} onClick={() => setAgeIdx(ageIdx === i ? null : i)}>{b.l}</Chip>
+            ))}
+          </ChipGroup>
+
+          <ChipGroup label="Capelli">
+            {HAIRS.map((h) => (
+              <Chip key={h} active={hair === h.toLowerCase()} onClick={() => toggle(hair, h.toLowerCase(), setHair)}>{h}</Chip>
+            ))}
+          </ChipGroup>
+
+          <ChipGroup label="Etnia">
+            {ETHNICITIES.map((e) => (
+              <Chip key={e} active={ethnicity === e.toLowerCase()} onClick={() => toggle(ethnicity, e.toLowerCase(), setEthnicity)}>{e}</Chip>
+            ))}
+          </ChipGroup>
+
+          <ChipGroup label="Categoria d'uso" hint="determina prezzo e consenso">
+            {CATEGORIES.map((c) => (
+              <Chip key={c} active={category === c} onClick={() => toggle(category, c, setCategory)}>{c}</Chip>
+            ))}
+          </ChipGroup>
+
+          <button type="submit" disabled={loading} style={{ padding: "0.9rem", borderRadius: 10, border: "none", background: loading ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer", marginTop: "0.4rem" }}>
+            {loading ? "Ricerca in corso…" : "Cerca avatar affine"}
           </button>
         </form>
 
@@ -128,18 +169,6 @@ export default function MatchClient() {
 
         {result && (
           <div style={{ marginTop: "2rem" }}>
-            {/* Criteri di identità + categoria scelta */}
-            <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "1.2rem", marginBottom: "1.2rem" }}>
-              <p style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>CRITERI DI RICERCA</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                <Attr label="Genere" v={result.attrs.gender} />
-                <Attr label="Etnia" v={result.attrs.ethnicity} />
-                <Attr label="Capelli" v={result.attrs.hair_color} />
-                <Attr label="Età" v={result.attrs.age_min ? `${result.attrs.age_min}-${result.attrs.age_max}` : null} />
-                <Attr label="Categoria" v={result.category} />
-              </div>
-            </div>
-
             {result.matched && result.results && result.results.length > 0 ? (
               <>
                 <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 1rem" }}>
@@ -234,12 +263,37 @@ export default function MatchClient() {
   );
 }
 
-function Attr({ label, v }: { label: string; v: string | null }) {
+function ChipGroup({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "0.4rem 0.7rem" }}>
-      <span style={{ color: "#374151", fontSize: "0.68rem" }}>{label}: </span>
-      <span style={{ color: v ? "#f0f0f5" : "#374151", fontSize: "0.78rem", fontWeight: 600 }}>{v ?? "—"}</span>
+    <div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.6rem" }}>
+        <span style={{ color: "#9ca3af", fontSize: "0.78rem", fontWeight: 600 }}>{label}</span>
+        {hint && <span style={{ color: "#374151", fontSize: "0.68rem" }}>· {hint}</span>}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>{children}</div>
     </div>
+  );
+}
+
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        padding: "0.5rem 0.9rem",
+        borderRadius: 999,
+        cursor: "pointer",
+        fontSize: "0.82rem",
+        fontWeight: 600,
+        background: active ? "rgba(107,33,232,0.18)" : "#12121a",
+        border: active ? "1px solid #6B21E8" : "1px solid rgba(255,255,255,0.1)",
+        color: active ? "#f0f0f5" : "#9ca3af",
+        transition: "all 0.12s",
+      }}
+    >
+      {children}
+    </button>
   );
 }
 

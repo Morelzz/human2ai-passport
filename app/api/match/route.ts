@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
-import { extractAttributes, scoreAvatar, specifiedCount } from "@/lib/matching";
+import { extractAttributes, normalizeIdentity, scoreAvatar, specifiedCount } from "@/lib/matching";
 
 export async function POST(request: Request) {
   // Richiede autenticazione (la chiamata costa)
@@ -10,19 +10,24 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Devi accedere per cercare" }, { status: 401 });
 
   const body = await request.json().catch(() => null);
-  const prompt = String(body?.prompt ?? "").trim();
   // Categoria d'uso scelta esplicitamente dal menu (consenso deliberato, non inferito).
   const category = body?.category ? String(body.category).trim() : null;
-  if (prompt.length < 5) {
-    return NextResponse.json({ error: "Descrivi meglio cosa cerchi" }, { status: 400 });
-  }
 
-  // 1. Estrai gli attributi di IDENTITÀ dal prompt (la scena/uso non conta qui)
+  // 1. Attributi di IDENTITÀ: dall'identikit strutturato (chip) se presente,
+  //    altrimenti dal prompt libero via Claude (retro-compatibile).
   let attrs;
-  try {
-    attrs = await extractAttributes(prompt);
-  } catch {
-    return NextResponse.json({ error: "Errore nell'analisi del prompt" }, { status: 502 });
+  if (body?.identity && typeof body.identity === "object") {
+    attrs = normalizeIdentity(body.identity);
+  } else {
+    const prompt = String(body?.prompt ?? "").trim();
+    if (prompt.length < 5) {
+      return NextResponse.json({ error: "Descrivi meglio cosa cerchi" }, { status: 400 });
+    }
+    try {
+      attrs = await extractAttributes(prompt);
+    } catch {
+      return NextResponse.json({ error: "Errore nell'analisi del prompt" }, { status: 502 });
+    }
   }
 
   // Serve almeno un criterio concreto, altrimenti la ricerca è troppo vaga

@@ -56,6 +56,19 @@ Regole:
   };
 }
 
+// --- 1b. Identikit strutturato (chip) -> attributi, senza chiamata AI ---
+// Quando l'utente compila l'identikit cliccabile, gli attributi arrivano già puliti:
+// normalizziamo senza scomodare Claude (deterministico, istantaneo, gratis).
+export function normalizeIdentity(raw: unknown): PromptAttributes {
+  const r = (raw ?? {}) as Record<string, unknown>;
+  const gender = r.gender === "uomo" || r.gender === "donna" ? r.gender : null;
+  const ethnicity = typeof r.ethnicity === "string" && r.ethnicity.trim() ? r.ethnicity.trim().toLowerCase() : null;
+  const hair_color = typeof r.hair_color === "string" && r.hair_color.trim() ? r.hair_color.trim().toLowerCase() : null;
+  const age_min = typeof r.age_min === "number" ? r.age_min : null;
+  const age_max = typeof r.age_max === "number" ? r.age_max : null;
+  return { gender, ethnicity, hair_color, age_min, age_max };
+}
+
 // --- 2. Punteggio di affinità avatar vs attributi ---
 export interface ScorableAvatar {
   gender: string | null;
@@ -82,6 +95,20 @@ function parseRange(range: string | null): [number, number] | null {
 function fuzzyEq(a: string, b: string): boolean {
   const x = a.toLowerCase().trim();
   const y = b.toLowerCase().trim();
+  return x === y || x.includes(y) || y.includes(x);
+}
+
+// Confronto etnia gender-insensitive: nel registro l'etnia è declinata
+// ("italiano"/"italiana"), l'identikit è neutro. Togliamo accenti e la vocale
+// finale di genere prima del confronto: "italiano" ~ "italiana" -> "italian".
+function stemEthnic(s: string): string {
+  return s.toLowerCase().trim()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "") // toglie accenti
+    .replace(/[aoe]$/, "");                            // toglie la vocale finale di genere
+}
+function ethnicityEq(a: string, b: string): boolean {
+  const x = stemEthnic(a);
+  const y = stemEthnic(b);
   return x === y || x.includes(y) || y.includes(x);
 }
 
@@ -113,7 +140,7 @@ export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes, categor
   }
 
   if (attrs.ethnicity) {
-    if (!av.ethnicity || !fuzzyEq(av.ethnicity, attrs.ethnicity)) {
+    if (!av.ethnicity || !ethnicityEq(av.ethnicity, attrs.ethnicity)) {
       return { score: 0, allowed: false, reasons: ["etnia diversa"] };
     }
     score += 1;
