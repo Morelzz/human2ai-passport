@@ -1,8 +1,8 @@
 "use client";
 
 // Componenti UI condivisi tra /login e /signup.
-import { colors } from "@/lib/ui";
 import { Logo } from "@/app/Nav";
+import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const labelStyle: React.CSSProperties = {
   display: "block",
@@ -52,12 +52,13 @@ export function submitStyle(loading: boolean): React.CSSProperties {
 
 export function Shell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: colors.bg, minHeight: "100vh", color: colors.text, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-      <div style={{ marginBottom: "2rem" }}>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-obsidian p-6 text-foreground">
+      <CineBackground />
+      <div className="relative z-[2] mb-8">
         <Logo size={26} />
       </div>
-      <div style={{ width: "100%", maxWidth: 380, background: colors.panel, border: `1px solid ${colors.border}`, borderRadius: 18, padding: "2rem" }}>
-        <h1 style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0 0 1.5rem" }}>{title}</h1>
+      <div className="glass relative z-[2] w-full max-w-sm rounded-2xl p-8">
+        <h1 className="mb-6 text-xl font-extrabold">{title}</h1>
         {children}
       </div>
     </div>
