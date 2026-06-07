@@ -310,7 +310,11 @@ export default function MatchClient() {
           ) : (
             <div className="rounded-2xl border border-crimson/30 bg-crimson/5 p-6">
               <p className="mb-2 text-base font-bold text-crimson">⛔ Richiesta bloccata</p>
-              <p className="text-sm leading-relaxed text-muted">{result.reason}</p>
+              <p className="text-sm font-semibold leading-relaxed text-foreground">
+                Nessuna persona reale ha acconsentito a questa richiesta. Non possiamo generarla — e
+                questo è esattamente il punto.
+              </p>
+              {result.reason && <p className="mt-2 text-sm leading-relaxed text-muted">{result.reason}</p>}
             </div>
           )}
         </div>

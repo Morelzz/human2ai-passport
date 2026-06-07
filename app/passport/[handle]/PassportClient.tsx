@@ -103,6 +103,11 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
               ) : (
                 <span className="inline-block rounded-full border border-crimson/40 bg-crimson/10 px-4 py-1 text-sm font-bold tracking-wide text-crimson">✕ REVOCATO</span>
               )}
+              {status === "REVOCATO" && (
+                <p className="mt-2 max-w-xs text-xs leading-relaxed text-crimson-light">
+                  Questa persona ha ritirato il consenso. Il suo volto non è più generabile.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -197,6 +202,9 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           </button>
           <Link href="/verify" className="rounded-lg border border-violet/30 bg-violet/10 px-3 py-2 text-sm text-violet-light transition-colors hover:bg-violet/20">Verifica →</Link>
         </div>
+        <p className="mt-3 text-xs leading-relaxed text-faint">
+          Identificativo univoco e certificato di questo volto. Prova che è reale.
+        </p>
       </Card>
 
       {/* Timeline */}
