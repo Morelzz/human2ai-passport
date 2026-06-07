@@ -27,7 +27,8 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
       <div className="mb-8 flex items-end justify-between gap-4">
         <div>
           <p className="text-xs tracking-[0.18em] text-faint">VOLTI IN EVIDENZA</p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Persone reali, già nel registro.</h2>
+          <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">Persone, non <span className="text-gradient">prompt</span>.</h2>
+          <p className="mt-1 text-sm text-muted">Ogni volto qui è una persona vera, consenziente e pagata.</p>
         </div>
         <Link href="/match" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-violet-light hover:underline sm:inline-flex">
           Esplora tutti i {total} <ArrowRight className="h-4 w-4" />

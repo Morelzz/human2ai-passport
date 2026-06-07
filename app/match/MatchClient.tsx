@@ -12,13 +12,6 @@ const GENDERS = [
   { v: "uomo", l: "Uomo" },
   { v: "donna", l: "Donna" },
 ];
-const AGE_BANDS = [
-  { l: "18-25", min: 18, max: 25 },
-  { l: "26-35", min: 26, max: 35 },
-  { l: "36-45", min: 36, max: 45 },
-  { l: "46-60", min: 46, max: 60 },
-  { l: "60+", min: 60, max: 99 },
-];
 const HAIRS = ["Neri", "Castani", "Biondi", "Rossi", "Grigi", "Rasati", "Calvo"];
 const ETHNICITIES = ["Italiana", "Giapponese", "Cinese", "Indiana", "Nigeriana", "Afroamericana", "Caucasica", "Latina", "Araba"];
 
@@ -55,7 +48,8 @@ interface GenResult {
 export default function MatchClient() {
   // Passo 1 — CHI: identikit (chip) + categoria d'uso
   const [gender, setGender] = useState("");
-  const [ageIdx, setAgeIdx] = useState<number | null>(null);
+  const [ageMin, setAgeMin] = useState(18);
+  const [ageMax, setAgeMax] = useState(100);
   const [hair, setHair] = useState("");
   const [ethnicity, setEthnicity] = useState("");
   const [category, setCategory] = useState("");
@@ -78,8 +72,9 @@ export default function MatchClient() {
 
   async function search(e: React.FormEvent) {
     e.preventDefault();
-    const band = ageIdx != null ? AGE_BANDS[ageIdx] : null;
-    if (!gender && !ethnicity && !hair && !band && !category) {
+    // Età: il range completo 18–100 = "indifferente" (nessun filtro).
+    const ageActive = ageMin > 18 || ageMax < 100;
+    if (!gender && !ethnicity && !hair && !ageActive && !category) {
       setError("Seleziona almeno una caratteristica o una categoria d'uso.");
       return;
     }
@@ -87,8 +82,8 @@ export default function MatchClient() {
       gender: gender || null,
       ethnicity: ethnicity || null,
       hair_color: hair || null,
-      age_min: band ? band.min : null,
-      age_max: band ? band.max : null,
+      age_min: ageActive ? ageMin : null,
+      age_max: ageActive ? ageMax : null,
     };
     setLoading(true);
     setError(null);
@@ -144,11 +139,28 @@ export default function MatchClient() {
           ))}
         </ChipGroup>
 
-        <ChipGroup label="Età">
-          {AGE_BANDS.map((b, i) => (
-            <Chip key={b.l} active={ageIdx === i} onClick={() => setAgeIdx(ageIdx === i ? null : i)}>{b.l}</Chip>
-          ))}
-        </ChipGroup>
+        <div>
+          <div className="mb-2.5 flex items-baseline gap-2">
+            <span className="text-sm font-semibold text-muted">Età</span>
+            <span className="text-[0.7rem] text-faint">· dai {ageMin} ai {ageMax >= 100 ? "100+" : ageMax} anni</span>
+          </div>
+          <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-obsidian-2 p-4">
+            <label className="flex items-center gap-3">
+              <span className="w-7 text-[0.7rem] text-faint">Da</span>
+              <input type="range" min={18} max={100} value={ageMin}
+                onChange={(e) => setAgeMin(Math.min(Number(e.target.value), ageMax))}
+                className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
+              <span className="w-9 text-right text-sm font-bold">{ageMin}</span>
+            </label>
+            <label className="flex items-center gap-3">
+              <span className="w-7 text-[0.7rem] text-faint">A</span>
+              <input type="range" min={18} max={100} value={ageMax}
+                onChange={(e) => setAgeMax(Math.max(Number(e.target.value), ageMin))}
+                className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
+              <span className="w-9 text-right text-sm font-bold">{ageMax >= 100 ? "100+" : ageMax}</span>
+            </label>
+          </div>
+        </div>
 
         <ChipGroup label="Capelli">
           {HAIRS.map((h) => (
