@@ -26,7 +26,8 @@ export function Navbar({ firstName }: { firstName: string | null }) {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-obsidian/70 backdrop-blur-xl">
+    <>
+    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-obsidian/70 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -63,6 +64,7 @@ export function Navbar({ firstName }: { firstName: string | null }) {
           <Menu className="h-6 w-6" />
         </button>
       </nav>
+    </header>
 
       {/* Drawer mobile */}
       <AnimatePresence>
@@ -77,7 +79,7 @@ export function Navbar({ firstName }: { firstName: string | null }) {
             <motion.aside
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-obsidian-2/95 p-6 backdrop-blur-xl md:hidden"
+              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[#101018] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] md:hidden"
             >
               <div className="mb-8 flex items-center justify-between">
                 <span className="text-sm font-bold tracking-[0.15em]">MENU</span>
@@ -108,6 +110,6 @@ export function Navbar({ firstName }: { firstName: string | null }) {
           </>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
