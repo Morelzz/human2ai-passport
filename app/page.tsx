@@ -63,6 +63,7 @@ export default async function Home() {
             <Link href="/pricing" className="text-sm text-faint hover:text-muted">Prezzi</Link>
             <Link href="/trasparenza" className="text-sm text-faint hover:text-muted">Trasparenza</Link>
             <Link href="/verify" className="text-sm text-faint hover:text-muted">Verifica</Link>
+            <Link href="/sviluppatori" className="text-sm text-faint hover:text-muted">Sviluppatori</Link>
             <Link href="/privacy" className="text-sm text-faint hover:text-muted">Privacy</Link>
             <Link href="/termini" className="text-sm text-faint hover:text-muted">Termini</Link>
           </div>
