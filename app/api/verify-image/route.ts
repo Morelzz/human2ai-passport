@@ -7,16 +7,21 @@ export const runtime = "nodejs";
 // Verifica "filtro": data un'immagine, estrae la filigrana invisibile (certificato
 // nascosto nei pixel) e conferma se è un contenuto Human2AI, di chi, e lo stato consenso.
 export async function POST(req: Request) {
-  const body = await req.json().catch(() => null);
-  const image = typeof body?.image === "string" ? body.image : "";
-  if (!image) return NextResponse.json({ valid: false, error: "Nessuna immagine" }, { status: 400 });
-
-  const b64 = image.includes(",") ? image.split(",")[1] : image;
+  // Preferito: multipart/form-data (file binario, niente bloat base64).
+  // Fallback: JSON { image: dataURL } per retrocompatibilità.
   let buf: Buffer;
-  try {
-    buf = Buffer.from(b64, "base64");
-  } catch {
-    return NextResponse.json({ valid: false, marked: false });
+  const ctype = req.headers.get("content-type") ?? "";
+  if (ctype.includes("multipart/form-data")) {
+    const form = await req.formData().catch(() => null);
+    const file = form?.get("image");
+    if (!(file instanceof File)) return NextResponse.json({ valid: false, error: "Nessuna immagine" }, { status: 400 });
+    buf = Buffer.from(await file.arrayBuffer());
+  } else {
+    const body = await req.json().catch(() => null);
+    const image = typeof body?.image === "string" ? body.image : "";
+    if (!image) return NextResponse.json({ valid: false, error: "Nessuna immagine" }, { status: 400 });
+    const b64 = image.includes(",") ? image.split(",")[1] : image;
+    try { buf = Buffer.from(b64, "base64"); } catch { return NextResponse.json({ valid: false, marked: false }); }
   }
   if (!buf.length) return NextResponse.json({ valid: false, marked: false });
 

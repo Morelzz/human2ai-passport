@@ -47,17 +47,9 @@ export default function VerifyClient() {
     setImgLoading(true);
     setResult(null);
     try {
-      const dataUrl = await new Promise<string>((res, rej) => {
-        const r = new FileReader();
-        r.onload = () => res(String(r.result));
-        r.onerror = rej;
-        r.readAsDataURL(file);
-      });
-      const res = await fetch("/api/verify-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: dataUrl }),
-      });
+      const fd = new FormData();
+      fd.append("image", file);
+      const res = await fetch("/api/verify-image", { method: "POST", body: fd });
       const data = await res.json();
       setResult({ ...data, source: "image" });
     } catch {

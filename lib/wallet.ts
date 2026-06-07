@@ -19,10 +19,12 @@ export const PAYOUT_THRESHOLD_CENTS = 5000;
 // Bande di prezzo (LORDO pagato dal buyer, in centesimi).
 export type PriceBand = "premium" | "standard" | "base";
 
+// Prezzi per generazione (provvisori, volutamente bassi: gen reale ~0,06 €,
+// quindi margine ampio). Da rivedere a regime. Base 0,30 € → Premium 1,00 €.
 export const BAND_PRICE_CENTS: Record<PriceBand, number> = {
-  premium: 1000, // 10,00 €
-  standard: 600, //  6,00 €
-  base: 400,     //  4,00 €
+  premium: 100, // 1,00 €
+  standard: 60, // 0,60 €
+  base: 30,     // 0,30 €
 };
 
 // Mappa categoria -> banda. Le categorie non mappate ricadono su "base".

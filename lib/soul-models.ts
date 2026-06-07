@@ -15,9 +15,10 @@ export interface SoulModelInfo {
 }
 
 // Default = Soul 2.0: realismo editoriale a 2k.
+// Nomi brand Human2AI: HUMAN = massima fedeltà (Soul 2.0), SHAPE = classico con stili (Soul ID).
 export const SOUL_MODELS: SoulModelInfo[] = [
-  { id: "soul-v2", label: "Soul 2.0", quality: "2k", description: "Realismo editoriale, massima qualità", supportsStyles: false },
-  { id: "soul-id", label: "Soul ID", quality: "1080p", description: "Stili artistici applicabili", supportsStyles: true },
+  { id: "soul-v2", label: "HUMAN", quality: "2k", description: "Massima fedeltà, realismo editoriale", supportsStyles: false },
+  { id: "soul-id", label: "SHAPE", quality: "1080p", description: "Classico, con stili artistici", supportsStyles: true },
 ];
 
 export const DEFAULT_MODEL: SoulModel = "soul-v2";

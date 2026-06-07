@@ -19,7 +19,7 @@ const AGE_BANDS = [
   { l: "46-60", min: 46, max: 60 },
   { l: "60+", min: 60, max: 99 },
 ];
-const HAIRS = ["Neri", "Castani", "Biondi", "Rossi", "Grigi", "Rasati"];
+const HAIRS = ["Neri", "Castani", "Biondi", "Rossi", "Grigi", "Rasati", "Calvo"];
 const ETHNICITIES = ["Italiana", "Giapponese", "Cinese", "Indiana", "Nigeriana", "Afroamericana", "Caucasica", "Latina", "Araba"];
 
 interface Attrs {
@@ -271,7 +271,9 @@ export default function MatchClient() {
                           <p className="mb-3 text-sm font-bold text-teal">✓ Generazione certificata</p>
                           {gen.image_url && (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-white/8 bg-obsidian-3" />
+                            // Mostra la versione con filigrana invisibile (se c'è il certificato),
+                            // così l'immagine che l'utente vede/salva porta già il codice nascosto.
+                            <img src={gen.certificate ? `/api/content/${gen.certificate}` : gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-white/8 bg-obsidian-3" />
                           )}
                           <div className="mb-4 rounded-lg bg-obsidian-2 p-4">
                             <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
