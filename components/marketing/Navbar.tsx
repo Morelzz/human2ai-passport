@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const LINKS = [
+  { href: "/catalogo", label: "Catalogo" },
   { href: "/match", label: "Trova un volto" },
   { href: "/pricing", label: "Prezzi" },
   { href: "/trasparenza", label: "Trasparenza" },
