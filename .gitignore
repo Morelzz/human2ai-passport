@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Permessi locali Claude Code (personali)
 .claude/settings.local.json
+
+# Output dei test motori (artefatti locali)
+scripts/*-output.png
