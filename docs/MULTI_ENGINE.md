@@ -45,9 +45,9 @@ Naming per **livello di fedeltà/uso**, NON per motore (i motori restano invisib
 | **SOUL** | identity-locked | Higgsfield Soul (addestrato) | fedele |
 | **HUMAN** | identity-locked top | Higgsfield Soul 2.0 | fedele alta risoluzione |
 | **TWIN** *(nuovo)* | identità 360° da reference-set completo | Nano Banana Pro / GPT Image 2 | massima somiglianza |
-| **LIVE** *(nuovo)* | fotorealismo commerciale premium, 4K, testo-in-immagine | GPT Image 2 / Nano Banana Pro | scene commerciali top |
+| **ECHO** *(nuovo)* | fotorealismo commerciale premium, 4K, testo-in-immagine | GPT Image 2 / Nano Banana Pro | scene commerciali top |
 
-*(TWIN e LIVE = nomi PROPOSTI, da confermare. Alternative: TWIN→MIRROR/ECHO; LIVE→PRIME/ICON/VIVID.)*
+*(Nomi CONFERMATI dall'utente 2026-06-08: **TWIN** + **ECHO**.)*
 Il routing motore→tier è **interno**: la piattaforma sceglie il motore migliore per la
 richiesta (es. testo nell'immagine → GPT Image 2; blend multi-persona → Nano Banana Pro).
 
@@ -95,7 +95,12 @@ Higgsfield resta un adapter come gli altri → nessuna rottura dell'esistente.
 2. **Fedeltà non garantita 1:1**: validare empiricamente per avatar; eventuale "score di fedeltà".
 3. **Costo/latenza**: inviare N immagini ad alta fedeltà a ogni call costa più input-token di un
    Soul (identità "cotta" dentro). Pesare sui margini (gen reale resta ben sotto i prezzi di vendita).
-4. **Chiavi API**: GPT Image 2 (OpenAI), Nano Banana Pro (Gemini API / Vertex AI).
+4. **Chiavi API: DISPONIBILI ORA** (verificato 2026-06-08).
+   - **GPT Image 2** — model id `gpt-image-2`, GA per developer da inizio maggio 2026. Chiave su
+     platform.openai.com. Prezzo ~$0,04–0,35 a immagine (per complessità/dimensione).
+   - **Nano Banana Pro** — model id `gemini-3-pro-image-preview`. Chiave su Google AI Studio
+     (aistudio.google.com → "Create API Key"); **richiede billing attivo (Tier 1+)**, il free
+     tier non genera immagini. Prezzo $0,134 (1K/2K) · $0,24 (4K); batch ~$0,067/2K. Vertex AI per enterprise.
 
 ## 9. Cosa NON cambia
 Tutto l'esistente (registro, consenso, royalty, filigrana, certificato, Higgsfield) resta
