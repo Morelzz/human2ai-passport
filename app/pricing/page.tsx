@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { BAND_PRICE_CENTS, PLATFORM_FEE_BPS, splitRoyalty, formatEur } from "@/lib/wallet";
+import { SiteNav } from "@/components/marketing/SiteNav";
+import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const metadata = {
   title: "Prezzi — Human2AI",
@@ -86,106 +88,92 @@ const PLANS: Plan[] = [
 
 export default function PricingPage() {
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      {/* Nav */}
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-          <div style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)" }} />
-          <span style={{ color: "#f0f0f5", fontSize: "0.8rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
-        </Link>
-        <div style={{ display: "flex", gap: "0.75rem" }}>
-          <Link href="/match" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>Trova un volto</Link>
-          <Link href="/account" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>Account</Link>
-        </div>
-      </nav>
+    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+      <CineBackground />
+      <div className="relative z-[2]">
+        <SiteNav />
 
-      <section style={{ maxWidth: 1040, margin: "0 auto", padding: "4rem 1.5rem 5rem" }}>
-        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, margin: "0 0 1rem" }}>
-            Gratis per provare. <span style={{ color: "#6B21E8" }}>Paghi per generare sul serio.</span>
-          </h1>
-          <p style={{ color: "#6b7280", fontSize: "1.05rem", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
-            Entrare e provare non costa nulla. Chi mette il proprio volto viene pagato.
-            Si paga solo l&apos;uso commerciale — e la persona reale prende l&apos;{100 - feePct}%.
-          </p>
-        </div>
-
-        {/* Piani */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "1rem", marginBottom: "4rem" }}>
-          {PLANS.map((p) => (
-            <div key={p.name} style={{
-              background: "#12121a",
-              border: `1px solid ${p.recommended ? "rgba(107,33,232,0.5)" : "rgba(255,255,255,0.08)"}`,
-              borderRadius: 18, padding: "1.6rem", display: "flex", flexDirection: "column",
-              boxShadow: p.recommended ? "0 0 40px rgba(107,33,232,0.12)" : "none",
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
-                <span style={{ fontWeight: 800, fontSize: "1.1rem", color: p.accent }}>{p.name}</span>
-                {p.recommended && <span style={{ fontSize: "0.6rem", fontWeight: 700, color: "#6B21E8", background: "rgba(107,33,232,0.14)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.1rem 0.5rem", letterSpacing: "0.05em" }}>CONSIGLIATO</span>}
-              </div>
-              <p style={{ color: "#6b7280", fontSize: "0.8rem", margin: "0 0 0.8rem" }}>{p.who}</p>
-              <div style={{ fontSize: "1.6rem", fontWeight: 800, margin: "0 0 0.2rem" }}>{p.price}</div>
-              {p.highlight && (
-                <p style={{ color: "#00A896", fontSize: "0.78rem", fontWeight: 700, margin: "0 0 0.8rem" }}>{p.highlight}</p>
-              )}
-              <ul style={{ listStyle: "none", padding: 0, margin: "1rem 0 1.5rem", display: "flex", flexDirection: "column", gap: "0.6rem", flex: 1 }}>
-                {p.features.map((f) => (
-                  <li key={f} style={{ display: "flex", gap: "0.5rem", color: "#9ca3af", fontSize: "0.84rem", lineHeight: 1.4 }}>
-                    <span style={{ color: p.accent, flexShrink: 0 }}>›</span>{f}
-                  </li>
-                ))}
-              </ul>
-              <Link href={p.cta.href} style={{
-                display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10,
-                background: p.recommended ? "linear-gradient(135deg,#6B21E8,#B8005C)" : "rgba(255,255,255,0.05)",
-                border: p.recommended ? "none" : "1px solid rgba(255,255,255,0.12)",
-                color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none",
-              }}>
-                {p.cta.label}
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        {/* Quanto costa generare */}
-        <div style={{ marginBottom: "3rem" }}>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.5rem", textAlign: "center" }}>Quanto costa generare</h2>
-          <p style={{ color: "#6b7280", fontSize: "0.92rem", textAlign: "center", margin: "0 0 2rem" }}>
-            Il prezzo dipende dalla categoria d&apos;uso. Su ogni generazione la persona reale riceve l&apos;{100 - feePct}%, la piattaforma il {feePct}%.
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
-            {BANDS.map((b) => {
-              const split = splitRoyalty(b.cents);
-              return (
-                <div key={b.key} style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem" }}>
-                  <p style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.1em", margin: "0 0 0.4rem" }}>{b.label.toUpperCase()}</p>
-                  <div style={{ fontSize: "2rem", fontWeight: 800, margin: "0 0 0.2rem" }}>{formatEur(b.cents)}</div>
-                  <p style={{ color: "#374151", fontSize: "0.78rem", margin: "0 0 1rem", lineHeight: 1.5 }}>{b.cats}</p>
-                  <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "0.8rem", display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 700 }}>Royalty alla persona</span>
-                    <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 800 }}>{formatEur(split.net_cents)}</span>
-                  </div>
-                </div>
-              );
-            })}
+        <section className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
+          <div className="mb-12 text-center">
+            <h1 className="text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">
+              Gratis per provare. <span className="text-gradient">Paghi per generare sul serio.</span>
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+              Entrare e provare non costa nulla. Chi mette il proprio volto viene pagato.
+              Si paga solo l&apos;uso commerciale — e la persona reale prende l&apos;{100 - feePct}%.
+            </p>
           </div>
-        </div>
 
-        {/* Strip fiducia */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem" }}>
-          {[
-            { t: "Consenso verificato", d: "Identità reale via KYC. Nessuno spam, nessun volto rubato." },
-            { t: "Token verificabile", d: "Ogni volto e ogni generazione hanno un certificato controllabile da chiunque." },
-            { t: "La persona viene pagata", d: "Royalty all'80%, wallet e payout. Mai un umano generato gratis." },
-            { t: "Revocabile", d: "Il consenso è una timeline: si può revocare per il futuro, sempre." },
-          ].map((x) => (
-            <div key={x.t} style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "1.2rem" }}>
-              <p style={{ color: "#f0f0f5", fontSize: "0.9rem", fontWeight: 700, margin: "0 0 0.4rem" }}>{x.t}</p>
-              <p style={{ color: "#6b7280", fontSize: "0.8rem", margin: 0, lineHeight: 1.5 }}>{x.d}</p>
+          {/* Piani */}
+          <div className="mb-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {PLANS.map((p) => (
+              <div key={p.name}
+                className={`glass flex flex-col rounded-2xl p-6 ${p.recommended ? "shadow-[0_0_40px_rgba(107,33,232,0.18)]" : ""}`}
+                style={p.recommended ? { borderColor: "rgba(107,33,232,0.5)" } : undefined}>
+                <div className="mb-1 flex items-center gap-2">
+                  <span className="text-lg font-extrabold" style={{ color: p.accent }}>{p.name}</span>
+                  {p.recommended && <span className="rounded-full border border-violet/30 bg-violet/15 px-2 py-0.5 text-[0.6rem] font-bold tracking-wide text-violet-light">CONSIGLIATO</span>}
+                </div>
+                <p className="mb-3 text-sm text-muted">{p.who}</p>
+                <div className="text-2xl font-extrabold">{p.price}</div>
+                {p.highlight && <p className="mt-1 text-sm font-bold text-teal">{p.highlight}</p>}
+                <ul className="my-5 flex flex-1 flex-col gap-2.5">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex gap-2 text-sm leading-snug text-muted">
+                      <span className="shrink-0" style={{ color: p.accent }}>›</span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href={p.cta.href}
+                  className={`block rounded-xl px-4 py-3 text-center text-sm font-bold text-white transition-all ${
+                    p.recommended ? "bg-[linear-gradient(135deg,#6B21E8,#B8005C)] shadow-[0_8px_30px_rgba(107,33,232,0.3)] hover:brightness-110" : "border border-white/15 bg-white/5 hover:bg-white/10"
+                  }`}>
+                  {p.cta.label}
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* Quanto costa generare */}
+          <div className="mb-12">
+            <h2 className="text-center text-2xl font-extrabold tracking-tight">Quanto costa generare</h2>
+            <p className="mx-auto mt-2 mb-8 max-w-xl text-center text-sm text-muted">
+              Il prezzo dipende dalla categoria d&apos;uso. Su ogni generazione la persona reale riceve l&apos;{100 - feePct}%, la piattaforma il {feePct}%.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {BANDS.map((b) => {
+                const split = splitRoyalty(b.cents);
+                return (
+                  <div key={b.key} className="glass rounded-2xl p-6">
+                    <p className="mb-1 text-xs tracking-[0.1em] text-muted">{b.label.toUpperCase()}</p>
+                    <div className="text-3xl font-extrabold">{formatEur(b.cents)}</div>
+                    <p className="mt-1 mb-4 text-sm leading-relaxed text-faint">{b.cats}</p>
+                    <div className="flex justify-between border-t border-white/6 pt-3">
+                      <span className="text-sm font-bold text-teal">Royalty alla persona</span>
+                      <span className="text-sm font-extrabold text-teal">{formatEur(split.net_cents)}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+
+          {/* Strip fiducia */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { t: "Consenso verificato", d: "Identità reale via KYC. Nessuno spam, nessun volto rubato." },
+              { t: "Token verificabile", d: "Ogni volto e ogni generazione hanno un certificato controllabile da chiunque." },
+              { t: "La persona viene pagata", d: "Royalty all'80%, wallet e payout. Mai un umano generato gratis." },
+              { t: "Revocabile", d: "Il consenso è una timeline: si può revocare per il futuro, sempre." },
+            ].map((x) => (
+              <div key={x.t} className="rounded-2xl border border-white/6 bg-white/[0.02] p-5">
+                <p className="mb-1 text-sm font-bold">{x.t}</p>
+                <p className="text-sm leading-relaxed text-muted">{x.d}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
