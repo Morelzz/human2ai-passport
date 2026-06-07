@@ -2,7 +2,14 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import VerifyClient from "./VerifyClient";
 
-export default function VerifyPage() {
+export default async function VerifyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>;
+}) {
+  // Deep-link: /verify?token=<cert> precompila e verifica subito (usato dai feed,
+  // dal badge, dalle segnalazioni). Senza il parametro, comportamento invariato.
+  const { token } = await searchParams;
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -19,7 +26,7 @@ export default function VerifyPage() {
               il consenso e a quale persona reale appartiene.
             </p>
           </div>
-          <VerifyClient />
+          <VerifyClient initialToken={token ?? ""} />
         </main>
       </div>
     </div>

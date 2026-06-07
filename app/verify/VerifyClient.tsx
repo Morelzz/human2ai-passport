@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 interface VerifyResult {
@@ -23,11 +23,21 @@ function formatDate(d: string) {
   return new Date(d).toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-export default function VerifyClient() {
-  const [token, setToken] = useState("");
+export default function VerifyClient({ initialToken = "" }: { initialToken?: string }) {
+  const [token, setToken] = useState(initialToken);
   const [result, setResult] = useState<VerifyResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [imgLoading, setImgLoading] = useState(false);
+
+  // Se arriviamo con ?token=<cert> in URL, verifichiamo subito (una sola volta).
+  const autoRan = useRef(false);
+  useEffect(() => {
+    if (initialToken && !autoRan.current) {
+      autoRan.current = true;
+      verify();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function verify() {
     if (!token.trim()) return;

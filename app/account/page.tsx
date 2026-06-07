@@ -156,7 +156,14 @@ export default async function AccountPage() {
           </>
         )}
 
-        {role === "enterprise" && <OrgAvatars avatars={orgAvatars} />}
+        {role === "enterprise" && (
+          <>
+            <OrgAvatars avatars={orgAvatars} />
+            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#00d4be", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+              Attività dei tuoi volti →
+            </Link>
+          </>
+        )}
 
         {role === "seller" && (
           <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
@@ -203,7 +210,10 @@ export default async function AccountPage() {
               <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>Royalty accumulate</span>
               <span style={{ color: "#00A896", fontSize: "1.5rem", fontWeight: 800 }}>{formatEur(royaltyCents)}</span>
             </div>
-            <p style={{ color: "#374151", fontSize: "0.78rem", margin: "0 0 1.2rem" }}>{usageCount} utilizzi totali</p>
+            <p style={{ color: "#374151", fontSize: "0.78rem", margin: "0 0 0.9rem" }}>{usageCount} utilizzi totali</p>
+            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#00d4be", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginBottom: "1.2rem" }}>
+              Attività del mio volto →
+            </Link>
 
             {/* Barra verso la soglia di payout */}
             <div style={{ height: 8, background: "#12121a", borderRadius: 999, overflow: "hidden", marginBottom: "0.5rem" }}>
