@@ -42,13 +42,13 @@ interface MatchResponse {
 interface GenResult {
   mode: "preview" | "commercial";
   alias: string;
-  image_url?: string;   // commerciale: URL pulito
-  image_data?: string;  // anteprima: data-URL watermarkato
+  image_url?: string;
+  image_data?: string;
   certificate?: string;
   category?: string | null;
   gross_cents?: number;
   fee_cents?: number;
-  royalty_cents?: number; // netto avatar
+  royalty_cents?: number;
 }
 
 export default function MatchClient() {
@@ -73,7 +73,6 @@ export default function MatchClient() {
   const [styleId, setStyleId] = useState("");
   const modelSupportsStyles = SOUL_MODELS.find((m) => m.id === model)?.supportsStyles ?? false;
 
-  // toggle: ri-cliccando una chip già attiva la deselezioni
   const toggle = (cur: string, v: string, set: (s: string) => void) => set(cur === v ? "" : v);
 
   async function search(e: React.FormEvent) {
@@ -129,218 +128,190 @@ export default function MatchClient() {
   const priceLabel = formatEur(grossForCategory(category || null));
 
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem", display: "flex", justifyContent: "space-between" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-          <div style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg,#6B21E8,#B8005C)" }} />
-          <span style={{ color: "#f0f0f5", fontSize: "0.8rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
-        </Link>
-        <Link href="/account" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>Account</Link>
-      </nav>
+    <main className="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
+      <span className="text-xs font-bold tracking-[0.14em] text-violet-light">PASSO 1 — CHI</span>
+      <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Componi l&apos;identikit</h1>
+      <p className="mt-2 mb-8 text-sm leading-relaxed text-muted sm:text-base">
+        Seleziona le caratteristiche della <span className="text-foreground">persona</span> e la categoria d&apos;uso.
+        Cercheremo nel registro un avatar reale e consenziente. La <em>scena</em> la dirigi dopo.
+      </p>
 
-      <section style={{ maxWidth: 620, margin: "0 auto", padding: "3rem 1.5rem" }}>
-        <span style={{ color: "#6B21E8", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>PASSO 1 — CHI</span>
-        <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Componi l&apos;identikit</h1>
-        <p style={{ color: "#6b7280", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
-          Seleziona le caratteristiche della <strong style={{ color: "#9ca3af" }}>persona</strong> e la categoria d&apos;uso.
-          Cercheremo nel registro un avatar reale e consenziente. La <em>scena</em> la dirigi dopo.
-        </p>
+      <form onSubmit={search} className="flex flex-col gap-6">
+        <ChipGroup label="Genere">
+          {GENDERS.map((g) => (
+            <Chip key={g.v} active={gender === g.v} onClick={() => toggle(gender, g.v, setGender)}>{g.l}</Chip>
+          ))}
+        </ChipGroup>
 
-        <form onSubmit={search} style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
-          <ChipGroup label="Genere">
-            {GENDERS.map((g) => (
-              <Chip key={g.v} active={gender === g.v} onClick={() => toggle(gender, g.v, setGender)}>{g.l}</Chip>
-            ))}
-          </ChipGroup>
+        <ChipGroup label="Età">
+          {AGE_BANDS.map((b, i) => (
+            <Chip key={b.l} active={ageIdx === i} onClick={() => setAgeIdx(ageIdx === i ? null : i)}>{b.l}</Chip>
+          ))}
+        </ChipGroup>
 
-          <ChipGroup label="Età">
-            {AGE_BANDS.map((b, i) => (
-              <Chip key={b.l} active={ageIdx === i} onClick={() => setAgeIdx(ageIdx === i ? null : i)}>{b.l}</Chip>
-            ))}
-          </ChipGroup>
+        <ChipGroup label="Capelli">
+          {HAIRS.map((h) => (
+            <Chip key={h} active={hair === h.toLowerCase()} onClick={() => toggle(hair, h.toLowerCase(), setHair)}>{h}</Chip>
+          ))}
+        </ChipGroup>
 
-          <ChipGroup label="Capelli">
-            {HAIRS.map((h) => (
-              <Chip key={h} active={hair === h.toLowerCase()} onClick={() => toggle(hair, h.toLowerCase(), setHair)}>{h}</Chip>
-            ))}
-          </ChipGroup>
+        <ChipGroup label="Etnia">
+          {ETHNICITIES.map((e) => (
+            <Chip key={e} active={ethnicity === e.toLowerCase()} onClick={() => toggle(ethnicity, e.toLowerCase(), setEthnicity)}>{e}</Chip>
+          ))}
+        </ChipGroup>
 
-          <ChipGroup label="Etnia">
-            {ETHNICITIES.map((e) => (
-              <Chip key={e} active={ethnicity === e.toLowerCase()} onClick={() => toggle(ethnicity, e.toLowerCase(), setEthnicity)}>{e}</Chip>
-            ))}
-          </ChipGroup>
+        <ChipGroup label="Categoria d'uso" hint="determina prezzo e consenso">
+          {CATEGORIES.map((c) => (
+            <Chip key={c} active={category === c} onClick={() => toggle(category, c, setCategory)}>{c}</Chip>
+          ))}
+        </ChipGroup>
 
-          <ChipGroup label="Categoria d'uso" hint="determina prezzo e consenso">
-            {CATEGORIES.map((c) => (
-              <Chip key={c} active={category === c} onClick={() => toggle(category, c, setCategory)}>{c}</Chip>
-            ))}
-          </ChipGroup>
+        <button type="submit" disabled={loading}
+          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+          {loading ? "Ricerca in corso…" : "Cerca avatar affine"}
+        </button>
+      </form>
 
-          <button type="submit" disabled={loading} style={{ padding: "0.9rem", borderRadius: 10, border: "none", background: loading ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer", marginTop: "0.4rem" }}>
-            {loading ? "Ricerca in corso…" : "Cerca avatar affine"}
-          </button>
-        </form>
+      {error && <p className="mt-6 text-sm text-crimson">{error}</p>}
 
-        {error && <p style={{ color: "#B8005C", fontSize: "0.85rem", marginTop: "1.5rem" }}>{error}</p>}
+      {result && (
+        <div className="mt-8">
+          {result.matched && result.results && result.results.length > 0 ? (
+            <>
+              <p className="mb-4 text-sm font-bold tracking-wide text-teal">
+                ✓ {result.results.length} AVATAR {result.results.length === 1 ? "TROVATO" : "TROVATI"}
+              </p>
+              <div className="flex flex-col gap-4">
+                {result.results.map((avatar) => {
+                  const gen = genByHandle[avatar.handle];
+                  const generating = generatingHandle === avatar.handle;
+                  const tier = TIER_CONFIG[avatar.tier];
+                  const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatar.portrait_url;
+                  return (
+                    <div key={avatar.handle} className="glass rounded-2xl border-teal/25 p-6">
+                      <div className="flex items-center gap-4">
+                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-obsidian-3">
+                          {portrait && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={portrait} alt={avatar.alias} className="h-full w-full object-cover" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-lg font-bold">{avatar.alias}</div>
+                          <div className="mb-1 text-sm text-muted">@{avatar.handle}</div>
+                          <span className="rounded-full px-2.5 py-0.5 text-[0.7rem] font-bold" style={{ background: tier.bg, color: tier.color }}>{tier.label}</span>
+                        </div>
+                      </div>
+                      <p className="mt-4 text-xs text-faint">Affinità: {avatar.reasons.join(" · ")}</p>
 
-        {result && (
-          <div style={{ marginTop: "2rem" }}>
-            {result.matched && result.results && result.results.length > 0 ? (
-              <>
-                <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 1rem" }}>
-                  ✓ {result.results.length} AVATAR {result.results.length === 1 ? "TROVATO" : "TROVATI"}
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  {result.results.map((avatar) => {
-                    const gen = genByHandle[avatar.handle];
-                    const generating = generatingHandle === avatar.handle;
-                    return (
-                      <div key={avatar.handle} style={{ background: "#12121a", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 16, padding: "1.5rem" }}>
-                        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                          <div style={{ width: 64, height: 64, borderRadius: 12, overflow: "hidden", background: "#1c1c28", flexShrink: 0 }}>
-                            {avatar.portrait_url && (
+                      {avatar.gallery_count > 0 && (
+                        <div className="mt-5">
+                          <span className="mb-2 block text-xs font-semibold text-muted">
+                            Repertorio <span className="font-normal text-faint">· esempi generati da questo volto</span>
+                          </span>
+                          <div className="flex gap-2 overflow-x-auto pb-1">
+                            {Array.from({ length: avatar.gallery_count }).map((_, i) => (
                               // eslint-disable-next-line @next/next/no-img-element
-                              <img src={avatar.portrait_url} alt={avatar.alias} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                            )}
-                          </div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: 700, fontSize: "1.05rem" }}>{avatar.alias}</div>
-                            <div style={{ color: "#6b7280", fontSize: "0.82rem", marginBottom: "0.3rem" }}>@{avatar.handle}</div>
-                            <span style={{ background: TIER_CONFIG[avatar.tier].bg, color: TIER_CONFIG[avatar.tier].color, borderRadius: 999, padding: "0.15rem 0.6rem", fontSize: "0.7rem", fontWeight: 700 }}>
-                              {TIER_CONFIG[avatar.tier].label}
-                            </span>
+                              <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`} loading="lazy"
+                                className="h-[150px] w-[112px] shrink-0 rounded-lg border border-white/8 bg-obsidian-3 object-cover" />
+                            ))}
                           </div>
                         </div>
-                        <p style={{ color: "#374151", fontSize: "0.75rem", margin: "1rem 0 0" }}>
-                          Affinità: {avatar.reasons.join(" · ")}
-                        </p>
+                      )}
 
-                        {/* Galleria/repertorio: cosa produce questo Soul (campioni watermarkati) */}
-                        {avatar.gallery_count > 0 && (
-                          <div style={{ marginTop: "1.2rem" }}>
-                            <span style={{ color: "#9ca3af", fontSize: "0.72rem", fontWeight: 600, display: "block", marginBottom: "0.5rem" }}>
-                              Repertorio <span style={{ color: "#374151", fontWeight: 400 }}>· esempi generati da questo volto</span>
-                            </span>
-                            <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.3rem" }}>
-                              {Array.from({ length: avatar.gallery_count }).map((_, i) => (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`}
-                                  style={{ height: 150, width: 112, objectFit: "cover", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "#1c1c28", flexShrink: 0 }} />
+                      {!gen ? (
+                        <>
+                          <div className="mt-5">
+                            <label className="mb-2 block text-xs font-bold tracking-[0.1em] text-violet-light">PASSO 2 — SCENA / DIREZIONE</label>
+                            <textarea
+                              value={sceneByHandle[avatar.handle] ?? ""}
+                              onChange={(e) => setSceneByHandle((m) => ({ ...m, [avatar.handle]: e.target.value }))}
+                              placeholder="Es. che balla in spiaggia al tramonto, luce dorata, look estivo, 35mm"
+                              rows={2}
+                              className="w-full resize-y rounded-xl border border-white/10 bg-obsidian px-3 py-3 text-sm text-foreground outline-none focus:border-violet/50"
+                            />
+                            <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
+                              Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — garantito dal Soul.
+                            </p>
+                          </div>
+
+                          <div className="mt-4">
+                            <span className="mb-2 block text-xs font-semibold text-muted">Modello</span>
+                            <div className="flex flex-wrap gap-2">
+                              {SOUL_MODELS.map((m) => (
+                                <Chip key={m.id} active={model === m.id} onClick={() => setModel(m.id)}>{m.label} · {m.quality}</Chip>
                               ))}
                             </div>
                           </div>
-                        )}
 
-                        {!gen ? (
-                          <>
-                            {/* Passo 2 — SCENA: direzione artistica libera */}
-                            <div style={{ marginTop: "1.2rem" }}>
-                              <label style={{ color: "#6B21E8", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", display: "block", marginBottom: "0.5rem" }}>
-                                PASSO 2 — SCENA / DIREZIONE
-                              </label>
-                              <textarea
-                                value={sceneByHandle[avatar.handle] ?? ""}
-                                onChange={(e) => setSceneByHandle((m) => ({ ...m, [avatar.handle]: e.target.value }))}
-                                placeholder="Es. che balla in spiaggia al tramonto, luce dorata, look estivo, 35mm"
-                                rows={2}
-                                style={{ width: "100%", padding: "0.8rem", borderRadius: 10, background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.08)", color: "#f0f0f5", fontSize: "0.9rem", outline: "none", resize: "vertical", fontFamily: "inherit" }}
-                              />
-                              <p style={{ color: "#374151", fontSize: "0.68rem", margin: "0.5rem 0 0", lineHeight: 1.5 }}>
-                                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — garantito dal Soul.
-                              </p>
-                            </div>
-
-                            {/* Modello (qualità) */}
-                            <div style={{ marginTop: "1rem" }}>
-                              <span style={{ color: "#9ca3af", fontSize: "0.72rem", fontWeight: 600, display: "block", marginBottom: "0.5rem" }}>Modello</span>
-                              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                                {SOUL_MODELS.map((m) => (
-                                  <Chip key={m.id} active={model === m.id} onClick={() => setModel(m.id)}>
-                                    {m.label} · {m.quality}
-                                  </Chip>
+                          {modelSupportsStyles && (
+                            <div className="mt-3">
+                              <span className="mb-2 block text-xs font-semibold text-muted">Stile <span className="font-normal text-faint">· opzionale</span></span>
+                              <div className="flex flex-wrap gap-2">
+                                {SOUL_STYLES.map((s) => (
+                                  <Chip key={s.id} active={styleId === s.id} onClick={() => setStyleId(styleId === s.id ? "" : s.id)}>{s.label}</Chip>
                                 ))}
                               </div>
                             </div>
+                          )}
 
-                            {/* Stile (solo Soul ID) */}
-                            {modelSupportsStyles && (
-                              <div style={{ marginTop: "0.9rem" }}>
-                                <span style={{ color: "#9ca3af", fontSize: "0.72rem", fontWeight: 600, display: "block", marginBottom: "0.5rem" }}>
-                                  Stile <span style={{ color: "#374151", fontWeight: 400 }}>· opzionale</span>
-                                </span>
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
-                                  {SOUL_STYLES.map((s) => (
-                                    <Chip key={s.id} active={styleId === s.id} onClick={() => setStyleId(styleId === s.id ? "" : s.id)}>
-                                      {s.label}
-                                    </Chip>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                              style={{ width: "100%", marginTop: "1rem", padding: "0.8rem", borderRadius: 10, border: "none", background: generating ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: generating ? "default" : "pointer" }}>
-                              {generating ? "Generazione…" : `Genera la tua scena · ${priceLabel}`}
-                            </button>
-                            <p style={{ color: "#374151", fontSize: "0.68rem", margin: "0.6rem 0 0", lineHeight: 1.5 }}>
-                              Output pulito, full-res, con certificato e royalty a {avatar.alias}.
-                            </p>
-                            <Link href={`/passport/${avatar.handle}`} style={{ display: "block", textAlign: "center", marginTop: "0.6rem", padding: "0.75rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#f0f0f5", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
-                              Vedi il passport →
-                            </Link>
-                          </>
-                        ) : (
-                          <div style={{ marginTop: "1.2rem", background: "#0a0a0f", border: "1px solid rgba(0,168,150,0.25)", borderRadius: 12, padding: "1.2rem" }}>
-                            <p style={{ color: "#00A896", fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.8rem" }}>✓ Generazione certificata</p>
-                            {gen.image_url && (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={gen.image_url} alt="output generato" style={{ width: "100%", maxWidth: 280, borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)", marginBottom: "1rem", background: "#1c1c28" }} />
-                            )}
-
-                            {/* Breakdown economico */}
-                            <div style={{ background: "#12121a", borderRadius: 10, padding: "0.9rem 1rem", marginBottom: "0.9rem" }}>
-                              <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
-                              <EuroRow label="Fee piattaforma" value={`− ${formatEur(gen.fee_cents ?? 0)}`} dim />
-                              <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "0.6rem 0" }} />
-                              <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents ?? 0)} highlight />
-                            </div>
-
-                            <p style={{ color: "#374151", fontSize: "0.68rem", letterSpacing: "0.04em", margin: "0 0 0.3rem" }}>CREDENZIALE D&apos;USCITA (hash anonimo)</p>
-                            <code style={{ display: "block", color: "#6B21E8", fontSize: "0.7rem", wordBreak: "break-all", fontFamily: "monospace", marginBottom: "0.9rem" }}>{gen.certificate}</code>
-                            {gen.certificate && (
-                              <a href={`/api/content/${gen.certificate}`} style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "rgba(0,168,150,0.12)", border: "1px solid rgba(0,168,150,0.3)", color: "#00A896", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none" }}>
-                                Scarica con provenienza →
-                              </a>
-                            )}
+                          <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
+                            className="mt-4 w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+                            {generating ? "Generazione…" : `Genera la tua scena · ${priceLabel}`}
+                          </button>
+                          <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">Output pulito, full-res, con certificato e royalty a {avatar.alias}.</p>
+                          <Link href={`/passport/${avatar.handle}`} className="mt-3 block rounded-xl border border-violet/30 bg-violet/10 px-4 py-3 text-center text-sm font-semibold text-foreground transition-colors hover:bg-violet/20">
+                            Vedi il passport →
+                          </Link>
+                        </>
+                      ) : (
+                        <div className="mt-5 rounded-xl border border-teal/25 bg-obsidian p-5">
+                          <p className="mb-3 text-sm font-bold text-teal">✓ Generazione certificata</p>
+                          {gen.image_url && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-white/8 bg-obsidian-3" />
+                          )}
+                          <div className="mb-4 rounded-lg bg-obsidian-2 p-4">
+                            <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
+                            <EuroRow label="Fee piattaforma" value={`− ${formatEur(gen.fee_cents ?? 0)}`} dim />
+                            <div className="my-2 h-px bg-white/6" />
+                            <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents ?? 0)} highlight />
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <div style={{ background: "rgba(184,0,92,0.05)", border: "1px solid rgba(184,0,92,0.3)", borderRadius: 16, padding: "1.5rem" }}>
-                <p style={{ color: "#B8005C", fontWeight: 700, fontSize: "0.95rem", margin: "0 0 0.5rem" }}>⛔ Richiesta bloccata</p>
-                <p style={{ color: "#6b7280", fontSize: "0.88rem", lineHeight: 1.6, margin: 0 }}>{result.reason}</p>
+                          <p className="mb-1 text-[0.7rem] tracking-wide text-faint">CREDENZIALE D&apos;USCITA (hash anonimo)</p>
+                          <code className="mb-4 block break-all font-mono text-[0.7rem] text-violet-light">{gen.certificate}</code>
+                          {gen.certificate && (
+                            <a href={`/api/content/${gen.certificate}`} className="block rounded-xl border border-teal/30 bg-teal/10 px-4 py-3 text-center text-sm font-bold text-teal transition-colors hover:bg-teal/20">
+                              Scarica con provenienza →
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
-        )}
-      </section>
-    </div>
+            </>
+          ) : (
+            <div className="rounded-2xl border border-crimson/30 bg-crimson/5 p-6">
+              <p className="mb-2 text-base font-bold text-crimson">⛔ Richiesta bloccata</p>
+              <p className="text-sm leading-relaxed text-muted">{result.reason}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </main>
   );
 }
 
 function ChipGroup({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.6rem" }}>
-        <span style={{ color: "#9ca3af", fontSize: "0.78rem", fontWeight: 600 }}>{label}</span>
-        {hint && <span style={{ color: "#374151", fontSize: "0.68rem" }}>· {hint}</span>}
+      <div className="mb-2.5 flex items-baseline gap-2">
+        <span className="text-sm font-semibold text-muted">{label}</span>
+        {hint && <span className="text-[0.7rem] text-faint">· {hint}</span>}
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>{children}</div>
+      <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   );
 }
@@ -350,17 +321,9 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      style={{
-        padding: "0.5rem 0.9rem",
-        borderRadius: 999,
-        cursor: "pointer",
-        fontSize: "0.82rem",
-        fontWeight: 600,
-        background: active ? "rgba(107,33,232,0.18)" : "#12121a",
-        border: active ? "1px solid #6B21E8" : "1px solid rgba(255,255,255,0.1)",
-        color: active ? "#f0f0f5" : "#9ca3af",
-        transition: "all 0.12s",
-      }}
+      className={`rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
+        active ? "border border-violet bg-violet/20 text-foreground" : "border border-white/10 bg-obsidian-2 text-muted hover:text-foreground"
+      }`}
     >
       {children}
     </button>
@@ -369,9 +332,9 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 
 function EuroRow({ label, value, dim, highlight }: { label: string; value: string; dim?: boolean; highlight?: boolean }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "0.15rem 0" }}>
-      <span style={{ color: dim ? "#6b7280" : "#9ca3af", fontSize: "0.82rem" }}>{label}</span>
-      <span style={{ color: highlight ? "#00A896" : "#9ca3af", fontSize: highlight ? "1.05rem" : "0.85rem", fontWeight: highlight ? 800 : 600 }}>{value}</span>
+    <div className="flex items-baseline justify-between py-0.5">
+      <span className={`text-sm ${dim ? "text-muted" : "text-foreground/80"}`}>{label}</span>
+      <span className={highlight ? "text-base font-extrabold text-teal" : "text-sm font-semibold text-foreground/80"}>{value}</span>
     </div>
   );
 }
