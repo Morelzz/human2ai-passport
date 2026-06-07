@@ -9,6 +9,7 @@ import LogoutButton from "./LogoutButton";
 import PayoutButton from "./PayoutButton";
 import SoulActivate from "./SoulActivate";
 import OrgAvatars, { OrgAvatar } from "./OrgAvatars";
+import LinkWallet from "./LinkWallet";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -41,6 +42,7 @@ export default async function AccountPage() {
 
   // Avatar del creatore (se esiste)
   let myAvatar: string | null = null;
+  let myWallet: string | null = null;
   let soulActive = false;
   let royaltyCents = 0;
   let usageCount = 0;
@@ -49,10 +51,11 @@ export default async function AccountPage() {
     const admin = createServerClient();
     const { data: av } = await admin
       .from("avatars")
-      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count")
+      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count, owner_wallet")
       .eq("owner_id", user.id)
       .maybeSingle();
     myAvatar = av?.handle ?? null;
+    myWallet = (av as { owner_wallet?: string } | null)?.owner_wallet ?? null;
     soulActive = !!av?.soul_ref;
     royaltyCents = av?.royalty_accrued_cents ?? 0;
     usageCount = av?.usage_count ?? 0;
@@ -171,6 +174,7 @@ export default async function AccountPage() {
                 <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "#6b7280", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                   Gestisci il consenso
                 </Link>
+                <LinkWallet initialWallet={myWallet} />
               </div>
             ) : isVerifiedSeller ? (
               <Link href="/account/avatar" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
