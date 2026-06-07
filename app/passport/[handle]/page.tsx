@@ -3,6 +3,8 @@ import { createServerClient } from "@/lib/supabase";
 import { Avatar, ConsentEvent, TIER_CONFIG } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
 import { galleryCount } from "@/lib/sample-galleries";
+import { SiteNav } from "@/components/marketing/SiteNav";
+import { CineBackground } from "@/components/marketing/CineBackground";
 import PassportClient from "./PassportClient";
 
 interface Props {
@@ -48,14 +50,20 @@ export default async function PassportPage({ params }: Props) {
   const tokenShort = truncateToken(av.token_hash);
 
   return (
-    <PassportClient
-      avatar={av}
-      events={consentEvents}
-      status={status}
-      tier={tier}
-      tokenShort={tokenShort}
-      ownerVerified={ownerVerified}
-      galleryCount={galleryCount(handle)}
-    />
+    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+      <CineBackground />
+      <div className="relative z-[2]">
+        <SiteNav />
+        <PassportClient
+          avatar={av}
+          events={consentEvents}
+          status={status}
+          tier={tier}
+          tokenShort={tokenShort}
+          ownerVerified={ownerVerified}
+          galleryCount={galleryCount(handle)}
+        />
+      </div>
+    </div>
   );
 }

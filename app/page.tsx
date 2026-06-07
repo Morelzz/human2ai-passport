@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase";
-import { createAuthClient } from "@/lib/supabase-auth";
 import { Tier } from "@/lib/types";
-import { Navbar } from "@/components/marketing/Navbar";
+import { SiteNav } from "@/components/marketing/SiteNav";
+import { CineBackground } from "@/components/marketing/CineBackground";
 import { Hero } from "@/components/marketing/Hero";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
@@ -28,24 +28,12 @@ export default async function Home() {
       revoked_at: a.revoked_at,
     }));
 
-  // Sessione per la nav.
-  const auth = await createAuthClient();
-  const { data: { user } } = await auth.auth.getUser();
-  let firstName: string | null = null;
-  if (user) {
-    const { data: profile } = await auth.from("profiles").select("full_name").eq("id", user.id).single();
-    const full = profile?.full_name || user.email || "";
-    firstName = full ? String(full).trim().split(/\s+/)[0] : "Account";
-  }
-
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      {/* Strato cinematografico (bagliori + grana) */}
-      <div className="cine-bg" aria-hidden />
-      <div className="grain" aria-hidden />
+      <CineBackground />
 
       <div className="relative z-[2]">
-        <Navbar firstName={firstName} />
+        <SiteNav />
         <Hero count={approved.length} />
         <HowItWorks />
         <Registry avatars={featured} total={approved.length} />
