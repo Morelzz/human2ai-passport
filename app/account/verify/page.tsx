@@ -12,9 +12,12 @@ export default async function VerifyIdentityPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("kyc_status")
+    .select("role, kyc_status")
     .eq("id", user.id)
     .single();
+
+  // KYC riservato ai creatori/venditori. Compratori (e altri) tornano all'account.
+  if (profile?.role !== "seller") redirect("/account");
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">

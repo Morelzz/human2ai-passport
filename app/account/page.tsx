@@ -117,25 +117,30 @@ export default async function AccountPage() {
 
         <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
           <Row label="Tipo di account" value={ROLE_LABEL[role] ?? role} />
-          <Row label="Verifica identità (KYC)" value={kyc.text} valueColor={kyc.color} />
 
-          {(profile?.kyc_status ?? "none") !== "approved" && (
-            <Link
-              href="/account/verify"
-              style={{
-                display: "block",
-                textAlign: "center",
-                padding: "0.75rem",
-                borderRadius: 10,
-                background: "linear-gradient(135deg,#6B21E8,#B8005C)",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: "0.85rem",
-                textDecoration: "none",
-              }}
-            >
-              {profile?.kyc_status === "rejected" ? "Riprova la verifica" : "Verifica ora la tua identità"}
-            </Link>
+          {/* KYC SOLO per i creatori/venditori. Il compratore accede e basta. */}
+          {role === "seller" && (
+            <>
+              <Row label="Verifica identità (KYC)" value={kyc.text} valueColor={kyc.color} />
+              {(profile?.kyc_status ?? "none") !== "approved" && (
+                <Link
+                  href="/account/verify"
+                  style={{
+                    display: "block",
+                    textAlign: "center",
+                    padding: "0.75rem",
+                    borderRadius: 10,
+                    background: "linear-gradient(135deg,#6B21E8,#B8005C)",
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "0.85rem",
+                    textDecoration: "none",
+                  }}
+                >
+                  {profile?.kyc_status === "rejected" ? "Riprova la verifica" : "Verifica ora la tua identità"}
+                </Link>
+              )}
+            </>
           )}
         </div>
 
