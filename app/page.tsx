@@ -5,6 +5,8 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import { Hero } from "@/components/marketing/Hero";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
+import { Tension } from "@/components/marketing/Tension";
+import { Manifesto } from "@/components/marketing/Manifesto";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
 import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
@@ -36,6 +38,8 @@ export default async function Home() {
       <div className="relative z-[2]">
         <SiteNav />
         <Hero count={approved.length} />
+        <Tension />
+        <Manifesto />
         <HowItWorks />
         <Registry avatars={featured} total={approved.length} />
         <PublicRoadmap />
