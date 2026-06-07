@@ -7,6 +7,8 @@ import { Hero } from "@/components/marketing/Hero";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { Tension } from "@/components/marketing/Tension";
 import { Manifesto } from "@/components/marketing/Manifesto";
+import { Audiences } from "@/components/marketing/Audiences";
+import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
 import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
@@ -41,15 +43,20 @@ export default async function Home() {
         <Tension />
         <Manifesto />
         <HowItWorks />
+        <Audiences />
         <Registry avatars={featured} total={approved.length} />
+        <Trust />
         <PublicRoadmap />
         <ClosingCTA />
 
         <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] px-5 py-8 sm:px-8">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-shield.png" alt="" aria-hidden className="h-7 w-7 object-contain opacity-80 [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
-            <span className="text-xs font-bold tracking-[0.15em] text-muted">HUMAN2AI</span>
+            <div className="leading-tight">
+              <span className="block text-xs font-bold tracking-[0.15em] text-muted">HUMAN2AI</span>
+              <span className="block text-[0.62rem] font-semibold tracking-[0.08em] text-faint">Real Humans. Real Rights. Real Earnings.</span>
+            </div>
           </div>
           <div className="flex flex-wrap gap-5">
             <Link href="/match" className="text-sm text-faint hover:text-muted">Registro</Link>
