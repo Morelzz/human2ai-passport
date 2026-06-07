@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Copy, Check, ShieldCheck, BadgeCheck, AlertTriangle } from "lucide-react";
+import { Copy, Check, ShieldCheck, BadgeCheck, AlertTriangle, Fingerprint, Link2 } from "lucide-react";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -15,6 +15,17 @@ interface Props {
   tokenShort: string;
   ownerVerified?: boolean;
   galleryCount?: number;
+  ownership: {
+    owner: string;
+    ownerVerified?: boolean;
+    tokenShort: string;
+    issued: string;
+    soulbound: boolean;
+    chain: string | null;
+    tx: string | null;
+    anchoredAt: string | null;
+    ownerWallet: string | null;
+  };
 }
 
 function formatDate(d: string) {
@@ -26,7 +37,7 @@ const fade = {
   show: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] as const } }),
 };
 
-export default function PassportClient({ avatar, events, status, tier, tokenShort, ownerVerified, galleryCount = 0 }: Props) {
+export default function PassportClient({ avatar, events, status, tier, tokenShort, ownerVerified, galleryCount = 0, ownership }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyToken() {
@@ -95,6 +106,56 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             </div>
           </div>
         </div>
+      </motion.div>
+
+      {/* Atto di proprietà */}
+      <motion.div custom={1} variants={fade} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
+        className="glass mt-4 overflow-hidden rounded-2xl p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Fingerprint className="h-4 w-4 text-violet-light" />
+          <p className="text-xs tracking-[0.1em] text-muted">ATTO DI PROPRIETÀ</p>
+          {ownership.soulbound && (
+            <span className="rounded-full border border-violet/30 bg-violet/10 px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-violet-light">SOULBOUND</span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="mb-0.5 text-[0.7rem] text-muted">Titolare</p>
+            <p className="flex items-center gap-1.5 text-sm font-semibold">
+              {ownership.owner}
+              {ownership.ownerVerified && <BadgeCheck className="h-3.5 w-3.5 text-teal" />}
+            </p>
+          </div>
+          <div>
+            <p className="mb-0.5 text-[0.7rem] text-muted">Registrato il</p>
+            <p className="text-sm font-semibold">{formatDate(ownership.issued)}</p>
+          </div>
+          <div className="col-span-2">
+            <p className="mb-0.5 text-[0.7rem] text-muted">Token di proprietà</p>
+            <code className="rounded bg-violet/10 px-2 py-1 font-mono text-sm text-violet-light">{ownership.tokenShort}</code>
+          </div>
+        </div>
+
+        {/* Stato ancoraggio on-chain */}
+        <div className="mt-4 flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.02] p-3">
+          <Link2 className="h-4 w-4 shrink-0 text-muted" />
+          {ownership.tx ? (
+            <p className="text-xs text-muted">
+              Ancorato su <span className="font-semibold text-foreground capitalize">{ownership.chain ?? "on-chain"}</span> ·{" "}
+              <span className="font-mono text-violet-light">{ownership.tx.slice(0, 14)}…</span>
+            </p>
+          ) : (
+            <p className="text-xs text-muted">
+              <span className="font-semibold text-foreground">Pronto per l&apos;ancoraggio on-chain</span> — la proprietà verrà ancorata su Base (identità soulbound).
+            </p>
+          )}
+        </div>
+
+        <p className="mt-3 text-xs leading-relaxed text-faint">
+          Questo è il titolo del volto: <strong className="text-muted">non vendibile</strong> (non si vende la propria identità).
+          Le licenze d&apos;uso sono separate e tracciabili, con royalty alla persona a ogni utilizzo.
+        </p>
       </motion.div>
 
       {/* Repertorio */}

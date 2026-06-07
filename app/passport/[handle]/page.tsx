@@ -49,6 +49,21 @@ export default async function PassportPage({ params }: Props) {
   const tier = TIER_CONFIG[av.tier];
   const tokenShort = truncateToken(av.token_hash);
 
+  // Atto di proprietà: il token unico è il titolo. I campi on-chain (Base) sono
+  // opzionali finché non si applica ownership.sql / non si ancora la prima volta.
+  const a = avatar as Record<string, unknown>;
+  const ownership = {
+    owner: av.alias,
+    ownerVerified,
+    tokenShort,
+    issued: av.consent_start,
+    soulbound: (a.soulbound as boolean) ?? true,
+    chain: (a.chain as string) ?? null,
+    tx: (a.onchain_tx as string) ?? null,
+    anchoredAt: (a.anchored_at as string) ?? null,
+    ownerWallet: (a.owner_wallet as string) ?? null,
+  };
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -62,6 +77,7 @@ export default async function PassportPage({ params }: Props) {
           tokenShort={tokenShort}
           ownerVerified={ownerVerified}
           galleryCount={galleryCount(handle)}
+          ownership={ownership}
         />
       </div>
     </div>
