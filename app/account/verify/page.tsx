@@ -21,7 +21,7 @@ export default async function VerifyIdentityPage() {
       <CineBackground />
       <div className="relative z-[2]">
         <SiteNav />
-        <VerifyClient userId={user.id} initialStatus={profile?.kyc_status ?? "none"} />
+        <VerifyClient initialStatus={profile?.kyc_status ?? "none"} />
       </div>
     </div>
   );
