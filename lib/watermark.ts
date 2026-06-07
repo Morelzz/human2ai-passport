@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import { embedStego } from "./stegano";
 
 // Applica un watermark "impresso nei pixel" e restituisce i byte JPEG.
 // L'URL pulito del motore NON viene mai esposto al client: solo questa versione protetta.
@@ -56,4 +57,38 @@ export async function embedProvenance(
     })
     .jpeg({ quality: 95 })
     .toBuffer();
+}
+
+// Provenienza COMPLETA: filigrana INVISIBILE (certificato nascosto nei pixel,
+// steganografia) + metadati EXIF leggibili. Output PNG (lossless, necessario
+// perché il codice nascosto sopravviva). È la versione "certificato" scaricabile.
+export async function embedProvenancePng(
+  imageUrl: string,
+  info: { certificate: string; alias: string; verifyUrl: string }
+): Promise<Buffer> {
+  const resp = await fetch(imageUrl);
+  if (!resp.ok) throw new Error("download immagine fallito");
+  const buf = Buffer.from(await resp.arrayBuffer());
+
+  // 1. Nasconde il certificato nei pixel (invisibile).
+  const stego = await embedStego(buf, info.certificate);
+
+  // 2. Aggiunge i metadati di provenienza leggibili (best-effort: se la EXIF su
+  //    PNG non è supportata in runtime, restituiamo comunque il PNG marcato).
+  const desc = `Generato via Human2AI con consenso. Avatar: ${info.alias}. Certificato: ${info.certificate}. Verifica: ${info.verifyUrl}`;
+  try {
+    return await sharp(stego)
+      .withExif({
+        IFD0: {
+          ImageDescription: desc,
+          Copyright: "Human2AI — contenuto certificato, persona reale consenziente",
+          Artist: info.alias,
+          Software: "Human2AI",
+        },
+      })
+      .png()
+      .toBuffer();
+  } catch {
+    return stego;
+  }
 }

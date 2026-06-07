@@ -1,5 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
-import { embedProvenance } from "@/lib/watermark";
+import { embedProvenancePng } from "@/lib/watermark";
 
 // Download del contenuto commerciale con la PROVENIENZA impressa nei metadati.
 // Chi ha il certificato (il compratore) ottiene il file con la sua tracciabilità.
@@ -24,7 +24,7 @@ export async function GET(
 
   let out: Buffer;
   try {
-    out = await embedProvenance(gen.image_url, {
+    out = await embedProvenancePng(gen.image_url, {
       certificate: cert,
       alias: av?.alias ?? "—",
       verifyUrl: `${origin}/verify`,
@@ -35,8 +35,8 @@ export async function GET(
 
   return new Response(new Uint8Array(out), {
     headers: {
-      "Content-Type": "image/jpeg",
-      "Content-Disposition": `attachment; filename="human2ai-${cert.slice(0, 12)}.jpg"`,
+      "Content-Type": "image/png",
+      "Content-Disposition": `attachment; filename="human2ai-${cert.slice(0, 12)}.png"`,
       "Cache-Control": "private, max-age=3600",
     },
   });
