@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
+import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 
 export const metadata = {
   title: "Trasparenza — Human2AI",
@@ -90,32 +91,14 @@ export default async function TrasparenzaPage() {
             </div>
           </div>
 
-          {/* ── ROADMAP ──────────────────────────────────────────────── */}
-          <div className="mt-16">
-            <div className="reveal text-center">
-              <span className="text-xs font-bold tracking-[0.14em] text-teal">ROADMAP</span>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">La strada verso lo standard globale</h2>
-            </div>
-            <ol className="relative mt-10 ml-3 border-l border-white/10">
-              {[
-                { q: "Q1", c: "#8b47f0", t: "Lancio della piattaforma", d: "Il registro pubblico dei volti consenzienti: identità, consenso-timeline, verifica, filigrana invisibile e proprietà soulbound." },
-                { q: "Q2", c: "#B8005C", t: "Integrazione con i sistemi generativi", d: "Aggancio via API/filtro ai motori di generazione, per testare su larga scala il passaggio obbligato dal consenso." },
-                { q: "Q3", c: "#00A896", t: "Conversione di massa", d: "Adozione mobile-first: ogni volto diventa un'identità verificata e pagata. Lo standard diventa abitudine." },
-                { q: "Q4", c: "#8b47f0", t: "Infrastruttura e scala globale", d: "Data center a basso impatto ambientale, diffusione internazionale e il diritto d'immagine come standard riconosciuto." },
-              ].map((p, i) => (
-                <li key={p.q} className="reveal relative mb-8 pl-8" style={{ animationDelay: `${0.08 * i}s` }}>
-                  <span className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full border-2 border-obsidian" style={{ background: p.c }} />
-                  <div className="glass rounded-2xl p-5">
-                    <span className="text-xs font-extrabold tracking-widest" style={{ color: p.c }}>{p.q}</span>
-                    <h3 className="mt-1 text-lg font-bold">{p.t}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted">{p.d}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
+        </section>
 
-          <p className="mx-auto mt-14 max-w-xl text-center text-xs leading-relaxed text-faint">
+        {/* Roadmap pubblica (visione 5 anni) — stesso componente della home,
+            unica fonte: docs/SITE_ROADMAP.md. */}
+        <PublicRoadmap />
+
+        <section className="mx-auto max-w-xl px-5 pb-20 text-center sm:px-8">
+          <p className="text-xs leading-relaxed text-faint">
             Nessun dato personale o biometrico è esposto. Solo aggregati. Ogni contenuto è
             verificabile dal suo certificato in <Link href="/verify" className="text-teal hover:underline">/verify</Link>.
           </p>

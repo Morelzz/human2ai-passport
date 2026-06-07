@@ -6,6 +6,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import { Hero } from "@/components/marketing/Hero";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
+import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 
 export default async function Home() {
@@ -37,6 +38,7 @@ export default async function Home() {
         <Hero count={approved.length} />
         <HowItWorks />
         <Registry avatars={featured} total={approved.length} />
+        <PublicRoadmap />
         <ClosingCTA />
 
         <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] px-5 py-8 sm:px-8">
