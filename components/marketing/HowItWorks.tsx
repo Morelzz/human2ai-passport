@@ -1,39 +1,61 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ShieldCheck, Sparkles, Coins, BadgeCheck } from "lucide-react";
+import { ShieldCheck, Search, Coins } from "lucide-react";
+
+// [COME FUNZIONA] — Tre passi, dopo il manifesto. Copy verbatim da
+// docs/SITE_COPY.md. I motori (Higgsfield/HeyGen) restano invisibili.
 
 const STEPS = [
-  { n: "01", t: "Consenso", d: "Una persona reale rivendica il proprio volto, verifica l'identità e dichiara gli usi autorizzati.", Icon: ShieldCheck, color: "text-violet", ring: "border-violet/40 bg-violet/10" },
-  { n: "02", t: "Generazione", d: "Chi crea sceglie un volto consenziente. Senza consenso, niente generazione.", Icon: Sparkles, color: "text-crimson", ring: "border-crimson/40 bg-crimson/10" },
-  { n: "03", t: "Royalty", d: "Ogni generazione paga la persona reale: l'80% a lei, accumulo e payout.", Icon: Coins, color: "text-teal", ring: "border-teal/40 bg-teal/10" },
-  { n: "04", t: "Certificato", d: "Ogni contenuto esce con un token verificabile da chiunque, per sempre.", Icon: BadgeCheck, color: "text-violet-light", ring: "border-violet/40 bg-violet/10" },
+  {
+    n: "01",
+    t: "Una persona reale entra.",
+    d: "Viene verificata, firma il proprio consenso e sceglie dove la sua immagine può vivere.",
+    Icon: ShieldCheck,
+    color: "text-violet",
+    ring: "border-violet/40 bg-violet/10",
+  },
+  {
+    n: "02",
+    t: "Una richiesta arriva.",
+    d: "Chi crea descrive ciò che gli serve. Il sistema cerca una persona reale che abbia acconsentito. Se non la trova, non genera. Punto.",
+    Icon: Search,
+    color: "text-crimson",
+    ring: "border-crimson/40 bg-crimson/10",
+  },
+  {
+    n: "03",
+    t: "Il valore torna alla persona.",
+    d: "A ogni utilizzo, una royalty matura nel portafoglio di chi ha messo il proprio volto. Il valore generato dall'AI torna all'essere umano da cui nasce.",
+    Icon: Coins,
+    color: "text-teal",
+    ring: "border-teal/40 bg-teal/10",
+  },
 ];
 
 const reveal = {
   hidden: { opacity: 0, y: 24 },
-  show: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const } }),
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const },
+  }),
 };
 
 export function HowItWorks() {
   return (
     <section id="come-funziona" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-8 sm:py-24">
-      <motion.p
-        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        className="text-center text-xs tracking-[0.18em] text-faint"
-      >
-        IL LOOP DEL CONSENSO
-      </motion.p>
       <motion.h2
-        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="mt-2 text-center text-3xl font-bold tracking-tight sm:text-4xl"
+        className="text-center text-3xl font-bold tracking-tight sm:text-4xl"
       >
-        Quattro passi, un patto.
+        Come funziona
       </motion.h2>
 
-      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {STEPS.map((s, i) => (
           <motion.div
             key={s.n}
@@ -55,11 +77,6 @@ export function HowItWorks() {
           </motion.div>
         ))}
       </div>
-
-      <p className="mt-10 text-center text-sm text-muted">
-        Hai un&apos;immagine generata?{" "}
-        <Link href="/verify" className="font-semibold text-teal hover:underline">Verifica il suo certificato →</Link>
-      </p>
     </section>
   );
 }
