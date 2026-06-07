@@ -61,6 +61,25 @@ body {
   to   { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
 }
 
+/* Campo di profondità a punti: griglia rada mascherata che sfuma ai bordi,
+   con drift verticale lentissimo (come particelle che salgono). Dà spazialità
+   senza appesantire — è un solo elemento con un pattern CSS. */
+.cine-stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 0.5px, transparent 0.6px);
+  background-size: 38px 38px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 60% at 50% 32%, #000 28%, transparent 76%);
+  mask-image: radial-gradient(ellipse 85% 60% at 50% 32%, #000 28%, transparent 76%);
+  animation: cine-stars-drift 90s linear infinite;
+}
+@keyframes cine-stars-drift {
+  to { background-position: 38px -760px; }
+}
+
 /* Grana cinematografica finissima sopra ogni cosa. */
 .grain {
   position: fixed;
@@ -112,6 +131,7 @@ body {
 /* Rispetto totale di chi preferisce meno movimento. */
 @media (prefers-reduced-motion: reduce) {
   .cine-bg { animation: none; opacity: 1; }
+  .cine-stars { animation: none; }
   .reveal { animation: none; opacity: 1; transform: none; }
   .glass-hover:hover { transform: none; }
 }
