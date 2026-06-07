@@ -1,9 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
-import { page, colors } from "@/lib/ui";
-import { Nav } from "@/app/Nav";
 
 interface PendingAvatar {
   id: string;
@@ -53,9 +50,6 @@ export default function ReviewClient() {
   }
 
   return (
-    <div style={page}>
-      <Nav right={<Link href="/account" style={{ color: colors.muted, fontSize: "0.85rem", textDecoration: "none" }}>Account</Link>} />
-
       <section style={{ maxWidth: 760, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <span style={{ color: "#B8005C", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
         <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Coda di revisione</h1>
@@ -104,6 +98,5 @@ export default function ReviewClient() {
           </div>
         )}
       </section>
-    </div>
   );
 }

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { PAYOUT_THRESHOLD_CENTS, formatEur } from "@/lib/wallet";
-import { page } from "@/lib/ui";
-import { Nav } from "@/app/Nav";
+import { SiteNav } from "@/components/marketing/SiteNav";
+import { CineBackground } from "@/components/marketing/CineBackground";
 import LogoutButton from "./LogoutButton";
 import PayoutButton from "./PayoutButton";
 import SoulActivate from "./SoulActivate";
@@ -97,8 +97,10 @@ export default async function AccountPage() {
   const myGenerations: MyGen[] = (gens ?? []) as MyGen[];
 
   return (
-    <div style={page}>
-      <Nav right={<LogoutButton />} />
+    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+      <CineBackground />
+      <div className="relative z-[2]">
+        <SiteNav />
 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem", flexWrap: "wrap", margin: "0 0 0.4rem" }}>
@@ -257,10 +259,15 @@ export default async function AccountPage() {
           </div>
         )}
 
-        <p style={{ color: "#374151", fontSize: "0.78rem", lineHeight: 1.6, marginTop: "2rem" }}>
+        <div style={{ marginTop: "2rem", display: "flex", justifyContent: "center" }}>
+          <LogoutButton />
+        </div>
+
+        <p style={{ color: "#374151", fontSize: "0.78rem", lineHeight: 1.6, marginTop: "1.5rem", textAlign: "center" }}>
           Il tuo profilo è protetto: solo tu puoi vederlo e modificarlo.
         </p>
       </section>
+      </div>
     </div>
   );
 }
