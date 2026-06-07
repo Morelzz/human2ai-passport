@@ -1,5 +1,5 @@
-import { page } from "@/lib/ui";
-import { Nav } from "../Nav";
+import { SiteNav } from "@/components/marketing/SiteNav";
+import { CineBackground } from "@/components/marketing/CineBackground";
 import ReportClient from "./ReportClient";
 
 interface Props {
@@ -11,21 +11,24 @@ export default async function ReportPage({ searchParams }: Props) {
   const { handle, cert } = await searchParams;
 
   return (
-    <div style={page}>
-      <Nav breadcrumb="Segnala abuso" />
+    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+      <CineBackground />
+      <div className="relative z-[2]">
+        <SiteNav />
 
-      <main style={{ maxWidth: 600, margin: "0 auto", padding: "4rem 1.5rem" }}>
-        <div style={{ marginBottom: "2rem" }}>
-          <span style={{ color: "#B8005C", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>ENFORCEMENT</span>
-          <h1 style={{ fontSize: "2rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Segnala un abuso</h1>
-          <p style={{ color: "#6b7280", lineHeight: 1.6, margin: 0 }}>
-            Se un avatar non rappresenta una persona realmente consenziente, è un&apos;<strong style={{ color: "#9ca3af" }}>impersonazione</strong>,
-            o un contenuto è stato usato fuori dalle categorie concesse, segnalalo. Gli operatori revisionano
-            ogni segnalazione e, se accolta, l&apos;avatar viene rimosso dal registro pubblico.
-          </p>
-        </div>
-        <ReportClient initialHandle={handle ?? ""} initialCert={cert ?? ""} />
-      </main>
+        <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
+          <div className="mb-8">
+            <span className="text-xs font-bold tracking-[0.14em] text-crimson">ENFORCEMENT</span>
+            <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Segnala un abuso</h1>
+            <p className="mt-3 leading-relaxed text-muted">
+              Se un avatar non rappresenta una persona realmente consenziente, è un&apos;<span className="text-foreground">impersonazione</span>,
+              o un contenuto è stato usato fuori dalle categorie concesse, segnalalo. Gli operatori revisionano
+              ogni segnalazione e, se accolta, l&apos;avatar viene rimosso dal registro pubblico.
+            </p>
+          </div>
+          <ReportClient initialHandle={handle ?? ""} initialCert={cert ?? ""} />
+        </main>
+      </div>
     </div>
   );
 }
