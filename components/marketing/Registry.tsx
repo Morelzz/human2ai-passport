@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TIER_CONFIG, Tier } from "@/lib/types";
+import { avatarArt } from "@/lib/avatar-art";
 
 export interface FeaturedAvatar {
   handle: string;
@@ -15,9 +16,9 @@ export interface FeaturedAvatar {
 }
 
 // Il ritratto reale di Mario passa dalla route interna; gli altri usano il portrait.
-function imageFor(a: FeaturedAvatar): string | null {
+function imageFor(a: FeaturedAvatar): string {
   if (a.handle === "mario-r") return "/api/sample/mario-r/0";
-  return a.portrait_url;
+  return avatarArt(a.handle, a.alias);
 }
 
 export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total: number }) {

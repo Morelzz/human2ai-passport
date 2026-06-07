@@ -5,6 +5,7 @@ import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
 import { formatEur, grossForCategory } from "@/lib/wallet";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
+import { avatarArt } from "@/lib/avatar-art";
 
 // --- Opzioni dell'identikit (chip cliccabili) ---
 const GENDERS = [
@@ -187,7 +188,7 @@ export default function MatchClient() {
                   const gen = genByHandle[avatar.handle];
                   const generating = generatingHandle === avatar.handle;
                   const tier = TIER_CONFIG[avatar.tier];
-                  const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatar.portrait_url;
+                  const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatarArt(avatar.handle, avatar.alias);
                   return (
                     <div key={avatar.handle} className="glass rounded-2xl border-teal/25 p-6">
                       <div className="flex items-center gap-4">

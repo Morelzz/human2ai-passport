@@ -106,7 +106,8 @@ export async function POST(request: Request) {
   const id = crypto.randomUUID();
   const consentStart = new Date().toISOString().slice(0, 10);
   const tokenHash = computeTokenHash(id, consentStart, validApproved);
-  const portraitUrl = `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(handle)}&backgroundColor=6B21E8`;
+  // Nessun ritratto esterno: l'avatar visivo è generato localmente (lib/avatar-art) al render.
+  const portraitUrl: string | null = null;
   // Enterprise: token per il consenso "persona-nel-loop" (link da condividere).
   const consentToken = isEnterprise ? crypto.randomBytes(24).toString("hex") : null;
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Copy, Check, ShieldCheck, BadgeCheck, AlertTriangle } from "lucide-react";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
+import { avatarArt } from "@/lib/avatar-art";
 
 interface Props {
   avatar: Avatar;
@@ -36,7 +37,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
 
   const royaltyEur = (avatar.royalty_accrued_cents / 100).toFixed(2);
   // Mario ha un ritratto reale via route interna; gli altri usano il portrait.
-  const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatar.portrait_url;
+  const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatarArt(avatar.handle, avatar.alias);
 
   const labels: Record<string, string> = {
     GRANTED: "Consenso concesso",

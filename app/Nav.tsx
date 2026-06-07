@@ -1,12 +1,15 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { colors, gradient } from "@/lib/ui";
+import { colors } from "@/lib/ui";
 
-// Logo Human2AI (cerchio gradiente + wordmark). Link alla home.
+// Logo Human2AI (scudo + wordmark). Link alla home.
+// Lo scudo PNG ha fondo navy: lo fondiamo nel dark con una maschera radiale.
 export function Logo({ size = 28 }: { size?: number }) {
+  const mask = "radial-gradient(circle,#000 56%,transparent 80%)";
   return (
     <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-      <div style={{ width: size, height: size, borderRadius: "50%", background: gradient, flexShrink: 0 }} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/logo-shield.png" alt="" aria-hidden style={{ width: size, height: size, objectFit: "contain", maskImage: mask, WebkitMaskImage: mask, flexShrink: 0 }} />
       <span style={{ color: colors.text, fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
     </Link>
   );
