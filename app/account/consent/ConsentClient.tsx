@@ -37,11 +37,6 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, k
   }
 
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem" }}>
-        <Link href="/account" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>← Torna all&apos;account</Link>
-      </nav>
-
       <section style={{ maxWidth: 540, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
         <h1 style={{ fontSize: "1.7rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Gestisci il consenso</h1>
         <p style={{ color: "#6b7280", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
@@ -163,6 +158,5 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, k
           </>
         )}
       </section>
-    </div>
   );
 }

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { SiteNav } from "@/components/marketing/SiteNav";
+import { CineBackground } from "@/components/marketing/CineBackground";
 import ConsentClient from "./ConsentClient";
 
 export default async function ConsentPage() {
@@ -18,6 +20,10 @@ export default async function ConsentPage() {
   if (!avatar) redirect("/account");
 
   return (
+    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+      <CineBackground />
+      <div className="relative z-[2]">
+        <SiteNav />
     <ConsentClient
       handle={avatar.handle}
       approved={avatar.approved_categories ?? []}
@@ -37,5 +43,7 @@ export default async function ConsentPage() {
         language: avatar.language,
       }}
     />
+      </div>
+    </div>
   );
 }

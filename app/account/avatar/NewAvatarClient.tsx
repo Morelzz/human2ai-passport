@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CATEGORIES, IDENTITY_KIT, IDENTITY_LABELS, TIER_CONFIG, Tier } from "@/lib/types";
-import { page, colors } from "@/lib/ui";
-import { Nav } from "@/app/Nav";
 
 const TIERS: Tier[] = ["SPARK", "SHAPE", "SOUL", "HUMAN"];
 
@@ -60,9 +58,6 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
   }
 
   return (
-    <div style={page}>
-      <Nav right={<Link href="/account" style={{ color: colors.muted, fontSize: "0.85rem", textDecoration: "none" }}>← Torna all&apos;account</Link>} />
-
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
         {consentUrl ? (
           <div style={{ background: "#12121a", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 18, padding: "2rem" }}>
@@ -166,7 +161,6 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
         </>
         )}
       </section>
-    </div>
   );
 }
 

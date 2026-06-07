@@ -42,13 +42,6 @@ export default function VerifyClient({ userId, initialStatus }: { userId: string
   }
 
   return (
-    <div style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0f0f5" }}>
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "1rem 2rem" }}>
-        <Link href="/account" style={{ color: "#6b7280", fontSize: "0.85rem", textDecoration: "none" }}>
-          ← Torna all&apos;account
-        </Link>
-      </nav>
-
       <section style={{ maxWidth: 460, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.25)", borderRadius: 999, padding: "0.3rem 0.9rem", marginBottom: "1.5rem" }}>
           <span style={{ color: "#00A896", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em" }}>VERIFICA IDENTITÀ — DEMO</span>
@@ -86,7 +79,6 @@ export default function VerifyClient({ userId, initialStatus }: { userId: string
           )}
         </div>
       </section>
-    </div>
   );
 }
 
