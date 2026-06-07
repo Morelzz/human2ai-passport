@@ -45,6 +45,9 @@ export function CineBackground() {
       {/* Campo di profondità a punti (griglia rada mascherata) — dà spazialità. */}
       <div className="cine-stars" aria-hidden />
 
+      {/* Vignettatura: bordi più scuri, inquadratura cinematografica. */}
+      <div className="cine-vignette" aria-hidden />
+
       {/* Grana cinematografica finissima. */}
       <div className="grain" aria-hidden />
     </>

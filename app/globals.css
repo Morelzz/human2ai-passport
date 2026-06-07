@@ -28,6 +28,7 @@
 html {
   background: #0a0a0f;
   color: #f0f0f5;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -78,6 +79,16 @@ body {
 }
 @keyframes cine-stars-drift {
   to { background-position: 38px -760px; }
+}
+
+/* Vignettatura cinematografica: bordi leggermente più scuri per inquadrare la
+   scena e dare profondità (lo schermo non è più una lastra piatta uniforme). */
+.cine-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(120% 120% at 50% 38%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
 }
 
 /* Grana cinematografica finissima sopra ogni cosa. */
