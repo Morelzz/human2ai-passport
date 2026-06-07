@@ -36,17 +36,17 @@ export function Hero({ count }: { count: number }) {
           </motion.div>
 
           <motion.h1 variants={item} className="text-balance text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-[3.75rem]">
-            Presto, generare un volto <span className="text-crimson">senza consenso</span> sarà <span className="text-gradient">impossibile</span>.
+            Dietro ogni volto, una <span className="text-gradient">persona vera</span>.
           </motion.h1>
 
           <motion.p variants={item} className="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg lg:mx-0">
-            Noi siamo il filtro tra ogni intelligenza artificiale e ogni volto umano.
-            Ogni identità ha un consenso <span className="text-foreground">verificabile</span>.
-            Ogni generazione <span className="text-foreground">paga la persona reale</span>.
+            HUMAN2AI è il filtro che impedisce a un&apos;intelligenza artificiale di creare un essere
+            umano senza il permesso di un essere umano reale — <span className="text-foreground">riconosciuto,
+            protetto e pagato</span> ogni volta.
           </motion.p>
 
           <motion.div variants={item} className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
-            <Button asChild size="lg"><Link href="/match">Esplora il registro</Link></Button>
+            <Button asChild size="lg"><Link href="/match">Esplora il Registro Volti</Link></Button>
             <Button asChild size="lg" variant="secondary"><Link href="#come-funziona">Come funziona</Link></Button>
           </motion.div>
 
