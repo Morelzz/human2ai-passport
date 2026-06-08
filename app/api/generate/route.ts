@@ -10,6 +10,7 @@ import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
 import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
+import { prepareExtras } from "@/lib/echo-job";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
@@ -110,6 +111,43 @@ export async function POST(request: Request) {
   const useEcho = body?.engine === "echo";
   const echoSize = isEchoSize(body?.echoSize) ? body.echoSize : "1024x1024";
   const echoQuality = isEchoQuality(body?.echoQuality) ? body.echoQuality : "high";
+
+  // ── ECHO COMMERCIALE → ASINCRONO ──────────────────────────────────────────
+  // La chiamata a gpt-image-2 (con reference) dura da ~1 a ~3 minuti, oltre il
+  // limite delle funzioni Vercel: NON generiamo qui. Mettiamo in coda un job,
+  // blocchiamo il prezzo, e ritorniamo subito (< 1s). Un worker esterno (la
+  // stessa app su host senza cap) esegue la generazione; il client interroga lo
+  // stato via /api/generate/job/[id]. (L'anteprima ECHO resta sincrona/dormiente.)
+  if (useEcho && !isPreview) {
+    if (!isEchoConfigured()) {
+      return NextResponse.json({ error: "Motore ECHO non configurato" }, { status: 503 });
+    }
+    // Fail-fast: serve il reference-set consensuale dell'avatar.
+    const identity = await getReferenceSet(handle);
+    if (identity.length === 0) {
+      return NextResponse.json({ error: "ECHO non disponibile per questo avatar (reference-set assente)" }, { status: 400 });
+    }
+    const extras = await prepareExtras(body?.extraRefs);
+    // Prezzo bloccato ora: dipende da categoria (valore) + size/quality (compute).
+    const { gross_cents, fee_cents, net_cents, surcharge_cents } = splitEcho(category, echoSize, echoQuality);
+    const params = {
+      scene,
+      category,
+      echoSize,
+      echoQuality,
+      extras,
+      pricing: { gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents },
+    };
+    const { data: job, error: jobErr } = await admin
+      .from("generation_jobs")
+      .insert({ engine: "echo", buyer_id: user.id, avatar_id: avatar.id, handle, params })
+      .select("id")
+      .single();
+    if (jobErr || !job) {
+      return NextResponse.json({ error: "Coda non disponibile: riprova" }, { status: 503 });
+    }
+    return NextResponse.json({ ok: true, mode: "async", jobId: job.id, alias: avatar.alias, gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents });
+  }
 
   let cleanUrl: string | null = null; // URL pulito (serve al download commerciale)
   let previewData: string | null = null; // anteprima watermarkata (data-URL)

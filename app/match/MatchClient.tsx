@@ -215,9 +215,45 @@ export default function MatchClient() {
       }),
     });
     const json = await res.json();
+    if (!res.ok) { setGeneratingHandle(null); setError(json.error ?? "Errore"); return; }
+    // ECHO commerciale = ASINCRONO: il server ha messo in coda un job, un worker
+    // lo genera (può durare minuti). Restiamo "in lavorazione" e interroghiamo lo
+    // stato finché non è pronto. L'utente può anche lasciare la pagina e tornare.
+    if (json.mode === "async" && json.jobId) {
+      await pollJob(handle, json.jobId, json.alias ?? "");
+      return;
+    }
     setGeneratingHandle(null);
-    if (!res.ok) { setError(json.error ?? "Errore"); return; }
     setGenByHandle((m) => ({ ...m, [handle]: json }));
+  }
+
+  // Interroga /api/generate/job/[id] finché il job non è done/error (max ~6 min).
+  async function pollJob(handle: string, jobId: string, alias: string) {
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 6 * 60 * 1000) {
+      await new Promise((r) => setTimeout(r, 3000));
+      let pj: GenResult & { status?: string; error?: string };
+      try {
+        const r = await fetch(`/api/generate/job/${jobId}`);
+        pj = await r.json();
+        if (!r.ok) { setGeneratingHandle(null); setError(pj.error ?? "Errore"); return; }
+      } catch {
+        continue; // singolo errore di rete: riprova al prossimo giro
+      }
+      if (pj.status === "done") {
+        setGenByHandle((m) => ({ ...m, [handle]: { ...pj, mode: "commercial", alias } }));
+        setGeneratingHandle(null);
+        return;
+      }
+      if (pj.status === "error") {
+        setGeneratingHandle(null);
+        setError(pj.error ?? "Generazione non riuscita");
+        return;
+      }
+      // pending | running → continua a interrogare
+    }
+    setGeneratingHandle(null);
+    setError("La generazione sta richiedendo troppo: riprova tra poco (il job potrebbe completarsi comunque).");
   }
 
   const baseGross = grossForCategory(category || null);
