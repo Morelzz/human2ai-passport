@@ -5,7 +5,21 @@ import { createServerClient } from "@/lib/supabase";
 import { grossForCategory, splitRoyalty } from "@/lib/wallet";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
 import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
-import { watermarkPreview } from "@/lib/watermark";
+import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
+import { generateEcho, isEchoConfigured } from "@/lib/engines/echo";
+import { getReferenceSet } from "@/lib/references";
+import { uploadPublicImage } from "@/lib/storage";
+
+export const runtime = "nodejs";
+
+// Compone il prompt finale per ECHO: suffisso identità di sistema (non
+// sovrascrivibile dal compratore) + scena sanitizzata.
+function buildEchoPrompt(scene: string): string {
+  const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
+  const base =
+    "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
+  return safe ? `${base} Scene: ${safe}.` : base;
+}
 
 export async function POST(request: Request) {
   const auth = await createAuthClient();
@@ -37,8 +51,6 @@ export async function POST(request: Request) {
 
   if (!avatar) return NextResponse.json({ error: "Avatar inesistente" }, { status: 404 });
   if (avatar.revoked_at) return NextResponse.json({ error: "Consenso revocato: generazione bloccata" }, { status: 403 });
-  if (avatar.tier !== "SOUL") return NextResponse.json({ error: "Solo avatar SOUL sono generabili in questa fase" }, { status: 403 });
-
   // Guardrail consenso: solo per uso COMMERCIALE la categoria dev'essere autorizzata.
   // L'anteprima watermarkata è discovery non commerciale: non vincola la categoria.
   if (!isPreview && category) {
@@ -50,32 +62,72 @@ export async function POST(request: Request) {
     }
   }
 
-  // Bridge verso il motore (Higgsfield Soul) — terza parte invisibile, solo lato server.
-  // Il prompt inviato è SOLO la scena: l'identità arriva dal Soul (custom_reference_id).
-  let engineResult;
-  try {
-    engineResult = await generateWithHiggsfield({
-      avatarId: avatar.id,
-      soulRef: avatar.soul_ref ?? null,
-      prompt: buildGenerationPrompt(scene),
-      model,
-      styleId: model === "soul-id" ? styleId : null,
-      preview: isPreview,
-    });
-  } catch {
-    return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
-  }
-  if (engineResult.status !== "completed") {
-    return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
+  // Selezione del motore. ECHO = gpt-image-2 con identity-lock dal reference-set;
+  // default = Higgsfield Soul. I motori restano terze parti INVISIBILI, lato server.
+  const useEcho = body?.engine === "echo";
+
+  let cleanUrl: string | null = null; // URL pulito (serve al download commerciale)
+  let previewData: string | null = null; // anteprima watermarkata (data-URL)
+  let generationRef: string;
+
+  if (useEcho) {
+    if (!isEchoConfigured()) {
+      return NextResponse.json({ error: "Motore ECHO non configurato" }, { status: 503 });
+    }
+    // Identity-lock: servono le reference reali e consensuali dell'avatar.
+    const references = await getReferenceSet(handle);
+    if (references.length === 0) {
+      return NextResponse.json({ error: "ECHO non disponibile per questo avatar (reference-set assente)" }, { status: 400 });
+    }
+    let png: Buffer;
+    try {
+      png = (await generateEcho({ prompt: buildEchoPrompt(scene), references })).png;
+    } catch (e) {
+      return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined }, { status: 502 });
+    }
+    generationRef = "echo:gpt-image-2";
+    if (isPreview) {
+      // L'immagine pulita NON viene esposta né caricata: solo l'anteprima watermarkata.
+      previewData = await watermarkPreviewBuffer(png);
+    } else {
+      // Commerciale: carica il PNG pulito su storage; il download imporrà la filigrana.
+      try {
+        cleanUrl = await uploadPublicImage("generations", `${avatar.id}/${crypto.randomUUID()}.png`, png);
+      } catch {
+        return NextResponse.json({ error: "Salvataggio immagine non riuscito" }, { status: 502 });
+      }
+    }
+  } else {
+    // Higgsfield Soul (terza parte invisibile). Richiede un avatar SOUL. Il prompt
+    // inviato è SOLO la scena: l'identità arriva dal Soul (custom_reference_id).
+    if (avatar.tier !== "SOUL") {
+      return NextResponse.json({ error: "Solo avatar SOUL sono generabili con questo motore" }, { status: 403 });
+    }
+    let engineResult;
+    try {
+      engineResult = await generateWithHiggsfield({
+        avatarId: avatar.id,
+        soulRef: avatar.soul_ref ?? null,
+        prompt: buildGenerationPrompt(scene),
+        model,
+        styleId: model === "soul-id" ? styleId : null,
+        preview: isPreview,
+      });
+    } catch {
+      return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
+    }
+    if (engineResult.status !== "completed") {
+      return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
+    }
+    generationRef = engineResult.generationRef;
+    cleanUrl = engineResult.imageUrl;
+    if (isPreview) previewData = await watermarkPreview(cleanUrl);
   }
 
   // --- ANTEPRIMA: watermark impresso, nessuna royalty, nessun certificato ---
   // Il client riceve SOLO il data-URL watermarkato; l'URL pulito resta lato server.
   if (isPreview) {
-    let imageData: string;
-    try {
-      imageData = await watermarkPreview(engineResult.imageUrl);
-    } catch {
+    if (!previewData) {
       return NextResponse.json({ error: "Anteprima non riuscita" }, { status: 502 });
     }
     // Registra l'anteprima (per il conteggio del free trial), senza economia.
@@ -87,13 +139,17 @@ export async function POST(request: Request) {
       gross_cents: 0,
       fee_cents: 0,
       royalty_cents: 0,
-      image_url: engineResult.imageUrl, // archivio interno, NON esposto al client
-      engine_ref: engineResult.generationRef,
+      image_url: cleanUrl, // archivio interno (null per ECHO: pulito mai esposto)
+      engine_ref: generationRef,
     });
-    return NextResponse.json({ ok: true, mode: "preview", alias: avatar.alias, image_data: imageData });
+    return NextResponse.json({ ok: true, mode: "preview", alias: avatar.alias, image_data: previewData });
   }
 
   // --- COMMERCIALE ---
+  // Il download commerciale (con filigrana invisibile) richiede un URL pulito raggiungibile.
+  if (!cleanUrl) {
+    return NextResponse.json({ error: "Immagine non disponibile" }, { status: 502 });
+  }
   // Economia: prezzo lordo per categoria, diviso in fee piattaforma + netto avatar.
   const gross = grossForCategory(category);
   const { gross_cents, fee_cents, net_cents } = splitRoyalty(gross);
@@ -119,8 +175,8 @@ export async function POST(request: Request) {
     fee_cents,
     royalty_cents: net_cents, // netto accreditato all'avatar
     certificate,
-    image_url: engineResult.imageUrl,
-    engine_ref: engineResult.generationRef,
+    image_url: cleanUrl,
+    engine_ref: generationRef,
   });
   if (genErr) {
     return NextResponse.json({ error: "Generazione non registrata: riprova" }, { status: 500 });
@@ -140,7 +196,7 @@ export async function POST(request: Request) {
     mode: "commercial",
     certificate,
     alias: avatar.alias,
-    image_url: engineResult.imageUrl,
+    image_url: cleanUrl,
     category,
     gross_cents,
     fee_cents,

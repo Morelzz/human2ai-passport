@@ -1,13 +1,8 @@
 import sharp from "sharp";
 import { embedStego } from "./stegano";
 
-// Applica un watermark "impresso nei pixel" e restituisce i byte JPEG.
-// L'URL pulito del motore NON viene mai esposto al client: solo questa versione protetta.
-export async function watermarkBuffer(imageUrl: string): Promise<Buffer> {
-  const resp = await fetch(imageUrl);
-  if (!resp.ok) throw new Error("download immagine fallito");
-  const buf = Buffer.from(await resp.arrayBuffer());
-
+// Applica un watermark "impresso nei pixel" a un buffer immagine e restituisce JPEG.
+export async function watermarkBytes(buf: Buffer): Promise<Buffer> {
   const img = sharp(buf);
   const meta = await img.metadata();
   const w = meta.width ?? 1024;
@@ -29,9 +24,24 @@ export async function watermarkBuffer(imageUrl: string): Promise<Buffer> {
     .toBuffer();
 }
 
-// Variante data-URL (usata dalla generazione anteprima inline).
+// Versione da URL: scarica e watermarka. L'URL pulito del motore NON viene mai
+// esposto al client, solo questa versione protetta.
+export async function watermarkBuffer(imageUrl: string): Promise<Buffer> {
+  const resp = await fetch(imageUrl);
+  if (!resp.ok) throw new Error("download immagine fallito");
+  return watermarkBytes(Buffer.from(await resp.arrayBuffer()));
+}
+
+// Variante data-URL da URL (anteprima inline, motori che restituiscono un URL).
 export async function watermarkPreview(imageUrl: string): Promise<string> {
   const out = await watermarkBuffer(imageUrl);
+  return `data:image/jpeg;base64,${out.toString("base64")}`;
+}
+
+// Variante data-URL da buffer (anteprima ECHO: l'immagine pulita resta in RAM,
+// non viene mai caricata/esposta).
+export async function watermarkPreviewBuffer(buf: Buffer): Promise<string> {
+  const out = await watermarkBytes(buf);
   return `data:image/jpeg;base64,${out.toString("base64")}`;
 }
 
