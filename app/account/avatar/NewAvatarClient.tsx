@@ -19,8 +19,48 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
   const [loading, setLoading] = useState(false);
   const [consentUrl, setConsentUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [refs, setRefs] = useState<(string | null)[]>(() => Array(POSES.length).fill(null));
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzeNote, setAnalyzeNote] = useState<string | null>(null);
 
   const kitComplete = (Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).every((f) => kit[f]);
+
+  async function pickPhoto(slot: number, file?: File) {
+    if (!file) return;
+    try {
+      const d = await resizeFile(file);
+      setRefs((a) => { const n = [...a]; n[slot] = d; return n; });
+    } catch {
+      setError("Immagine non leggibile, riprova.");
+    }
+  }
+
+  // Claude SUGGERISCE i campi visivi dell'identikit dalle foto; la persona conferma.
+  async function analyze() {
+    const imgs = refs.filter((d): d is string => !!d);
+    if (imgs.length === 0) { setAnalyzeNote("Carica almeno una foto per l'analisi."); return; }
+    setAnalyzing(true); setAnalyzeNote(null);
+    try {
+      const res = await fetch("/api/avatar/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images: imgs }),
+      });
+      const json = await res.json();
+      if (!res.ok) { setAnalyzeNote(json.error ?? "Analisi non riuscita."); }
+      else {
+        const s = (json.suggestions ?? {}) as Record<string, string>;
+        setKit((k) => ({ ...k, ...s }));
+        const n = Object.keys(s).length;
+        setAnalyzeNote(n > 0
+          ? `Pre-compilati ${n} campi da Claude — controllali e conferma. L'etnia dichiarala tu (dato sensibile).`
+          : "Nessun campo proposto con sicurezza: compila l'identikit a mano.");
+      }
+    } catch {
+      setAnalyzeNote("Analisi non riuscita.");
+    }
+    setAnalyzing(false);
+  }
 
   function toggle(list: string[], setList: (v: string[]) => void, cat: string, otherList: string[], setOther: (v: string[]) => void) {
     if (list.includes(cat)) {
@@ -39,7 +79,10 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
     const res = await fetch("/api/avatar/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ handle, alias, tier, approved_categories: approved, excluded_categories: excluded, ...kit }),
+      body: JSON.stringify({
+        handle, alias, tier, approved_categories: approved, excluded_categories: excluded, ...kit,
+        references: refs.map((d, slot) => (d ? { slot, data: d } : null)).filter(Boolean),
+      }),
     });
     const json = await res.json();
     if (!res.ok) {
@@ -98,6 +141,36 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.35rem 0 0" }}>
               human2ai…/passport/<strong>{handle || "tuo-handle"}</strong>
             </p>
+          </div>
+
+          {/* Le tue foto — reference-set per l'identity-lock (ECHO) */}
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
+            <p style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Le tue foto · 8 pose</p>
+            <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+              Bloccano l&apos;identità reale per le generazioni fotorealistiche (motore ECHO). Foto <strong>nitide, ben illuminate, sfondo neutro, senza filtri</strong>, almeno 1024px. Restano <strong>private e cifrate</strong>.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.6rem" }}>
+              {POSES.map((p, slot) => (
+                <label key={p.key} title={p.tip}
+                  style={{ cursor: "pointer", border: `1px dashed ${refs[slot] ? "#6B21E8" : "rgba(255,255,255,0.14)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: refs[slot] ? "rgba(107,33,232,0.08)" : "transparent", aspectRatio: "3 / 4", overflow: "hidden", position: "relative" }}>
+                  {refs[slot] ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={refs[slot]!} alt={p.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <>
+                      <PoseGlyph pose={p} />
+                      <span style={{ color: "#6b7280", fontSize: "0.58rem", fontWeight: 600, textAlign: "center", lineHeight: 1.15 }}>{p.label}</span>
+                    </>
+                  )}
+                  <input type="file" accept="image/*" onChange={(e) => { pickPhoto(slot, e.target.files?.[0]); e.currentTarget.value = ""; }} style={{ display: "none" }} />
+                </label>
+              ))}
+            </div>
+            <button type="button" onClick={analyze} disabled={analyzing || refs.every((d) => !d)}
+              style={{ marginTop: "1rem", width: "100%", padding: "0.6rem", borderRadius: 8, border: "1px solid rgba(107,33,232,0.3)", background: "rgba(107,33,232,0.12)", color: "#8b47f0", fontWeight: 700, fontSize: "0.8rem", cursor: analyzing || refs.every((d) => !d) ? "default" : "pointer", opacity: refs.every((d) => !d) ? 0.5 : 1 }}>
+              {analyzing ? "Analisi in corso…" : "✨ Analizza le foto e compila l'identikit"}
+            </button>
+            {analyzeNote && <p style={{ color: "#9aa0aa", fontSize: "0.72rem", margin: "0.6rem 0 0", lineHeight: 1.5 }}>{analyzeNote}</p>}
           </div>
 
           {/* Identity kit — immutabile dopo la creazione */}
@@ -162,6 +235,74 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
         )}
       </section>
   );
+}
+
+// Le 8 pose canoniche del reference-set (identity-lock ECHO). Ogni box ha
+// un'icona-posa stilizzata che mostra inquadratura e orientamento dello scatto.
+type Pose = { key: string; label: string; tip: string; crop: "head" | "bust" | "full"; facing: "front" | "right" | "left" | "back" | "tq" };
+const POSES: Pose[] = [
+  { key: "face-front", label: "Volto frontale", tip: "Primo piano, sguardo in camera", crop: "head", facing: "front" },
+  { key: "face-right", label: "Profilo destro", tip: "Volto di lato, lato destro", crop: "head", facing: "right" },
+  { key: "face-left", label: "Profilo sinistro", tip: "Volto di lato, lato sinistro", crop: "head", facing: "left" },
+  { key: "face-tq", label: "Volto 3/4", tip: "Leggermente girato (tre quarti)", crop: "head", facing: "tq" },
+  { key: "bust-front", label: "Mezzo busto", tip: "Testa e spalle, frontale", crop: "bust", facing: "front" },
+  { key: "bust-back", label: "Busto di spalle", tip: "Testa e spalle, di spalle", crop: "bust", facing: "back" },
+  { key: "full-front", label: "Corpo intero", tip: "Tutta la figura, frontale", crop: "full", facing: "front" },
+  { key: "full-back", label: "Corpo di spalle", tip: "Tutta la figura, di spalle", crop: "full", facing: "back" },
+];
+
+// Icona-posa stilizzata (SVG minimale): testa per crop, tratti viso per orientamento.
+function PoseGlyph({ pose }: { pose: Pose }) {
+  const c = "#8b47f0";
+  const cx = 24;
+  const r = pose.crop === "head" ? 11 : pose.crop === "bust" ? 8 : 6;
+  const cy = pose.crop === "head" ? 20 : pose.crop === "bust" ? 15 : 11;
+  const f = pose.facing;
+  return (
+    <svg viewBox="0 0 48 60" width="38" height="48" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx={cx} cy={cy} r={r} fill={f === "back" ? c : "none"} fillOpacity={f === "back" ? 0.18 : 0} />
+      {f === "front" && (<>
+        <circle cx={cx - r / 2.4} cy={cy} r="0.9" fill={c} stroke="none" />
+        <circle cx={cx + r / 2.4} cy={cy} r="0.9" fill={c} stroke="none" />
+      </>)}
+      {f === "tq" && (<>
+        <circle cx={cx + r / 4} cy={cy} r="0.9" fill={c} stroke="none" />
+        <circle cx={cx + r / 1.3} cy={cy} r="0.9" fill={c} stroke="none" />
+      </>)}
+      {f === "right" && <path d={`M${cx + r} ${cy - 2} l4 2 l-4 2`} />}
+      {f === "left" && <path d={`M${cx - r} ${cy - 2} l-4 2 l4 2`} />}
+      {pose.crop === "head" && <path d="M12 58 q12 -13 24 0" />}
+      {pose.crop === "bust" && <path d="M10 58 q0 -18 14 -18 q14 0 14 18" />}
+      {pose.crop === "full" && (<>
+        <line x1={cx} y1={cy + r} x2={cx} y2="40" />
+        <line x1={cx} y1="27" x2={cx - 8} y2="34" />
+        <line x1={cx} y1="27" x2={cx + 8} y2="34" />
+        <line x1={cx} y1="40" x2={cx - 7} y2="55" />
+        <line x1={cx} y1="40" x2={cx + 7} y2="55" />
+      </>)}
+    </svg>
+  );
+}
+
+// Ridimensiona un File a ≤1024px e ritorna un data-URL JPEG (payload leggero).
+function resizeFile(file: File, max = 1024): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { reject(new Error("canvas")); return; }
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL("image/jpeg", 0.9));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("img")); };
+    img.src = url;
+  });
 }
 
 function Chips({ list, selected, accent, onToggle }: { list: readonly string[]; selected: string[]; accent: string; onToggle: (c: string) => void }) {
