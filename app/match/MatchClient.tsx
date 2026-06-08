@@ -325,7 +325,12 @@ export default function MatchClient() {
         </button>
       </form>
 
-      {error && <p className="mt-6 text-sm text-crimson">{error}</p>}
+      {error && (
+        <div className="mt-6 flex items-start gap-2 rounded-xl border border-crimson/40 bg-crimson/10 p-4 text-sm font-medium text-crimson">
+          <span aria-hidden>⚠️</span>
+          <span>{error}</span>
+        </div>
+      )}
 
       {result && (
         <div className="mt-8">
@@ -338,6 +343,19 @@ export default function MatchClient() {
                 {result.results.map((avatar) => {
                   const gen = genByHandle[avatar.handle];
                   const generating = generatingHandle === avatar.handle;
+                  // Stato "in lavorazione" mostrato durante la generazione (con
+                  // copy ECHO-aware: la generazione async può durare minuti).
+                  const inProgress = generating ? (
+                    <div className="mt-3 flex items-start gap-3 rounded-xl border border-violet/30 bg-violet/10 p-4">
+                      <span className="mt-0.5 inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-violet-light border-t-transparent" aria-hidden />
+                      <div className="text-[0.8rem] leading-relaxed text-foreground">
+                        <span className="font-semibold">Generazione in corso…</span>
+                        {engine === "echo" ? " ECHO lavora alla massima fedeltà: può richiedere 1–3 minuti." : ""}
+                        <br />
+                        <span className="text-faint">Puoi restare qui o tornare dopo: la trovi in <Link href="/account" className="text-violet-light underline">I miei contenuti</Link>.</span>
+                      </div>
+                    </div>
+                  ) : null;
                   const tier = TIER_CONFIG[avatar.tier];
                   const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatarArt(avatar.handle, avatar.alias);
                   return (
@@ -520,6 +538,7 @@ export default function MatchClient() {
                             className="mt-4 w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
                             {generating ? "Generazione…" : `Genera la tua scena · ${priceLabel}`}
                           </button>
+                          {inProgress}
                           <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">Output pulito, full-res, con certificato e royalty a {avatar.alias}.</p>
                           <Link href={`/passport/${avatar.handle}`} className="mt-3 block rounded-xl border border-violet/30 bg-violet/10 px-4 py-3 text-center text-sm font-semibold text-foreground transition-colors hover:bg-violet/20">
                             Vedi il passport →
@@ -557,6 +576,7 @@ export default function MatchClient() {
                               className="w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-5 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50">
                               {generating ? "Generazione…" : `↻ Genera un'altra variante · ${priceLabel}`}
                             </button>
+                            {inProgress}
                             <button onClick={() => resetGeneration(avatar.handle)} disabled={generating}
                               className="w-full rounded-xl border border-white/12 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">
                               Nuova scena (cambia prompt e immagini) →
