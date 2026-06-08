@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
-import { grossForCategory, grossForEcho, splitRoyalty } from "@/lib/wallet";
+import { grossForCategory, splitRoyalty, splitEcho } from "@/lib/wallet";
+import { echoCostCentsFromUsage } from "@/lib/engines/echo-cost";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
 import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
 import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
@@ -113,6 +114,7 @@ export async function POST(request: Request) {
   let cleanUrl: string | null = null; // URL pulito (serve al download commerciale)
   let previewData: string | null = null; // anteprima watermarkata (data-URL)
   let generationRef: string;
+  let echoUsage: import("@/lib/engines/echo-cost").EchoUsage | undefined; // token reali ECHO
 
   if (useEcho) {
     if (!isEchoConfigured()) {
@@ -141,7 +143,9 @@ export async function POST(request: Request) {
 
     let png: Buffer;
     try {
-      png = (await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta), references, size: echoSize, quality: echoQuality })).png;
+      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta), references, size: echoSize, quality: echoQuality });
+      png = echoResult.png;
+      echoUsage = echoResult.usage;
     } catch (e) {
       return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined }, { status: 502 });
     }
@@ -210,10 +214,26 @@ export async function POST(request: Request) {
   if (!cleanUrl) {
     return NextResponse.json({ error: "Immagine non disponibile" }, { status: 502 });
   }
-  // Economia: prezzo lordo per categoria (ECHO: + sovrapprezzo risoluzione/qualità),
-  // diviso in fee piattaforma + netto avatar.
-  const gross = useEcho ? grossForEcho(category, echoSize, echoQuality) : grossForCategory(category);
-  const { gross_cents, fee_cents, net_cents } = splitRoyalty(gross);
+  // Economia. ECHO usa il modello "compute a parte": valore-categoria (royalty
+  // 80/20 alla persona) + supplemento-compute (tutto alla piattaforma, copre il
+  // costo OpenAI). Higgsfield: il solo valore-categoria, split 80/20 classico.
+  let gross_cents: number, fee_cents: number, net_cents: number;
+  let surcharge_cents = 0;
+  if (useEcho) {
+    const s = splitEcho(category, echoSize, echoQuality);
+    ({ gross_cents, fee_cents, net_cents, surcharge_cents } = s);
+  } else {
+    ({ gross_cents, fee_cents, net_cents } = splitRoyalty(grossForCategory(category)));
+  }
+
+  // Costo REALE del compute dai token effettivi (solo ECHO; null se l'API non
+  // ha restituito usage). Loggato per tarare le tariffe in echo-cost.ts.
+  const engineCostCents = useEcho ? echoCostCentsFromUsage(echoUsage) : null;
+  if (useEcho) {
+    const real = engineCostCents != null ? `${(engineCostCents / 100).toFixed(3)}€` : "n/d";
+    const margin = engineCostCents != null ? `${((surcharge_cents - engineCostCents) / 100).toFixed(3)}€` : "n/d";
+    console.log(`[ECHO cost] ${echoSize} ${echoQuality} · reale=${real} · supplemento=${(surcharge_cents / 100).toFixed(2)}€ · margine=${margin} · tokens=${JSON.stringify(echoUsage ?? {})}`);
+  }
 
   // Credenziale d'uscita: hash anonimo (nessun dato biometrico) — seme del C2PA.
   const genId = crypto.randomUUID();
@@ -252,6 +272,13 @@ export async function POST(request: Request) {
     })
     .eq("id", avatar.id);
 
+  // Best-effort: salva il costo reale del compute. Se la colonna engine_cost_cents
+  // non è ancora stata creata (migrazione echo_cost.sql) l'update fallisce in
+  // silenzio senza intaccare la generazione già registrata.
+  if (engineCostCents != null) {
+    await admin.from("generations").update({ engine_cost_cents: engineCostCents }).eq("id", genId);
+  }
+
   return NextResponse.json({
     ok: true,
     mode: "commercial",
@@ -262,5 +289,6 @@ export async function POST(request: Request) {
     gross_cents,
     fee_cents,
     royalty_cents: net_cents,
+    surcharge_cents,
   });
 }

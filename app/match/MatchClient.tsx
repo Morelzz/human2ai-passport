@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
-import { formatEur, grossForCategory, echoMultiplier } from "@/lib/wallet";
+import { formatEur, grossForCategory, grossForEcho } from "@/lib/wallet";
+import { echoSurchargeCents } from "@/lib/engines/echo-cost";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -66,6 +67,7 @@ interface GenResult {
   gross_cents?: number;
   fee_cents?: number;
   royalty_cents?: number;
+  surcharge_cents?: number;
 }
 
 // Ridimensiona un'immagine scelta dall'utente a max 1024px e ritorna un data-URL
@@ -219,7 +221,9 @@ export default function MatchClient() {
   }
 
   const baseGross = grossForCategory(category || null);
-  const priceCents = engine === "echo" ? Math.round(baseGross * echoMultiplier(echoSize, echoQuality)) : baseGross;
+  // ECHO: valore-categoria + supplemento-compute (modello "compute a parte").
+  const echoSurcharge = echoSurchargeCents(echoSize, echoQuality);
+  const priceCents = engine === "echo" ? grossForEcho(category || null, echoSize, echoQuality) : baseGross;
   const priceLabel = formatEur(priceCents);
 
   return (
@@ -394,7 +398,7 @@ export default function MatchClient() {
                                 </div>
                               </div>
                               <p className="text-[0.66rem] leading-relaxed text-faint">
-                                {echoSize.replace("x", "×")} px{echoRes !== "standard" ? " · più lento (anche qualche minuto) e più costoso" : ""}
+                                {echoSize.replace("x", "×")} px · supplemento compute {formatEur(echoSurcharge)}{echoRes !== "standard" ? " · più lento (anche qualche minuto)" : ""}
                               </p>
                             </div>
                           )}
@@ -496,7 +500,10 @@ export default function MatchClient() {
                           )}
                           <div className="mb-4 rounded-lg bg-obsidian-2 p-4">
                             <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
-                            <EuroRow label="Fee piattaforma" value={`− ${formatEur(gen.fee_cents ?? 0)}`} dim />
+                            <EuroRow label="Fee piattaforma" value={`− ${formatEur((gen.fee_cents ?? 0) - (gen.surcharge_cents ?? 0))}`} dim />
+                            {(gen.surcharge_cents ?? 0) > 0 && (
+                              <EuroRow label="Supplemento compute" value={`− ${formatEur(gen.surcharge_cents ?? 0)}`} dim />
+                            )}
                             <div className="my-2 h-px bg-white/6" />
                             <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents ?? 0)} highlight />
                           </div>

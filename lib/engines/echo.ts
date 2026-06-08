@@ -10,6 +10,8 @@
 //    dell'avatar come riferimento del soggetto, fino a 10 immagini)
 // ──────────────────────────────────────────────────────────────────────────
 
+import type { EchoUsage } from "./echo-cost";
+
 const GEN_URL = "https://api.openai.com/v1/images/generations";
 const EDIT_URL = "https://api.openai.com/v1/images/edits";
 const MODEL = "gpt-image-2";
@@ -51,6 +53,8 @@ export interface EchoResult {
   refsUsed: number;
   size: string;
   quality: string;
+  /** Token effettivi consumati (per calcolare il costo reale). Assente se l'API non lo restituisce. */
+  usage?: EchoUsage;
 }
 
 /** Vero se la chiave è presente: permette di "accendere" ECHO senza far crashare il resto. */
@@ -58,18 +62,20 @@ export function isEchoConfigured(): boolean {
   return !!process.env.OPENAI_API_KEY;
 }
 
-// Estrae i byte PNG dalla risposta dell'API (b64 o url).
-async function pngFromResponse(text: string): Promise<Buffer> {
-  let json: { data?: { b64_json?: string; url?: string }[] };
+// Estrae byte PNG + usage (token consumati) dalla risposta dell'API.
+async function parseEchoResponse(text: string): Promise<{ png: Buffer; usage?: EchoUsage }> {
+  let json: { data?: { b64_json?: string; url?: string }[]; usage?: EchoUsage };
   try {
     json = JSON.parse(text);
   } catch {
     throw new Error(`ECHO: risposta non-JSON: ${text.slice(0, 300)}`);
   }
   const item = json.data?.[0];
-  if (item?.b64_json) return Buffer.from(item.b64_json, "base64");
-  if (item?.url) return Buffer.from(await (await fetch(item.url)).arrayBuffer());
-  throw new Error("ECHO: nessuna immagine nella risposta dell'API.");
+  let png: Buffer;
+  if (item?.b64_json) png = Buffer.from(item.b64_json, "base64");
+  else if (item?.url) png = Buffer.from(await (await fetch(item.url)).arrayBuffer());
+  else throw new Error("ECHO: nessuna immagine nella risposta dell'API.");
+  return { png, usage: json.usage };
 }
 
 /** Una generazione ECHO (gpt-image-2). Lancia un Error col messaggio esatto dell'API in caso di fallimento. */
@@ -100,7 +106,8 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
     });
     const text = await res.text();
     if (!res.ok) throw new Error(`OpenAI edit ${res.status}: ${text.slice(0, 600)}`);
-    return { png: await pngFromResponse(text), model: MODEL, mode: "edit", refsUsed: refs.length, size, quality };
+    const { png, usage } = await parseEchoResponse(text);
+    return { png, model: MODEL, mode: "edit", refsUsed: refs.length, size, quality, usage };
   }
 
   // ── Senza reference: text-to-image ───────────────────────────────────────
@@ -111,5 +118,6 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
   });
   const text = await res.text();
   if (!res.ok) throw new Error(`OpenAI ${res.status}: ${text.slice(0, 600)}`);
-  return { png: await pngFromResponse(text), model: MODEL, mode: "generation", refsUsed: 0, size, quality };
+  const { png, usage } = await parseEchoResponse(text);
+  return { png, model: MODEL, mode: "generation", refsUsed: 0, size, quality, usage };
 }

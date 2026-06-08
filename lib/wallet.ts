@@ -9,6 +9,7 @@
 // Tutti i valori sono in centesimi di euro. Sono costanti: ritoccale qui.
 
 import type { Category } from "@/lib/types";
+import { echoSurchargeCents } from "@/lib/engines/echo-cost";
 
 // Fee di piattaforma in basis points (20% = 2000 bp).
 export const PLATFORM_FEE_BPS = 2000;
@@ -56,30 +57,16 @@ export function grossForCategory(category: string | null): number {
   return BAND_PRICE_CENTS[bandForCategory(category)];
 }
 
-// Sovrapprezzo ECHO per risoluzione e qualità (gpt-image-2). PROVVISORI: da tarare
-// sui costi reali OpenAI. Moltiplicano il lordo di categoria.
-const ECHO_QUALITY_MULT: Record<string, number> = { low: 0.8, medium: 1, high: 1.6 };
+// ── ECHO: modello "compute a parte" (deciso 2026-06-08) ────────────────────
+// Il prezzo ECHO = VALORE-categoria (su cui matura la royalty 80/20 alla
+// persona) + SUPPLEMENTO-compute (= costo OpenAI × markup, tutto alla
+// piattaforma per coprire il conto del motore). Così la royalty resta legata
+// al valore d'uso del volto, non al costo di calcolo, e la piattaforma non va
+// mai sotto costo. Le tariffe del compute vivono in lib/engines/echo-cost.ts.
 
-// Moltiplicatore di risoluzione basato sui PIXEL totali (copre ogni formato).
-function echoSizeMult(size?: string | null): number {
-  if (!size) return 1;
-  const m = /^(\d+)x(\d+)$/.exec(size);
-  if (!m) return 1;
-  const px = Number(m[1]) * Number(m[2]);
-  if (px <= 1_600_000) return 1; // ~HD (1024², 1024x1536, 1536x1024)
-  if (px <= 4_500_000) return 2.5; // ~2K (2048², 2560x1440, 1440x2560)
-  return 4; // ~4K (3840x2160, 2160x3840)
-}
-
-// Moltiplicatore di prezzo per una generazione ECHO data risoluzione+qualità.
-export function echoMultiplier(size?: string | null, quality?: string | null): number {
-  const q = (quality && ECHO_QUALITY_MULT[quality]) || 1;
-  return echoSizeMult(size) * q;
-}
-
-// Lordo (centesimi) per ECHO: categoria × moltiplicatore risoluzione/qualità.
+// Lordo (centesimi) per ECHO = valore-categoria + supplemento-compute.
 export function grossForEcho(category: string | null, size?: string | null, quality?: string | null): number {
-  return Math.round(grossForCategory(category) * echoMultiplier(size, quality));
+  return grossForCategory(category) + echoSurchargeCents(size, quality);
 }
 
 export interface RoyaltySplit {
@@ -92,6 +79,28 @@ export interface RoyaltySplit {
 export function splitRoyalty(grossCents: number): RoyaltySplit {
   const fee = Math.floor((grossCents * PLATFORM_FEE_BPS) / 10000);
   return { gross_cents: grossCents, fee_cents: fee, net_cents: grossCents - fee };
+}
+
+// Breakdown ECHO con compute separato. La royalty 80/20 si applica SOLO al
+// valore-categoria; il supplemento-compute va per intero alla piattaforma.
+export interface EchoSplit extends RoyaltySplit {
+  value_cents: number;     // valore-categoria (base della royalty)
+  surcharge_cents: number; // supplemento-compute (interamente alla piattaforma)
+}
+
+export function splitEcho(category: string | null, size?: string | null, quality?: string | null): EchoSplit {
+  const value = grossForCategory(category);
+  const surcharge = echoSurchargeCents(size, quality);
+  // Netto avatar = 80% del SOLO valore-categoria (stesso arrotondamento di splitRoyalty).
+  const net = value - Math.floor((value * PLATFORM_FEE_BPS) / 10000);
+  const gross = value + surcharge;
+  return {
+    gross_cents: gross,
+    fee_cents: gross - net, // 20% del valore + tutto il supplemento → piattaforma
+    net_cents: net,
+    value_cents: value,
+    surcharge_cents: surcharge,
+  };
 }
 
 export function formatEur(cents: number): string {
