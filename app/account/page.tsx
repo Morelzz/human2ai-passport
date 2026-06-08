@@ -88,14 +88,14 @@ export default async function AccountPage() {
   const admin2 = createServerClient();
   const { data: gens } = await admin2
     .from("generations")
-    .select("id, certificate, image_url, royalty_cents, gross_cents, category, created_at, avatars(alias, handle)")
+    .select("id, certificate, image_url, royalty_cents, gross_cents, category, tier, created_at, avatars(alias, handle)")
     .eq("buyer_id", user.id)
     .not("certificate", "is", null)
     .order("created_at", { ascending: false })
     .limit(12);
   type MyGen = {
     id: string; certificate: string | null; image_url: string | null;
-    gross_cents: number | null; category: string | null; created_at: string;
+    gross_cents: number | null; category: string | null; tier: string | null; created_at: string;
     avatars: { alias: string; handle: string } | { alias: string; handle: string }[] | null;
   };
   const myGenerations: MyGen[] = (gens ?? []) as MyGen[];
@@ -260,7 +260,12 @@ export default async function AccountPage() {
                       <img src={g.image_url} alt="contenuto" style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", background: "#1c1c28", display: "block" }} />
                     )}
                     <div style={{ padding: "0.7rem 0.8rem" }}>
-                      <p style={{ color: "#f0f0f5", fontSize: "0.82rem", fontWeight: 600, margin: "0 0 0.15rem" }}>{av?.alias ?? "—"}</p>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.4rem", margin: "0 0 0.15rem" }}>
+                        <p style={{ color: "#f0f0f5", fontSize: "0.82rem", fontWeight: 600, margin: 0 }}>{av?.alias ?? "—"}</p>
+                        {g.tier && (
+                          <span title="Motore di generazione" style={{ flexShrink: 0, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "#8b47f0", background: "rgba(107,33,232,0.14)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.1rem 0.45rem" }}>{g.tier}</span>
+                        )}
+                      </div>
                       <p style={{ color: "#374151", fontSize: "0.7rem", margin: "0 0 0.5rem" }}>
                         {g.category ?? "—"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
                       </p>

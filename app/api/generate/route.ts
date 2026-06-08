@@ -5,7 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { grossForCategory, splitRoyalty, splitEcho } from "@/lib/wallet";
 import { echoCostCentsFromUsage } from "@/lib/engines/echo-cost";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
-import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
+import { DEFAULT_MODEL, isValidModel, isValidStyle, modelTierLabel } from "@/lib/soul-models";
 import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
 import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
@@ -310,11 +310,13 @@ export async function POST(request: Request) {
     })
     .eq("id", avatar.id);
 
-  // Best-effort: salva il costo reale del compute. Se la colonna engine_cost_cents
-  // non è ancora stata creata (migrazione echo_cost.sql) l'update fallisce in
-  // silenzio senza intaccare la generazione già registrata.
-  if (engineCostCents != null) {
-    await admin.from("generations").update({ engine_cost_cents: engineCostCents }).eq("id", genId);
+  // Best-effort: tier (motore usato) + eventuale costo reale del compute. Colonne
+  // additive (migrazione echo_cost.sql): se mancano, l'update fallisce in silenzio
+  // senza intaccare la generazione già registrata.
+  {
+    const meta: Record<string, unknown> = { tier: useEcho ? "ECHO" : modelTierLabel(model) };
+    if (engineCostCents != null) meta.engine_cost_cents = engineCostCents;
+    await admin.from("generations").update(meta).eq("id", genId);
   }
 
   return NextResponse.json({

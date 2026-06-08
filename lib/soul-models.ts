@@ -27,6 +27,12 @@ export function isValidModel(m: string | null | undefined): m is SoulModel {
   return m === "soul-v2" || m === "soul-id";
 }
 
+// Etichetta-tier (brand) di un modello Higgsfield: HUMAN (soul-v2) / SHAPE (soul-id).
+// ECHO ha la sua etichetta a parte. Usata per marcare la generazione col motore usato.
+export function modelTierLabel(model: string | null | undefined): string {
+  return SOUL_MODELS.find((m) => m.id === model)?.label ?? "HUMAN";
+}
+
 // Stili Soul (sottoinsieme curato dei 106 disponibili sul motore).
 // Si applicano SOLO al modello Soul ID (v1) tramite style_id.
 export interface SoulStyleInfo { id: string; label: string; }

@@ -175,10 +175,11 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     });
     if (genErr) throw new Error(`registrazione generazione fallita: ${genErr.message}`);
 
-    // Best-effort: costo reale del compute (colonna additiva, vedi echo_cost.sql).
-    if (engineCostCents != null) {
-      await admin.from("generations").update({ engine_cost_cents: engineCostCents }).eq("id", genId);
-    }
+    // Best-effort: tier 'ECHO' + costo reale del compute (colonne additive, vedi
+    // echo_cost.sql). Se mancano, l'update fallisce in silenzio senza intaccare la gen.
+    const meta: Record<string, unknown> = { tier: "ECHO" };
+    if (engineCostCents != null) meta.engine_cost_cents = engineCostCents;
+    await admin.from("generations").update(meta).eq("id", genId);
 
     // Accredita la royalty NETTA + incrementa utilizzi.
     const { data: av } = await admin
