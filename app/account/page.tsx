@@ -10,6 +10,7 @@ import PayoutButton from "./PayoutButton";
 import SoulActivate from "./SoulActivate";
 import OrgAvatars, { OrgAvatar } from "./OrgAvatars";
 import LinkWallet from "./LinkWallet";
+import { MarkContentsSeen } from "./MarkContentsSeen";
 import AnchorPanel from "./AnchorPanel";
 
 const ROLE_LABEL: Record<string, string> = {
@@ -105,6 +106,7 @@ export default async function AccountPage() {
       <CineBackground />
       <div className="relative z-[2]">
         <SiteNav />
+        <MarkContentsSeen />
 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem", flexWrap: "wrap", margin: "0 0 0.4rem" }}>

@@ -13,8 +13,9 @@ const LINKS = [
   { href: "/trasparenza", label: "Trasparenza" },
 ];
 
-export function Navbar({ firstName }: { firstName: string | null }) {
+export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; unseen?: number }) {
   const [open, setOpen] = useState(false);
+  const badge = unseen > 0 ? (unseen > 9 ? "9+" : String(unseen)) : null;
 
   // Blocca lo scroll del body e chiude con Esc quando il drawer è aperto.
   useEffect(() => {
@@ -44,9 +45,14 @@ export function Navbar({ firstName }: { firstName: string | null }) {
             </Link>
           ))}
           {firstName ? (
-            <Link href="/account" className="inline-flex items-center gap-2 rounded-full border border-violet/30 bg-violet/10 px-3.5 py-1.5 text-sm font-semibold text-foreground">
+            <Link href="/account" className="relative inline-flex items-center gap-2 rounded-full border border-violet/30 bg-violet/10 px-3.5 py-1.5 text-sm font-semibold text-foreground">
               <span className="h-4.5 w-4.5 rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)]" />
               {firstName}
+              {badge && (
+                <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-crimson px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_rgba(10,10,15,1)]">
+                  {badge}
+                </span>
+              )}
             </Link>
           ) : (
             <Link href="/login" className="text-sm text-muted transition-colors hover:text-foreground">Accedi</Link>
@@ -97,8 +103,11 @@ export function Navbar({ firstName }: { firstName: string | null }) {
                   </Link>
                 ))}
                 <Link href={firstName ? "/account" : "/login"} onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">
-                  {firstName ? `Account · ${firstName}` : "Accedi"}
+                  className="flex items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">
+                  <span>{firstName ? `Account · ${firstName}` : "Accedi"}</span>
+                  {badge && (
+                    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-crimson px-1.5 text-xs font-bold text-white">{badge}</span>
+                  )}
                 </Link>
               </div>
 
