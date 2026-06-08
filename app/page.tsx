@@ -12,6 +12,7 @@ import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
 import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
+import { Reveal } from "@/components/motion/Reveal";
 
 export default async function Home() {
   const supabase = createServerClient();
@@ -40,14 +41,14 @@ export default async function Home() {
       <div className="relative z-[2]">
         <SiteNav />
         <Hero count={approved.length} />
-        <Tension />
-        <Manifesto />
-        <HowItWorks />
-        <Audiences />
-        <Registry avatars={featured} total={approved.length} />
-        <Trust />
-        <PublicRoadmap />
-        <ClosingCTA />
+        <Reveal><Tension /></Reveal>
+        <Reveal><Manifesto /></Reveal>
+        <Reveal><HowItWorks /></Reveal>
+        <Reveal><Audiences /></Reveal>
+        <Reveal><Registry avatars={featured} total={approved.length} /></Reveal>
+        <Reveal><Trust /></Reveal>
+        <Reveal><PublicRoadmap /></Reveal>
+        <Reveal><ClosingCTA /></Reveal>
 
         <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] px-5 py-8 sm:px-8">
           <div className="flex items-center gap-2.5">
