@@ -70,6 +70,22 @@ interface GenResult {
   surcharge_cents?: number;
 }
 
+// Guardia fotorealismo (ECHO): termini che spingono verso uno stile NON reale e
+// che farebbero perdere l'identità del volto (e sprecare una generazione). Se
+// l'utente li usa con ECHO, lo avvisiamo PRIMA di pagare.
+const NON_PHOTOREAL_TERMS = [
+  "anime", "manga", "cartoon", "cartone", "fumetto", "comic", "comics",
+  "illustrazione", "illustration", "disegno", "drawing", "sketch", "schizzo",
+  "dipinto", "painting", "pittura", "acquerello", "watercolor",
+  "render", "3d", "pixar", "disney", "pixel", "low poly", "lowpoly",
+  "caricatura", "caricature", "statua", "scultura", "origami", "lego",
+  "plastilina", "claymation", "cel shading", "cel-shading", "voxel",
+];
+function detectNonPhotoreal(scene: string): string[] {
+  const s = " " + scene.toLowerCase().replace(/[^a-z0-9]+/g, " ") + " ";
+  return NON_PHOTOREAL_TERMS.filter((t) => s.includes(" " + t + " "));
+}
+
 // Ridimensiona un'immagine scelta dall'utente a max 1024px e ritorna un data-URL
 // JPEG: payload leggero (sotto i limiti del server) e veloce da inviare.
 function resizeImage(file: File, maxDim = 1024): Promise<string> {
@@ -356,6 +372,8 @@ export default function MatchClient() {
                       </div>
                     </div>
                   ) : null;
+                  // Guardia fotorealismo: termini non-reali nel prompt + motore ECHO.
+                  const styleRisk = engine === "echo" ? detectNonPhotoreal(sceneByHandle[avatar.handle] ?? "") : [];
                   const tier = TIER_CONFIG[avatar.tier];
                   const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatarArt(avatar.handle, avatar.alias);
                   return (
@@ -404,6 +422,14 @@ export default function MatchClient() {
                             <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
                               Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — {engine === "echo" ? "identità bloccata dalle sue foto reali" : "garantito dal Soul"}.
                             </p>
+                            {styleRisk.length > 0 && (
+                              <div className="mt-2 flex items-start gap-2 rounded-lg border border-[#f0b429]/40 bg-[#f0b429]/10 p-3 text-[0.72rem] leading-relaxed text-[#f0b429]">
+                                <span aria-hidden>⚠️</span>
+                                <span>
+                                  ECHO è <span className="font-semibold">fotorealistico</span>: «{styleRisk.join("», «")}» può far perdere l&apos;identità reale di {avatar.alias} (e spendere una generazione per un risultato fuori target). Per la massima fedeltà descrivi una <span className="font-semibold">scena reale</span> — luogo, luce, abbigliamento, posa.
+                                </span>
+                              </div>
+                            )}
                           </div>
 
                           <div className="mt-4">
