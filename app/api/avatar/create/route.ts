@@ -1,11 +1,33 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import sharp from "sharp";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { uploadPrivate } from "@/lib/storage";
 import { computeTokenHash } from "@/lib/token";
 import { CATEGORIES, IDENTITY_KIT, Tier } from "@/lib/types";
 
+export const runtime = "nodejs";
+
 const TIERS: Tier[] = ["SPARK", "SHAPE", "SOUL", "HUMAN"];
+const REFERENCES_BUCKET = "references";
+
+// Decodifica un data-url immagine e lo ridimensiona a ≤1024px (JPEG) per lo
+// storage del reference-set (identity-lock dei motori ECHO/TWIN).
+async function refFromDataUrl(dataUrl: unknown): Promise<Buffer | null> {
+  if (typeof dataUrl !== "string") return null;
+  const m = /^data:image\/[a-z0-9.+-]+;base64,(.+)$/i.exec(dataUrl);
+  if (!m) return null;
+  try {
+    return await sharp(Buffer.from(m[1], "base64"))
+      .rotate()
+      .resize({ width: 1024, height: 1024, fit: "inside", withoutEnlargement: true })
+      .jpeg({ quality: 90 })
+      .toBuffer();
+  } catch {
+    return null;
+  }
+}
 const HANDLE_RE = /^[a-z0-9-]{3,30}$/;
 
 export async function POST(request: Request) {
@@ -152,7 +174,24 @@ export async function POST(request: Request) {
     occurred_at: consentStart,
   });
 
+  // Reference-set: salva le foto caricate (8 pose) nel bucket privato cifrato,
+  // sotto {handle}/, così l'avatar diventa generabile con ECHO (identity-lock).
+  // Best-effort: un problema di storage NON annulla la creazione dell'avatar.
+  let refsStored = 0;
+  const rawRefs = Array.isArray(body.references) ? body.references.slice(0, 8) : [];
+  for (const r of rawRefs) {
+    const buf = await refFromDataUrl(r?.data);
+    if (!buf) continue;
+    const slot = String(Math.max(0, Math.min(7, Number(r?.slot) || 0))).padStart(2, "0");
+    try {
+      await uploadPrivate(REFERENCES_BUCKET, `${handle}/ref-${slot}.jpg`, buf, "image/jpeg");
+      refsStored++;
+    } catch {
+      /* storage non disponibile: l'avatar resta valido, le reference si potranno ricaricare */
+    }
+  }
+
   // Per le org: link tokenizzato che la persona deve aprire per confermare il consenso.
   const consentUrl = consentToken ? `${new URL(request.url).origin}/consent/${consentToken}` : null;
-  return NextResponse.json({ handle, consent_url: consentUrl });
+  return NextResponse.json({ handle, consent_url: consentUrl, refs_stored: refsStored });
 }
