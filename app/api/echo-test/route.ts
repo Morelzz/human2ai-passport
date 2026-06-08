@@ -75,8 +75,13 @@ export async function GET(request: Request) {
         ? "a realistic photo of the same man shown in the reference images, upper body, neutral studio background, soft natural lighting, looking straight at the camera"
         : "a photorealistic red sports car parked on a city street at golden hour, commercial advertising photography")) + extraPromptNote;
 
+  const size = (url.searchParams.get("size") as Parameters<typeof generateEcho>[0]["size"]) ?? undefined;
+  const quality = (url.searchParams.get("quality") as Parameters<typeof generateEcho>[0]["quality"]) ?? undefined;
+
   try {
-    const { png, model, mode, refsUsed } = await generateEcho({ prompt, references });
+    const t0 = Date.now();
+    const { png, model, mode, refsUsed } = await generateEcho({ prompt, references, size, quality });
+    const ms = Date.now() - t0;
 
     // Test pipeline completa (come il commerciale): carica su storage + filigrana.
     if (full) {
@@ -90,7 +95,7 @@ export async function GET(request: Request) {
     mkdirSync(dir, { recursive: true });
     const out = resolve(dir, "echo-test-output.png");
     writeFileSync(out, png);
-    return Response.json({ ok: true, engine: "echo", model, mode, refsUsed, bytes: png.length, path: out, handle: handle ?? null, prompt });
+    return Response.json({ ok: true, engine: "echo", model, mode, refsUsed, size, quality, ms, bytes: png.length, path: out, handle: handle ?? null });
   } catch (e) {
     return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 502 });
   }

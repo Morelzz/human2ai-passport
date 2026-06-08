@@ -3,9 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
-import { formatEur, grossForCategory } from "@/lib/wallet";
+import { formatEur, grossForCategory, echoMultiplier } from "@/lib/wallet";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 import { avatarArt } from "@/lib/avatar-art";
+
+// Opzioni risoluzione/qualità per ECHO (gpt-image-2), con etichette leggibili.
+const ECHO_SIZE_OPTS = [
+  { v: "1024x1024", l: "Quadrata · 1024" },
+  { v: "1024x1536", l: "Verticale · 1024×1536" },
+  { v: "1536x1024", l: "Orizzontale · 1536×1024" },
+  { v: "2560x1440", l: "2K · 2560×1440" },
+  { v: "3840x2160", l: "4K · 3840×2160" },
+];
+const ECHO_QUALITY_OPTS = [
+  { v: "low", l: "Bassa" },
+  { v: "medium", l: "Media" },
+  { v: "high", l: "Alta" },
+];
 
 // --- Opzioni dell'identikit (chip cliccabili) ---
 const GENDERS = [
@@ -90,6 +104,8 @@ export default function MatchClient() {
   // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
   // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
   const [engine, setEngine] = useState<"higgsfield" | "echo">("higgsfield");
+  const [echoSize, setEchoSize] = useState("1024x1024");
+  const [echoQuality, setEchoQuality] = useState("high");
   // ECHO: fino a 2 immagini extra del cliente. Ogni box ha un RUOLO: noi
   // colleghiamo l'immagine al soggetto in automatico, l'utente non scrive nulla.
   type EchoRef = { dataUrl: string; desc: string; role: string } | undefined;
@@ -176,6 +192,8 @@ export default function MatchClient() {
         category: category || null,
         scene: sceneByHandle[handle] ?? "",
         engine,
+        echoSize,
+        echoQuality,
         extraRefs: engine === "echo"
           ? echoRefs.filter((r): r is { dataUrl: string; desc: string; role: string } => !!r?.dataUrl).map((r) => ({ data: r.dataUrl, desc: r.desc, role: r.role }))
           : undefined,
@@ -189,7 +207,9 @@ export default function MatchClient() {
     setGenByHandle((m) => ({ ...m, [handle]: json }));
   }
 
-  const priceLabel = formatEur(grossForCategory(category || null));
+  const baseGross = grossForCategory(category || null);
+  const priceCents = engine === "echo" ? Math.round(baseGross * echoMultiplier(echoSize, echoQuality)) : baseGross;
+  const priceLabel = formatEur(priceCents);
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
@@ -331,6 +351,31 @@ export default function MatchClient() {
                               </p>
                             )}
                           </div>
+
+                          {/* ECHO — risoluzione e qualità (incidono sul prezzo) */}
+                          {engine === "echo" && (
+                            <div className="mt-4 grid grid-cols-2 gap-2">
+                              <div>
+                                <span className="mb-1 block text-xs font-semibold text-muted">Risoluzione</span>
+                                <select value={echoSize} onChange={(e) => setEchoSize(e.target.value)}
+                                  className="w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-2 text-xs text-foreground outline-none focus:border-teal/50">
+                                  {ECHO_SIZE_OPTS.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
+                                </select>
+                              </div>
+                              <div>
+                                <span className="mb-1 block text-xs font-semibold text-muted">Qualità</span>
+                                <select value={echoQuality} onChange={(e) => setEchoQuality(e.target.value)}
+                                  className="w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-2 text-xs text-foreground outline-none focus:border-teal/50">
+                                  {ECHO_QUALITY_OPTS.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
+                                </select>
+                              </div>
+                              {(echoSize === "2560x1440" || echoSize === "3840x2160") && (
+                                <p className="col-span-2 text-[0.66rem] leading-relaxed text-crimson-light">
+                                  Le risoluzioni alte sono più lente (anche qualche minuto) e più costose.
+                                </p>
+                              )}
+                            </div>
+                          )}
 
                           {/* ECHO — fino a 2 immagini extra del cliente (outfit, scenario…) */}
                           {engine === "echo" && (

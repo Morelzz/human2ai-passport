@@ -2,16 +2,20 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
-import { grossForCategory, splitRoyalty } from "@/lib/wallet";
+import { grossForCategory, grossForEcho, splitRoyalty } from "@/lib/wallet";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
 import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
 import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
-import { generateEcho, isEchoConfigured } from "@/lib/engines/echo";
+import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
+// Le generazioni ad alta risoluzione (2K/4K) possono durare minuti: alziamo il
+// limite. NB: su Vercel Hobby resta capato a ~60s → le risoluzioni alte vanno
+// usate in locale o con un piano superiore (o, in futuro, generazione async).
+export const maxDuration = 300;
 
 // Compone il prompt finale per ECHO. L'utente NON scrive il collegamento: indica
 // solo il RUOLO di ogni immagine (outfit/accessorio/sfondo/oggetto) e noi
@@ -103,6 +107,8 @@ export async function POST(request: Request) {
   // Selezione del motore. ECHO = gpt-image-2 con identity-lock dal reference-set;
   // default = Higgsfield Soul. I motori restano terze parti INVISIBILI, lato server.
   const useEcho = body?.engine === "echo";
+  const echoSize = isEchoSize(body?.echoSize) ? body.echoSize : "1024x1024";
+  const echoQuality = isEchoQuality(body?.echoQuality) ? body.echoQuality : "high";
 
   let cleanUrl: string | null = null; // URL pulito (serve al download commerciale)
   let previewData: string | null = null; // anteprima watermarkata (data-URL)
@@ -135,7 +141,7 @@ export async function POST(request: Request) {
 
     let png: Buffer;
     try {
-      png = (await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta), references })).png;
+      png = (await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta), references, size: echoSize, quality: echoQuality })).png;
     } catch (e) {
       return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined }, { status: 502 });
     }
@@ -204,8 +210,9 @@ export async function POST(request: Request) {
   if (!cleanUrl) {
     return NextResponse.json({ error: "Immagine non disponibile" }, { status: 502 });
   }
-  // Economia: prezzo lordo per categoria, diviso in fee piattaforma + netto avatar.
-  const gross = grossForCategory(category);
+  // Economia: prezzo lordo per categoria (ECHO: + sovrapprezzo risoluzione/qualità),
+  // diviso in fee piattaforma + netto avatar.
+  const gross = useEcho ? grossForEcho(category, echoSize, echoQuality) : grossForCategory(category);
   const { gross_cents, fee_cents, net_cents } = splitRoyalty(gross);
 
   // Credenziale d'uscita: hash anonimo (nessun dato biometrico) — seme del C2PA.

@@ -14,12 +14,24 @@ const GEN_URL = "https://api.openai.com/v1/images/generations";
 const EDIT_URL = "https://api.openai.com/v1/images/edits";
 const MODEL = "gpt-image-2";
 
-export type EchoSize = "1024x1024" | "1536x1024" | "1024x1536";
+// Risoluzioni e qualità supportate da gpt-image-2 (come nel Playground OpenAI).
+export type EchoSize = "1024x1024" | "1024x1536" | "1536x1024" | "2560x1440" | "3840x2160";
+export type EchoQuality = "low" | "medium" | "high";
+
+export const ECHO_SIZES: EchoSize[] = ["1024x1024", "1024x1536", "1536x1024", "2560x1440", "3840x2160"];
+export const ECHO_QUALITIES: EchoQuality[] = ["low", "medium", "high"];
+export function isEchoSize(v: unknown): v is EchoSize {
+  return typeof v === "string" && (ECHO_SIZES as string[]).includes(v);
+}
+export function isEchoQuality(v: unknown): v is EchoQuality {
+  return typeof v === "string" && (ECHO_QUALITIES as string[]).includes(v);
+}
 
 export interface EchoInput {
   /** Prompt finale già composto (suffisso identità di sistema + prompt sanitizzato del compratore). */
   prompt: string;
   size?: EchoSize;
+  quality?: EchoQuality;
   /** Reference-set dell'avatar (foto reali ridimensionate) per l'identity-lock. */
   references?: Buffer[];
 }
@@ -29,6 +41,8 @@ export interface EchoResult {
   model: string;
   mode: "generation" | "edit";
   refsUsed: number;
+  size: string;
+  quality: string;
 }
 
 /** Vero se la chiave è presente: permette di "accendere" ECHO senza far crashare il resto. */
@@ -56,6 +70,7 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
   if (!key) throw new Error("ECHO non configurato: OPENAI_API_KEY mancante.");
 
   const size = input.size ?? "1024x1024";
+  const quality = input.quality ?? "high";
   const refs = input.references ?? [];
 
   // ── Identity-lock: edit endpoint multi-immagine ──────────────────────────
@@ -64,6 +79,7 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
     form.append("model", MODEL);
     form.append("prompt", input.prompt);
     form.append("size", size);
+    form.append("quality", quality);
     form.append("n", "1");
     refs.forEach((buf, i) => {
       form.append("image[]", new Blob([new Uint8Array(buf)], { type: "image/jpeg" }), `ref-${i}.jpg`);
@@ -76,16 +92,16 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
     });
     const text = await res.text();
     if (!res.ok) throw new Error(`OpenAI edit ${res.status}: ${text.slice(0, 600)}`);
-    return { png: await pngFromResponse(text), model: MODEL, mode: "edit", refsUsed: refs.length };
+    return { png: await pngFromResponse(text), model: MODEL, mode: "edit", refsUsed: refs.length, size, quality };
   }
 
   // ── Senza reference: text-to-image ───────────────────────────────────────
   const res = await fetch(GEN_URL, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: MODEL, prompt: input.prompt, size, n: 1 }),
+    body: JSON.stringify({ model: MODEL, prompt: input.prompt, size, quality, n: 1 }),
   });
   const text = await res.text();
   if (!res.ok) throw new Error(`OpenAI ${res.status}: ${text.slice(0, 600)}`);
-  return { png: await pngFromResponse(text), model: MODEL, mode: "generation", refsUsed: 0 };
+  return { png: await pngFromResponse(text), model: MODEL, mode: "generation", refsUsed: 0, size, quality };
 }

@@ -56,6 +56,29 @@ export function grossForCategory(category: string | null): number {
   return BAND_PRICE_CENTS[bandForCategory(category)];
 }
 
+// Sovrapprezzo ECHO per risoluzione e qualità (gpt-image-2). PROVVISORI: da tarare
+// sui costi reali OpenAI. Moltiplicano il lordo di categoria.
+const ECHO_SIZE_MULT: Record<string, number> = {
+  "1024x1024": 1,
+  "1024x1536": 1.4,
+  "1536x1024": 1.4,
+  "2560x1440": 2.5,
+  "3840x2160": 4,
+};
+const ECHO_QUALITY_MULT: Record<string, number> = { low: 0.8, medium: 1, high: 1.6 };
+
+// Moltiplicatore di prezzo per una generazione ECHO data risoluzione+qualità.
+export function echoMultiplier(size?: string | null, quality?: string | null): number {
+  const s = (size && ECHO_SIZE_MULT[size]) || 1;
+  const q = (quality && ECHO_QUALITY_MULT[quality]) || 1;
+  return s * q;
+}
+
+// Lordo (centesimi) per ECHO: categoria × moltiplicatore risoluzione/qualità.
+export function grossForEcho(category: string | null, size?: string | null, quality?: string | null): number {
+  return Math.round(grossForCategory(category) * echoMultiplier(size, quality));
+}
+
 export interface RoyaltySplit {
   gross_cents: number; // pagato dal buyer
   fee_cents: number;   // trattenuto dalla piattaforma
