@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "start:railway": "node worker/start-prod.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
