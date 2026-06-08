@@ -34,15 +34,21 @@ export function pixelsOf(size?: string | null): number {
 }
 
 // Token immagine in USCITA a 1024×1024 per qualità (ancore note dell'economia
-// gpt-image). Le altre risoluzioni scalano ~linearmente coi pixel.
+// gpt-image).
 const OUTPUT_TOKENS_AT_1MP: Record<string, number> = { low: 272, medium: 1056, high: 4160 };
 const PX_1MP = 1024 * 1024;
+
+// I token output di gpt-image scalano ~con la DIMENSIONE LINEARE, NON con l'area:
+// VERIFICATO sui costi reali in produzione (1024×1536 high ≈ €0,26; 4K 2160×3840
+// high ≈ €0,54 — ~2,1× per ~5,3× pixel → sublineare ≈ √px). Quindi scaliamo con
+// √(px) e applichiamo una piccola calibrazione per agganciare i dati reali.
+const OUTPUT_PX_CALIBRATION = 1.2;
 
 // Stima dei token output per una (size, quality).
 function estOutputTokens(size: string | undefined | null, quality: string): number {
   const base = OUTPUT_TOKENS_AT_1MP[quality] ?? OUTPUT_TOKENS_AT_1MP.high;
   const px = pixelsOf(size) || PX_1MP;
-  return base * (px / PX_1MP);
+  return base * Math.sqrt(px / PX_1MP) * OUTPUT_PX_CALIBRATION;
 }
 
 // Token INPUT del reference-set: ~8 foto a ~1024px ≈ 320 token l'una (costante
