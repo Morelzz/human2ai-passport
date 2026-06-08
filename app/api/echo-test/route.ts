@@ -1,9 +1,10 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { generateEcho, isEchoConfigured } from "@/lib/engines/echo";
 import { getReferenceSet, uploadReferenceSetFromLocal } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
 import { embedProvenancePng } from "@/lib/watermark";
+import { embedStego, extractStego } from "@/lib/stegano";
 
 // Rotta di TEST/UTILITY dev-only per ECHO. 404 in produzione. Non è il flusso
 // commerciale (quello è /api/generate). Azioni:
@@ -27,6 +28,21 @@ export async function GET(request: Request) {
     try {
       const count = await uploadReferenceSetFromLocal(uploadHandle);
       return Response.json({ ok: true, action: "upload-refs", handle: uploadHandle, uploaded: count });
+    } catch (e) {
+      return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 });
+    }
+  }
+
+  // — Test filigrana invisibile (roundtrip + invisibilità), senza chiamate API —
+  if (url.searchParams.get("stego") === "1") {
+    try {
+      const dir = resolve(process.cwd(), "scripts");
+      const src = readFileSync(resolve(dir, "echo-prod-output.png"));
+      const cert = "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
+      const stamped = await embedStego(src, cert);
+      const extracted = await extractStego(stamped);
+      writeFileSync(resolve(dir, "stego-test-output.png"), stamped);
+      return Response.json({ ok: true, action: "stego", match: extracted === cert, extracted: extracted?.slice(0, 16) + "…", srcBytes: src.length, stampedBytes: stamped.length });
     } catch (e) {
       return Response.json({ ok: false, error: e instanceof Error ? e.message : String(e) }, { status: 500 });
     }

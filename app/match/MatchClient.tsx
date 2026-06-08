@@ -122,6 +122,12 @@ export default function MatchClient() {
       return next;
     });
   }
+  // Ricomincia: torna al form per scrivere una NUOVA scena e nuove immagini.
+  function resetGeneration(handle: string) {
+    setGenByHandle((m) => { const n = { ...m }; delete n[handle]; return n; });
+    setSceneByHandle((m) => { const n = { ...m }; delete n[handle]; return n; });
+    setEchoRefs([]);
+  }
   const [model, setModel] = useState<SoulModel>(DEFAULT_MODEL);
   const [styleId, setStyleId] = useState("");
   const modelSupportsStyles = engine === "higgsfield" && (SOUL_MODELS.find((m) => m.id === model)?.supportsStyles ?? false);
@@ -434,6 +440,18 @@ export default function MatchClient() {
                               Scarica con provenienza →
                             </a>
                           )}
+
+                          {/* Genera ancora: stessa scena/immagini (variante) oppure ricomincia da capo */}
+                          <div className="mt-4 grid gap-2 border-t border-white/8 pt-4">
+                            <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
+                              className="w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-5 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50">
+                              {generating ? "Generazione…" : `↻ Genera un'altra variante · ${priceLabel}`}
+                            </button>
+                            <button onClick={() => resetGeneration(avatar.handle)} disabled={generating}
+                              className="w-full rounded-xl border border-white/12 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">
+                              Nuova scena (cambia prompt e immagini) →
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
