@@ -9,16 +9,42 @@ import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
 import { generateEcho, isEchoConfigured } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
+import sharp from "sharp";
 
 export const runtime = "nodejs";
 
 // Compone il prompt finale per ECHO: suffisso identità di sistema (non
-// sovrascrivibile dal compratore) + scena sanitizzata.
-function buildEchoPrompt(scene: string): string {
+// sovrascrivibile dal compratore) + descrizione SEMANTICA dei capi/scenari
+// caricati dal cliente (niente numerazione: il modello li abbina per contenuto)
+// + scena sanitizzata.
+function buildEchoPrompt(scene: string, extras: string[]): string {
   const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
-  const base =
+  let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
+  const items = extras.map((e) => e.trim()).filter(Boolean);
+  if (items.length > 0) {
+    base +=
+      " Incorporate these elements, each shown in the additional reference images: " +
+      items.map((d) => `"${d}"`).join("; ") +
+      ". Apply them faithfully and exactly as depicted — clothing/accessories worn by the person, backgrounds and scenery placed behind them.";
+  }
   return safe ? `${base} Scene: ${safe}.` : base;
+}
+
+// Decodifica un data-URL immagine e lo ridimensiona per l'invio al motore.
+async function dataUrlToBuffer(dataUrl: string): Promise<Buffer | null> {
+  const m = /^data:image\/[a-z0-9.+-]+;base64,(.+)$/i.exec(dataUrl);
+  if (!m) return null;
+  try {
+    const raw = Buffer.from(m[1], "base64");
+    return await sharp(raw)
+      .rotate()
+      .resize({ width: 1024, height: 1024, fit: "inside", withoutEnlargement: true })
+      .jpeg({ quality: 90 })
+      .toBuffer();
+  } catch {
+    return null;
+  }
 }
 
 export async function POST(request: Request) {
@@ -75,13 +101,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Motore ECHO non configurato" }, { status: 503 });
     }
     // Identity-lock: servono le reference reali e consensuali dell'avatar.
-    const references = await getReferenceSet(handle);
-    if (references.length === 0) {
+    const identity = await getReferenceSet(handle);
+    if (identity.length === 0) {
       return NextResponse.json({ error: "ECHO non disponibile per questo avatar (reference-set assente)" }, { status: 400 });
     }
+    // Immagini extra del cliente (capi/scenari), MAX 2. Totale immagini ≤ 10.
+    const rawExtras = Array.isArray(body?.extraRefs) ? body.extraRefs.slice(0, 2) : [];
+    const extraBuffers: Buffer[] = [];
+    const extraDescs: string[] = [];
+    for (const ex of rawExtras) {
+      const buf = typeof ex?.data === "string" ? await dataUrlToBuffer(ex.data) : null;
+      if (!buf) continue;
+      extraBuffers.push(buf);
+      extraDescs.push(typeof ex?.desc === "string" ? ex.desc.slice(0, 120) : "");
+    }
+    // 8 identità + fino a 2 extra, mai oltre il limite di 10 del motore.
+    const references = [...identity.slice(0, 10 - extraBuffers.length), ...extraBuffers];
+
     let png: Buffer;
     try {
-      png = (await generateEcho({ prompt: buildEchoPrompt(scene), references })).png;
+      png = (await generateEcho({ prompt: buildEchoPrompt(scene, extraDescs), references })).png;
     } catch (e) {
       return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined }, { status: 502 });
     }

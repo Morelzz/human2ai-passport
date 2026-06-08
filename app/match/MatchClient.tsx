@@ -45,6 +45,30 @@ interface GenResult {
   royalty_cents?: number;
 }
 
+// Ridimensiona un'immagine scelta dall'utente a max 1024px e ritorna un data-URL
+// JPEG: payload leggero (sotto i limiti del server) e veloce da inviare.
+function resizeImage(file: File, maxDim = 1024): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      URL.revokeObjectURL(url);
+      if (!ctx) return reject(new Error("canvas"));
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL("image/jpeg", 0.9));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("img")); };
+    img.src = url;
+  });
+}
+
 export default function MatchClient() {
   // Passo 1 — CHI: identikit (chip) + categoria d'uso
   const [gender, setGender] = useState("");
@@ -66,6 +90,37 @@ export default function MatchClient() {
   // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
   // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
   const [engine, setEngine] = useState<"higgsfield" | "echo">("higgsfield");
+  // ECHO: fino a 2 immagini extra del cliente (outfit, scenario…) con descrizione.
+  type EchoRef = { dataUrl: string; desc: string } | undefined;
+  const [echoRefs, setEchoRefs] = useState<EchoRef[]>([]);
+
+  async function pickEcho(i: number, file: File | undefined) {
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImage(file);
+      setEchoRefs((prev) => {
+        const next = [...prev];
+        next[i] = { dataUrl, desc: next[i]?.desc ?? "" };
+        return next;
+      });
+    } catch {
+      /* immagine non leggibile */
+    }
+  }
+  function setEchoDesc(i: number, desc: string) {
+    setEchoRefs((prev) => {
+      const next = [...prev];
+      if (next[i]) next[i] = { ...next[i]!, desc };
+      return next;
+    });
+  }
+  function removeEcho(i: number) {
+    setEchoRefs((prev) => {
+      const next = [...prev];
+      next[i] = undefined;
+      return next;
+    });
+  }
   const [model, setModel] = useState<SoulModel>(DEFAULT_MODEL);
   const [styleId, setStyleId] = useState("");
   const modelSupportsStyles = engine === "higgsfield" && (SOUL_MODELS.find((m) => m.id === model)?.supportsStyles ?? false);
@@ -114,6 +169,9 @@ export default function MatchClient() {
         category: category || null,
         scene: sceneByHandle[handle] ?? "",
         engine,
+        extraRefs: engine === "echo"
+          ? echoRefs.filter((r): r is { dataUrl: string; desc: string } => !!r?.dataUrl).map((r) => ({ data: r.dataUrl, desc: r.desc }))
+          : undefined,
         model,
         styleId: modelSupportsStyles ? (styleId || null) : null,
       }),
@@ -266,6 +324,60 @@ export default function MatchClient() {
                               </p>
                             )}
                           </div>
+
+                          {/* ECHO — fino a 2 immagini extra del cliente (outfit, scenario…) */}
+                          {engine === "echo" && (
+                            <div className="mt-4">
+                              <span className="mb-2 block text-xs font-semibold text-muted">
+                                Capi e scenari <span className="font-normal text-faint">· opzionale, fino a 2</span>
+                              </span>
+                              <div className="grid grid-cols-2 gap-2">
+                                {[0, 1].map((i) => {
+                                  const ref = echoRefs[i];
+                                  return (
+                                    <div key={i} className="rounded-xl border border-white/10 bg-obsidian p-2">
+                                      {ref?.dataUrl ? (
+                                        <>
+                                          <div className="relative">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img src={ref.dataUrl} alt="" className="h-24 w-full rounded-lg object-cover" />
+                                            <button
+                                              type="button"
+                                              onClick={() => removeEcho(i)}
+                                              aria-label="Rimuovi"
+                                              className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black/80"
+                                            >
+                                              ✕
+                                            </button>
+                                          </div>
+                                          <input
+                                            value={ref.desc}
+                                            onChange={(e) => setEchoDesc(i, e.target.value)}
+                                            placeholder={i === 0 ? "Es. maglietta nera del brand" : "Es. bosco sullo sfondo"}
+                                            className="mt-2 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
+                                          />
+                                        </>
+                                      ) : (
+                                        <label className="flex h-[124px] cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-white/15 text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
+                                          <span className="text-2xl leading-none">+</span>
+                                          <span className="px-2 text-[0.68rem] leading-tight">{i === 0 ? "Outfit / capo" : "Scenario / altro"}</span>
+                                          <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => { pickEcho(i, e.target.files?.[0]); e.currentTarget.value = ""; }}
+                                          />
+                                        </label>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <p className="mt-2 text-[0.68rem] leading-relaxed text-faint">
+                                Carica una foto e scrivi cos&apos;è (es. una maglietta, uno sfondo). L&apos;AI la userà mantenendo il volto reale di {avatar.alias}.
+                              </p>
+                            </div>
+                          )}
 
                           {modelSupportsStyles && (
                             <div className="mt-3">

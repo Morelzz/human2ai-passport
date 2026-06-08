@@ -34,20 +34,30 @@ export async function GET(request: Request) {
 
   const handle = url.searchParams.get("handle");
   const full = url.searchParams.get("full") === "1";
+  const garmentTest = url.searchParams.get("garment") === "1";
 
   let references: Buffer[] | undefined;
+  let extraPromptNote = "";
   if (handle) {
     references = await getReferenceSet(handle);
     if (references.length === 0) {
       return Response.json({ ok: false, error: `Nessun reference-set per '${handle}' (né storage né cartella locale).` }, { status: 404 });
     }
+    // Test "immagine extra": aggiunge una maglietta rossa sintetica come 2ª referenza
+    // del cliente, per verificare il percorso outfit (8 identità + 1 extra ≤ 10).
+    if (garmentTest) {
+      const { default: sharp } = await import("sharp");
+      const redShirt = await sharp({ create: { width: 512, height: 512, channels: 3, background: { r: 200, g: 20, b: 40 } } }).jpeg().toBuffer();
+      references = [...references.slice(0, 9), redShirt];
+      extraPromptNote = " Wearing a plain bright red t-shirt, exactly as shown in the additional reference image.";
+    }
   }
 
   const prompt =
-    url.searchParams.get("prompt") ??
-    (handle
-      ? "a realistic portrait photo of the same man shown in the reference images, head and shoulders, neutral studio background, soft natural lighting, looking straight at the camera"
-      : "a photorealistic red sports car parked on a city street at golden hour, commercial advertising photography");
+    (url.searchParams.get("prompt") ??
+      (handle
+        ? "a realistic photo of the same man shown in the reference images, upper body, neutral studio background, soft natural lighting, looking straight at the camera"
+        : "a photorealistic red sports car parked on a city street at golden hour, commercial advertising photography")) + extraPromptNote;
 
   try {
     const { png, model, mode, refsUsed } = await generateEcho({ prompt, references });
