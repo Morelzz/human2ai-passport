@@ -33,6 +33,16 @@ export function pixelsOf(size?: string | null): number {
   return m ? Number(m[1]) * Number(m[2]) : 0;
 }
 
+// Etichetta-risoluzione leggibile (Standard / 2K / 4K) dai pixel totali, così
+// non si deve dedurre dai pixel quale risoluzione è stata generata.
+export function echoResLabel(size?: string | null): string {
+  const px = pixelsOf(size);
+  if (!px) return "—";
+  if (px <= 1_600_000) return "Standard";
+  if (px <= 4_500_000) return "2K";
+  return "4K";
+}
+
 // Token immagine in USCITA a 1024×1024 per qualità (ancore note dell'economia
 // gpt-image).
 const OUTPUT_TOKENS_AT_1MP: Record<string, number> = { low: 272, medium: 1056, high: 4160 };

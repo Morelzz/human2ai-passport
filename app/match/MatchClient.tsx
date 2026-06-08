@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
 import { formatEur, grossForCategory, grossForEcho } from "@/lib/wallet";
-import { echoSurchargeCents } from "@/lib/engines/echo-cost";
+import { echoSurchargeCents, echoResLabel } from "@/lib/engines/echo-cost";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -68,6 +68,7 @@ interface GenResult {
   fee_cents?: number;
   royalty_cents?: number;
   surcharge_cents?: number;
+  size?: string;
 }
 
 // Guardia fotorealismo (ECHO): termini che spingono verso uno stile NON reale e
@@ -572,7 +573,10 @@ export default function MatchClient() {
                         </>
                       ) : (
                         <div className="mt-5 rounded-xl border border-teal/25 bg-obsidian p-5">
-                          <p className="mb-3 text-sm font-bold text-teal">✓ Generazione certificata</p>
+                          <p className="mb-1 text-sm font-bold text-teal">✓ Generazione certificata</p>
+                          {gen.size && (
+                            <p className="mb-3 text-[0.72rem] font-semibold text-violet-light">Motore ECHO · {echoResLabel(gen.size)} · {gen.size.replace("x", "×")} px</p>
+                          )}
                           {gen.image_url && (
                             // eslint-disable-next-line @next/next/no-img-element
                             // Mostra la versione con filigrana invisibile (se c'è il certificato),

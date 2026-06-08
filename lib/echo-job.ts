@@ -16,7 +16,7 @@ import sharp from "sharp";
 import type { createServerClient } from "@/lib/supabase";
 import { getReferenceSet } from "@/lib/references";
 import { generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/echo";
-import { echoCostCentsFromUsage } from "@/lib/engines/echo-cost";
+import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 
 type Admin = ReturnType<typeof createServerClient>;
@@ -211,7 +211,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
       .eq("id", job.id);
 
     const real = engineCostCents != null ? `${(engineCostCents / 100).toFixed(3)}€` : "n/d";
-    console.log(`[ECHO job ${job.id}] done · ${p.echoSize} ${p.echoQuality} · reale=${real} · suppl=${(surcharge_cents / 100).toFixed(2)}€`);
+    console.log(`[ECHO job ${job.id}] done · ${echoResLabel(p.echoSize)} ${p.echoSize} ${p.echoQuality} · reale=${real} · suppl=${(surcharge_cents / 100).toFixed(2)}€`);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "errore sconosciuto";
     await admin.from("generation_jobs").update({ status: "error", finished_at: nowIso(), error: msg.slice(0, 500) }).eq("id", job.id);

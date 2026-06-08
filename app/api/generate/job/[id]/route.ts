@@ -24,11 +24,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Job inesistente" }, { status: 404 });
   }
 
-  const category = (job.params as { category?: string | null } | null)?.category ?? null;
+  const jobParams = (job.params as { category?: string | null; echoSize?: string } | null) ?? null;
   return NextResponse.json({
     status: job.status, // pending | running | done | error
     error: job.status === "error" ? job.error : undefined,
-    category,
+    category: jobParams?.category ?? null,
+    size: jobParams?.echoSize ?? undefined,
     certificate: job.certificate ?? undefined,
     image_url: job.image_url ?? undefined,
     gross_cents: job.gross_cents ?? undefined,
