@@ -44,6 +44,26 @@ export async function uploadPrivate(
   if (error) throw new Error(`Storage upload '${bucket}/${path}': ${error.message}`);
 }
 
+/**
+ * Cancella TUTTI i file sotto un prefisso (es. references/{handle}). Usato per il
+ * diritto all'oblio: alla revoca del consenso le foto reali vengono rimosse
+ * ("cancello, non cassaforte"). Ritorna quanti file sono stati eliminati. Non
+ * lancia: la cancellazione è best-effort.
+ */
+export async function deletePrefix(bucket: string, prefix: string): Promise<number> {
+  const admin = createServerClient();
+  try {
+    const { data: list } = await admin.storage.from(bucket).list(prefix);
+    if (!list || list.length === 0) return 0;
+    const paths = list.filter((f) => f.name).map((f) => `${prefix}/${f.name}`);
+    if (paths.length === 0) return 0;
+    const { error } = await admin.storage.from(bucket).remove(paths);
+    return error ? 0 : paths.length;
+  } catch {
+    return 0;
+  }
+}
+
 /** Lista e scarica tutti i file immagine sotto un prefisso (per il reference-set). */
 export async function downloadAll(bucket: string, prefix: string): Promise<Buffer[]> {
   const admin = createServerClient();

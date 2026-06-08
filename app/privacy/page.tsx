@@ -29,6 +29,15 @@ export default function PrivacyPage() {
               royalty. I documenti d&apos;identità eventualmente caricati per la verifica sono trattati solo per quella
               finalità e non restano esposti.
             </Section>
+            <Section title="Le tue foto: dove vivono e per quanto">
+              Le foto che carichi per creare l&apos;avatar (il &laquo;reference-set&raquo;) vengono ridimensionate sul tuo
+              dispositivo e salvate in uno <strong className="text-foreground">spazio privato e cifrato</strong> (Supabase
+              Storage), accessibile solo dai nostri sistemi lato server: non sono mai pubbliche, non finiscono nel codice,
+              non vengono indicizzate. Servono unicamente a bloccare l&apos;identità reale nelle generazioni autorizzate.
+              <strong className="text-foreground"> Quando revochi il consenso, le foto-reference vengono cancellate</strong>
+              (&laquo;cancello, non cassaforte&raquo;): restano solo i certificati anonimi delle generazioni già avvenute,
+              come prova. Conserviamo i dati nel territorio dell&apos;Unione Europea ove possibile.
+            </Section>
             <Section title="Nessun dato biometrico esposto">
               Non pubblichiamo né esponiamo dati biometrici. Eventuali ancoraggi pubblici (oggi assenti, in futuro su
               blockchain) conterrebbero <strong className="text-foreground">solo hash anonimi</strong>, mai volti, foto o
@@ -46,6 +55,15 @@ export default function PrivacyPage() {
             <Section title="Sicurezza">
               Le credenziali e i dati sensibili sono gestiti lato server e non sono mai esposti al browser. L&apos;accesso
               ai dati è limitato e controllato.
+            </Section>
+            <Section title="Fornitori che ci aiutano (sub-processor)">
+              Per erogare il servizio ci appoggiamo a fornitori selezionati, che trattano i dati solo per nostro conto e
+              limitatamente a ciò che serve: <strong className="text-foreground">Supabase</strong> (database, autenticazione
+              e archiviazione cifrata delle foto), <strong className="text-foreground">Anthropic (Claude)</strong> — solo se
+              scegli di far analizzare le foto per pre-compilare l&apos;identikit, <strong className="text-foreground">OpenAI</strong> e
+              <strong className="text-foreground"> Higgsfield</strong> per la generazione delle immagini quando autorizzata.
+              Alcuni di questi fornitori hanno sede fuori dall&apos;UE: i trasferimenti avvengono con le garanzie previste dal
+              GDPR. Non cediamo i tuoi dati a nessun altro e non li usiamo per addestrare modelli senza il tuo consenso.
             </Section>
             <Section title="Contatti">
               Per qualsiasi richiesta sulla privacy: <span className="text-foreground">privacy@human2ai.example</span>.

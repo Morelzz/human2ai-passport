@@ -33,6 +33,13 @@ export default function TerminiPage() {
               commerciale produce un certificato verificabile e remunera la persona reale. È vietato usare i contenuti
               fuori dalle categorie concesse o per finalità illecite, diffamatorie o ingannevoli.
             </Section>
+            <Section title="Le tue foto e il reference-set">
+              Le foto che carichi servono solo a rappresentare fedelmente la tua identità nelle generazioni che autorizzi.
+              Restano private e cifrate, non vengono cedute né usate per addestrare modelli senza il tuo consenso. Quando
+              revochi il consenso le foto-reference vengono <strong className="text-foreground">cancellate</strong>; i
+              certificati delle generazioni già avvenute restano come prova (la revoca è prospettica). Caricando dichiari di
+              avere il pieno diritto sulle immagini e di essere la persona rappresentata.
+            </Section>
             <Section title="Royalty e pagamenti">
               Su ogni generazione commerciale la persona reale riceve una quota maggioritaria (royalty), la piattaforma
               una fee. Gli importi maturano in un wallet con payout a soglia. I prezzi dipendono dalla categoria d&apos;uso.

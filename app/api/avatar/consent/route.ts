@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { deletePrefix } from "@/lib/storage";
 import { CATEGORIES } from "@/lib/types";
+
+export const runtime = "nodejs";
 
 type Action =
   | { type: "revoke_all" }
@@ -24,7 +27,7 @@ export async function POST(request: Request) {
   // L'avatar deve appartenere all'utente
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, approved_categories, excluded_categories, revoked_at")
+    .select("id, handle, approved_categories, excluded_categories, revoked_at")
     .eq("owner_id", user.id)
     .maybeSingle();
   if (!avatar) return NextResponse.json({ error: "Nessun avatar da gestire" }, { status: 404 });
@@ -35,15 +38,20 @@ export async function POST(request: Request) {
 
   if (action.type === "revoke_all") {
     if (avatar.revoked_at) return NextResponse.json({ error: "Già revocato" }, { status: 409 });
-    // Revoca PROSPETTICA: blocca il futuro, non cancella il passato
+    // Revoca PROSPETTICA: blocca il futuro, non cancella il passato (le generazioni
+    // e i certificati restano come prova). MA le foto-reference grezze (dato
+    // biometrico) NON servono più — diritto all'oblio: le cancelliamo subito
+    // ("cancello, non cassaforte"). La revoca prospettica non ne risente: senza
+    // consenso non si genera comunque.
     await admin.from("avatars").update({ revoked_at: today }).eq("id", avatar.id);
+    const purged = await deletePrefix("references", avatar.handle);
     await admin.from("consent_events").insert({
       avatar_id: avatar.id,
       event_type: "REVOKED",
-      detail: "Revoca totale (kill-switch creatore)",
+      detail: `Revoca totale (kill-switch creatore)${purged > 0 ? ` · ${purged} foto-reference cancellate` : ""}`,
       occurred_at: today,
     });
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, references_deleted: purged });
   }
 
   if (action.type === "reactivate") {
