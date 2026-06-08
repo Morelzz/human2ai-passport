@@ -90,8 +90,9 @@ export default function MatchClient() {
   // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
   // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
   const [engine, setEngine] = useState<"higgsfield" | "echo">("higgsfield");
-  // ECHO: fino a 2 immagini extra del cliente (outfit, scenario…) con descrizione.
-  type EchoRef = { dataUrl: string; desc: string } | undefined;
+  // ECHO: fino a 2 immagini extra del cliente. Ogni box ha un RUOLO: noi
+  // colleghiamo l'immagine al soggetto in automatico, l'utente non scrive nulla.
+  type EchoRef = { dataUrl: string; desc: string; role: string } | undefined;
   const [echoRefs, setEchoRefs] = useState<EchoRef[]>([]);
 
   async function pickEcho(i: number, file: File | undefined) {
@@ -100,17 +101,17 @@ export default function MatchClient() {
       const dataUrl = await resizeImage(file);
       setEchoRefs((prev) => {
         const next = [...prev];
-        next[i] = { dataUrl, desc: next[i]?.desc ?? "" };
+        next[i] = { dataUrl, desc: next[i]?.desc ?? "", role: next[i]?.role ?? (i === 0 ? "outfit" : "sfondo") };
         return next;
       });
     } catch {
       /* immagine non leggibile */
     }
   }
-  function setEchoDesc(i: number, desc: string) {
+  function updateEcho(i: number, patch: Partial<NonNullable<EchoRef>>) {
     setEchoRefs((prev) => {
       const next = [...prev];
-      if (next[i]) next[i] = { ...next[i]!, desc };
+      if (next[i]) next[i] = { ...next[i]!, ...patch };
       return next;
     });
   }
@@ -170,7 +171,7 @@ export default function MatchClient() {
         scene: sceneByHandle[handle] ?? "",
         engine,
         extraRefs: engine === "echo"
-          ? echoRefs.filter((r): r is { dataUrl: string; desc: string } => !!r?.dataUrl).map((r) => ({ data: r.dataUrl, desc: r.desc }))
+          ? echoRefs.filter((r): r is { dataUrl: string; desc: string; role: string } => !!r?.dataUrl).map((r) => ({ data: r.dataUrl, desc: r.desc, role: r.role }))
           : undefined,
         model,
         styleId: modelSupportsStyles ? (styleId || null) : null,
@@ -350,11 +351,21 @@ export default function MatchClient() {
                                               ✕
                                             </button>
                                           </div>
+                                          <select
+                                            value={ref.role}
+                                            onChange={(e) => updateEcho(i, { role: e.target.value })}
+                                            className="mt-2 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-1.5 text-xs text-foreground outline-none focus:border-teal/50"
+                                          >
+                                            <option value="outfit">Outfit / capo</option>
+                                            <option value="accessorio">Accessorio</option>
+                                            <option value="sfondo">Sfondo / scenario</option>
+                                            <option value="oggetto">Oggetto</option>
+                                          </select>
                                           <input
                                             value={ref.desc}
-                                            onChange={(e) => setEchoDesc(i, e.target.value)}
-                                            placeholder={i === 0 ? "Es. maglietta nera del brand" : "Es. bosco sullo sfondo"}
-                                            className="mt-2 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
+                                            onChange={(e) => updateEcho(i, { desc: e.target.value })}
+                                            placeholder="descrizione (opzionale)"
+                                            className="mt-1.5 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
                                           />
                                         </>
                                       ) : (
@@ -374,7 +385,9 @@ export default function MatchClient() {
                                 })}
                               </div>
                               <p className="mt-2 text-[0.68rem] leading-relaxed text-faint">
-                                Carica una foto e scrivi cos&apos;è (es. una maglietta, uno sfondo). L&apos;AI la userà mantenendo il volto reale di {avatar.alias}.
+                                Carica le immagini e scegli <span className="text-muted">cosa sono</span>: al collegamento pensiamo noi.
+                                Es. outfit + sfondo → {avatar.alias} indossa quell&apos;outfit in quell&apos;ambiente, automaticamente.
+                                Il campo &laquo;scena&raquo; sopra è solo per direzioni extra (posa, luce) ed è opzionale.
                               </p>
                             </div>
                           )}

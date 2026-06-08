@@ -13,22 +13,34 @@ import sharp from "sharp";
 
 export const runtime = "nodejs";
 
-// Compone il prompt finale per ECHO: suffisso identità di sistema (non
-// sovrascrivibile dal compratore) + descrizione SEMANTICA dei capi/scenari
-// caricati dal cliente (niente numerazione: il modello li abbina per contenuto)
-// + scena sanitizzata.
-function buildEchoPrompt(scene: string, extras: string[]): string {
+// Compone il prompt finale per ECHO. L'utente NON scrive il collegamento: indica
+// solo il RUOLO di ogni immagine (outfit/accessorio/sfondo/oggetto) e noi
+// generiamo la frase giusta in modo automatico, semantico (niente numerazione).
+type ExtraMeta = { role: string; desc: string };
+
+function clauseForExtra(e: ExtraMeta): string {
+  const d = e.desc.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
+  switch (e.role) {
+    case "outfit":
+      return `the person is wearing the ${d || "outfit"} shown in the additional reference images`;
+    case "accessorio":
+      return `the person is wearing or using the ${d || "accessory"} shown in the additional reference images`;
+    case "sfondo":
+      return `the scene takes place in the ${d || "location"} shown in the additional reference images, used as the background and environment`;
+    default:
+      return `the image includes the ${d || "object"} shown in the additional reference images`;
+  }
+}
+
+function buildEchoPrompt(scene: string, extras: ExtraMeta[]): string {
   const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
   let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
-  const items = extras.map((e) => e.trim()).filter(Boolean);
-  if (items.length > 0) {
-    base +=
-      " Incorporate these elements, each shown in the additional reference images: " +
-      items.map((d) => `"${d}"`).join("; ") +
-      ". Apply them faithfully and exactly as depicted — clothing/accessories worn by the person, backgrounds and scenery placed behind them.";
+  const clauses = extras.map(clauseForExtra);
+  if (clauses.length > 0) {
+    base += " " + clauses.join("; ") + ". Apply each one faithfully and exactly as depicted.";
   }
-  return safe ? `${base} Scene: ${safe}.` : base;
+  return safe ? `${base} Additional direction: ${safe}.` : base;
 }
 
 // Decodifica un data-URL immagine e lo ridimensiona per l'invio al motore.
@@ -108,19 +120,22 @@ export async function POST(request: Request) {
     // Immagini extra del cliente (capi/scenari), MAX 2. Totale immagini ≤ 10.
     const rawExtras = Array.isArray(body?.extraRefs) ? body.extraRefs.slice(0, 2) : [];
     const extraBuffers: Buffer[] = [];
-    const extraDescs: string[] = [];
+    const extraMeta: ExtraMeta[] = [];
     for (const ex of rawExtras) {
       const buf = typeof ex?.data === "string" ? await dataUrlToBuffer(ex.data) : null;
       if (!buf) continue;
       extraBuffers.push(buf);
-      extraDescs.push(typeof ex?.desc === "string" ? ex.desc.slice(0, 120) : "");
+      extraMeta.push({
+        role: typeof ex?.role === "string" ? ex.role : "oggetto",
+        desc: typeof ex?.desc === "string" ? ex.desc : "",
+      });
     }
     // 8 identità + fino a 2 extra, mai oltre il limite di 10 del motore.
     const references = [...identity.slice(0, 10 - extraBuffers.length), ...extraBuffers];
 
     let png: Buffer;
     try {
-      png = (await generateEcho({ prompt: buildEchoPrompt(scene, extraDescs), references })).png;
+      png = (await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta), references })).png;
     } catch (e) {
       return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined }, { status: 502 });
     }
