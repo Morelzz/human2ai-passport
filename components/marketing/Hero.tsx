@@ -6,6 +6,7 @@ import { ShieldCheck, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Parallax } from "@/components/motion/Parallax";
 import { Magnetic } from "@/components/motion/Magnetic";
+import { KineticText } from "@/components/motion/KineticText";
 
 const container = {
   hidden: {},
@@ -15,10 +16,6 @@ const item = {
   hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
   show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const } },
 };
-
-// Titolo cinetico: ogni parola entra sfalsata. L'ultima frase ha il gradiente animato.
-const H1_LINE1 = ["Dietro", "ogni", "volto,"];
-const H1_LINE2 = ["una"];
 
 export function Hero({ count }: { count: number }) {
   return (
@@ -43,18 +40,10 @@ export function Hero({ count }: { count: number }) {
           </motion.div>
 
           <h1 className="text-balance text-4xl font-extrabold leading-[1.04] tracking-tight sm:text-5xl lg:text-[3.9rem]">
+            <span className="block"><KineticText text="Dietro ogni volto," /></span>
             <span className="block">
-              {H1_LINE1.map((w, i) => (
-                <motion.span key={i} variants={item} className="mr-[0.28em] inline-block">{w}</motion.span>
-              ))}
-            </span>
-            <span className="block">
-              {H1_LINE2.map((w, i) => (
-                <motion.span key={i} variants={item} className="mr-[0.28em] inline-block">{w}</motion.span>
-              ))}
-              <motion.span variants={item} className="inline-block">
-                <ShimmerWord>persona vera</ShimmerWord>.
-              </motion.span>
+              <KineticText text="una " delay={0.18} />
+              <ShimmerWord>persona vera</ShimmerWord>.
             </span>
           </h1>
 
