@@ -58,20 +58,23 @@ export function grossForCategory(category: string | null): number {
 
 // Sovrapprezzo ECHO per risoluzione e qualità (gpt-image-2). PROVVISORI: da tarare
 // sui costi reali OpenAI. Moltiplicano il lordo di categoria.
-const ECHO_SIZE_MULT: Record<string, number> = {
-  "1024x1024": 1,
-  "1024x1536": 1.4,
-  "1536x1024": 1.4,
-  "2560x1440": 2.5,
-  "3840x2160": 4,
-};
 const ECHO_QUALITY_MULT: Record<string, number> = { low: 0.8, medium: 1, high: 1.6 };
+
+// Moltiplicatore di risoluzione basato sui PIXEL totali (copre ogni formato).
+function echoSizeMult(size?: string | null): number {
+  if (!size) return 1;
+  const m = /^(\d+)x(\d+)$/.exec(size);
+  if (!m) return 1;
+  const px = Number(m[1]) * Number(m[2]);
+  if (px <= 1_600_000) return 1; // ~HD (1024², 1024x1536, 1536x1024)
+  if (px <= 4_500_000) return 2.5; // ~2K (2048², 2560x1440, 1440x2560)
+  return 4; // ~4K (3840x2160, 2160x3840)
+}
 
 // Moltiplicatore di prezzo per una generazione ECHO data risoluzione+qualità.
 export function echoMultiplier(size?: string | null, quality?: string | null): number {
-  const s = (size && ECHO_SIZE_MULT[size]) || 1;
   const q = (quality && ECHO_QUALITY_MULT[quality]) || 1;
-  return s * q;
+  return echoSizeMult(size) * q;
 }
 
 // Lordo (centesimi) per ECHO: categoria × moltiplicatore risoluzione/qualità.

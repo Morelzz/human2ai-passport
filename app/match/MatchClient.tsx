@@ -7,15 +7,24 @@ import { formatEur, grossForCategory, echoMultiplier } from "@/lib/wallet";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 import { avatarArt } from "@/lib/avatar-art";
 
-// Opzioni risoluzione/qualità per ECHO (gpt-image-2), con etichette leggibili.
-const ECHO_SIZE_OPTS = [
-  { v: "1024x1024", l: "Quadrata · 1024" },
-  { v: "1024x1536", l: "Verticale · 1024×1536" },
-  { v: "1536x1024", l: "Orizzontale · 1536×1024" },
-  { v: "2560x1440", l: "2K · 2560×1440" },
-  { v: "3840x2160", l: "4K · 3840×2160" },
+// ECHO (gpt-image-2): Formato × Risoluzione → dimensione in pixel valida per l'API.
+// Il quadrato non ha 4K (supererebbe il limite di pixel del modello).
+const ECHO_SIZE_GRID: Record<string, Record<string, string>> = {
+  quadrato:    { standard: "1024x1024", "2k": "2048x2048" },
+  verticale:   { standard: "1024x1536", "2k": "1440x2560", "4k": "2160x3840" },
+  orizzontale: { standard: "1536x1024", "2k": "2560x1440", "4k": "3840x2160" },
+};
+const ECHO_FORMATS = [
+  { v: "quadrato", l: "Quadrato" },
+  { v: "verticale", l: "Verticale" },
+  { v: "orizzontale", l: "Orizzontale" },
 ];
-const ECHO_QUALITY_OPTS = [
+const ECHO_RESES = [
+  { v: "standard", l: "Standard" },
+  { v: "2k", l: "2K" },
+  { v: "4k", l: "4K" },
+];
+const ECHO_QUALS = [
   { v: "low", l: "Bassa" },
   { v: "medium", l: "Media" },
   { v: "high", l: "Alta" },
@@ -104,8 +113,10 @@ export default function MatchClient() {
   // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
   // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
   const [engine, setEngine] = useState<"higgsfield" | "echo">("higgsfield");
-  const [echoSize, setEchoSize] = useState("1024x1024");
+  const [echoFormat, setEchoFormat] = useState("quadrato");
+  const [echoRes, setEchoRes] = useState("standard");
   const [echoQuality, setEchoQuality] = useState("high");
+  const echoSize = ECHO_SIZE_GRID[echoFormat]?.[echoRes] ?? ECHO_SIZE_GRID[echoFormat]?.["2k"] ?? "1024x1024";
   // ECHO: fino a 2 immagini extra del cliente. Ogni box ha un RUOLO: noi
   // colleghiamo l'immagine al soggetto in automatico, l'utente non scrive nulla.
   type EchoRef = { dataUrl: string; desc: string; role: string } | undefined;
@@ -352,28 +363,39 @@ export default function MatchClient() {
                             )}
                           </div>
 
-                          {/* ECHO — risoluzione e qualità (incidono sul prezzo) */}
+                          {/* ECHO — formato, risoluzione e qualità (incidono sul prezzo) */}
                           {engine === "echo" && (
-                            <div className="mt-4 grid grid-cols-2 gap-2">
+                            <div className="mt-4 space-y-3">
                               <div>
-                                <span className="mb-1 block text-xs font-semibold text-muted">Risoluzione</span>
-                                <select value={echoSize} onChange={(e) => setEchoSize(e.target.value)}
-                                  className="w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-2 text-xs text-foreground outline-none focus:border-teal/50">
-                                  {ECHO_SIZE_OPTS.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
-                                </select>
+                                <span className="mb-1.5 block text-xs font-semibold text-muted">Formato</span>
+                                <div className="flex flex-wrap gap-2">
+                                  {ECHO_FORMATS.map((f) => (
+                                    <Chip key={f.v} active={echoFormat === f.v}
+                                      onClick={() => { setEchoFormat(f.v); if (f.v === "quadrato" && echoRes === "4k") setEchoRes("2k"); }}>
+                                      {f.l}
+                                    </Chip>
+                                  ))}
+                                </div>
                               </div>
                               <div>
-                                <span className="mb-1 block text-xs font-semibold text-muted">Qualità</span>
-                                <select value={echoQuality} onChange={(e) => setEchoQuality(e.target.value)}
-                                  className="w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-2 text-xs text-foreground outline-none focus:border-teal/50">
-                                  {ECHO_QUALITY_OPTS.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
-                                </select>
+                                <span className="mb-1.5 block text-xs font-semibold text-muted">Risoluzione</span>
+                                <div className="flex flex-wrap gap-2">
+                                  {ECHO_RESES.filter((r) => !(echoFormat === "quadrato" && r.v === "4k")).map((r) => (
+                                    <Chip key={r.v} active={echoRes === r.v} onClick={() => setEchoRes(r.v)}>{r.l}</Chip>
+                                  ))}
+                                </div>
                               </div>
-                              {(echoSize === "2560x1440" || echoSize === "3840x2160") && (
-                                <p className="col-span-2 text-[0.66rem] leading-relaxed text-crimson-light">
-                                  Le risoluzioni alte sono più lente (anche qualche minuto) e più costose.
-                                </p>
-                              )}
+                              <div>
+                                <span className="mb-1.5 block text-xs font-semibold text-muted">Qualità</span>
+                                <div className="flex flex-wrap gap-2">
+                                  {ECHO_QUALS.map((q) => (
+                                    <Chip key={q.v} active={echoQuality === q.v} onClick={() => setEchoQuality(q.v)}>{q.l}</Chip>
+                                  ))}
+                                </div>
+                              </div>
+                              <p className="text-[0.66rem] leading-relaxed text-faint">
+                                {echoSize.replace("x", "×")} px{echoRes !== "standard" ? " · più lento (anche qualche minuto) e più costoso" : ""}
+                              </p>
                             </div>
                           )}
 

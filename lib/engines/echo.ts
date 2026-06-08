@@ -14,11 +14,19 @@ const GEN_URL = "https://api.openai.com/v1/images/generations";
 const EDIT_URL = "https://api.openai.com/v1/images/edits";
 const MODEL = "gpt-image-2";
 
-// Risoluzioni e qualità supportate da gpt-image-2 (come nel Playground OpenAI).
-export type EchoSize = "1024x1024" | "1024x1536" | "1536x1024" | "2560x1440" | "3840x2160";
+// Risoluzioni e qualità supportate da gpt-image-2 (lati multipli di 16, lato lungo
+// ≤3840, rapporto ≤3:1, pixel 0,65M–8,29M). Quadrato/Verticale/Orizzontale a varie risoluzioni.
+export type EchoSize =
+  | "1024x1024" | "2048x2048"               // quadrato (HD, 2K)
+  | "1024x1536" | "1440x2560" | "2160x3840" // verticale (HD, 2K, 4K)
+  | "1536x1024" | "2560x1440" | "3840x2160"; // orizzontale (HD, 2K, 4K)
 export type EchoQuality = "low" | "medium" | "high";
 
-export const ECHO_SIZES: EchoSize[] = ["1024x1024", "1024x1536", "1536x1024", "2560x1440", "3840x2160"];
+export const ECHO_SIZES: EchoSize[] = [
+  "1024x1024", "2048x2048",
+  "1024x1536", "1440x2560", "2160x3840",
+  "1536x1024", "2560x1440", "3840x2160",
+];
 export const ECHO_QUALITIES: EchoQuality[] = ["low", "medium", "high"];
 export function isEchoSize(v: unknown): v is EchoSize {
   return typeof v === "string" && (ECHO_SIZES as string[]).includes(v);
