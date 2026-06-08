@@ -63,10 +63,12 @@ export default function MatchClient() {
   const [generatingHandle, setGeneratingHandle] = useState<string | null>(null);
   const [genByHandle, setGenByHandle] = useState<Record<string, GenResult>>({});
 
-  // Impostazioni di generazione: modello (qualità) + stile (solo Soul ID)
+  // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
+  // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
+  const [engine, setEngine] = useState<"higgsfield" | "echo">("higgsfield");
   const [model, setModel] = useState<SoulModel>(DEFAULT_MODEL);
   const [styleId, setStyleId] = useState("");
-  const modelSupportsStyles = SOUL_MODELS.find((m) => m.id === model)?.supportsStyles ?? false;
+  const modelSupportsStyles = engine === "higgsfield" && (SOUL_MODELS.find((m) => m.id === model)?.supportsStyles ?? false);
 
   const toggle = (cur: string, v: string, set: (s: string) => void) => set(cur === v ? "" : v);
 
@@ -111,6 +113,7 @@ export default function MatchClient() {
         mode,
         category: category || null,
         scene: sceneByHandle[handle] ?? "",
+        engine,
         model,
         styleId: modelSupportsStyles ? (styleId || null) : null,
       }),
@@ -245,7 +248,7 @@ export default function MatchClient() {
                               className="w-full resize-y rounded-xl border border-white/10 bg-obsidian px-3 py-3 text-sm text-foreground outline-none focus:border-violet/50"
                             />
                             <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
-                              Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — garantito dal Soul.
+                              Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — {engine === "echo" ? "identità bloccata dalle sue foto reali" : "garantito dal Soul"}.
                             </p>
                           </div>
 
@@ -253,9 +256,15 @@ export default function MatchClient() {
                             <span className="mb-2 block text-xs font-semibold text-muted">Modello</span>
                             <div className="flex flex-wrap gap-2">
                               {SOUL_MODELS.map((m) => (
-                                <Chip key={m.id} active={model === m.id} onClick={() => setModel(m.id)}>{m.label} · {m.quality}</Chip>
+                                <Chip key={m.id} active={engine === "higgsfield" && model === m.id} onClick={() => { setEngine("higgsfield"); setModel(m.id); }}>{m.label} · {m.quality}</Chip>
                               ))}
+                              <Chip active={engine === "echo"} onClick={() => setEngine("echo")}>ECHO · fotoreale</Chip>
                             </div>
+                            {engine === "echo" && (
+                              <p className="mt-2 text-[0.7rem] leading-relaxed text-teal">
+                                Massima fedeltà: l&apos;identità è bloccata dalle foto reali della persona.
+                              </p>
+                            )}
                           </div>
 
                           {modelSupportsStyles && (
