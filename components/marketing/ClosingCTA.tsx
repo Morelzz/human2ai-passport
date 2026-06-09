@@ -1,34 +1,59 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { KineticText } from "@/components/motion/KineticText";
 
-// [CTA FINALE] — Chiusura pagina. Concetto forte, una riga + button.
-// Copy verbatim da docs/SITE_COPY.md.
+// [CTA FINALE] — Chiusura pagina. Aurora viva dentro la card, tipografia
+// oversize cinetica, CTA magnetica. Copy verbatim da docs/SITE_COPY.md.
 
 export function ClosingCTA() {
+  const reduce = useReducedMotion();
   return (
-    <section className="mx-auto max-w-4xl px-5 pb-24 pt-8 sm:px-8 sm:pb-32">
+    <section className="mx-auto max-w-5xl px-5 pb-24 pt-8 sm:px-8 sm:pb-32">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="glass relative overflow-hidden rounded-[2rem] px-6 py-16 text-center sm:px-12 sm:py-24"
+        className="glass relative overflow-hidden rounded-[2rem] px-6 py-20 text-center sm:px-12 sm:py-28"
       >
-        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(184,0,92,0.20),transparent_70%)]" />
+        {/* Aurora viva dentro la card (due bagliori che respirano in alternanza) */}
+        <motion.div
+          aria-hidden
+          className="absolute -left-1/4 -top-1/2 h-[120%] w-[80%] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(184,0,92,0.28), transparent 65%)" }}
+          animate={reduce ? undefined : { x: ["0%", "30%", "0%"], opacity: [0.5, 0.9, 0.5] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          aria-hidden
+          className="absolute -right-1/4 -bottom-1/2 h-[120%] w-[80%] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(107,33,232,0.30), transparent 65%)" }}
+          animate={reduce ? undefined : { x: ["0%", "-30%", "0%"], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
+        {/* Filo di luce perimetrale in alto */}
+        <div aria-hidden className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
         <div className="relative">
-          <h2 className="mx-auto max-w-2xl text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-            L&apos;epoca dei volti senza nome <span className="text-gradient">finisce qui</span>.
+          <span className="label-mono text-crimson-light">L&apos;appello</span>
+          <h2 className="mx-auto mt-5 max-w-3xl text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-6xl">
+            <KineticText text="L'epoca dei volti senza nome " />
+            <KineticText text="finisce qui" gradient delay={0.35} />
+            <KineticText text="." delay={0.45} />
           </h2>
-          <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-muted sm:text-lg">
+          <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted sm:text-lg">
             Unisciti alle persone che hanno deciso di possedere la propria immagine nell&apos;era dell&apos;AI.
           </p>
-          <div className="mt-9">
-            <Button asChild size="lg">
-              <Link href="/signup">Entra in HUMAN2AI</Link>
-            </Button>
+          <div className="mt-10 flex justify-center">
+            <Magnetic>
+              <Button asChild size="lg">
+                <Link href="/signup">Entra in HUMAN2AI</Link>
+              </Button>
+            </Magnetic>
           </div>
         </div>
       </motion.div>

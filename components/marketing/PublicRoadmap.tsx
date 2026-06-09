@@ -86,7 +86,7 @@ export function PublicRoadmap() {
     <section id="la-strada" className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
       {/* Intestazione */}
       <div className="mx-auto max-w-2xl text-center">
-        <span className="text-xs font-bold tracking-[0.16em] text-teal">LA STRADA</span>
+        <span className="label-mono text-teal">La strada</span>
         <h2 className="mt-2 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
           <KineticText text="Dove stiamo andando" />
         </h2>

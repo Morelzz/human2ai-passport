@@ -50,23 +50,58 @@ export default async function Home() {
         <Reveal><PublicRoadmap /></Reveal>
         <Reveal><ClosingCTA /></Reveal>
 
-        <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] px-5 py-8 sm:px-8">
-          <div className="flex items-center gap-2.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-shield.png" alt="" aria-hidden className="h-7 w-7 object-contain opacity-80 [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
-            <div className="leading-tight">
-              <span className="block text-xs font-bold tracking-[0.15em] text-muted">HUMAN2AI</span>
-              <span className="block text-[0.62rem] font-semibold tracking-[0.08em] text-faint">Real Humans. Real Rights. Real Earnings.</span>
+        <footer className="relative mt-8 overflow-hidden">
+          <hr className="divider-glow mx-auto max-w-6xl" />
+          <div className="mx-auto max-w-6xl px-5 pb-10 pt-12 sm:px-8">
+            <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
+              {/* Identità */}
+              <div className="max-w-xs">
+                <div className="flex items-center gap-2.5">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/logo-shield.png" alt="" aria-hidden className="h-9 w-9 object-contain opacity-90 [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
+                  <span className="text-sm font-bold tracking-[0.18em]">HUMAN2AI</span>
+                </div>
+                <p className="mt-4 text-sm leading-relaxed text-faint">
+                  Il registro dei diritti d&apos;immagine. Il filtro di tutela umana sopra ogni IA generativa.
+                </p>
+                <p className="mt-3 font-mono text-[0.62rem] font-semibold tracking-[0.12em] text-muted">
+                  REAL HUMANS · REAL RIGHTS · REAL EARNINGS
+                </p>
+              </div>
+
+              {/* Colonne link (gli stessi di prima, organizzati) */}
+              <div className="grid grid-cols-2 gap-x-12 gap-y-8 sm:grid-cols-3">
+                <div>
+                  <span className="label-mono text-violet-light">Piattaforma</span>
+                  <div className="mt-3 flex flex-col gap-2.5">
+                    <Link href="/match" className="text-sm text-faint transition-colors hover:text-foreground">Registro</Link>
+                    <Link href="/pricing" className="text-sm text-faint transition-colors hover:text-foreground">Prezzi</Link>
+                    <Link href="/verify" className="text-sm text-faint transition-colors hover:text-foreground">Verifica</Link>
+                  </div>
+                </div>
+                <div>
+                  <span className="label-mono text-teal">Fiducia</span>
+                  <div className="mt-3 flex flex-col gap-2.5">
+                    <Link href="/trasparenza" className="text-sm text-faint transition-colors hover:text-foreground">Trasparenza</Link>
+                    <Link href="/sviluppatori" className="text-sm text-faint transition-colors hover:text-foreground">Sviluppatori</Link>
+                  </div>
+                </div>
+                <div>
+                  <span className="label-mono text-crimson-light">Legale</span>
+                  <div className="mt-3 flex flex-col gap-2.5">
+                    <Link href="/privacy" className="text-sm text-faint transition-colors hover:text-foreground">Privacy</Link>
+                    <Link href="/termini" className="text-sm text-faint transition-colors hover:text-foreground">Termini</Link>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-5">
-            <Link href="/match" className="text-sm text-faint hover:text-muted">Registro</Link>
-            <Link href="/pricing" className="text-sm text-faint hover:text-muted">Prezzi</Link>
-            <Link href="/trasparenza" className="text-sm text-faint hover:text-muted">Trasparenza</Link>
-            <Link href="/verify" className="text-sm text-faint hover:text-muted">Verifica</Link>
-            <Link href="/sviluppatori" className="text-sm text-faint hover:text-muted">Sviluppatori</Link>
-            <Link href="/privacy" className="text-sm text-faint hover:text-muted">Privacy</Link>
-            <Link href="/termini" className="text-sm text-faint hover:text-muted">Termini</Link>
+
+            {/* Wordmark gigante in chiusura (tipografia oversize, trend 2026) */}
+            <div aria-hidden className="pointer-events-none mt-12 select-none overflow-hidden">
+              <p className="bg-gradient-to-b from-white/[0.07] to-transparent bg-clip-text text-center text-[18vw] font-extrabold leading-[0.85] tracking-tighter text-transparent sm:text-[11rem]">
+                HUMAN2AI
+              </p>
+            </div>
           </div>
         </footer>
       </div>

@@ -24,7 +24,7 @@ export function Audiences() {
         >
           <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_0%_0%,rgba(0,168,150,0.12),transparent_70%)]" />
           <div className="relative">
-            <span className="text-xs font-bold tracking-[0.14em] text-teal">PER CHI METTE IL VOLTO</span>
+            <span className="label-mono text-teal">Per chi mette il volto</span>
             <h3 className="mt-2 text-balance text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
               Il tuo volto, alle tue condizioni.
             </h3>
@@ -49,7 +49,7 @@ export function Audiences() {
         >
           <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_100%_0%,rgba(107,33,232,0.14),transparent_70%)]" />
           <div className="relative">
-            <span className="text-xs font-bold tracking-[0.14em] text-violet-light">PER I BRAND</span>
+            <span className="label-mono text-violet-light">Per i brand</span>
             <h3 className="mt-2 text-balance text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
               Volti che puoi usare senza paura.
             </h3>

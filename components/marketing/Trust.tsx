@@ -29,8 +29,8 @@ export function Trust() {
       >
         <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(0,168,150,0.12),transparent_70%)]" />
         <div className="relative">
-          <span className="text-xs font-bold tracking-[0.14em] text-teal">FIDUCIA &amp; PROVENIENZA</span>
-          <h2 className="mt-2 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+          <span className="label-mono text-teal">Fiducia &amp; Provenienza</span>
+          <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
             La prova è parte del prodotto.
           </h2>
           <p className="mt-5 max-w-2xl leading-relaxed text-muted">
