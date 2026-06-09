@@ -208,6 +208,68 @@ html { scrollbar-width: thin; scrollbar-color: #2a2140 #0a0a0f; }
   color: transparent;
 }
 
+/* ── Tipografia del blog (.prose-h2ai): markdown renderizzato, tema dark ── */
+.prose-h2ai {
+  font-size: 1.02rem;
+  line-height: 1.78;
+  color: #c7c9d1;
+}
+.prose-h2ai p { margin: 0 0 1.25em; }
+.prose-h2ai h2 {
+  margin: 2em 0 0.6em;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #f0f0f5;
+}
+.prose-h2ai h3 {
+  margin: 1.6em 0 0.5em;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f0f0f5;
+}
+.prose-h2ai a {
+  color: #8b47f0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(139, 71, 240, 0.4);
+}
+.prose-h2ai a:hover { text-decoration-color: #8b47f0; }
+.prose-h2ai strong { color: #f0f0f5; font-weight: 700; }
+.prose-h2ai em { color: #d6d8e0; }
+.prose-h2ai ul, .prose-h2ai ol { margin: 0 0 1.25em; padding-left: 1.3em; }
+.prose-h2ai li { margin: 0.4em 0; }
+.prose-h2ai li::marker { color: #8b47f0; }
+.prose-h2ai blockquote {
+  margin: 1.6em 0;
+  padding: 0.9em 1.2em;
+  border-left: 3px solid #6B21E8;
+  border-radius: 0 0.75rem 0.75rem 0;
+  background: rgba(107, 33, 232, 0.08);
+  color: #e6e1f5;
+  font-weight: 600;
+}
+.prose-h2ai blockquote p { margin: 0; }
+.prose-h2ai code {
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  background: rgba(255, 255, 255, 0.07);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.85em;
+  color: #00d4be;
+}
+.prose-h2ai pre {
+  margin: 1.4em 0;
+  padding: 1em 1.2em;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0d0d14;
+  overflow-x: auto;
+}
+.prose-h2ai pre code { background: none; padding: 0; }
+.prose-h2ai hr { margin: 2em 0; border: 0; height: 1px; background: rgba(255, 255, 255, 0.1); }
+.prose-h2ai img { border-radius: 0.9rem; border: 1px solid rgba(255, 255, 255, 0.08); }
+
 /* Nav responsive: sotto i 720px nascondi i link secondari e stringi il padding.
    Logo, account/accesso e CTA di verifica restano sempre raggiungibili. */
 @media (max-width: 720px) {

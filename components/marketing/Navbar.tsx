@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/match", label: "Trova un volto" },
   { href: "/pricing", label: "Prezzi" },
   { href: "/trasparenza", label: "Trasparenza" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; unseen?: number }) {
