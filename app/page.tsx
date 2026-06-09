@@ -14,6 +14,11 @@ import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Reveal } from "@/components/motion/Reveal";
 
+// A4 — social. Handle Instagram UFFICIALE (confermato da Morelz, 2026-06-10).
+// URL pulito senza parametri di condivisione/tracking. Un solo punto di verità.
+const INSTAGRAM_HANDLE = "h2ai.studio";
+const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;
+
 export default async function Home() {
   const supabase = createServerClient();
   const { data } = await supabase.from("avatars").select("*").order("consent_start");
@@ -67,6 +72,25 @@ export default async function Home() {
                 <p className="mt-3 font-mono text-[0.62rem] font-semibold tracking-[0.12em] text-muted">
                   REAL HUMANS · REAL RIGHTS · REAL EARNINGS
                 </p>
+
+                {/* A4 — Seguici: link leggero, niente embed */}
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] py-2 pl-2.5 pr-4 transition-all hover:border-violet/40 hover:bg-violet/10"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)]">
+                    {/* Glifo Instagram inline (lucide non distribuisce più icone brand) */}
+                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                    </svg>
+                  </span>
+                  <span className="text-sm font-semibold text-muted transition-colors group-hover:text-foreground">@{INSTAGRAM_HANDLE}</span>
+                </a>
+                <p className="mt-2 text-[0.68rem] text-faint">I volti veri dietro il registro, ogni settimana.</p>
               </div>
 
               {/* Colonne link (gli stessi di prima, organizzati) */}
