@@ -45,3 +45,7 @@ next-env.d.ts
 
 # Output dei test motori (artefatti locali)
 scripts/*-output.png
+
+# Strategia interna: MAI su GitHub (repo pubblico)
+EXPANSION_V3.md
+ROADMAP_V2.md
