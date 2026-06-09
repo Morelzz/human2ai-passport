@@ -11,7 +11,9 @@ export function SmoothScroll() {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+    // anchors: i link interni (#come-funziona) scrollano via Lenis, dato che il
+    // CSS scroll-behavior:smooth è stato rimosso (era in conflitto con Lenis).
+    const lenis = new Lenis({ duration: 1.1, smoothWheel: true, anchors: true });
     let raf = 0;
     const loop = (time: number) => {
       lenis.raf(time);

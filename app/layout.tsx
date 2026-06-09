@@ -49,10 +49,12 @@ export default function RootLayout({
   return (
     <html
       lang="it"
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      {/* NB: niente h-full/height:100% su html/body — rompe la misura dello
+          scroll di Lenis (lo scroll "scattava" e tornava in cima). */}
+      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <SmoothScroll />
         {children}
       </body>

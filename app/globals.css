@@ -28,7 +28,24 @@
 html {
   background: #0a0a0f;
   color: #f0f0f5;
-  scroll-behavior: smooth;
+  /* NB: niente scroll-behavior:smooth qui — lo smoothing è di Lenis, e i due
+     in conflitto producono la rotella "glitchata" (doppio smoothing). */
+}
+
+/* CSS richiesto da Lenis (smooth scroll): senza, l'altezza della pagina viene
+   misurata male e lo scroll "scatta" o torna in cima. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
