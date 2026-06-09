@@ -54,10 +54,9 @@ export function Audiences() {
               Volti che puoi usare senza paura.
             </h3>
             <p className="mt-4 max-w-md leading-relaxed text-muted">
-              Ogni persona del nostro catalogo è verificata e consenziente, per le categorie che vedi
-              dichiarate. Niente cause sul diritto d&apos;immagine, niente volti rubati, niente sintetico
-              spacciato per reale. Solo persone vere, con una prova di provenienza allegata a ogni
-              contenuto che generi.
+              Ogni volto del catalogo è verificato e consenziente, per categorie d&apos;uso dichiarate.
+              Niente cause, niente volti rubati: solo persone vere, con la prova di provenienza
+              in ogni contenuto che generi.
             </p>
             <Button asChild size="lg" variant="secondary" className="mt-7">
               <Link href="/match">Sfoglia il catalogo verificato</Link>

@@ -35,7 +35,10 @@ export function KineticText({
     );
   }
 
-  const words = text.split(" ");
+  // filter(Boolean): spazi ai bordi o doppi producevano "parole" vuote → span
+  // vuoti e buchi visibili nel testo. La spaziatura tra segmenti si gestisce
+  // FUORI dal componente (con {" "} nel JSX), mai dentro `text`.
+  const words = text.split(" ").filter(Boolean);
   return (
     <motion.span
       className={`${className ?? ""} ${gradCls}`}

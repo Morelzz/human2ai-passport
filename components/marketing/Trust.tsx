@@ -34,9 +34,9 @@ export function Trust() {
             La prova è parte del prodotto.
           </h2>
           <p className="mt-5 max-w-2xl leading-relaxed text-muted">
-            A ogni volto corrisponde un passaporto pubblico e un identificativo univoco e certificato.
-            Chiunque, in un clic, può verificare che dietro un contenuto c&apos;è una persona reale che ha
-            acconsentito e che viene pagata. Non chiediamo fiducia: la rendiamo verificabile.
+            Ogni volto ha un passaporto pubblico e un identificativo certificato: chiunque, in un clic,
+            verifica che dietro un contenuto c&apos;è una persona reale, consenziente e pagata.
+            Non chiediamo fiducia — la rendiamo verificabile.
           </p>
 
           <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">

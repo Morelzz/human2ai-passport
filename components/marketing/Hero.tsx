@@ -40,15 +40,14 @@ export function Hero({ count }: { count: number }) {
           <h1 className="text-balance text-4xl font-extrabold leading-[1.04] tracking-tight drop-shadow-[0_2px_30px_rgba(0,0,0,0.6)] sm:text-5xl lg:text-[3.9rem]">
             <span className="block"><KineticText text="Dietro ogni volto," /></span>
             <span className="block">
-              <KineticText text="una " delay={0.18} />
+              <KineticText text="una" delay={0.18} />{" "}
               <ShimmerWord>persona vera</ShimmerWord>.
             </span>
           </h1>
 
           <motion.p variants={item} className="mx-auto mt-6 max-w-md text-base leading-relaxed text-muted drop-shadow-[0_1px_12px_rgba(0,0,0,0.7)] sm:text-lg sm:mx-0">
-            HUMAN2AI è il filtro che impedisce a un&apos;intelligenza artificiale di creare un essere
-            umano senza il permesso di un essere umano reale — <span className="text-foreground">riconosciuto,
-            protetto e pagato</span> ogni volta.
+            Il filtro che impedisce all&apos;AI di generare un essere umano senza il permesso
+            di una persona reale — <span className="text-foreground">riconosciuta, protetta e pagata</span>, ogni volta.
           </motion.p>
 
           <motion.div variants={item} className="mt-8 flex flex-wrap justify-center gap-3 sm:justify-start">

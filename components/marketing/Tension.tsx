@@ -22,7 +22,7 @@ export function Tension() {
       <h2 className="relative mt-6 text-balance text-3xl font-extrabold leading-[1.12] tracking-tight text-muted sm:text-5xl">
         <KineticText text="L'AI ha imparato a fabbricare persone che non esistono." />
         <span className="mt-3 block text-2xl font-semibold text-faint sm:text-3xl">
-          <KineticText text="Volti senza nome, senza consenso, senza nessuno dietro." delay={0.25} />
+          <KineticText text="Senza nome. Senza consenso. Senza nessuno dietro." delay={0.25} />
         </span>
       </h2>
 
@@ -36,13 +36,14 @@ export function Tension() {
         className="relative mx-auto my-12 h-px w-40 origin-center rounded-full bg-gradient-to-r from-transparent via-violet to-transparent shadow-[0_0_18px_rgba(107,33,232,0.6)]"
       />
 
-      {/* La svolta — ancora più grande, viva */}
+      {/* La svolta — ancora più grande, viva. NB: spazi tra segmenti con {" "},
+          mai dentro `text` (producevano buchi e a-capo sporchi). */}
       <p className="relative text-balance text-3xl font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-[3.4rem] sm:leading-[1.06]">
         <KineticText text="Noi abbiamo scelto la strada opposta." />
         <span className="mt-4 block">
-          <KineticText text="Qui ogni umano generato " delay={0.3} />
-          <KineticText text="esiste davvero" gradient delay={0.5} />
-          <KineticText text=" — e ha detto di sì." delay={0.6} />
+          <KineticText text="Qui ogni volto appartiene a una" delay={0.3} />{" "}
+          <KineticText text="persona vera" gradient delay={0.5} />{" "}
+          <KineticText text="che ha detto sì." delay={0.6} />
         </span>
       </p>
     </section>
