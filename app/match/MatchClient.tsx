@@ -5,6 +5,8 @@ import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
 import { formatEur, grossForCategory, grossForEcho } from "@/lib/wallet";
 import { echoSurchargeCents, echoResLabel } from "@/lib/engines/echo-cost";
+import { KineticText } from "@/components/motion/KineticText";
+import { ScannerFrame } from "@/components/motion/ScannerFrame";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -281,8 +283,19 @@ export default function MatchClient() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
-      <span className="text-xs font-bold tracking-[0.14em] text-violet-light">PASSO 1 — CHI</span>
-      <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Componi l&apos;identikit</h1>
+      {/* Kicker in stile HUD: stato del registro + passo corrente */}
+      <div className="flex items-center gap-2.5 font-mono text-[0.68rem] font-bold tracking-[0.14em]">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-teal" />
+        </span>
+        <span className="text-teal">REGISTRO ATTIVO</span>
+        <span className="text-faint">/</span>
+        <span className="text-violet-light">PASSO 1 — CHI</span>
+      </div>
+      <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+        <KineticText text="Componi l'identikit" />
+      </h1>
       <p className="mt-2 mb-8 text-sm leading-relaxed text-muted sm:text-base">
         Seleziona le caratteristiche della <span className="text-foreground">persona</span> e la categoria d&apos;uso.
         Cercheremo nel registro un avatar reale e consenziente. La <em>scena</em> la dirigi dopo.
@@ -353,8 +366,8 @@ export default function MatchClient() {
         <div className="mt-8">
           {result.matched && result.results && result.results.length > 0 ? (
             <>
-              <p className="mb-4 text-sm font-bold tracking-wide text-teal">
-                ✓ {result.results.length} AVATAR {result.results.length === 1 ? "TROVATO" : "TROVATI"}
+              <p className="mb-4 font-mono text-sm font-bold tracking-wide text-teal">
+                <span className="text-faint">&gt;</span> SCANSIONE COMPLETATA · {result.results.length} {result.results.length === 1 ? "VOLTO CONSENZIENTE TROVATO" : "VOLTI CONSENZIENTI TROVATI"}
               </p>
               <div className="flex flex-col gap-4">
                 {result.results.map((avatar) => {
@@ -380,19 +393,22 @@ export default function MatchClient() {
                   return (
                     <div key={avatar.handle} className="glass rounded-2xl border-teal/25 p-6">
                       <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-obsidian-3">
+                        <ScannerFrame className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-obsidian-3">
                           {portrait && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={portrait} alt={avatar.alias} className="h-full w-full object-cover" />
                           )}
-                        </div>
+                        </ScannerFrame>
                         <div className="flex-1">
                           <div className="text-lg font-bold">{avatar.alias}</div>
                           <div className="mb-1 text-sm text-muted">@{avatar.handle}</div>
                           <span className="rounded-full px-2.5 py-0.5 text-[0.7rem] font-bold" style={{ background: tier.bg, color: tier.color }}>{tier.label}</span>
                         </div>
                       </div>
-                      <p className="mt-4 text-xs text-faint">Affinità: {avatar.reasons.join(" · ")}</p>
+                      <p className="mt-4 font-mono text-[0.7rem] tracking-wide text-teal/90">
+                        <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
+                        <span className="text-faint">affinità: {avatar.reasons.join(" · ")}</span>
+                      </p>
 
                       {avatar.gallery_count > 0 && (
                         <div className="mt-5">

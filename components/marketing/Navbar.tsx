@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollProgress } from "@/components/motion/ScrollProgress";
 
 const LINKS = [
   { href: "/catalogo", label: "Catalogo" },
@@ -16,6 +17,12 @@ const LINKS = [
 export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; unseen?: number }) {
   const [open, setOpen] = useState(false);
   const badge = unseen > 0 ? (unseen > 9 ? "9+" : String(unseen)) : null;
+
+  // Nav "viva": oltre la soglia di scroll il vetro si addensa e la barra si
+  // restringe (transizione fluida via classi + transition-all).
+  const [scrolled, setScrolled] = useState(false);
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
 
   // Blocca lo scroll del body e chiude con Esc quando il drawer è aperto.
   useEffect(() => {
@@ -29,8 +36,15 @@ export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; un
 
   return (
     <>
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-obsidian/70 backdrop-blur-xl">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+    <header
+      className={`sticky top-0 z-40 border-b backdrop-blur-xl transition-all duration-500 ${
+        scrolled
+          ? "border-violet/20 bg-obsidian/90 shadow-[0_8px_40px_rgba(0,0,0,0.45),0_1px_0_rgba(107,33,232,0.25)]"
+          : "border-white/[0.06] bg-obsidian/70"
+      }`}
+    >
+      <ScrollProgress />
+      <nav className={`mx-auto flex max-w-6xl items-center justify-between px-5 transition-all duration-500 sm:px-8 ${scrolled ? "h-[3.4rem]" : "h-16"}`}>
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-shield.png" alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
@@ -40,8 +54,14 @@ export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; un
         {/* Desktop */}
         <div className="hidden items-center gap-7 md:flex">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className="text-sm text-muted transition-colors hover:text-foreground">
+            <Link key={l.href} href={l.href} className="group relative text-sm text-muted transition-colors hover:text-foreground">
               {l.label}
+              {/* Underline a gradiente che si disegna all'hover */}
+              <span
+                aria-hidden
+                className="absolute -bottom-1.5 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full transition-transform duration-300 ease-out group-hover:scale-x-100"
+                style={{ background: "linear-gradient(90deg,#6B21E8,#B8005C)", boxShadow: "0 0 8px rgba(107,33,232,0.6)" }}
+              />
             </Link>
           ))}
           {firstName ? (
