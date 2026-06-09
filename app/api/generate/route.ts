@@ -11,6 +11,7 @@ import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
 import { prepareExtras } from "@/lib/echo-job";
+import { logBlockedRequest } from "@/lib/blocked";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
@@ -94,14 +95,21 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (!avatar) return NextResponse.json({ error: "Avatar inesistente" }, { status: 404 });
-  if (avatar.revoked_at) return NextResponse.json({ error: "Consenso revocato: generazione bloccata" }, { status: 403 });
+  if (avatar.revoked_at) {
+    // Ogni blocco del filtro viene loggato (forma della domanda, mai chi chiede):
+    // alimenta il Transparency Report e la heatmap della domanda scoperta.
+    logBlockedRequest(admin, { source: "generate", reason: "revoked", category });
+    return NextResponse.json({ error: "Consenso revocato: generazione bloccata" }, { status: 403 });
+  }
   // Guardrail consenso: solo per uso COMMERCIALE la categoria dev'essere autorizzata.
   // L'anteprima watermarkata è discovery non commerciale: non vincola la categoria.
   if (!isPreview && category) {
     if (avatar.excluded_categories?.includes(category)) {
+      logBlockedRequest(admin, { source: "generate", reason: "category_excluded", category });
       return NextResponse.json({ error: `"${avatar.alias}" ha escluso la categoria ${category}` }, { status: 403 });
     }
     if (avatar.approved_categories && !avatar.approved_categories.includes(category)) {
+      logBlockedRequest(admin, { source: "generate", reason: "category_not_approved", category });
       return NextResponse.json({ error: `"${avatar.alias}" non ha autorizzato la categoria ${category}` }, { status: 403 });
     }
   }

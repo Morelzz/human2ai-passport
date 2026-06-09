@@ -25,6 +25,18 @@ export default async function TrasparenzaPage() {
   const payoutCount = pays?.length ?? 0;
   const payoutPaid = (pays ?? []).reduce((s, p) => s + (p.amount_cents ?? 0), 0);
 
+  // Richieste BLOCCATE dal filtro del consenso (il numero manifesto: il filtro
+  // che funziona). Difensivo: se la migrazione blocked_requests.sql non è
+  // ancora applicata, i count sono null -> 0, nessun crash.
+  const { count: blockedTotal } = await sb.from("blocked_requests").select("id", { count: "exact", head: true });
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const { count: blockedMonth } = await sb
+    .from("blocked_requests")
+    .select("id", { count: "exact", head: true })
+    .gte("created_at", monthStart.toISOString());
+
   const stats = [
     { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#8b47f0" },
     { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "#00A896" },
@@ -43,12 +55,31 @@ export default async function TrasparenzaPage() {
         <section className="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-24">
           {/* Intro */}
           <div className="reveal mb-12 text-center">
-            <span className="text-xs font-bold tracking-[0.14em] text-teal">TRASPARENZA</span>
-            <h1 className="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">La prova è nei numeri</h1>
+            <span className="label-mono text-teal">Transparency report</span>
+            <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">La prova è nei numeri</h1>
             <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Ogni volto è una persona reale che ha acconsentito. Ogni generazione è tracciata e
-              paga chi c&apos;è dietro. Niente di nascosto: questi sono i numeri del registro.
+              paga chi c&apos;è dietro. Niente di nascosto: questi sono i numeri del registro,
+              letti in tempo reale.
             </p>
+          </div>
+
+          {/* Il numero MANIFESTO: il filtro che blocca. Mostrato con orgoglio. */}
+          <div className="reveal glass relative mb-10 overflow-hidden rounded-[2rem] p-8 text-center sm:p-10">
+            <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(184,0,92,0.16),transparent_70%)]" />
+            <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#B8005C,transparent)]" />
+            <div className="relative">
+              <span className="label-mono text-crimson-light">Il filtro al lavoro</span>
+              <div className="mt-4 font-mono text-6xl font-extrabold leading-none text-crimson sm:text-7xl">
+                {blockedMonth ?? 0}
+              </div>
+              <p className="mx-auto mt-4 max-w-md text-balance text-lg font-semibold leading-snug text-foreground">
+                richieste di generare un essere umano <span className="text-crimson">rifiutate questo mese</span> per mancanza di consenso.
+              </p>
+              <p className="mt-2 text-sm text-faint">
+                {blockedTotal ?? 0} da sempre · ogni blocco è il filtro che fa il suo lavoro.
+              </p>
+            </div>
           </div>
 
           {/* Numeri */}
@@ -66,7 +97,7 @@ export default async function TrasparenzaPage() {
           <div className="reveal glass relative mt-16 overflow-hidden rounded-[2rem] p-8 sm:p-12">
             <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(107,33,232,0.18),transparent_70%)]" />
             <div className="relative">
-              <span className="text-xs font-bold tracking-[0.14em] text-violet-light">LA VISIONE</span>
+              <span className="label-mono text-violet-light">La visione</span>
               <h2 className="mt-2 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
                 Presto, generare un volto <span className="text-crimson">senza consenso</span> sarà <span className="text-gradient">impossibile</span>.
               </h2>

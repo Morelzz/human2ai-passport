@@ -3,6 +3,7 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { extractAttributes, normalizeIdentity, scoreAvatar, specifiedCount } from "@/lib/matching";
 import { galleryCount } from "@/lib/sample-galleries";
+import { logBlockedRequest } from "@/lib/blocked";
 
 export async function POST(request: Request) {
   // Richiede autenticazione (la chiamata costa)
@@ -57,8 +58,11 @@ export async function POST(request: Request) {
     .filter((x) => x.result.allowed)
     .sort((a, b) => b.result.score - a.result.score);
 
-  // 4. Decisione: nessun match -> BLOCCO
+  // 4. Decisione: nessun match -> BLOCCO. Il blocco viene loggato (forma della
+  // domanda, mai chi chiede): è il numero manifesto del Transparency Report e
+  // la heatmap della domanda scoperta (quali volti mancano al registro).
   if (matches.length === 0) {
+    logBlockedRequest(admin, { source: "match", reason: "no_match", category, attrs: attrs as unknown as Record<string, unknown> });
     return NextResponse.json({
       matched: false,
       attrs,
