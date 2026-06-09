@@ -3,15 +3,22 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const GRAD = "linear-gradient(90deg,#6B21E8,#B8005C,#00A896,#6B21E8)";
 
 const charV: Variants = {
   hidden: { opacity: 0, y: "0.55em", filter: "blur(8px)" },
   show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5, ease: EASE } },
 };
 
-// Testo cinetico: rivela il testo LETTERA per lettera (rise + blur che si risolve)
-// allo scroll/ingresso. Le parole non si spezzano (ogni parola è inline-block).
-// Statico sotto reduced-motion. `gradient` applica il gradiente brand animato.
+// Testo cinetico: rivela il testo LETTERA per lettera (rise + blur) allo scroll.
+// Variante `gradient`: gradiente brand animato.
+//
+// ⚠️ ARCHITETTURA (bug imparato): mai mettere sullo stesso motion-element sia
+// l'orchestrazione variants (whileInView/hidden→show) sia un `animate` object —
+// il secondo SOPPRIME la prima e i figli restano invisibili (opacity 0).
+// Quindi: il gradiente vive su uno span INTERNO con solo `animate` infinito,
+// il reveal vive su uno span ESTERNO con solo variants. Niente lettere annidate
+// nel gradiente (background-clip:text + figli trasformati = pittura rotta).
 export function KineticText({
   text,
   className,
@@ -24,31 +31,49 @@ export function KineticText({
   gradient?: boolean;
 }) {
   const reduce = useReducedMotion();
-  const gradCls = gradient ? "bg-[length:200%_auto] bg-clip-text text-transparent" : "";
-  const gradStyle = gradient
-    ? { backgroundImage: "linear-gradient(90deg,#6B21E8,#B8005C,#00A896,#6B21E8)" }
-    : undefined;
 
-  if (reduce) {
+  // ── Variante GRADIENTE: blocco unico (no per-lettera), robusta al 100% ────
+  if (gradient) {
+    const inner = (
+      <motion.span
+        className={`${className ?? ""} inline-block bg-[length:200%_auto] bg-clip-text text-transparent`}
+        style={{ backgroundImage: GRAD }}
+        animate={reduce ? undefined : { backgroundPosition: ["0% center", "200% center"] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+      >
+        {text}
+      </motion.span>
+    );
+    if (reduce) return inner;
     return (
-      <span className={`${className ?? ""} ${gradCls}`} style={gradStyle}>{text}</span>
+      <motion.span
+        className="inline-block"
+        initial={{ opacity: 0, y: 12, filter: "blur(8px)" }}
+        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        viewport={{ once: true, margin: "-12% 0px" }}
+        transition={{ duration: 0.7, delay, ease: EASE }}
+      >
+        {inner}
+      </motion.span>
     );
   }
 
+  // ── Variante normale: lettera per lettera ─────────────────────────────────
+  if (reduce) return <span className={className}>{text}</span>;
+
   // filter(Boolean): spazi ai bordi o doppi producevano "parole" vuote → span
-  // vuoti e buchi visibili nel testo. La spaziatura tra segmenti si gestisce
-  // FUORI dal componente (con {" "} nel JSX), mai dentro `text`.
+  // vuoti e buchi nel testo. La spaziatura tra segmenti si gestisce FUORI dal
+  // componente (con {" "} nel JSX), mai dentro `text`.
   const words = text.split(" ").filter(Boolean);
+
   return (
     <motion.span
-      className={`${className ?? ""} ${gradCls}`}
-      style={gradStyle}
+      className={className}
       aria-label={text}
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: "-12% 0px" }}
       variants={{ hidden: {}, show: { transition: { staggerChildren: 0.025, delayChildren: delay } } }}
-      {...(gradient ? { animate: { backgroundPosition: ["0% center", "200% center"] }, transition: { duration: 7, repeat: Infinity, ease: "linear" } } : {})}
     >
       {words.map((word, wi) => (
         <motion.span
