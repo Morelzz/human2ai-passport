@@ -129,6 +129,9 @@ export default function MatchClient() {
   // Passo 2 — SCENA: direzione artistica libera, per ogni avatar trovato
   const [sceneByHandle, setSceneByHandle] = useState<Record<string, string>>({});
   const [generatingHandle, setGeneratingHandle] = useState<string | null>(null);
+  // A1 Prompt Enhancer: proposta di scena migliorata per avatar (mai automatica).
+  const [enhancingHandle, setEnhancingHandle] = useState<string | null>(null);
+  const [enhancedByHandle, setEnhancedByHandle] = useState<Record<string, string | null>>({});
   const [genByHandle, setGenByHandle] = useState<Record<string, GenResult>>({});
 
   // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
@@ -244,6 +247,28 @@ export default function MatchClient() {
     }
     setGeneratingHandle(null);
     setGenByHandle((m) => ({ ...m, [handle]: json }));
+  }
+
+  // A1 — chiede a Claude una versione migliorata della scena (solo su click).
+  // La proposta appare evidenziata: l'utente la usa, la modifica o la ignora.
+  async function enhance(handle: string) {
+    const scene = (sceneByHandle[handle] ?? "").trim();
+    if (!scene) return;
+    setEnhancingHandle(handle);
+    setError(null);
+    try {
+      const res = await fetch("/api/enhance-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scene, category: category || null }),
+      });
+      const json = await res.json();
+      if (!res.ok) setError(json.error ?? "Miglioramento non riuscito");
+      else setEnhancedByHandle((m) => ({ ...m, [handle]: json.enhanced }));
+    } catch {
+      setError("Miglioramento non riuscito, riprova");
+    }
+    setEnhancingHandle(null);
   }
 
   // Interroga /api/generate/job/[id] finché il job non è done/error (max ~6 min).
@@ -436,9 +461,48 @@ export default function MatchClient() {
                               rows={2}
                               className="w-full resize-y rounded-xl border border-white/10 bg-obsidian px-3 py-3 text-sm text-foreground outline-none focus:border-violet/50"
                             />
-                            <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
-                              Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — {engine === "echo" ? "identità bloccata dalle sue foto reali" : "garantito dal Soul"}.
-                            </p>
+
+                            {/* A1 — Prompt Enhancer: mai automatico, parte solo da qui */}
+                            <div className="mt-2 flex items-center justify-between gap-3">
+                              <p className="text-[0.7rem] leading-relaxed text-faint">
+                                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — {engine === "echo" ? "identità bloccata dalle sue foto reali" : "garantito dal Soul"}.
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => enhance(avatar.handle)}
+                                disabled={enhancingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
+                                className="shrink-0 rounded-full border border-violet/35 bg-violet/10 px-3 py-1.5 text-[0.72rem] font-bold text-violet-light transition-all hover:bg-violet/20 disabled:opacity-40"
+                              >
+                                {enhancingHandle === avatar.handle ? "✨ Miglioro…" : "✨ Migliora prompt"}
+                              </button>
+                            </div>
+
+                            {/* Proposta migliorata, evidenziata: usa / ignora (modificabile dopo l'uso) */}
+                            {enhancedByHandle[avatar.handle] && (
+                              <div className="mt-2 rounded-xl border border-violet/40 bg-violet/[0.08] p-3 shadow-[0_0_24px_rgba(107,33,232,0.15)]">
+                                <span className="label-mono text-violet-light">Proposta</span>
+                                <p className="mt-1.5 text-sm leading-relaxed text-foreground">{enhancedByHandle[avatar.handle]}</p>
+                                <div className="mt-2.5 flex gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSceneByHandle((m) => ({ ...m, [avatar.handle]: enhancedByHandle[avatar.handle] ?? "" }));
+                                      setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }));
+                                    }}
+                                    className="rounded-lg border border-teal/40 bg-teal/10 px-3 py-1.5 text-[0.72rem] font-bold text-teal transition-colors hover:bg-teal/20"
+                                  >
+                                    ✓ Usa questa (poi modificabile)
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }))}
+                                    className="rounded-lg border border-white/15 px-3 py-1.5 text-[0.72rem] font-semibold text-muted transition-colors hover:bg-white/5"
+                                  >
+                                    Tieni la mia
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                             {styleRisk.length > 0 && (
                               <div className="mt-2 flex items-start gap-2 rounded-lg border border-[#f0b429]/40 bg-[#f0b429]/10 p-3 text-[0.72rem] leading-relaxed text-[#f0b429]">
                                 <span aria-hidden>⚠️</span>
