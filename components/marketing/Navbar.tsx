@@ -55,14 +55,9 @@ export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; un
         {/* Desktop */}
         <div className="hidden items-center gap-7 md:flex">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className="group relative text-sm text-muted transition-colors hover:text-foreground">
+            // Dala: nessun underline, nessuno sfondo — solo lo scarto di colore sul void.
+            <Link key={l.href} href={l.href} className="text-sm tracking-[0.021em] text-[#9a9a9a] transition-colors hover:text-foreground">
               {l.label}
-              {/* Underline a gradiente che si disegna all'hover */}
-              <span
-                aria-hidden
-                className="absolute -bottom-1.5 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full transition-transform duration-300 ease-out group-hover:scale-x-100"
-                style={{ background: "linear-gradient(90deg,#6B21E8,#B8005C)", boxShadow: "0 0 8px rgba(107,33,232,0.6)" }}
-              />
             </Link>
           ))}
           {firstName ? (

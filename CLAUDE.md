@@ -36,14 +36,21 @@ parti invisibili. Human2AI è la tutela dell'umano + i binari di diritti e pagam
 Mantieni il progetto **monorepo singolo, semplice**. Niente over-engineering. Questo è un MVP
 che deve girare, non una cattedrale.
 
-## Palette e identità visiva (estetica "Obsidian Intelligence")
+## Palette e identità visiva (estetica "Obsidian Intelligence" × sistema "Dala ibrido")
 
-- Sfondo profondo / dark-first
-- Deep Violet `#6B21E8`
-- Crimson Empathy `#B8005C`
-- Precision Teal `#00A896`
+> **Dal 2026-06-10 il design segue `docs/DESIGN.md`** (reference "Dala", scelta da Morelz)
+> in modalità **IBRIDO FEDELE**: nero assoluto (void `#000000`), titoli display ultra-sottili
+> (peso 200, tracking -0.04em), geometria a PILLOLA (raggio 24px+), bordi hairline, vuoto che
+> respira, costellazione di particelle come marchio visivo, UN solo colore d'azione riempito
+> (il viola). MA: crimson/teal restano come colori FUNZIONALI di stato (bloccato/verificato —
+> raccontano il consenso) e il gradiente tricolore sopravvive solo nei payoff chiave. Niente
+> ombre/glow/gradienti decorativi nelle nuove superfici.
+
+- Sfondo: void `#000000` (dark-first assoluto)
+- Deep Violet `#6B21E8` / azione `#8b47f0` (unico riempimento cromatico)
+- Crimson Empathy `#B8005C` (stato: bloccato/revocato)
+- Precision Teal `#00A896` (stato: verificato/consenso)
 - Estetica: premium, elegante, avanguardia, futuristica. ZERO aspetto "giocattolo" o marketing generico.
-- Riferimento di mood: Apple Vision Pro (pulizia, profondità, vetro).
 
 ## Regole NON NEGOZIABILI (guardrail)
 

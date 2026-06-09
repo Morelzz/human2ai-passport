@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Palette Obsidian Intelligence */
-  --color-obsidian:    #0a0a0f;
+  /* Palette Obsidian Intelligence — base portata al VOID nero assoluto
+     (sistema "Dala ibrido", docs/DESIGN.md): la profondità viene dal vuoto. */
+  --color-obsidian:    #000000;
   --color-obsidian-2:  #12121a;
   --color-obsidian-3:  #1c1c28;
   --color-violet:      #6B21E8;
@@ -26,7 +27,7 @@
 }
 
 html {
-  background: #0a0a0f;
+  background: #000000;
   color: #f0f0f5;
   /* NB: niente scroll-behavior:smooth qui — lo smoothing è di Lenis, e i due
      in conflitto producono la rotella "glitchata" (doppio smoothing). */
@@ -49,7 +50,7 @@ html.lenis body {
 }
 
 body {
-  background: #0a0a0f;
+  background: #000000;
   color: #f0f0f5;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -181,14 +182,14 @@ body {
 
 /* Scrollbar custom: sottile, scura, pollice viola con glow all'hover. */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: #0a0a0f; }
+::-webkit-scrollbar-track { background: #000000; }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #2a2140, #1c1c28);
-  border: 2px solid #0a0a0f;
+  border: 2px solid #000000;
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #6B21E8, #3b2a66); }
-html { scrollbar-width: thin; scrollbar-color: #2a2140 #0a0a0f; }
+html { scrollbar-width: thin; scrollbar-color: #2a2140 #000000; }
 
 /* Entrata fade-up — solo CSS, stagger via `animation-delay` inline. */
 .reveal {
