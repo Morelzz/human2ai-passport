@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ShieldCheck, Search, Coins } from "lucide-react";
+import { KineticText } from "@/components/motion/KineticText";
 
 // [COME FUNZIONA] — Tre passi, dopo il manifesto. Copy verbatim da
 // docs/SITE_COPY.md. I motori (Higgsfield/HeyGen) restano invisibili.
@@ -45,15 +46,9 @@ const reveal = {
 export function HowItWorks() {
   return (
     <section id="come-funziona" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-8 sm:py-24">
-      <motion.h2
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center text-3xl font-bold tracking-tight sm:text-4xl"
-      >
-        Come funziona
-      </motion.h2>
+      <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
+        <KineticText text="Come funziona" />
+      </h2>
 
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {STEPS.map((s, i) => (

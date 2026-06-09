@@ -58,9 +58,9 @@ export function Manifesto() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-xs font-bold tracking-[0.18em] text-crimson-light"
+          className="label-mono text-crimson-light"
         >
-          IL MANIFESTO
+          Il manifesto
         </motion.span>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

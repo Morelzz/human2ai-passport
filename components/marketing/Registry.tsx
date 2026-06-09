@@ -26,7 +26,7 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
       <div className="mb-8 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs tracking-[0.18em] text-faint">VOLTI IN EVIDENZA</p>
+          <span className="label-mono text-violet-light">Volti in evidenza</span>
           <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">Persone, non <span className="text-gradient">prompt</span>.</h2>
           <p className="mt-1 text-sm text-muted">Ogni volto qui è una persona vera, consenziente e pagata.</p>
         </div>
