@@ -101,6 +101,7 @@ export default async function Home() {
                     <Link href="/match" className="text-sm text-faint transition-colors hover:text-foreground">Registro</Link>
                     <Link href="/pricing" className="text-sm text-faint transition-colors hover:text-foreground">Prezzi</Link>
                     <Link href="/verify" className="text-sm text-faint transition-colors hover:text-foreground">Verifica</Link>
+                    <Link href="/partner" className="text-sm text-faint transition-colors hover:text-foreground">Diventa partner</Link>
                   </div>
                 </div>
                 <div>
