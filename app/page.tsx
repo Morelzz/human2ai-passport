@@ -10,7 +10,6 @@ import { Manifesto } from "@/components/marketing/Manifesto";
 import { Audiences } from "@/components/marketing/Audiences";
 import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
-import { VideoShowcase } from "@/components/marketing/VideoShowcase";
 import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Reveal } from "@/components/motion/Reveal";
@@ -48,7 +47,6 @@ export default async function Home() {
         <SiteNav />
         <Hero count={approved.length} />
         <Reveal><Tension /></Reveal>
-        <Reveal><VideoShowcase /></Reveal>
         <Reveal><Manifesto /></Reveal>
         <Reveal><HowItWorks /></Reveal>
         <Reveal><Audiences /></Reveal>

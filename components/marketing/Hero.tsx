@@ -5,13 +5,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/motion/Magnetic";
-import { FaceConstellation } from "./FaceConstellation";
+import { HeroVideo } from "./HeroVideo";
 
-// HERO — sistema "Dala ibrido" (docs/DESIGN.md): split 50/50 sul void.
-// Sinistra: blocco testo stretto (eyebrow → display sottile → body → CTA).
-// Destra: la costellazione-volto, che possiede la scena (il testo è ospite).
-// Titolo peso 200 a dimensione estrema con tracking negativo: "inciso nella
-// luce, non stampato". Niente ombre, niente vetro: profondità dal vuoto.
+// HERO — video di brand a tutto schermo (scelta di Morelz) + tipografia
+// "Dala": display peso 200 a dimensione estrema, tracking -0.04em ("inciso
+// nella luce"), CTA a pillola. Scrim multi-livello per la leggibilità.
 
 const container = {
   hidden: {},
@@ -24,39 +22,38 @@ const item = {
 
 export function Hero({ count }: { count: number }) {
   return (
-    <section className="relative mx-auto flex min-h-[92vh] max-w-6xl items-center px-5 sm:px-8">
-      <div className="grid w-full items-center gap-10 py-16 lg:grid-cols-2 lg:gap-6">
-        {/* Costellazione-volto — su mobile sopra, su desktop a destra */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.6, ease: "easeOut" }}
-          className="order-1 lg:order-2"
-        >
-          <FaceConstellation className="mx-auto h-[44vh] w-full max-w-[30rem] lg:h-[72vh] lg:max-w-none" />
-        </motion.div>
+    <section className="relative flex min-h-[92vh] items-center overflow-hidden">
+      {/* Video di sfondo a tutto schermo (loop con dip-to-dark) */}
+      <HeroVideo className="absolute inset-0 z-0" />
 
-        {/* Blocco testo — stretto, il void respira intorno */}
-        <motion.div variants={container} initial="hidden" animate="show" className="order-2 max-w-[30rem] text-center lg:order-1 lg:text-left">
-          <motion.span variants={item} className="label-mono text-violet-light">
+      {/* Scrim per leggibilità del testo */}
+      <div aria-hidden className="absolute inset-0 z-[1] bg-black/45" />
+      <div aria-hidden className="absolute inset-0 z-[1] hidden bg-gradient-to-r from-black via-black/70 to-transparent sm:block" />
+      <div aria-hidden className="absolute inset-x-0 top-0 z-[1] h-28 bg-gradient-to-b from-black to-transparent" />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-black to-transparent" />
+
+      {/* Contenuto */}
+      <div className="relative z-[2] mx-auto w-full max-w-6xl px-5 py-20 sm:px-8">
+        <motion.div variants={container} initial="hidden" animate="show" className="max-w-xl text-center sm:text-left">
+          <motion.span variants={item} className="label-mono inline-flex text-violet-light">
             Il filtro di tutela umana
           </motion.span>
 
           <motion.h1
             variants={item}
-            className="mt-6 text-balance text-[3.4rem] font-extralight leading-[0.95] tracking-[-0.04em] sm:text-[4.6rem] lg:text-[5.2rem]"
+            className="mt-6 text-balance text-[3.2rem] font-extralight leading-[0.97] tracking-[-0.04em] sm:text-[4.4rem] lg:text-[5rem]"
           >
             Dietro ogni volto,
             <br />
             una <ShimmerWord>persona vera</ShimmerWord>.
           </motion.h1>
 
-          <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[#bdbdbd] lg:mx-0">
+          <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[#bdbdbd] sm:mx-0">
             Il filtro che impedisce all&apos;AI di generare un essere umano senza il permesso
             di una persona reale — <span className="text-foreground">riconosciuta, protetta e pagata</span>, ogni volta.
           </motion.p>
 
-          <motion.div variants={item} className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
+          <motion.div variants={item} className="mt-9 flex flex-wrap justify-center gap-3 sm:justify-start">
             <Magnetic><Button asChild size="lg"><Link href="/match">Esplora il registro</Link></Button></Magnetic>
             <Magnetic><Button asChild size="lg" variant="secondary"><Link href="#come-funziona">Come funziona</Link></Button></Magnetic>
           </motion.div>
@@ -70,7 +67,7 @@ export function Hero({ count }: { count: number }) {
       {/* Indicatore di scroll */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 text-[#9a9a9a]"
+        className="pointer-events-none absolute bottom-5 left-1/2 z-[2] -translate-x-1/2 text-[#9a9a9a]"
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 1, 0.4], y: [0, 6, 0] }}
         transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
@@ -81,8 +78,8 @@ export function Hero({ count }: { count: number }) {
   );
 }
 
-// Il payoff tricolore: l'unico momento a gradiente dell'hero (ibrido fedele —
-// la firma brand sopravvive solo dove conta). Statico sotto reduced-motion.
+// Il payoff tricolore: l'unico momento a gradiente dell'hero. Statico sotto
+// reduced-motion.
 function ShimmerWord({ children }: { children: React.ReactNode }) {
   const reduce = useReducedMotion();
   return (
