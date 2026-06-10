@@ -49,7 +49,17 @@ interface Attrs {
   age_max: number | null;
 }
 
-interface MatchAvatar { handle: string; alias: string; portrait_url: string | null; tier: Tier; reasons: string[]; gallery_count: number; }
+interface MatchAvatar {
+  handle: string;
+  alias: string;
+  portrait_url: string | null;
+  tier: Tier;
+  reasons: string[];
+  gallery_count: number;
+  // D2 — lo scope di consenso viaggia col risultato (dato già pubblico).
+  approved_categories: string[];
+  excluded_categories: string[];
+}
 
 interface MatchResponse {
   matched: boolean;
@@ -114,13 +124,17 @@ function resizeImage(file: File, maxDim = 1024): Promise<string> {
 }
 
 export default function MatchClient() {
-  // Passo 1 — CHI: identikit (chip) + categoria d'uso
+  // Passo 1 — CHI. Review D1: il BRIEF in linguaggio naturale è il centro
+  // della ricerca; i filtri classici restano come raffinamento alternativo.
+  const [brief, setBrief] = useState("");
   const [gender, setGender] = useState("");
   const [ageMin, setAgeMin] = useState(18);
   const [ageMax, setAgeMax] = useState(100);
   const [hair, setHair] = useState("");
   const [ethnicity, setEthnicity] = useState("");
   const [category, setCategory] = useState("");
+  // D3 — stato del salvataggio "avvisami" sull'empty state.
+  const [alertState, setAlertState] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -189,30 +203,62 @@ export default function MatchClient() {
     e.preventDefault();
     // Età: il range completo 18–100 = "indifferente" (nessun filtro).
     const ageActive = ageMin > 18 || ageMax < 100;
-    if (!gender && !ethnicity && !hair && !ageActive && !category) {
-      setError("Seleziona almeno una caratteristica o una categoria d'uso.");
+    const hasChips = Boolean(gender || ethnicity || hair || ageActive);
+    const text = brief.trim();
+    if (!hasChips && text.length < 5 && !category) {
+      setError("Descrivi chi cerchi, oppure usa i filtri classici o una categoria d'uso.");
       return;
     }
-    const identity = {
-      gender: gender || null,
-      ethnicity: ethnicity || null,
-      hair_color: hair || null,
-      age_min: ageActive ? ageMin : null,
-      age_max: ageActive ? ageMax : null,
-    };
+    // D1: la descrizione libera passa dal matching engine (Claude estrae gli
+    // attributi). Se selezioni i filtri classici, sono LORO a comandare.
+    // La categoria resta SEMPRE esplicita: il consenso è deliberato, mai inferito.
+    const body = !hasChips && text.length >= 5
+      ? { prompt: text, category: category || null }
+      : {
+          identity: {
+            gender: gender || null,
+            ethnicity: ethnicity || null,
+            hair_color: hair || null,
+            age_min: ageActive ? ageMin : null,
+            age_max: ageActive ? ageMax : null,
+          },
+          category: category || null,
+        };
     setLoading(true);
     setError(null);
     setResult(null);
     setGenByHandle({});
+    setAlertState("idle");
     const res = await fetch("/api/match", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identity, category: category || null }),
+      body: JSON.stringify(body),
     });
     const json = await res.json();
     setLoading(false);
     if (!res.ok) { setError(json.error ?? "Errore"); return; }
     setResult(json);
+  }
+
+  // D3 — salva la ricerca senza match come domanda reale ("avvisami quando
+  // entra un volto compatibile"). Usa gli attributi già normalizzati dal server.
+  async function saveAlert() {
+    if (!result) return;
+    setAlertState("saving");
+    try {
+      const res = await fetch("/api/match/alert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ attrs: result.attrs, category: result.category }),
+      });
+      if (res.ok) { setAlertState("saved"); return; }
+      const j = await res.json().catch(() => null);
+      setError(j?.error ?? "Salvataggio non riuscito");
+      setAlertState("error");
+    } catch {
+      setError("Salvataggio non riuscito, riprova");
+      setAlertState("error");
+    }
   }
 
   async function generate(handle: string, mode: "preview" | "commercial") {
@@ -319,60 +365,93 @@ export default function MatchClient() {
         <span className="text-violet-light">PASSO 1 — CHI</span>
       </div>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
-        <KineticText text="Componi l'identikit" />
+        <KineticText text="Descrivi chi cerchi" />
       </h1>
       <p className="mt-2 mb-8 text-sm leading-relaxed text-muted sm:text-base">
-        Seleziona le caratteristiche della <span className="text-foreground">persona</span> e la categoria d&apos;uso.
-        Cercheremo nel registro un avatar reale e consenziente. La <em>scena</em> la dirigi dopo.
+        Scrivi il tuo brief come lo diresti a un&apos;agenzia: il matching trova la{" "}
+        <span className="text-foreground">persona reale e consenziente</span> più affine nel registro.
+        La <em>scena</em> la dirigi dopo.
       </p>
 
       <form onSubmit={search} className="flex flex-col gap-6">
-        <ChipGroup label="Genere">
-          {GENDERS.map((g) => (
-            <Chip key={g.v} active={gender === g.v} onClick={() => toggle(gender, g.v, setGender)}>{g.l}</Chip>
-          ))}
-        </ChipGroup>
-
+        {/* Review D1 — il brief in linguaggio naturale al centro */}
         <div>
-          <div className="mb-2.5 flex items-baseline gap-2">
-            <span className="text-sm font-semibold text-muted">Età</span>
-            <span className="text-[0.7rem] text-faint">· dai {ageMin} ai {ageMax >= 100 ? "100+" : ageMax} anni</span>
-          </div>
-          <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-obsidian-2 p-4">
-            <label className="flex items-center gap-3">
-              <span className="w-7 text-[0.7rem] text-faint">Da</span>
-              <input type="range" min={18} max={100} value={ageMin}
-                onChange={(e) => setAgeMin(Math.min(Number(e.target.value), ageMax))}
-                className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
-              <span className="w-9 text-right text-sm font-bold">{ageMin}</span>
-            </label>
-            <label className="flex items-center gap-3">
-              <span className="w-7 text-[0.7rem] text-faint">A</span>
-              <input type="range" min={18} max={100} value={ageMax}
-                onChange={(e) => setAgeMax(Math.max(Number(e.target.value), ageMin))}
-                className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
-              <span className="w-9 text-right text-sm font-bold">{ageMax >= 100 ? "100+" : ageMax}</span>
-            </label>
-          </div>
+          <label htmlFor="brief" className="mb-2 block text-xs font-bold tracking-[0.1em] text-violet-light">IL TUO BRIEF</label>
+          <textarea
+            id="brief"
+            value={brief}
+            onChange={(e) => setBrief(e.target.value)}
+            placeholder={'Es. "donna 30–40, mediterranea, sorriso naturale, capelli castani"'}
+            rows={3}
+            className="w-full resize-y rounded-2xl border border-white/10 bg-obsidian px-4 py-3.5 text-base text-foreground outline-none transition-colors focus:border-violet/50"
+          />
+          {/* Review D4 — principio vincolante, dichiarato dove serve */}
+          <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
+            Qui si <span className="text-muted">descrive</span>, non si carica: nessuna ricerca per
+            somiglianza da una foto, mai. Il volto di un altro non è una chiave di ricerca.
+          </p>
         </div>
 
-        <ChipGroup label="Capelli">
-          {HAIRS.map((h) => (
-            <Chip key={h} active={hair === h.toLowerCase()} onClick={() => toggle(hair, h.toLowerCase(), setHair)}>{h}</Chip>
-          ))}
-        </ChipGroup>
-
-        <ChipGroup label="Etnia">
-          {ETHNICITIES.map((e) => (
-            <Chip key={e} active={ethnicity === e.toLowerCase()} onClick={() => toggle(ethnicity, e.toLowerCase(), setEthnicity)}>{e}</Chip>
-          ))}
-        </ChipGroup>
-
-        <ChipGroup label="Categoria d'uso" hint="determina prezzo e consenso">
+        <ChipGroup label="Categoria d'uso" hint="esplicita: determina prezzo e consenso">
           {CATEGORIES.map((c) => (
             <Chip key={c} active={category === c} onClick={() => toggle(category, c, setCategory)}>{c}</Chip>
           ))}
         </ChipGroup>
+
+        {/* Filtri classici: raffinamento opzionale, in alternativa al brief */}
+        <details className="group rounded-2xl border border-white/10 bg-obsidian-2">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-sm font-semibold text-muted transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden">
+            <span>Filtri classici <span className="font-normal text-faint">· in alternativa alla descrizione</span></span>
+            <span aria-hidden className="text-faint transition-transform duration-300 group-open:rotate-180">⌄</span>
+          </summary>
+          <div className="flex flex-col gap-6 border-t border-white/6 p-4">
+            <ChipGroup label="Genere">
+              {GENDERS.map((g) => (
+                <Chip key={g.v} active={gender === g.v} onClick={() => toggle(gender, g.v, setGender)}>{g.l}</Chip>
+              ))}
+            </ChipGroup>
+
+            <div>
+              <div className="mb-2.5 flex items-baseline gap-2">
+                <span className="text-sm font-semibold text-muted">Età</span>
+                <span className="text-[0.7rem] text-faint">· dai {ageMin} ai {ageMax >= 100 ? "100+" : ageMax} anni</span>
+              </div>
+              <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-obsidian p-4">
+                <label className="flex items-center gap-3">
+                  <span className="w-7 text-[0.7rem] text-faint">Da</span>
+                  <input type="range" min={18} max={100} value={ageMin}
+                    onChange={(e) => setAgeMin(Math.min(Number(e.target.value), ageMax))}
+                    className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
+                  <span className="w-9 text-right text-sm font-bold">{ageMin}</span>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="w-7 text-[0.7rem] text-faint">A</span>
+                  <input type="range" min={18} max={100} value={ageMax}
+                    onChange={(e) => setAgeMax(Math.max(Number(e.target.value), ageMin))}
+                    className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
+                  <span className="w-9 text-right text-sm font-bold">{ageMax >= 100 ? "100+" : ageMax}</span>
+                </label>
+              </div>
+            </div>
+
+            <ChipGroup label="Capelli">
+              {HAIRS.map((h) => (
+                <Chip key={h} active={hair === h.toLowerCase()} onClick={() => toggle(hair, h.toLowerCase(), setHair)}>{h}</Chip>
+              ))}
+            </ChipGroup>
+
+            <ChipGroup label="Etnia">
+              {ETHNICITIES.map((e) => (
+                <Chip key={e} active={ethnicity === e.toLowerCase()} onClick={() => toggle(ethnicity, e.toLowerCase(), setEthnicity)}>{e}</Chip>
+              ))}
+            </ChipGroup>
+
+            <p className="text-[0.68rem] leading-relaxed text-faint">
+              Con un filtro selezionato la ricerca usa <span className="text-muted">i filtri</span> e
+              ignora la descrizione scritta sopra.
+            </p>
+          </div>
+        </details>
 
         <button type="submit" disabled={loading}
           className="mt-1 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
@@ -391,9 +470,23 @@ export default function MatchClient() {
         <div className="mt-8">
           {result.matched && result.results && result.results.length > 0 ? (
             <>
-              <p className="mb-4 font-mono text-sm font-bold tracking-wide text-teal">
+              <p className="mb-1.5 font-mono text-sm font-bold tracking-wide text-teal">
                 <span className="text-faint">&gt;</span> SCANSIONE COMPLETATA · {result.results.length} {result.results.length === 1 ? "VOLTO CONSENZIENTE TROVATO" : "VOLTI CONSENZIENTI TROVATI"}
               </p>
+              {/* D1 — come il matching ha letto il brief (attributi normalizzati dal server) */}
+              {(() => {
+                const a = result.attrs;
+                const parts = [
+                  a.gender,
+                  a.ethnicity,
+                  a.hair_color && `capelli ${a.hair_color}`,
+                  (a.age_min != null || a.age_max != null) && `${a.age_min ?? 18}–${a.age_max ?? "100+"} anni`,
+                  result.category,
+                ].filter(Boolean) as string[];
+                return parts.length > 0 ? (
+                  <p className="mb-4 text-xs text-faint">Ho letto: <span className="text-muted">{parts.join(" · ")}</span></p>
+                ) : <span className="mb-4 block" />;
+              })()}
               <div className="flex flex-col gap-4">
                 {result.results.map((avatar) => {
                   const gen = genByHandle[avatar.handle];
@@ -434,6 +527,29 @@ export default function MatchClient() {
                         <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
                         <span className="text-faint">affinità: {avatar.reasons.join(" · ")}</span>
                       </p>
+
+                      {/* Review D2 — lo stato di consenso rispetto alla ricerca, in chiaro */}
+                      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                        {result.category ? (
+                          <span className="rounded-full border border-teal/35 bg-teal/10 px-2.5 py-0.5 text-[0.68rem] font-bold text-teal">
+                            ✓ disponibile per {result.category}
+                          </span>
+                        ) : (
+                          <>
+                            {avatar.approved_categories.slice(0, 4).map((c) => (
+                              <span key={c} className="rounded-full border border-teal/25 bg-teal/5 px-2.5 py-0.5 text-[0.68rem] font-semibold text-teal/90">✓ {c}</span>
+                            ))}
+                            {avatar.approved_categories.length > 4 && (
+                              <span className="text-[0.68rem] text-faint">+{avatar.approved_categories.length - 4}</span>
+                            )}
+                          </>
+                        )}
+                        {avatar.excluded_categories.length > 0 && (
+                          <span className="rounded-full border border-crimson/25 bg-crimson/5 px-2.5 py-0.5 text-[0.68rem] font-semibold text-crimson/90">
+                            ✗ non concede {avatar.excluded_categories.join(", ")}
+                          </span>
+                        )}
+                      </div>
 
                       {avatar.gallery_count > 0 && (
                         <div className="mt-5">
@@ -703,10 +819,32 @@ export default function MatchClient() {
             <div className="rounded-2xl border border-crimson/30 bg-crimson/5 p-6">
               <p className="mb-2 text-base font-bold text-crimson">⛔ Richiesta bloccata</p>
               <p className="text-sm font-semibold leading-relaxed text-foreground">
-                Nessuna persona reale ha acconsentito a questa richiesta. Non possiamo generarla — e
-                questo è esattamente il punto.
+                Nessuna persona reale ha acconsentito a questa richiesta — e questo è il punto.
               </p>
               {result.reason && <p className="mt-2 text-sm leading-relaxed text-muted">{result.reason}</p>}
+
+              {/* Review D3 — il momento di verità diventa domanda: avvisami / candidati */}
+              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={saveAlert}
+                  disabled={alertState === "saving" || alertState === "saved"}
+                  className="rounded-xl border border-violet/35 bg-violet/10 px-4 py-3 text-sm font-bold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-60"
+                >
+                  {alertState === "saved" ? "✓ Avviso salvato" : alertState === "saving" ? "Salvo…" : "🔔 Avvisami quando entra un volto compatibile"}
+                </button>
+                <Link
+                  href="/signup"
+                  className="rounded-xl border border-teal/35 bg-teal/10 px-4 py-3 text-center text-sm font-bold text-teal transition-colors hover:bg-teal/20"
+                >
+                  Sei tu questo volto? Candidati →
+                </Link>
+              </div>
+              {alertState === "saved" && (
+                <p className="mt-2 text-xs leading-relaxed text-faint">
+                  Richiesta registrata come domanda reale: quando entra una persona compatibile, ti avvisiamo.
+                </p>
+              )}
             </div>
           )}
         </div>

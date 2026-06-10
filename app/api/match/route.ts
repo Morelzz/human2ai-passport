@@ -85,6 +85,10 @@ export async function POST(request: Request) {
       tier: m.av.tier,
       reasons: m.result.reasons,
       gallery_count: galleryCount(m.av.handle),
+      // Review D2 — card consent-aware: lo scope di consenso è pubblico
+      // (è già sul passport) e sul risultato diventa trasparenza immediata.
+      approved_categories: m.av.approved_categories ?? [],
+      excluded_categories: m.av.excluded_categories ?? [],
     })),
   });
 }

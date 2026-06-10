@@ -106,10 +106,31 @@ function stemEthnic(s: string): string {
     .normalize("NFD").replace(/[̀-ͯ]/g, "") // toglie accenti
     .replace(/[aoe]$/, "");                            // toglie la vocale finale di genere
 }
+// Review D1 — gruppi etnico-geografici: il registro archivia NAZIONALITÀ
+// ("italiana", "spagnola", "giapponese"…) ma il brief del buyer usa spesso
+// gruppi più larghi ("mediterranea", "asiatica", "europea"). La richiesta di
+// gruppo combacia con le nazionalità che contiene. Chiavi e valori in forma
+// GIÀ stemmata (vedi stemEthnic). Il filtro resta rigido: nessuna inferenza,
+// solo vocabolario allargato.
+const ETHNIC_GROUPS: Record<string, string[]> = {
+  mediterrane: ["italian", "spagnol", "grec", "portoghes"],
+  europe: ["italian", "spagnol", "frances", "tedesc", "grec", "portoghes", "russ", "polacc", "caucasic"],
+  caucasic: ["italian", "spagnol", "frances", "tedesc", "grec", "portoghes", "russ", "polacc", "europe"],
+  asiatic: ["giappones", "cines", "corean", "vietnamit", "thailandes", "filippin"],
+  "sud-asiatic": ["indian", "pakistan", "bengales", "cingales"],
+  african: ["nigerian", "senegales", "ghanes", "etiop", "keniot"],
+  latin: ["brasilian", "argentin", "messican", "colombian", "venezuelan", "perurian", "cilen"],
+  mediorental: ["arab", "marocchin", "egizian", "tunisin", "libanes", "iranian", "turc"],
+  arab: ["marocchin", "egizian", "tunisin", "libanes", "saudit", "mediorental"],
+};
+
 function ethnicityEq(a: string, b: string): boolean {
+  // a = etnia dell'avatar (registro), b = etnia richiesta (brief/filtri)
   const x = stemEthnic(a);
   const y = stemEthnic(b);
-  return x === y || x.includes(y) || y.includes(x);
+  if (x === y || x.includes(y) || y.includes(x)) return true;
+  const group = ETHNIC_GROUPS[y];
+  return Boolean(group?.some((g) => x === g || x.includes(g) || g.includes(x)));
 }
 
 // Modello a filtro rigido: l'avatar è un match SOLO se soddisfa OGNI attributo
