@@ -11,14 +11,16 @@ import { avatarArt } from "./avatar-art";
 // watermarkata via /api/sample/[handle]/[index].
 // Modulo PURO (niente import server): usabile anche dai client component.
 
+// Repertorio di Random (mario-r) RIGENERATO con ECHO (identity-lock, 2026-06-10,
+// scelta Morelz: più fedele del vecchio set Higgsfield). File su Supabase
+// Storage `generations/repertorio/mario-r/` — [0] è anche il ritratto.
+const SUPA = "https://ktjebfavzherochwhtis.supabase.co/storage/v1/object/public/generations/repertorio";
 const SAMPLE_GALLERIES: Record<string, string[]> = {
   "mario-r": [
-    // headshot studio (= ritratto)
-    "https://d3u0tzju9qaucj.cloudfront.net/5fc448f8-f943-446d-a181-609d64f40dc2/58adbaf7-8150-473a-b5f3-47723b967660.png",
-    // ritratto outdoor, t-shirt, luce naturale
-    "https://d3u0tzju9qaucj.cloudfront.net/5fc448f8-f943-446d-a181-609d64f40dc2/1a8fe355-97ab-43c3-8cfe-f76186153188.png",
-    // lifestyle, street style, golden hour
-    "https://d3u0tzju9qaucj.cloudfront.net/5fc448f8-f943-446d-a181-609d64f40dc2/f788eeee-0669-45f9-8563-ed63401329fe.png",
+    `${SUPA}/mario-r/00.png`, // headshot studio (= ritratto)
+    `${SUPA}/mario-r/01.png`, // outdoor golden hour, t-shirt bianca
+    `${SUPA}/mario-r/02.png`, // nel suo studio d'arte (Random è un artista)
+    `${SUPA}/mario-r/03.png`, // street style notturno, luci città
   ],
 };
 
