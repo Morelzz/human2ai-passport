@@ -26,13 +26,25 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
     setBusy(true);
     setErr(null);
     try {
+      // Ridimensiona PRIMA dell'invio: i file originali (PNG/foto da telefono)
+      // superano facilmente il limite di 4,5MB del body su Vercel -> 413 muto.
+      // Il documento resta più grande (deve essere leggibile), le foto bastano più piccole.
       const fd = new FormData();
-      fd.append("document", doc);
-      fd.append("selfie", selfie);
-      photos.forEach((p) => fd.append("photos", p));
+      fd.append("document", await shrinkForUpload(doc, 2000, 0.92));
+      fd.append("selfie", await shrinkForUpload(selfie, 1600, 0.9));
+      for (const p of photos) fd.append("photos", await shrinkForUpload(p, 1280, 0.85));
       const res = await fetch("/api/kyc/submit", { method: "POST", body: fd });
       const j = await res.json().catch(() => ({}));
-      if (!res.ok) { setErr(j.error ?? "Errore"); setBusy(false); return; }
+      if (!res.ok) {
+        setErr(
+          j.error ??
+            (res.status === 413
+              ? "I file sono troppo grandi: riduci il numero di foto e riprova."
+              : `Invio non riuscito (errore ${res.status}). Riprova.`),
+        );
+        setBusy(false);
+        return;
+      }
       setSubmitted(true);
       router.refresh();
     } catch {
@@ -93,6 +105,33 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
       </form>
     </section>
   );
+}
+
+// Ridimensiona un'immagine a maxDim px (lato lungo) e la converte in JPEG.
+// Se il browser non riesce a decodificarla (es. HEIC), invia l'originale:
+// meglio un tentativo che un blocco.
+function shrinkForUpload(file: File, maxDim: number, quality: number): Promise<File> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(file); return; }
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(
+        (blob) => resolve(blob ? new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" }) : file),
+        "image/jpeg",
+        quality,
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
 }
 
 function FilePick({ label, hint, file, onPick }: { label: string; hint: string; file: File | null; onPick: (f: File | null) => void }) {
