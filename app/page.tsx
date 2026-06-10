@@ -10,6 +10,7 @@ import { Manifesto } from "@/components/marketing/Manifesto";
 import { Audiences } from "@/components/marketing/Audiences";
 import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
+import { FilterMiniDemo, FilterDemoAvatar } from "@/components/marketing/FilterMiniDemo";
 import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Reveal } from "@/components/motion/Reveal";
@@ -41,6 +42,13 @@ export default async function Home() {
       revoked_at: a.revoked_at,
     }));
 
+  // Review C2 — persone per la mini-demo del filtro: le prime 4 attive +
+  // le revocate (vedere il BLOCK della revoca È la tesi del prodotto).
+  const demoAvatars: FilterDemoAvatar[] = [
+    ...featured.slice(0, 4).map((a) => ({ handle: a.handle, alias: a.alias, revoked: false })),
+    ...approved.filter((a) => a.revoked_at).map((a) => ({ handle: a.handle, alias: a.alias, revoked: true })),
+  ];
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -51,6 +59,7 @@ export default async function Home() {
         <Reveal><Tension /></Reveal>
         <Reveal><Manifesto /></Reveal>
         <Reveal><HowItWorks /></Reveal>
+        <Reveal><FilterMiniDemo avatars={demoAvatars} /></Reveal>
         <Reveal><Audiences /></Reveal>
         <Reveal><Registry avatars={featured} total={approved.length} /></Reveal>
         <Reveal><Trust /></Reveal>
