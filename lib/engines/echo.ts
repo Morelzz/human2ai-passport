@@ -78,7 +78,32 @@ async function parseEchoResponse(text: string): Promise<{ png: Buffer; usage?: E
   return { png, usage: json.usage };
 }
 
-/** Una generazione ECHO (gpt-image-2). Lancia un Error col messaggio esatto dell'API in caso di fallimento. */
+// Errori dell'API resi UMANI: il messaggio dell'Error arriva fino al box
+// errore del cliente (in /match via job.error), quindi NIENTE JSON grezzo.
+// Il dettaglio tecnico completo resta nei log server per la diagnosi.
+function echoApiError(endpoint: "edit" | "generation", status: number, body: string): Error {
+  console.error(`[ECHO] OpenAI ${endpoint} ${status}: ${body.slice(0, 1000)}`);
+  try {
+    const j = JSON.parse(body) as { error?: { code?: string; moderation_details?: { moderation_stage?: string } } };
+    if (j?.error?.code === "moderation_blocked") {
+      // La moderazione OpenAI è PROBABILISTICA: stesso input può passare al
+      // tentativo successivo. stage=input -> reference; stage=output -> risultato.
+      const where = j.error?.moderation_details?.moderation_stage === "input"
+        ? "la richiesta (la scena descritta o le immagini di riferimento)"
+        : "l'immagine generata";
+      return new Error(
+        `Il sistema di sicurezza del motore ha giudicato sensibile ${where} e ha fermato questa generazione. ` +
+        "Nessun costo per te. Riprova: spesso basta rigenerare. Se si ripete, descrivi una scena più sobria " +
+        "(per esempio specifica un abbigliamento più coperto)."
+      );
+    }
+  } catch {
+    /* body non JSON (es. pagina HTML di Cloudflare): si cade nel messaggio generico */
+  }
+  return new Error(`Il motore di generazione ha avuto un problema temporaneo. Riprova tra qualche istante.`);
+}
+
+/** Una generazione ECHO (gpt-image-2). In caso di fallimento lancia un Error con messaggio UMANO (dettagli nei log server). */
 export async function generateEcho(input: EchoInput): Promise<EchoResult> {
   const key = process.env.OPENAI_API_KEY;
   if (!key) throw new Error("ECHO non configurato: OPENAI_API_KEY mancante.");
@@ -105,7 +130,7 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
       body: form,
     });
     const text = await res.text();
-    if (!res.ok) throw new Error(`OpenAI edit ${res.status}: ${text.slice(0, 600)}`);
+    if (!res.ok) throw echoApiError("edit", res.status, text);
     const { png, usage } = await parseEchoResponse(text);
     return { png, model: MODEL, mode: "edit", refsUsed: refs.length, size, quality, usage };
   }
@@ -117,7 +142,7 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
     body: JSON.stringify({ model: MODEL, prompt: input.prompt, size, quality, n: 1 }),
   });
   const text = await res.text();
-  if (!res.ok) throw new Error(`OpenAI ${res.status}: ${text.slice(0, 600)}`);
+  if (!res.ok) throw echoApiError("generation", res.status, text);
   const { png, usage } = await parseEchoResponse(text);
   return { png, model: MODEL, mode: "generation", refsUsed: 0, size, quality, usage };
 }
