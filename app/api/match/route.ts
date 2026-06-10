@@ -4,6 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { extractAttributes, normalizeIdentity, scoreAvatar, specifiedCount } from "@/lib/matching";
 import { galleryCount } from "@/lib/sample-galleries";
 import { logBlockedRequest } from "@/lib/blocked";
+import { logMatchSearch } from "@/lib/searches";
 import { isPublicAvatar } from "@/lib/registry";
 
 export async function POST(request: Request) {
@@ -63,6 +64,15 @@ export async function POST(request: Request) {
   // 4. Decisione: nessun match -> BLOCCO. Il blocco viene loggato (forma della
   // domanda, mai chi chiede): è il numero manifesto del Transparency Report e
   // la heatmap della domanda scoperta (quali volti mancano al registro).
+  // E3 — ogni ricerca concreta viene loggata (forma della domanda, mai chi
+  // cerca): è la fonte della card seller "il tuo volto è stato cercato".
+  logMatchSearch(admin, {
+    attrs: attrs as unknown as Record<string, unknown>,
+    category,
+    matched: matches.length > 0,
+    resultsCount: matches.length,
+  });
+
   if (matches.length === 0) {
     logBlockedRequest(admin, { source: "match", reason: "no_match", category, attrs: attrs as unknown as Record<string, unknown> });
     return NextResponse.json({

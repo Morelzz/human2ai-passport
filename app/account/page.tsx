@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { PAYOUT_THRESHOLD_CENTS, formatEur } from "@/lib/wallet";
+import { demandForAvatar, type DemandSummary } from "@/lib/searches";
+import type { ScorableAvatar } from "@/lib/matching";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import LogoutButton from "./LogoutButton";
@@ -18,6 +20,8 @@ const ROLE_LABEL: Record<string, string> = {
   seller: "Creatore",
   admin: "Admin",
   enterprise: "Agenzia",
+  // E1 — predisposizione Public Figure: ruolo previsto dal DB, nessun flusso lo assegna ancora.
+  manager: "Manager",
 };
 
 const KYC_LABEL: Record<string, { text: string; color: string }> = {
@@ -49,11 +53,12 @@ export default async function AccountPage() {
   let royaltyCents = 0;
   let usageCount = 0;
   let payouts: { id: string; amount_cents: number; status: string; created_at: string }[] = [];
+  let demand: DemandSummary | null = null;
   if (role === "seller") {
     const admin = createServerClient();
     const { data: av } = await admin
       .from("avatars")
-      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count, owner_wallet")
+      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count, owner_wallet, gender, age_range, ethnicity, hair_color, approved_categories, excluded_categories")
       .eq("owner_id", user.id)
       .maybeSingle();
     myAvatar = av?.handle ?? null;
@@ -61,6 +66,8 @@ export default async function AccountPage() {
     soulActive = !!av?.soul_ref;
     royaltyCents = av?.royalty_accrued_cents ?? 0;
     usageCount = av?.usage_count ?? 0;
+    // E3 — la domanda reale vista da questo volto (null se la tabella manca)
+    if (av) demand = await demandForAvatar(admin, av as unknown as ScorableAvatar);
     if (av?.id) {
       const { data: ledger } = await admin
         .from("payouts")
@@ -246,6 +253,39 @@ export default async function AccountPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* E3 — "Il tuo volto è stato cercato": la domanda reale degli ultimi
+            7 giorni vista da questo volto. Compare solo se c'è almeno una
+            ricerca compatibile (e se la tabella match_searches esiste). */}
+        {role === "seller" && myAvatar && demand && demand.compatible > 0 && (
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È STATO CERCATO</p>
+
+            <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", marginBottom: "0.3rem" }}>
+              <span style={{ color: "#f0f0f5", fontSize: "1.8rem", fontWeight: 800 }}>{demand.compatible}</span>
+              <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>
+                {demand.compatible === 1 ? "ricerca compatibile" : "ricerche compatibili"} col tuo volto negli ultimi {demand.days} giorni
+              </span>
+            </div>
+
+            {demand.notGranted > 0 && (
+              <>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(107,33,232,0.1)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem", margin: "0.9rem 0 0" }}>
+                  <span style={{ color: "#8b47f0", fontSize: "0.82rem", fontWeight: 700 }}>
+                    {demand.notGranted === 1 ? "1 era in una categoria che oggi non concedi" : `${demand.notGranted} erano in categorie che oggi non concedi`}
+                  </span>
+                </div>
+                <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "0.8rem" }}>
+                  Apri nuove categorie — decidi tu →
+                </Link>
+              </>
+            )}
+
+            <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+              Registriamo solo la forma della domanda: chi cerca resta anonimo.
+            </p>
           </div>
         )}
 
