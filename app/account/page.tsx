@@ -155,7 +155,10 @@ export default async function AccountPage() {
 
         {role === "admin" && (
           <>
-            <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+            <Link href="/account/kyc" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+              Verifiche identità (KYC) →
+            </Link>
+            <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Coda di revisione operatori →
             </Link>
             <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
