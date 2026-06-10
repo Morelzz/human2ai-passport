@@ -15,12 +15,10 @@ export const metadata = {
 // H1 — pagina /scansione. TESTI VERBATIM da docs/SITE_COPY_SCANSIONE.md
 // (adattato solo il markup, mai i testi). Ordine: Hero → Il percorso →
 // Lo standard → Prepararsi → La mappa → CTA finale.
-// - Le CTA "Prenota" puntano TEMPORANEAMENTE a /contatti: si ripuntano al
-//   booking quando arriva H2 (niente link rotti, lezione blocco A).
 // - Lo slot mappa è un segnaposto: H4 lo sostituisce con Leaflet + tabella sedi.
 // - [Parametri minimi — DA MORELZ] è visibile SOLO in dev (nota del copy doc).
 
-const BOOKING_HREF = "/contatti"; // H2: diventerà la rotta di booking
+const BOOKING_HREF = "/scansione/prenota"; // H2 — il booking vero
 
 export default function ScansionePage() {
   const isDev = process.env.NODE_ENV !== "production";
