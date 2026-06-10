@@ -5,7 +5,7 @@ import { listPosts } from "@/lib/blog";
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = ["", "/match", "/catalogo", "/prezzi", "/trasparenza", "/verify", "/sviluppatori", "/blog", "/partner", "/studio", "/enterprise", "/privacy", "/termini"]
+  const staticRoutes = ["", "/match", "/catalogo", "/prezzi", "/trasparenza", "/verify", "/sviluppatori", "/faq", "/blog", "/partner", "/studio", "/enterprise", "/privacy", "/termini"]
     .map((p) => ({ url: `${BASE}${p}`, changeFrequency: "weekly" as const, priority: p === "" ? 1 : 0.7 }));
 
   const posts = (await listPosts()).map((p) => ({
