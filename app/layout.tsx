@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { CookieBanner } from "@/components/legal/CookieBanner";
+import { siteUrl } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// URL del sito (override in produzione via NEXT_PUBLIC_SITE_URL su Vercel).
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = siteUrl();
 const TITLE = "Human2AI — Il registro dei volti consenzienti";
 const DESCRIPTION =
   "Il filtro di tutela umana per l'IA: ogni volto ha un consenso verificabile, ogni generazione paga la persona reale.";

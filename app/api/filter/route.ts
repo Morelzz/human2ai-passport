@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { truncateToken } from "@/lib/token";
 import { isPublicAvatar } from "@/lib/registry";
+import { siteUrl } from "@/lib/site";
 
 // ──────────────────────────────────────────────────────────────────────────
 // IL FILTRO HUMAN2AI — consent-check API (demo pubblica, Fase 2 "Il Filtro per
@@ -11,7 +12,7 @@ import { isPublicAvatar } from "@/lib/registry";
 // ADDITIVO: sola lettura, nessun flusso esistente toccato.
 // ──────────────────────────────────────────────────────────────────────────
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = siteUrl();
 
 const CORS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",

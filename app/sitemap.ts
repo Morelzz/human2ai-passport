@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { listPosts } from "@/lib/blog";
+import { siteUrl } from "@/lib/site";
 
 // Sitemap: rotte pubbliche statiche + articoli del blog (letti dai file).
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const BASE = siteUrl();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = ["", "/match", "/catalogo", "/scansione", "/scansione/prenota", "/prezzi", "/trasparenza", "/verify", "/sviluppatori", "/faq", "/blog", "/academy", "/partner", "/studio", "/enterprise", "/contatti", "/privacy", "/termini", "/cookie"]

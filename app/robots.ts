@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const BASE = siteUrl();
 
 // Robots: tutto pubblico tranne API e area account; sitemap dichiarata.
 export default function robots(): MetadataRoute.Robots {
