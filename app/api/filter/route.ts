@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase";
 import { truncateToken } from "@/lib/token";
+import { isPublicAvatar } from "@/lib/registry";
 
 // ──────────────────────────────────────────────────────────────────────────
 // IL FILTRO HUMAN2AI — consent-check API (demo pubblica, Fase 2 "Il Filtro per
@@ -46,14 +47,14 @@ export async function GET(request: Request) {
   const sb = createServerClient();
   const { data: av } = await sb
     .from("avatars")
-    .select("handle, alias, token_hash, verification_status, revoked_at, consent_start, approved_categories, excluded_categories")
+    .select("*")
     .eq("handle", subject)
     .single();
 
   const base = { human2ai: "consent-filter", version: "demo", subject, requested_use: use || null, note };
 
-  // Non nel registro (o non ancora approvato) → nessuna autorizzazione possibile.
-  if (!av || (av.verification_status ?? "approved") !== "approved") {
+  // Non nel registro (non approvato o dato di test) → nessuna autorizzazione possibile.
+  if (!av || !isPublicAvatar(av)) {
     return json({
       ...base,
       allowed: false,

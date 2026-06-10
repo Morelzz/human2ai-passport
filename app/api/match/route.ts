@@ -4,6 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { extractAttributes, normalizeIdentity, scoreAvatar, specifiedCount } from "@/lib/matching";
 import { galleryCount } from "@/lib/sample-galleries";
 import { logBlockedRequest } from "@/lib/blocked";
+import { isPublicAvatar } from "@/lib/registry";
 
 export async function POST(request: Request) {
   // Richiede autenticazione (la chiamata costa)
@@ -51,9 +52,10 @@ export async function POST(request: Request) {
     .eq("tier", "SOUL")
     .is("revoked_at", null);
 
-  // 3. Filtro rigido: SOLO avatar verificati (gate) che soddisfano TUTTI i criteri
+  // 3. Filtro rigido: SOLO avatar del registro pubblico (approvati, niente
+  // dati di test — fonte unica lib/registry) che soddisfano TUTTI i criteri
   const matches = (candidates ?? [])
-    .filter((av) => (av.verification_status ?? "approved") === "approved")
+    .filter(isPublicAvatar)
     .map((av) => ({ av, result: scoreAvatar(av, attrs, category) }))
     .filter((x) => x.result.allowed)
     .sort((a, b) => b.result.score - a.result.score);

@@ -41,7 +41,9 @@ export function ClosingCTA() {
         <div className="relative">
           <span className="label-mono text-crimson-light">L&apos;appello</span>
           <h2 className="mx-auto mt-5 max-w-3xl text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-6xl">
-            <KineticText text="L'epoca dei volti senza nome " />
+            {/* Lo spazio tra segmenti va FUORI da KineticText (vedi nota nel
+                componente): dentro `text` viene perso → "nomefinisce". */}
+            <KineticText text="L'epoca dei volti senza nome" />{" "}
             <KineticText text="finisce qui" gradient delay={0.35} />
             <KineticText text="." delay={0.45} />
           </h2>

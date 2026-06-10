@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createServerClient } from "@/lib/supabase";
+import { getPublicAvatars } from "@/lib/registry";
 import { TIER_CONFIG, Tier } from "@/lib/types";
 import { avatarArt } from "@/lib/avatar-art";
 import { SiteNav } from "@/components/marketing/SiteNav";
@@ -27,14 +27,8 @@ function imageFor(a: CatalogAvatar): string {
 // Pagina ADDITIVA: catalogo avatar (griglia). Mobile-first. Sfoglia tutti i
 // volti approvati; per la ricerca guidata resta /match. Nessun flusso toccato.
 export default async function CatalogoPage() {
-  const sb = createServerClient();
-  const { data } = await sb
-    .from("avatars")
-    .select("handle, alias, portrait_url, tier, usage_count, revoked_at, verification_status, consent_start")
-    .order("consent_start");
-
-  const avatars = ((data ?? []) as (CatalogAvatar & { verification_status?: string })[])
-    .filter((a) => (a.verification_status ?? "approved") === "approved")
+  // Fonte UNICA del registro pubblico (lib/registry): esclude i dati di test.
+  const avatars = (await getPublicAvatars())
     // Mario (volto reale) per primo.
     .sort((a, b) => (a.handle === "mario-r" ? -1 : b.handle === "mario-r" ? 1 : 0));
 

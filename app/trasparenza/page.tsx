@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase";
+import { getPublicAvatars } from "@/lib/registry";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
@@ -14,8 +15,11 @@ export const metadata = {
 export default async function TrasparenzaPage() {
   const sb = createServerClient();
 
-  const { count: avatarsTotal } = await sb.from("avatars").select("id", { count: "exact", head: true });
-  const { count: avatarsActive } = await sb.from("avatars").select("id", { count: "exact", head: true }).is("revoked_at", null);
+  // Fonte UNICA del registro pubblico (lib/registry): gli stessi volti contati
+  // in home e catalogo — solo approvati, niente dati di test.
+  const publicAvatars = await getPublicAvatars(sb);
+  const avatarsTotal = publicAvatars.length;
+  const avatarsActive = publicAvatars.filter((a) => !a.revoked_at).length;
 
   const { data: gens } = await sb.from("generations").select("royalty_cents").not("certificate", "is", null);
   const genCount = gens?.length ?? 0;

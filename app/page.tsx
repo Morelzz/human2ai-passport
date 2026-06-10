@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createServerClient } from "@/lib/supabase";
+import { getPublicAvatars } from "@/lib/registry";
 import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
@@ -20,11 +20,9 @@ const INSTAGRAM_HANDLE = "h2ai.studio";
 const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;
 
 export default async function Home() {
-  const supabase = createServerClient();
-  const { data } = await supabase.from("avatars").select("*").order("consent_start");
-
-  // Gate: solo avatar approvati nel registro pubblico.
-  const approved = (data ?? []).filter((a) => (a.verification_status ?? "approved") === "approved");
+  // Fonte UNICA del registro pubblico (lib/registry): stessi volti e stessi
+  // contatori di catalogo e trasparenza.
+  const approved = await getPublicAvatars();
 
   // In evidenza: Mario (volto reale) per primo, poi gli altri. Max 8 nel carosello.
   const featured: FeaturedAvatar[] = [...approved]
@@ -35,7 +33,7 @@ export default async function Home() {
       alias: a.alias,
       portrait_url: a.portrait_url,
       tier: a.tier as Tier,
-      usage_count: a.usage_count,
+      usage_count: a.usage_count ?? 0,
       revoked_at: a.revoked_at,
     }));
 
@@ -99,7 +97,6 @@ export default async function Home() {
                   <span className="label-mono text-violet-light">Piattaforma</span>
                   <div className="mt-3 flex flex-col gap-2.5">
                     <Link href="/match" className="text-sm text-faint transition-colors hover:text-foreground">Registro</Link>
-                    <Link href="/pricing" className="text-sm text-faint transition-colors hover:text-foreground">Prezzi</Link>
                     <Link href="/verify" className="text-sm text-faint transition-colors hover:text-foreground">Verifica</Link>
                     <Link href="/partner" className="text-sm text-faint transition-colors hover:text-foreground">Diventa partner</Link>
                     <Link href="/studio" className="text-sm text-faint transition-colors hover:text-foreground">Studio</Link>
