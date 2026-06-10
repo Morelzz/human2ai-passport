@@ -39,16 +39,21 @@ async function ensureModels(): Promise<FaceApi> {
   return api;
 }
 
+async function loadImage(url: string, crossOrigin = false): Promise<HTMLImageElement> {
+  const img = new Image();
+  if (crossOrigin) img.crossOrigin = "anonymous"; // serve per leggere i pixel da Supabase Storage
+  await new Promise<void>((res, rej) => {
+    img.onload = () => res();
+    img.onerror = () => rej(new Error("img"));
+    img.src = url;
+  });
+  return img;
+}
+
 async function fileToImage(file: File): Promise<HTMLImageElement> {
   const url = URL.createObjectURL(file);
   try {
-    const img = new Image();
-    await new Promise<void>((res, rej) => {
-      img.onload = () => res();
-      img.onerror = () => rej(new Error("img"));
-      img.src = url;
-    });
-    return img;
+    return await loadImage(url);
   } finally {
     // l'URL serve finché l'immagine è in memoria: revoca posticipata
     setTimeout(() => URL.revokeObjectURL(url), 30_000);
@@ -72,13 +77,44 @@ async function descriptorFor(f: FaceApi, file: File): Promise<Float32Array | nul
   }
 }
 
-// Distanza -> percentuale leggibile. Curva logistica centrata sulla soglia
-// FaceNet "stessa persona" (~0.6): 0.4 -> ~88%, 0.55 -> ~62%, 0.6 -> 50%,
-// 0.7 -> ~27%. NB tra pose diverse (frontale vs profilo) la distanza sale
-// anche per la stessa persona: per questo il badge resta un AIUTO, non un verdetto.
-export function similarityFromDistance(distance: number): number {
-  return Math.round(100 / (1 + Math.exp((distance - 0.6) / 0.1)));
+// ── Descrittori riusabili fuori dal KYC (indice volti del registro) ────────
+// Stesso motore del face-match KYC: volto PIÙ GRANDE dell'immagine → 128 float.
+// Tutto sul dispositivo: i pixel non lasciano il browser, viaggia solo il vettore.
+
+/** Descrittore FaceNet da un File locale (null = nessun volto / non calcolabile). */
+export async function descriptorForFile(file: File): Promise<number[] | null> {
+  try {
+    const f = await ensureModels();
+    const d = await descriptorFor(f, file);
+    return d ? Array.from(d) : null;
+  } catch {
+    return null;
+  }
 }
+
+/** Descrittore FaceNet da un URL immagine (richiede CORS; null = non calcolabile). */
+export async function descriptorForUrl(url: string): Promise<number[] | null> {
+  try {
+    const f = await ensureModels();
+    const img = await loadImage(url, true);
+    const det = await f
+      .detectAllFaces(img, new f.SsdMobilenetv1Options({ minConfidence: 0.3 }))
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+    if (!det.length) return null;
+    const biggest = det.sort((a, b) => b.detection.box.area - a.detection.box.area)[0];
+    return Array.from(biggest.descriptor);
+  } catch {
+    return null;
+  }
+}
+
+// Distanza -> percentuale leggibile: la curva vive in lib/face-similarity
+// (fonte unica, condivisa col server). NB tra pose diverse (frontale vs
+// profilo) la distanza sale anche per la stessa persona: per questo il
+// badge resta un AIUTO, non un verdetto.
+import { similarityFromDistance } from "./face-similarity";
+export { similarityFromDistance };
 
 function pair(f: FaceApi, a: Float32Array | null, b: Float32Array | null) {
   if (!a || !b) return null;

@@ -164,6 +164,9 @@ export default async function AccountPage() {
             <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Segnalazioni di abuso →
             </Link>
+            <Link href="/account/face-index" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(139,71,240,0.1)", border: "1px solid rgba(139,71,240,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
+              Indice volti del registro →
+            </Link>
             <AnchorPanel />
           </>
         )}
