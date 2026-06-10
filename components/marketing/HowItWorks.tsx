@@ -1,11 +1,20 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShieldCheck, Search, Coins } from "lucide-react";
 import { KineticText } from "@/components/motion/KineticText";
 
+gsap.registerPlugin(ScrollTrigger);
+
 // [COME FUNZIONA] — Tre passi, dopo il manifesto. Copy verbatim da
 // docs/SITE_COPY.md. I motori (Higgsfield/HeyGen) restano invisibili.
+//
+// ONDATA GSAP (richiesta Morelz): su desktop la sezione si BLOCCA (pin) e i
+// tre passi avanzano legati allo scroll (scrub) con una linea di progresso
+// che attraversa i colori semantici dei passi (viola -> crimson -> teal).
+// Su mobile: fade-up leggero senza pin. Con prefers-reduced-motion: statico.
 
 const STEPS = [
   {
@@ -34,33 +43,80 @@ const STEPS = [
   },
 ];
 
-const reveal = {
-  hidden: { opacity: 0, y: 24 },
-  show: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] as const },
-  }),
-};
-
 export function HowItWorks() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      // Desktop: sezione pinnata, i passi entrano in sequenza legati allo scroll.
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const cards = gsap.utils.toArray<HTMLElement>("[data-step]");
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "+=200%",
+            pin: true,
+            scrub: 0.5,
+            anticipatePin: 1,
+          },
+        });
+        tl.fromTo("[data-progress]", { scaleX: 0 }, { scaleX: 1, duration: 3, ease: "none" }, 0);
+        cards.forEach((el, i) => {
+          tl.fromTo(
+            el,
+            { autoAlpha: 0, y: 90, rotateX: 9, scale: 0.96 },
+            { autoAlpha: 1, y: 0, rotateX: 0, scale: 1, duration: 0.75, ease: "power2.out" },
+            i * 0.95 + 0.12
+          );
+        });
+      });
+
+      // Mobile (movimento ok): fade-up senza pin, una volta sola.
+      mm.add("(max-width: 1023px) and (prefers-reduced-motion: no-preference)", () => {
+        gsap.utils.toArray<HTMLElement>("[data-step]").forEach((el) => {
+          gsap.fromTo(
+            el,
+            { autoAlpha: 0, y: 26 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.55,
+              ease: "power2.out",
+              scrollTrigger: { trigger: el, start: "top 88%", once: true },
+            }
+          );
+        });
+      });
+      // prefers-reduced-motion: nessuna media query attiva -> tutto statico e visibile.
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="come-funziona" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-8 sm:py-24">
+    <section
+      ref={sectionRef}
+      id="come-funziona"
+      className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-8 sm:py-24 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-0"
+    >
       <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
         <KineticText text="Come funziona" />
       </h2>
 
-      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {STEPS.map((s, i) => (
-          <motion.div
-            key={s.n}
-            custom={i}
-            variants={reveal}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
-            className="glass glass-hover rounded-2xl p-6"
-          >
+      {/* Linea di progresso: i colori dei tre passi (semantica, non decorazione) */}
+      <div className="mx-auto mt-8 hidden h-px w-full max-w-3xl overflow-hidden rounded-full bg-white/8 lg:block">
+        <div
+          data-progress
+          className="h-full w-full origin-left"
+          style={{ background: "linear-gradient(90deg, #8b47f0 0%, #B8005C 50%, #00A896 100%)", transform: "scaleX(0)" }}
+        />
+      </div>
+
+      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3 lg:[perspective:1100px]">
+        {STEPS.map((s) => (
+          <div key={s.n} data-step className="glass glass-hover rounded-2xl p-6 lg:[transform-style:preserve-3d]">
             <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl border ${s.ring}`}>
               <s.Icon className={`h-5 w-5 ${s.color}`} />
             </div>
@@ -69,7 +125,7 @@ export function HowItWorks() {
               <h3 className="text-lg font-bold">{s.t}</h3>
             </div>
             <p className="text-sm leading-relaxed text-muted">{s.d}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

@@ -69,7 +69,9 @@ export default async function Home() {
         <Hero count={approved.length} blockedMonth={blockedMonth} />
         <Reveal><Tension /></Reveal>
         <Reveal><Manifesto /></Reveal>
-        <Reveal><HowItWorks /></Reveal>
+        {/* Niente <Reveal>: la sezione è PINNATA da ScrollTrigger e un antenato
+            con transform romperebbe il position:fixed del pin. Si anima da sola. */}
+        <HowItWorks />
         <Reveal><FilterMiniDemo avatars={demoAvatars} /></Reveal>
         <Reveal><Audiences /></Reveal>
         <Reveal><Registry avatars={featured} total={approved.length} /></Reveal>

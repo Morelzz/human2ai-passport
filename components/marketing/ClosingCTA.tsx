@@ -1,18 +1,43 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { KineticText } from "@/components/motion/KineticText";
 
-// [CTA FINALE] — Chiusura pagina. Aurora viva dentro la card, tipografia
-// oversize cinetica, CTA magnetica. Copy verbatim da docs/SITE_COPY.md.
+// [CTA FINALE] — Chiusura pagina. Campo di particelle WebGL nel void (ondata
+// GSAP/Three.js), aurora viva, tipografia oversize cinetica, CTA magnetica.
+// Copy verbatim da docs/SITE_COPY.md.
+
+// Chunk three.js separato, mai in SSR: si monta solo quando la CTA si avvicina.
+const VoidField = dynamic(() => import("@/components/three/VoidField"), { ssr: false });
 
 export function ClosingCTA() {
   const reduce = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [nearViewport, setNearViewport] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e?.isIntersecting) {
+          setNearViewport(true);
+          io.disconnect(); // una volta caricato, resta
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section className="mx-auto max-w-5xl px-5 pb-24 pt-8 sm:px-8 sm:pb-32">
+    <section ref={sectionRef} className="mx-auto max-w-5xl px-5 pb-24 pt-8 sm:px-8 sm:pb-32">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -35,6 +60,11 @@ export function ClosingCTA() {
           animate={reduce ? undefined : { x: ["0%", "-30%", "0%"], opacity: [0.6, 1, 0.6] }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         />
+        {/* Void field: l'onda di particelle WebGL sotto il contenuto, sfumata ai bordi */}
+        {nearViewport && !reduce && (
+          <VoidField className="absolute inset-0 opacity-70 [mask-image:radial-gradient(85%_75%_at_50%_45%,#000_45%,transparent_100%)] [-webkit-mask-image:radial-gradient(85%_75%_at_50%_45%,#000_45%,transparent_100%)]" />
+        )}
+
         {/* Filo di luce perimetrale in alto */}
         <div aria-hidden className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
