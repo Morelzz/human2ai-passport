@@ -14,7 +14,9 @@ export interface FaceMatchResult {
   // distanza euclidea tra descrittori FaceNet: <=0.5 stessa persona quasi
   // certa, 0.5-0.6 probabile, >0.6 dubbia. similarity = stima leggibile 0-100.
   doc_selfie: { distance: number; similarity: number } | null;
-  selfie_photo: { distance: number; similarity: number } | null;
+  // selfie vs TUTTE le foto del set: si riporta il MIGLIOR accoppiamento
+  // (la posa frontale; i profili/spalle alzano la distanza per natura).
+  selfie_photo: { distance: number; similarity: number; checked?: number } | null;
   faces_found: { document: boolean; selfie: boolean; photo: boolean };
   computed_at: string;
 }
@@ -84,24 +86,40 @@ function pair(f: FaceApi, a: Float32Array | null, b: Float32Array | null) {
   return { distance: Math.round(distance * 1000) / 1000, similarity: similarityFromDistance(distance) };
 }
 
-/** Confronta documento ↔ selfie ↔ prima foto. Non lancia mai: null = non calcolabile. */
+/** Confronta documento (fronte) ↔ selfie ↔ tutte le foto del set.
+ *  Non lancia mai: null = non calcolabile. */
 export async function computeFaceMatch(
-  document: File,
+  documentFront: File,
   selfie: File,
-  firstPhoto: File | undefined,
+  photos: File[],
 ): Promise<FaceMatchResult | null> {
   try {
     const f = await ensureModels();
-    const [dDoc, dSelfie, dPhoto] = await Promise.all([
-      descriptorFor(f, document),
+    const [dDoc, dSelfie] = await Promise.all([
+      descriptorFor(f, documentFront),
       descriptorFor(f, selfie),
-      firstPhoto ? descriptorFor(f, firstPhoto) : Promise.resolve(null),
     ]);
+
+    // selfie vs ogni foto: tiene il MIGLIOR accoppiamento (distanza minima)
+    let best: { distance: number; similarity: number } | null = null;
+    let checked = 0;
+    let anyPhotoFace = false;
+    if (dSelfie) {
+      for (const photo of photos) {
+        const dPhoto = await descriptorFor(f, photo);
+        if (!dPhoto) continue;
+        anyPhotoFace = true;
+        checked++;
+        const p = pair(f, dSelfie, dPhoto);
+        if (p && (!best || p.distance < best.distance)) best = p;
+      }
+    }
+
     return {
       engine: "face-api-client",
       doc_selfie: pair(f, dDoc, dSelfie),
-      selfie_photo: pair(f, dSelfie, dPhoto),
-      faces_found: { document: !!dDoc, selfie: !!dSelfie, photo: !!dPhoto },
+      selfie_photo: best ? { ...best, checked } : null,
+      faces_found: { document: !!dDoc, selfie: !!dSelfie, photo: anyPhotoFace },
       computed_at: new Date().toISOString(),
     };
   } catch {

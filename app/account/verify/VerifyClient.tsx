@@ -4,45 +4,68 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { computeFaceMatch } from "@/lib/face-match";
+import { POSES, PoseGlyph } from "@/components/avatar/poses";
 
-// KYC reale (step 1): la persona carica documento + selfie + foto del volto.
-// Vengono salvati nello Storage privato e il profilo va "in revisione".
-// Il face-match automatico (documento↔selfie↔foto) sarà il passo successivo.
+// KYC reale (step 1): la persona carica documento (fronte+retro), selfie e
+// le foto del volto nello schema a 8 pose (lo stesso della creazione avatar).
+// Tutto viene ridimensionato sul dispositivo, confrontato col face match
+// locale (pre-screening per la coda operatori) e salvato nello Storage
+// privato; il profilo va "in revisione".
+
+type Slot = { file: File; url: string } | null;
+
 export default function VerifyClient({ initialStatus }: { initialStatus: string }) {
   const router = useRouter();
-  const [doc, setDoc] = useState<File | null>(null);
-  const [selfie, setSelfie] = useState<File | null>(null);
-  const [photos, setPhotos] = useState<File[]>([]);
+  const [docFront, setDocFront] = useState<Slot>(null);
+  const [docBack, setDocBack] = useState<Slot>(null);
+  const [selfie, setSelfie] = useState<Slot>(null);
+  const [poseSlots, setPoseSlots] = useState<Slot[]>(() => Array(POSES.length).fill(null));
   const [busy, setBusy] = useState(false);
   const [phase, setPhase] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(initialStatus === "pending");
   const approved = initialStatus === "approved";
 
+  const photoCount = poseSlots.filter(Boolean).length;
+
+  function slotFrom(file: File | undefined): Slot {
+    return file ? { file, url: URL.createObjectURL(file) } : null;
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!doc || !selfie || photos.length < 1) {
-      setErr("Carica documento, selfie e almeno una foto del volto.");
+    if (!docFront || !docBack || !selfie || photoCount < 1) {
+      setErr("Servono documento (fronte e retro), selfie e almeno una foto del volto.");
       return;
     }
     setBusy(true);
     setErr(null);
     try {
-      // Face match SUL DISPOSITIVO (documento ↔ selfie ↔ prima foto): è il
-      // pre-screening che l'operatore vedrà in coda. Best-effort: se fallisce
-      // (modelli non caricati, volto non trovato) l'invio procede comunque.
-      setPhase("Confronto i volti sul tuo dispositivo…");
-      const match = await computeFaceMatch(doc, selfie, photos[0]).catch(() => null);
-
-      // Ridimensiona PRIMA dell'invio: i file originali (PNG/foto da telefono)
+      // 1) Ridimensiona PRIMA di tutto: i file originali (PNG/foto da telefono)
       // superano facilmente il limite di 4,5MB del body su Vercel -> 413 muto.
-      // Il documento resta più grande (deve essere leggibile), le foto bastano più piccole.
+      // Il documento resta più grande (deve essere leggibile).
+      setPhase("Preparo i file…");
+      const front = await shrinkForUpload(docFront.file, 2000, 0.92);
+      const back = await shrinkForUpload(docBack.file, 2000, 0.92);
+      const selfieSmall = await shrinkForUpload(selfie.file, 1600, 0.9);
+      const photos: File[] = [];
+      for (const s of poseSlots) if (s) photos.push(await shrinkForUpload(s.file, 1280, 0.85));
+
+      // 2) Face match SUL DISPOSITIVO (fronte documento ↔ selfie ↔ tutte le
+      // foto): pre-screening per la coda operatori. Best-effort: se fallisce
+      // l'invio procede comunque.
+      setPhase("Confronto i volti sul tuo dispositivo…");
+      const match = await computeFaceMatch(front, selfieSmall, photos).catch(() => null);
+
+      // 3) Invio
       setPhase("Invio in corso…");
       const fd = new FormData();
-      fd.append("document", await shrinkForUpload(doc, 2000, 0.92));
-      fd.append("selfie", await shrinkForUpload(selfie, 1600, 0.9));
-      for (const p of photos) fd.append("photos", await shrinkForUpload(p, 1280, 0.85));
+      fd.append("document_front", front);
+      fd.append("document_back", back);
+      fd.append("selfie", selfieSmall);
+      for (const p of photos) fd.append("photos", p);
       if (match) fd.append("face_match", JSON.stringify(match));
+
       const res = await fetch("/api/kyc/submit", { method: "POST", body: fd });
       const j = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -90,7 +113,7 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
   }
 
   return (
-    <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
+    <section className="mx-auto max-w-xl px-5 py-14 sm:px-8">
       <span className="text-xs font-bold tracking-[0.14em] text-teal">VERIFICA IDENTITÀ</span>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Carica i tuoi documenti</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
@@ -98,15 +121,56 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
         I file restano <span className="text-foreground">privati</span>, usati solo per la verifica.
       </p>
 
-      <form onSubmit={submit} className="mt-8 flex flex-col gap-4">
-        <FilePick label="Documento d'identità" hint="carta d'identità o passaporto" file={doc} onPick={setDoc} />
-        <FilePick label="Selfie" hint="una foto del tuo viso, ora" file={selfie} onPick={setSelfie} />
-        <MultiPick label="Foto del volto" hint="da 1 a 10, per addestrare l'avatar" files={photos} onPick={setPhotos} />
+      <form onSubmit={submit} className="mt-8 flex flex-col gap-7">
+        {/* Documento: fronte + retro */}
+        <div>
+          <p className="mb-1.5 text-sm font-semibold text-muted">Documento d&apos;identità <span className="font-normal text-faint">· carta d&apos;identità o passaporto</span></p>
+          <div className="grid grid-cols-2 gap-3">
+            <PickBox label="Fronte" hint="il lato con la foto" slot={docFront} aspect="3/2" onPick={(f) => setDocFront(slotFrom(f))} />
+            <PickBox label="Retro" hint="l'altro lato" slot={docBack} aspect="3/2" onPick={(f) => setDocBack(slotFrom(f))} />
+          </div>
+        </div>
+
+        {/* Selfie: uno solo */}
+        <div>
+          <p className="mb-1.5 text-sm font-semibold text-muted">Selfie <span className="font-normal text-faint">· una foto del tuo viso, scattata ora</span></p>
+          <div className="grid grid-cols-2 gap-3">
+            <PickBox label="Selfie" hint="viso frontale, luce naturale" slot={selfie} aspect="3/4" onPick={(f) => setSelfie(slotFrom(f))} />
+          </div>
+        </div>
+
+        {/* Foto del volto: griglia a 8 pose (la stessa dell'avatar) */}
+        <div>
+          <p className="mb-1.5 text-sm font-semibold text-muted">Foto del volto <span className="font-normal text-faint">· segui lo schema, servono per addestrare l&apos;avatar</span></p>
+          <div className="grid grid-cols-4 gap-2.5">
+            {POSES.map((p, slot) => (
+              <label key={p.key} title={p.tip}
+                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}>
+                {poseSlots[slot] ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={poseSlots[slot]!.url} alt={p.label} className="absolute inset-0 h-full w-full object-cover" />
+                ) : (
+                  <>
+                    <PoseGlyph pose={p} />
+                    <span className="text-center text-[0.58rem] font-semibold leading-tight text-muted">{p.label}</span>
+                  </>
+                )}
+                <input type="file" accept="image/*" className="hidden"
+                  onChange={(e) => {
+                    const s = slotFrom(e.target.files?.[0]);
+                    if (s) setPoseSlots((a) => { const n = [...a]; n[slot] = s; return n; });
+                    e.currentTarget.value = "";
+                  }} />
+              </label>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-faint">{photoCount > 0 ? `${photoCount} su ${POSES.length} pose caricate` : "Carica almeno una posa (più ne carichi, migliore sarà l'avatar)."} Tutte le foto passano dal confronto automatico col selfie.</p>
+        </div>
 
         {err && <p className="text-sm text-crimson">{err}</p>}
 
         <button type="submit" disabled={busy}
-          className="mt-2 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
           {busy ? phase ?? "Invio in corso…" : "Invia per la verifica"}
         </button>
         <p className="text-xs leading-relaxed text-faint">
@@ -114,6 +178,33 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
         </p>
       </form>
     </section>
+  );
+}
+
+// Riquadro di caricamento singolo con anteprima (documento fronte/retro, selfie).
+function PickBox({ label, hint, slot, aspect, onPick }: {
+  label: string; hint: string; slot: Slot; aspect: "3/2" | "3/4"; onPick: (f: File | undefined) => void;
+}) {
+  return (
+    <label
+      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}
+      style={{ aspectRatio: aspect === "3/2" ? "3 / 2" : "3 / 4" }}>
+      {slot ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={slot.url} alt={label} className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <>
+          <span className="text-sm font-bold text-foreground">{label}</span>
+          <span className="text-center text-[0.66rem] leading-tight text-faint">{hint}</span>
+          <span className="mt-1 text-xs font-semibold text-violet-light">Sfoglia</span>
+        </>
+      )}
+      {slot && (
+        <span className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-2 py-0.5 text-[0.62rem] font-bold text-violet-light">Cambia</span>
+      )}
+      <input type="file" accept="image/*" className="hidden"
+        onChange={(e) => { onPick(e.target.files?.[0]); e.currentTarget.value = ""; }} />
+    </label>
   );
 }
 
@@ -142,30 +233,4 @@ function shrinkForUpload(file: File, maxDim: number, quality: number): Promise<F
     img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
     img.src = url;
   });
-}
-
-function FilePick({ label, hint, file, onPick }: { label: string; hint: string; file: File | null; onPick: (f: File | null) => void }) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-semibold text-muted">{label} <span className="font-normal text-faint">· {hint}</span></label>
-      <label className="flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-white/15 bg-obsidian-2 px-4 py-3 text-sm transition-colors hover:border-violet/40">
-        <span className={file ? "text-foreground" : "text-faint"}>{file ? file.name : "Scegli un file…"}</span>
-        <span className="text-violet-light">{file ? "Cambia" : "Sfoglia"}</span>
-        <input type="file" accept="image/*" className="hidden" onChange={(e) => onPick(e.target.files?.[0] ?? null)} />
-      </label>
-    </div>
-  );
-}
-
-function MultiPick({ label, hint, files, onPick }: { label: string; hint: string; files: File[]; onPick: (f: File[]) => void }) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-sm font-semibold text-muted">{label} <span className="font-normal text-faint">· {hint}</span></label>
-      <label className="flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-white/15 bg-obsidian-2 px-4 py-3 text-sm transition-colors hover:border-violet/40">
-        <span className={files.length ? "text-foreground" : "text-faint"}>{files.length ? `${files.length} foto selezionate` : "Scegli le foto…"}</span>
-        <span className="text-violet-light">Sfoglia</span>
-        <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => onPick(Array.from(e.target.files ?? []).slice(0, 10))} />
-      </label>
-    </div>
-  );
 }

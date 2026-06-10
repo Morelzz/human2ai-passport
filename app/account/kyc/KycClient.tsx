@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 // foto (URL firmati temporanei dal bucket privato) e decide. La regola è una:
 // documento, selfie e foto devono essere la STESSA persona.
 
-interface MatchPair { distance: number; similarity: number }
+interface MatchPair { distance: number; similarity: number; checked?: number }
 interface FaceMatch {
   doc_selfie: MatchPair | null;
   selfie_photo: MatchPair | null;
@@ -54,7 +54,9 @@ function MatchBadge({ title, pair }: { title: string; pair: MatchPair | null }) 
 }
 
 const FILE_LABEL: Record<string, string> = {
-  document: "Documento",
+  document: "Documento", // formato vecchio (candidature pre fronte/retro)
+  "document-front": "Documento (fronte)",
+  "document-back": "Documento (retro)",
   selfie: "Selfie",
 };
 
@@ -136,7 +138,7 @@ export default function KycClient() {
               {p.face_match ? (
                 <>
                   <MatchBadge title="documento ↔ selfie" pair={p.face_match.doc_selfie} />
-                  <MatchBadge title="selfie ↔ foto" pair={p.face_match.selfie_photo} />
+                  <MatchBadge title={p.face_match.selfie_photo?.checked ? `selfie ↔ foto (migliore di ${p.face_match.selfie_photo.checked})` : "selfie ↔ foto"} pair={p.face_match.selfie_photo} />
                   <span style={{ alignSelf: "center", color: "#374151", fontSize: "0.68rem" }}>pre-screening sul dispositivo — la decisione resta tua</span>
                 </>
               ) : (

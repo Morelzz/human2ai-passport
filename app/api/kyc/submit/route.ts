@@ -22,12 +22,13 @@ export async function POST(request: Request) {
   const form = await request.formData().catch(() => null);
   if (!form) return NextResponse.json({ error: "Dati non validi" }, { status: 400 });
 
-  const document = form.get("document");
+  const docFront = form.get("document_front");
+  const docBack = form.get("document_back");
   const selfie = form.get("selfie");
   const photos = form.getAll("photos").filter((p): p is File => p instanceof File && p.size > 0);
 
-  if (!(document instanceof File) || !(selfie instanceof File)) {
-    return NextResponse.json({ error: "Servono documento e selfie" }, { status: 400 });
+  if (!(docFront instanceof File) || !(docBack instanceof File) || !(selfie instanceof File)) {
+    return NextResponse.json({ error: "Servono documento (fronte e retro) e selfie" }, { status: 400 });
   }
   if (photos.length < 1) {
     return NextResponse.json({ error: "Carica almeno una foto del volto" }, { status: 400 });
@@ -45,7 +46,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    await up(document, "document");
+    await up(docFront, "document-front");
+    await up(docBack, "document-back");
     await up(selfie, "selfie");
     for (let i = 0; i < photos.length; i++) await up(photos[i], `photo-${i + 1}`);
 
