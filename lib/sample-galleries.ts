@@ -22,6 +22,19 @@ const SAMPLE_GALLERIES: Record<string, string[]> = {
     `${SUPA}/mario-r/02.png`, // nel suo studio d'arte (Random è un artista)
     `${SUPA}/mario-r/03.png`, // street style notturno, luci città
   ],
+  // Ambassador (2026-06-11): repertori ECHO con identity-lock.
+  asia: [
+    `${SUPA}/asia/00.png`, // headshot studio (= ritratto, mandala sul collo)
+    `${SUPA}/asia/01.png`, // outdoor golden hour
+    `${SUPA}/asia/02.png`, // editoriale dark/alternative
+    `${SUPA}/asia/03.png`, // street style notturno
+  ],
+  gabriella: [
+    `${SUPA}/gabriella/00.png`, // headshot studio (= ritratto)
+    `${SUPA}/gabriella/01.png`, // outdoor golden hour
+    `${SUPA}/gabriella/02.png`, // editoriale blazer nero
+    `${SUPA}/gabriella/03.png`, // street style notturno
+  ],
 };
 
 /** Galleria di un avatar a partire dalla sua riga (gallery_urls se valorizzata,
