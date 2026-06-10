@@ -14,7 +14,8 @@ export async function SiteNav() {
   let unseen = 0;
   if (user) {
     const { data: profile } = await auth.from("profiles").select("full_name").eq("id", user.id).single();
-    const full = profile?.full_name || user.email || "";
+    // Senza full_name si usa la parte locale dell'email (mai l'email intera in nav).
+    const full = profile?.full_name?.trim() || user.email?.split("@")[0] || "";
     firstName = full ? String(full).trim().split(/\s+/)[0] : "Account";
 
     // Notifiche "+N": generazioni con certificato completate DOPO l'ultima visita

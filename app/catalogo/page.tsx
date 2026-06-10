@@ -6,7 +6,9 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const metadata = {
-  title: "Catalogo avatar — Human2AI",
+  // Review B4: solo il nome pagina — il suffisso "— Human2AI" lo aggiunge il
+  // template di app/layout.tsx (prima usciva doppio).
+  title: "Catalogo avatar",
   description: "Il registro pubblico dei volti consenzienti: persone reali, verificate e pagate. Sfoglia il catalogo.",
 };
 
@@ -27,10 +29,17 @@ function imageFor(a: CatalogAvatar): string {
 // Pagina ADDITIVA: catalogo avatar (griglia). Mobile-first. Sfoglia tutti i
 // volti approvati; per la ricerca guidata resta /match. Nessun flusso toccato.
 export default async function CatalogoPage() {
-  // Fonte UNICA del registro pubblico (lib/registry): esclude i dati di test.
-  const avatars = (await getPublicAvatars())
-    // Mario (volto reale) per primo.
-    .sort((a, b) => (a.handle === "mario-r" ? -1 : b.handle === "mario-r" ? 1 : 0));
+  // Fonte UNICA del registro pubblico (lib/registry). Review B1: attivi prima
+  // (Mario, volto reale, in testa), revocati IN FONDO — restano visibili:
+  // la revoca rispettata è parte del racconto.
+  const avatars = (await getPublicAvatars()).sort((a, b) => {
+    const ra = a.revoked_at ? 1 : 0;
+    const rb = b.revoked_at ? 1 : 0;
+    if (ra !== rb) return ra - rb;
+    if (a.handle === "mario-r") return -1;
+    if (b.handle === "mario-r") return 1;
+    return 0;
+  });
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
@@ -103,6 +112,11 @@ export default async function CatalogoPage() {
                             {(a.usage_count ?? 0).toLocaleString("it-IT")} utilizzi
                           </span>
                         </div>
+                        {a.revoked_at && (
+                          <p className="mt-1.5 text-[0.62rem] italic leading-snug text-white/60">
+                            Questa persona ha cambiato idea. Il sistema ha obbedito.
+                          </p>
+                        )}
                       </div>
                     </div>
                   </Link>

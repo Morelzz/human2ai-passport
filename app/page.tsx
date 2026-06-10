@@ -24,9 +24,13 @@ export default async function Home() {
   // contatori di catalogo e trasparenza.
   const approved = await getPublicAvatars();
 
-  // In evidenza: Mario (volto reale) per primo, poi gli altri. Max 8 nel carosello.
-  const featured: FeaturedAvatar[] = [...approved]
-    .sort((a, b) => (a.handle === "mario-r" ? -1 : b.handle === "mario-r" ? 1 : 0))
+  // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
+  // Mario (volto reale) resta in testa. I revocati vivono nel catalogo, in fondo.
+  const featured: FeaturedAvatar[] = approved
+    .filter((a) => !a.revoked_at)
+    .sort((a, b) =>
+      a.handle === "mario-r" ? -1 : b.handle === "mario-r" ? 1 : (b.usage_count ?? 0) - (a.usage_count ?? 0)
+    )
     .slice(0, 8)
     .map((a) => ({
       handle: a.handle,

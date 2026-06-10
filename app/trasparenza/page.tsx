@@ -4,10 +4,11 @@ import { getPublicAvatars } from "@/lib/registry";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
-import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
+import { PublicRoadmapCompact } from "@/components/marketing/PublicRoadmap";
 
 export const metadata = {
-  title: "Trasparenza — Human2AI",
+  // Review B4: solo il nome pagina — il suffisso lo aggiunge il template layout.
+  title: "Trasparenza",
   description: "I numeri reali del registro: persone consenzienti, generazioni certificate, royalty pagate.",
 };
 
@@ -128,9 +129,9 @@ export default async function TrasparenzaPage() {
 
         </section>
 
-        {/* Roadmap pubblica (visione 5 anni) — stesso componente della home,
-            unica fonte: docs/SITE_ROADMAP.md. */}
-        <PublicRoadmap />
+        {/* Review B5: qui solo la versione CONDENSATA — la roadmap completa
+            vive in home (#la-strada). Stessa fonte dati (PHASES). */}
+        <PublicRoadmapCompact />
 
         <section className="mx-auto max-w-xl px-5 pb-20 text-center sm:px-8">
           <p className="text-xs leading-relaxed text-faint">

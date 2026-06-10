@@ -7,7 +7,7 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const metadata = {
-  title: "Attività del mio volto — Human2AI",
+  title: "Attività del mio volto",
 };
 
 // Pagina ADDITIVA, gated: il creatore vede DOVE e QUANDO il suo volto è stato

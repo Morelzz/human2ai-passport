@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Rocket, Webhook, Network, BadgeCheck, Leaf, type LucideIcon } from "lucide-react";
 import { KineticText } from "@/components/motion/KineticText";
@@ -168,6 +169,45 @@ export function PublicRoadmap() {
           Gli orizzonti temporali indicano la nostra visione, non impegni contrattuali. Gli anni sono indicativi.
         </p>
       </div>
+    </section>
+  );
+}
+
+// ── Review B5: versione CONDENSATA per /trasparenza ────────────────────────
+// La roadmap completa vive SOLO in home (#la-strada); qui 5 righe essenziali
+// (numero, titolo, orizzonte, stato) dalla STESSA fonte PHASES + link alla
+// versione completa. Niente doppione.
+export function PublicRoadmapCompact() {
+  return (
+    <section className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
+      <div className="text-center">
+        <span className="label-mono text-teal">La strada</span>
+        <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">Dove stiamo andando</h2>
+      </div>
+      <ol className="mt-8 space-y-2">
+        {PHASES.map((p) => {
+          const c = COLOR[p.status];
+          const isCurrent = p.status === "current";
+          return (
+            <li key={p.num} className="glass flex items-center gap-4 rounded-full px-5 py-3">
+              <span className="font-mono text-[0.65rem] font-extrabold" style={{ color: c }}>{p.num}</span>
+              <span className="min-w-0 flex-1 truncate text-sm font-bold">{p.title}</span>
+              {isCurrent && (
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider" style={{ background: `${c}22`, color: c }}>
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: c }} />
+                  In corso
+                </span>
+              )}
+              <span className="hidden shrink-0 text-xs text-faint sm:block">{p.horizon.split(" · ")[0]}</span>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="mt-6 text-center">
+        <Link href="/#la-strada" className="text-sm font-semibold text-violet-light transition-colors hover:text-foreground">
+          La roadmap completa, fase per fase →
+        </Link>
+      </p>
     </section>
   );
 }

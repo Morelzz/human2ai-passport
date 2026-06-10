@@ -3,7 +3,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import BadgeClient from "./BadgeClient";
 
 export const metadata = {
-  title: "Badge «Volto Verificato» — Human2AI",
+  title: "Badge «Volto Verificato»",
   description:
     "Incorpora il badge «Volto Verificato» sul tuo sito: dichiara che dietro un volto c'è una persona reale, consenziente e pagata, con la prova verificabile.",
 };

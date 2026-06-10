@@ -61,9 +61,21 @@ export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; un
             </Link>
           ))}
           {firstName ? (
-            <Link href="/account" className="relative inline-flex items-center gap-2 rounded-full border border-violet/30 bg-violet/10 px-3.5 py-1.5 text-sm font-semibold text-foreground">
-              <span className="h-4.5 w-4.5 rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)]" />
-              {firstName}
+            // Review B3: pillola riconoscibile come UTENTE (non voce di menu):
+            // avatar con iniziale + etichetta ACCOUNT sopra il nome.
+            <Link
+              href="/account"
+              title="Il tuo account"
+              aria-label={`Il tuo account: ${firstName}`}
+              className="relative inline-flex items-center gap-2.5 rounded-full border border-violet/30 bg-violet/10 py-1 pl-1 pr-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-violet/20"
+            >
+              <span className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)] text-[0.7rem] font-extrabold uppercase leading-none text-white">
+                {firstName.charAt(0)}
+              </span>
+              <span className="flex flex-col items-start leading-none">
+                <span className="text-[0.52rem] font-bold uppercase tracking-[0.16em] text-violet-light">Account</span>
+                <span className="mt-[3px] max-w-[9rem] truncate">{firstName}</span>
+              </span>
               {badge && (
                 <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-crimson px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_rgba(10,10,15,1)]">
                   {badge}
