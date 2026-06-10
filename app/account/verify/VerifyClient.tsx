@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { computeFaceMatch } from "@/lib/face-match";
 
 // KYC reale (step 1): la persona carica documento + selfie + foto del volto.
 // Vengono salvati nello Storage privato e il profilo va "in revisione".
@@ -13,6 +14,7 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
   const [selfie, setSelfie] = useState<File | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
+  const [phase, setPhase] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(initialStatus === "pending");
   const approved = initialStatus === "approved";
@@ -26,13 +28,21 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
     setBusy(true);
     setErr(null);
     try {
+      // Face match SUL DISPOSITIVO (documento ↔ selfie ↔ prima foto): è il
+      // pre-screening che l'operatore vedrà in coda. Best-effort: se fallisce
+      // (modelli non caricati, volto non trovato) l'invio procede comunque.
+      setPhase("Confronto i volti sul tuo dispositivo…");
+      const match = await computeFaceMatch(doc, selfie, photos[0]).catch(() => null);
+
       // Ridimensiona PRIMA dell'invio: i file originali (PNG/foto da telefono)
       // superano facilmente il limite di 4,5MB del body su Vercel -> 413 muto.
       // Il documento resta più grande (deve essere leggibile), le foto bastano più piccole.
+      setPhase("Invio in corso…");
       const fd = new FormData();
       fd.append("document", await shrinkForUpload(doc, 2000, 0.92));
       fd.append("selfie", await shrinkForUpload(selfie, 1600, 0.9));
       for (const p of photos) fd.append("photos", await shrinkForUpload(p, 1280, 0.85));
+      if (match) fd.append("face_match", JSON.stringify(match));
       const res = await fetch("/api/kyc/submit", { method: "POST", body: fd });
       const j = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -97,7 +107,7 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
 
         <button type="submit" disabled={busy}
           className="mt-2 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
-          {busy ? "Invio in corso…" : "Invia per la verifica"}
+          {busy ? phase ?? "Invio in corso…" : "Invia per la verifica"}
         </button>
         <p className="text-xs leading-relaxed text-faint">
           Inviando dichiari di essere la persona rappresentata e acconsenti alla verifica della tua identità.

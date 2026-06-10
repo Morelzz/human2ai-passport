@@ -6,6 +6,13 @@ import { useEffect, useState, useCallback } from "react";
 // foto (URL firmati temporanei dal bucket privato) e decide. La regola è una:
 // documento, selfie e foto devono essere la STESSA persona.
 
+interface MatchPair { distance: number; similarity: number }
+interface FaceMatch {
+  doc_selfie: MatchPair | null;
+  selfie_photo: MatchPair | null;
+  faces_found?: { document: boolean; selfie: boolean; photo: boolean };
+}
+
 interface PendingKyc {
   id: string;
   email: string | null;
@@ -13,6 +20,37 @@ interface PendingKyc {
   role: string;
   created_at: string;
   files: { name: string; url: string }[];
+  face_match: FaceMatch | null;
+}
+
+// Lettura della distanza FaceNet: <=0.5 alta, <=0.6 media, oltre bassa.
+function matchTone(pair: MatchPair): { label: string; color: string; bg: string } {
+  if (pair.distance <= 0.5) return { label: "alta", color: "#00d4be", bg: "rgba(0,168,150,0.12)" };
+  if (pair.distance <= 0.6) return { label: "media", color: "#e0b34d", bg: "rgba(224,179,77,0.1)" };
+  return { label: "bassa", color: "#ff6aa5", bg: "rgba(184,0,92,0.1)" };
+}
+
+// La percentuale si DERIVA sempre dalla distanza (fonte unica, stessa curva
+// di lib/face-match): cosi' i json salvati con tarature vecchie restano leggibili.
+function simPercent(distance: number): number {
+  return Math.round(100 / (1 + Math.exp((distance - 0.6) / 0.1)));
+}
+
+function MatchBadge({ title, pair }: { title: string; pair: MatchPair | null }) {
+  if (!pair) {
+    return (
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 999, padding: "0.3rem 0.8rem", color: "#6b7280", fontSize: "0.74rem", fontWeight: 600 }}>
+        {title}: non calcolabile
+      </span>
+    );
+  }
+  const t = matchTone(pair);
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", border: `1px solid ${t.color}44`, background: t.bg, borderRadius: 999, padding: "0.3rem 0.8rem", fontSize: "0.74rem", fontWeight: 700 }}>
+      <span style={{ color: "#6b7280", fontWeight: 600 }}>{title}:</span>
+      <span style={{ color: t.color }}>{simPercent(pair.distance)}% · {t.label}</span>
+    </span>
+  );
 }
 
 const FILE_LABEL: Record<string, string> = {
@@ -90,6 +128,20 @@ export default function KycClient() {
               <span style={{ color: "#374151", fontSize: "0.75rem" }}>
                 candidatura del {new Date(p.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
               </span>
+            </div>
+
+            {/* Pre-screening face-match calcolato sul dispositivo della persona:
+                aiuto alla decisione, NON una prova. L'operatore guarda le immagini. */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
+              {p.face_match ? (
+                <>
+                  <MatchBadge title="documento ↔ selfie" pair={p.face_match.doc_selfie} />
+                  <MatchBadge title="selfie ↔ foto" pair={p.face_match.selfie_photo} />
+                  <span style={{ alignSelf: "center", color: "#374151", fontSize: "0.68rem" }}>pre-screening sul dispositivo — la decisione resta tua</span>
+                </>
+              ) : (
+                <span style={{ color: "#374151", fontSize: "0.72rem" }}>Nessun pre-screening automatico per questa candidatura.</span>
+              )}
             </div>
 
             {p.files.length === 0 ? (

@@ -36,15 +36,26 @@ export async function GET() {
   for (const p of pending ?? []) {
     // I file della candidatura vivono in documents/<user_id>/
     const { data: files } = await admin.storage.from("documents").list(p.id);
-    const names = (files ?? []).map((f) => `${p.id}/${f.name}`);
+    const images = (files ?? []).filter((f) => f.name !== "face-match.json");
+    const names = images.map((f) => `${p.id}/${f.name}`);
     let signed: { name: string; url: string }[] = [];
     if (names.length > 0) {
       const { data: urls } = await admin.storage.from("documents").createSignedUrls(names, SIGNED_URL_TTL);
       signed = (urls ?? [])
-        .map((u, i) => ({ name: (files ?? [])[i]?.name ?? `file-${i}`, url: u.signedUrl }))
+        .map((u, i) => ({ name: images[i]?.name ?? `file-${i}`, url: u.signedUrl }))
         .filter((x): x is { name: string; url: string } => Boolean(x.url));
     }
-    items.push({ ...p, files: signed });
+
+    // Pre-screening face-match (se la candidatura l'ha calcolato)
+    let faceMatch: unknown = null;
+    if ((files ?? []).some((f) => f.name === "face-match.json")) {
+      const { data: blob } = await admin.storage.from("documents").download(`${p.id}/face-match.json`);
+      if (blob) {
+        try { faceMatch = JSON.parse(await blob.text()); } catch { /* corrotto: ignora */ }
+      }
+    }
+
+    items.push({ ...p, files: signed, face_match: faceMatch });
   }
 
   return NextResponse.json({ items });
