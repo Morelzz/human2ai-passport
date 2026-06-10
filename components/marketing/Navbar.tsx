@@ -10,7 +10,7 @@ import { ScrollProgress } from "@/components/motion/ScrollProgress";
 const LINKS = [
   { href: "/catalogo", label: "Catalogo" },
   { href: "/match", label: "Trova un volto" },
-  // "Prezzi" torna in menu quando la nuova pagina /prezzi è pronta (review C1).
+  { href: "/prezzi", label: "Prezzi" },
   { href: "/trasparenza", label: "Trasparenza" },
   { href: "/blog", label: "Blog" },
 ];
