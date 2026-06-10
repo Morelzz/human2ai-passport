@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase";
 import { getPublicAvatars } from "@/lib/registry";
+import { countBlockedThisMonth } from "@/lib/blocked";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
@@ -31,16 +32,10 @@ export default async function TrasparenzaPage() {
   const payoutPaid = (pays ?? []).reduce((s, p) => s + (p.amount_cents ?? 0), 0);
 
   // Richieste BLOCCATE dal filtro del consenso (il numero manifesto: il filtro
-  // che funziona). Difensivo: se la migrazione blocked_requests.sql non è
-  // ancora applicata, i count sono null -> 0, nessun crash.
+  // che funziona). Mese corrente da lib/blocked (fonte unica, condivisa con
+  // l'hero della home — review C3). Difensivo: tabella assente -> 0.
   const { count: blockedTotal } = await sb.from("blocked_requests").select("id", { count: "exact", head: true });
-  const monthStart = new Date();
-  monthStart.setDate(1);
-  monthStart.setHours(0, 0, 0, 0);
-  const { count: blockedMonth } = await sb
-    .from("blocked_requests")
-    .select("id", { count: "exact", head: true })
-    .gte("created_at", monthStart.toISOString());
+  const blockedMonth = await countBlockedThisMonth(sb);
 
   const stats = [
     { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#8b47f0" },

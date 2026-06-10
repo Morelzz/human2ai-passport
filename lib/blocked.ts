@@ -15,6 +15,20 @@ export interface BlockedEvent {
   attrs?: Record<string, unknown> | null;
 }
 
+// Review C3 — blocchi del MESE corrente: fonte UNICA per l'hero della home e
+// per /trasparenza (stesso numero, stessa query). Difensivo: se la migrazione
+// blocked_requests.sql non è applicata il count è null → 0, mai un crash.
+export async function countBlockedThisMonth(admin: Admin): Promise<number> {
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const { count } = await admin
+    .from("blocked_requests")
+    .select("id", { count: "exact", head: true })
+    .gte("created_at", monthStart.toISOString());
+  return count ?? 0;
+}
+
 export function logBlockedRequest(admin: Admin, ev: BlockedEvent): void {
   void admin
     .from("blocked_requests")

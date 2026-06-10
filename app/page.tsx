@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getPublicAvatars } from "@/lib/registry";
+import { createServerClient } from "@/lib/supabase";
+import { countBlockedThisMonth } from "@/lib/blocked";
 import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
@@ -24,6 +26,9 @@ export default async function Home() {
   // Fonte UNICA del registro pubblico (lib/registry): stessi volti e stessi
   // contatori di catalogo e trasparenza.
   const approved = await getPublicAvatars();
+
+  // Review C3 — il numero manifesto nell'hero: stessa fonte di /trasparenza.
+  const blockedMonth = await countBlockedThisMonth(createServerClient());
 
   // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
   // Mario (volto reale) resta in testa. I revocati vivono nel catalogo, in fondo.
@@ -55,7 +60,7 @@ export default async function Home() {
 
       <div className="relative z-[2]">
         <SiteNav />
-        <Hero count={approved.length} />
+        <Hero count={approved.length} blockedMonth={blockedMonth} />
         <Reveal><Tension /></Reveal>
         <Reveal><Manifesto /></Reveal>
         <Reveal><HowItWorks /></Reveal>

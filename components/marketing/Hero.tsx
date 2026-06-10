@@ -20,7 +20,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
-export function Hero({ count }: { count: number }) {
+export function Hero({ count, blockedMonth }: { count: number; blockedMonth: number }) {
   return (
     <section className="relative flex min-h-[92vh] items-center overflow-hidden">
       {/* Video di sfondo a tutto schermo (loop con dip-to-dark) */}
@@ -60,6 +60,13 @@ export function Hero({ count }: { count: number }) {
 
           <motion.p variants={item} className="mt-8 text-xs tracking-[0.05em] text-[#9a9a9a]">
             {count} volti già nel registro · ogni token è verificabile pubblicamente
+          </motion.p>
+
+          {/* Review C3 — il contatore manifesto: stessa fonte di /trasparenza */}
+          <motion.p variants={item} className="mt-2 text-xs tracking-[0.05em] text-[#9a9a9a]">
+            <span className="font-mono font-bold text-crimson-light">{blockedMonth}</span>{" "}
+            {blockedMonth === 1 ? "generazione rifiutata" : "generazioni rifiutate"} questo mese —{" "}
+            <span className="text-foreground">e questo è il punto.</span>
           </motion.p>
         </motion.div>
       </div>
