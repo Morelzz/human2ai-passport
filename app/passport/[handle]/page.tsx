@@ -11,6 +11,31 @@ interface Props {
   params: Promise<{ handle: string }>;
 }
 
+// Review C5 — metadata per-passport: titolo/descrizione propri; l'og:image
+// arriva da opengraph-image.tsx (convenzione Next, agganciata in automatico).
+export async function generateMetadata({ params }: Props) {
+  const { handle } = await params;
+  const sb = createServerClient();
+  const { data: a } = await sb
+    .from("avatars")
+    .select("alias, revoked_at, verification_status")
+    .eq("handle", handle)
+    .single();
+  if (!a || (a.verification_status ?? "approved") !== "approved") return { title: "Passaporto del volto" };
+  const title = `${a.alias} — Passaporto del volto`;
+  const description = a.revoked_at
+    ? `${a.alias} ha revocato il consenso: questo volto non è più generabile. La revoca è la prova che il sistema obbedisce.`
+    : `${a.alias} è una persona reale, verificata e consenziente del registro Human2AI. Ogni utilizzo del suo volto è autorizzato, tracciato e pagato.`;
+  // openGraph/twitter espliciti: senza, resterebbero quelli globali del layout
+  // (l'og:image invece arriva dalla convenzione e vince comunque).
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: "profile", siteName: "Human2AI", locale: "it_IT" },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
+
 export default async function PassportPage({ params }: Props) {
   const { handle } = await params;
   const supabase = createServerClient();
