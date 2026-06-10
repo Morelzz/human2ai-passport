@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getPublicAvatars } from "@/lib/registry";
 import { TIER_CONFIG, Tier } from "@/lib/types";
-import { avatarArt } from "@/lib/avatar-art";
+import { galleryFromRow, portraitFor } from "@/lib/sample-galleries";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 
@@ -19,11 +19,12 @@ type CatalogAvatar = {
   tier: Tier;
   usage_count: number | null;
   revoked_at: string | null;
+  gallery_urls?: unknown;
 };
 
+// Regola unica (lib/sample-galleries): avatar con galleria -> ritratto reale.
 function imageFor(a: CatalogAvatar): string {
-  if (a.handle === "mario-r") return "/api/sample/mario-r/0";
-  return avatarArt(a.handle, a.alias);
+  return portraitFor(a);
 }
 
 // Pagina ADDITIVA: catalogo avatar (griglia). Mobile-first. Sfoglia tutti i
@@ -36,9 +37,10 @@ export default async function CatalogoPage() {
     const ra = a.revoked_at ? 1 : 0;
     const rb = b.revoked_at ? 1 : 0;
     if (ra !== rb) return ra - rb;
-    if (a.handle === "mario-r") return -1;
-    if (b.handle === "mario-r") return 1;
-    return 0;
+    // Volti reali (con galleria) in testa: Mario/Random e gli ambassador.
+    const ga = galleryFromRow(a.handle, a.gallery_urls).length > 0 ? 1 : 0;
+    const gb = galleryFromRow(b.handle, b.gallery_urls).length > 0 ? 1 : 0;
+    return gb - ga;
   });
 
   return (

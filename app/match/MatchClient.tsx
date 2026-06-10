@@ -507,7 +507,8 @@ export default function MatchClient() {
                   // Guardia fotorealismo: termini non-reali nel prompt + motore ECHO.
                   const styleRisk = engine === "echo" ? detectNonPhotoreal(sceneByHandle[avatar.handle] ?? "") : [];
                   const tier = TIER_CONFIG[avatar.tier];
-                  const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatarArt(avatar.handle, avatar.alias);
+                  // Regola unica: avatar con galleria -> ritratto reale via route interna.
+                  const portrait = (avatar.gallery_count ?? 0) > 0 ? `/api/sample/${avatar.handle}/0` : avatarArt(avatar.handle, avatar.alias);
                   return (
                     <div key={avatar.handle} className="glass rounded-2xl border-teal/25 p-6">
                       <div className="flex items-center gap-4">

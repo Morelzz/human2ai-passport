@@ -16,6 +16,7 @@ import { FilterMiniDemo, FilterDemoAvatar } from "@/components/marketing/FilterM
 import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Reveal } from "@/components/motion/Reveal";
+import { galleryFromRow } from "@/lib/sample-galleries";
 
 // A4 — social. Handle Instagram UFFICIALE (confermato da Morelz, 2026-06-10).
 // URL pulito senza parametri di condivisione/tracking. Un solo punto di verità.
@@ -31,12 +32,16 @@ export default async function Home() {
   const blockedMonth = await countBlockedThisMonth(createServerClient());
 
   // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
-  // Mario (volto reale) resta in testa. I revocati vivono nel catalogo, in fondo.
+  // i volti REALI (con galleria: Mario/Random e gli ambassador) restano in
+  // testa. I revocati vivono nel catalogo, in fondo.
   const featured: FeaturedAvatar[] = approved
     .filter((a) => !a.revoked_at)
-    .sort((a, b) =>
-      a.handle === "mario-r" ? -1 : b.handle === "mario-r" ? 1 : (b.usage_count ?? 0) - (a.usage_count ?? 0)
-    )
+    .sort((a, b) => {
+      const ga = galleryFromRow(a.handle, a.gallery_urls).length > 0 ? 1 : 0;
+      const gb = galleryFromRow(b.handle, b.gallery_urls).length > 0 ? 1 : 0;
+      if (ga !== gb) return gb - ga;
+      return (b.usage_count ?? 0) - (a.usage_count ?? 0);
+    })
     .slice(0, 8)
     .map((a) => ({
       handle: a.handle,
@@ -45,6 +50,7 @@ export default async function Home() {
       tier: a.tier as Tier,
       usage_count: a.usage_count ?? 0,
       revoked_at: a.revoked_at,
+      gallery_urls: (a.gallery_urls as string[] | null) ?? null,
     }));
 
   // Review C2 — persone per la mini-demo del filtro: le prime 4 attive +

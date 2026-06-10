@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createServerClient } from "@/lib/supabase";
 import { Avatar, ConsentEvent, TIER_CONFIG } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
-import { galleryCount } from "@/lib/sample-galleries";
+import { galleryFromRow } from "@/lib/sample-galleries";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import PassportClient from "./PassportClient";
@@ -101,7 +101,7 @@ export default async function PassportPage({ params }: Props) {
           tier={tier}
           tokenShort={tokenShort}
           ownerVerified={ownerVerified}
-          galleryCount={galleryCount(handle)}
+          galleryCount={galleryFromRow(handle, (avatar as Record<string, unknown>).gallery_urls).length}
           ownership={ownership}
         />
       </div>

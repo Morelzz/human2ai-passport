@@ -30,6 +30,11 @@ export interface Avatar {
   created_at: string;
   verification_status?: string;
   org_id?: string | null;
+  // Profilo pubblico opzionale (migrazione avatar_public_profile.sql)
+  real_name?: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
+  gallery_urls?: string[] | null;
 }
 
 export interface ConsentEvent {

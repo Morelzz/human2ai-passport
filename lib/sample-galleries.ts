@@ -1,13 +1,17 @@
+import { avatarArt } from "./avatar-art";
+
 // Repertorio/galleria di immagini campione per avatar (il "repertoire" mostrato
 // al posto dell'anteprima live: generate una volta, mostrate all'infinito a costo zero).
 //
-// Gli URL puliti del motore vivono SOLO qui (lato server): non vengono mai esposti
-// al client. La galleria si serve watermarkata via /api/sample/[handle]/[index].
+// FONTE: la colonna `avatars.gallery_urls` (migrazione avatar_public_profile.sql)
+// — un avatar nuovo si gestisce con UNA riga, zero codice. La mappa qui sotto
+// resta come FALLBACK storico finché la colonna è vuota (e pre-migrazione).
 //
-// MVP: config per handle (oggi 1 avatar reale). Quando onboardiamo avatar a scala
-// (creazione Soul in-app), questa mappa diventerà una colonna su `avatars`.
+// Gli URL puliti non vengono mai esposti al client: la galleria si serve
+// watermarkata via /api/sample/[handle]/[index].
+// Modulo PURO (niente import server): usabile anche dai client component.
 
-export const SAMPLE_GALLERIES: Record<string, string[]> = {
+const SAMPLE_GALLERIES: Record<string, string[]> = {
   "mario-r": [
     // headshot studio (= ritratto)
     "https://d3u0tzju9qaucj.cloudfront.net/5fc448f8-f943-446d-a181-609d64f40dc2/58adbaf7-8150-473a-b5f3-47723b967660.png",
@@ -18,12 +22,21 @@ export const SAMPLE_GALLERIES: Record<string, string[]> = {
   ],
 };
 
-export function galleryCount(handle: string): number {
-  return SAMPLE_GALLERIES[handle]?.length ?? 0;
+/** Galleria di un avatar a partire dalla sua riga (gallery_urls se valorizzata,
+ *  altrimenti la mappa fallback). Pura: chi ha già la riga non rifà query. */
+export function galleryFromRow(handle: string, galleryUrls?: unknown): string[] {
+  if (Array.isArray(galleryUrls)) {
+    const urls = galleryUrls.filter((u): u is string => typeof u === "string" && u.length > 0);
+    if (urls.length > 0) return urls;
+  }
+  return SAMPLE_GALLERIES[handle] ?? [];
 }
 
-export function gallerySource(handle: string, index: number): string | null {
-  const urls = SAMPLE_GALLERIES[handle];
-  if (!urls || index < 0 || index >= urls.length) return null;
-  return urls[index];
+/** REGOLA UNICA del ritratto: un avatar con galleria mostra il volto reale
+ *  (watermarkato, via route interna); gli altri l'avatar-art locale.
+ *  Generalizza il vecchio caso speciale mario-r: vale anche per gli ambassador. */
+export function portraitFor(a: { handle: string; alias: string; gallery_urls?: unknown }): string {
+  return galleryFromRow(a.handle, a.gallery_urls).length > 0
+    ? `/api/sample/${a.handle}/0`
+    : avatarArt(a.handle, a.alias);
 }

@@ -167,6 +167,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: insErr.message }, { status: 500 });
   }
 
+  // Profilo pubblico facoltativo (nome reale + social). UPDATE separato e
+  // best-effort: se la migrazione avatar_public_profile.sql non è ancora
+  // applicata, la creazione dell'avatar NON deve fallire.
+  const realName = String(body.real_name ?? "").trim().slice(0, 80) || null;
+  const instagram = String(body.instagram ?? "").trim().replace(/^@/, "").slice(0, 120) || null;
+  const facebook = String(body.facebook ?? "").trim().replace(/^@/, "").slice(0, 120) || null;
+  if (realName || instagram || facebook) {
+    await admin
+      .from("avatars")
+      .update({ real_name: realName, instagram, facebook })
+      .eq("id", id)
+      .then(() => undefined, () => undefined);
+  }
+
   await admin.from("consent_events").insert({
     avatar_id: id,
     event_type: "GRANTED",

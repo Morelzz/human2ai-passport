@@ -12,6 +12,10 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
   const router = useRouter();
   const [handle, setHandle] = useState("");
   const [alias, setAlias] = useState(defaultAlias);
+  // Profilo pubblico facoltativo (passport): nome reale + social
+  const [realName, setRealName] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [facebook, setFacebook] = useState("");
   const [tier, setTier] = useState<Tier>("SOUL");
   const [approved, setApproved] = useState<string[]>([]);
   const [excluded, setExcluded] = useState<string[]>([]);
@@ -82,6 +86,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         handle, alias, tier, approved_categories: approved, excluded_categories: excluded, ...kit,
+        real_name: realName, instagram, facebook,
         references: refs.map((d, slot) => (d ? { slot, data: d } : null)).filter(Boolean),
       }),
     });
@@ -142,6 +147,28 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.35rem 0 0" }}>
               human2ai…/passport/<strong>{handle || "tuo-handle"}</strong>
             </p>
+          </div>
+
+          {/* Profilo pubblico opzionale: nome reale e social sul passport */}
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
+            <p style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Profilo pubblico · facoltativo</p>
+            <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+              Se vuoi, sul passport possono comparire il tuo <strong>nome e cognome</strong> e i tuoi <strong>canali social</strong>. Tutto facoltativo: decidi tu quanto essere riconoscibile.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+              <div>
+                <label style={lbl}>Nome e cognome (pubblico sul passport)</label>
+                <input value={realName} onChange={(e) => setRealName(e.target.value)} placeholder="es. Manuel Caso" style={inp} />
+              </div>
+              <div>
+                <label style={lbl}>Instagram</label>
+                <input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@tuo-profilo o URL" style={inp} />
+              </div>
+              <div>
+                <label style={lbl}>Facebook</label>
+                <input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="tuo-profilo o URL" style={inp} />
+              </div>
+            </div>
           </div>
 
           {/* Le tue foto — reference-set per l'identity-lock (ECHO) */}

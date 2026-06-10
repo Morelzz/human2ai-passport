@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { extractAttributes, normalizeIdentity, scoreAvatar, specifiedCount } from "@/lib/matching";
-import { galleryCount } from "@/lib/sample-galleries";
+import { galleryFromRow } from "@/lib/sample-galleries";
 import { logBlockedRequest } from "@/lib/blocked";
 import { logMatchSearch } from "@/lib/searches";
 import { isPublicAvatar } from "@/lib/registry";
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       portrait_url: m.av.portrait_url,
       tier: m.av.tier,
       reasons: m.result.reasons,
-      gallery_count: galleryCount(m.av.handle),
+      gallery_count: galleryFromRow(m.av.handle, (m.av as Record<string, unknown>).gallery_urls).length,
       // Review D2 — card consent-aware: lo scope di consenso è pubblico
       // (è già sul passport) e sul risultato diventa trasparenza immediata.
       approved_categories: m.av.approved_categories ?? [],

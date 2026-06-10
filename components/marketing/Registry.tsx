@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TIER_CONFIG, Tier } from "@/lib/types";
-import { avatarArt } from "@/lib/avatar-art";
+import { portraitFor } from "@/lib/sample-galleries";
 
 export interface FeaturedAvatar {
   handle: string;
@@ -13,12 +13,12 @@ export interface FeaturedAvatar {
   tier: Tier;
   usage_count: number;
   revoked_at: string | null;
+  gallery_urls?: string[] | null;
 }
 
-// Il ritratto reale di Mario passa dalla route interna; gli altri usano il portrait.
+// Regola unica (lib/sample-galleries): avatar con galleria -> ritratto reale.
 function imageFor(a: FeaturedAvatar): string {
-  if (a.handle === "mario-r") return "/api/sample/mario-r/0";
-  return avatarArt(a.handle, a.alias);
+  return portraitFor(a);
 }
 
 export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total: number }) {

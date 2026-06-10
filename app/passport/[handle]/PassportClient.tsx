@@ -37,6 +37,49 @@ const fade = {
   show: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] as const } }),
 };
 
+// Social pubblici della persona: si accetta handle (con o senza @) o URL completo.
+function socialHref(kind: "instagram" | "facebook", value: string): string {
+  if (/^https?:\/\//i.test(value)) return value;
+  const handle = value.replace(/^@/, "");
+  return kind === "instagram" ? `https://www.instagram.com/${handle}` : `https://www.facebook.com/${handle}`;
+}
+
+function socialLabel(value: string): string {
+  if (!/^https?:\/\//i.test(value)) return `@${value.replace(/^@/, "")}`;
+  try {
+    const path = new URL(value).pathname.replace(/\/+$/, "").split("/").pop();
+    return path ? `@${path}` : value;
+  } catch {
+    return value;
+  }
+}
+
+function SocialPill({ kind, value }: { kind: "instagram" | "facebook"; value: string }) {
+  return (
+    <a
+      href={socialHref(kind, value)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold text-muted transition-colors hover:border-violet/40 hover:text-foreground"
+    >
+      {kind === "instagram" ? (
+        /* Glifo Instagram inline (lucide non distribuisce più icone brand) */
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+        </svg>
+      ) : (
+        /* Glifo Facebook inline */
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+        </svg>
+      )}
+      {socialLabel(value)}
+    </a>
+  );
+}
+
 export default function PassportClient({ avatar, events, status, tier, tokenShort, ownerVerified, galleryCount = 0, ownership }: Props) {
   const [copied, setCopied] = useState(false);
 
@@ -47,8 +90,9 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
   }
 
   const royaltyEur = (avatar.royalty_accrued_cents / 100).toFixed(2);
-  // Mario ha un ritratto reale via route interna; gli altri usano il portrait.
-  const portrait = avatar.handle === "mario-r" ? "/api/sample/mario-r/0" : avatarArt(avatar.handle, avatar.alias);
+  // Regola unica: avatar con galleria -> ritratto reale (watermarkato) via
+  // route interna; gli altri l'avatar-art. Vale per Mario e per gli ambassador.
+  const portrait = galleryCount > 0 ? `/api/sample/${avatar.handle}/0` : avatarArt(avatar.handle, avatar.alias);
 
   const labels: Record<string, string> = {
     GRANTED: "Consenso concesso",
@@ -89,7 +133,18 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             </div>
 
             <h1 className="text-3xl font-extrabold tracking-tight">{avatar.alias}</h1>
-            <p className="mb-3 text-sm text-muted">@{avatar.handle}</p>
+            <p className="mb-1 text-sm text-muted">@{avatar.handle}</p>
+            {/* Nome e cognome PUBBLICO: compare solo se la persona lo dichiara */}
+            {avatar.real_name && (
+              <p className="mb-1 text-sm font-semibold text-foreground/90">{avatar.real_name}</p>
+            )}
+            {(avatar.instagram || avatar.facebook) && (
+              <div className="mb-3 mt-1 flex flex-wrap gap-2">
+                {avatar.instagram && <SocialPill kind="instagram" value={avatar.instagram} />}
+                {avatar.facebook && <SocialPill kind="facebook" value={avatar.facebook} />}
+              </div>
+            )}
+            {!avatar.real_name && !avatar.instagram && !avatar.facebook && <div className="mb-2" />}
 
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ background: tier.bg, borderColor: `${tier.color}44` }}>
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: tier.color }} />
