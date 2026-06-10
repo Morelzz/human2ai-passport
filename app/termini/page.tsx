@@ -1,5 +1,6 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
+import { LegalNotice } from "@/components/legal/LegalNotice";
 
 export const metadata = {
   title: "Termini",
@@ -16,7 +17,7 @@ export default function TerminiPage() {
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
           <span className="text-xs font-bold tracking-[0.14em] text-violet-light">TERMINI</span>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Termini di servizio</h1>
-          <p className="mt-3 text-sm text-faint">Bozza — in fase di revisione legale. Ultimo aggiornamento: 2026.</p>
+          <LegalNotice />
 
           <div className="mt-8 flex flex-col gap-6 text-[0.95rem] leading-relaxed text-muted">
             <Section title="Cos'è Human2AI">
@@ -40,6 +41,13 @@ export default function TerminiPage() {
               certificati delle generazioni già avvenute restano come prova (la revoca è prospettica). Caricando dichiari di
               avere il pieno diritto sulle immagini e di essere la persona rappresentata.
             </Section>
+            <Section title="Natura della licenza: concessione, mai cessione">
+              Generando ottieni una <strong className="text-foreground">licenza d&apos;uso</strong> del contenuto, nei
+              limiti della categoria autorizzata. <strong className="text-foreground">Il volto resta della persona,
+              sempre</strong>: nessun utilizzo trasferisce la titolarità dell&apos;immagine, e l&apos;identità non è
+              vendibile né cedibile — né dalla persona, né da noi, né da te.
+              <span className="mt-2 block font-mono text-[0.78rem] text-faint">[DA AVVOCATO: clausole puntuali della licenza — durata, territorio, sublicenza]</span>
+            </Section>
             <Section title="Royalty e pagamenti">
               Su ogni generazione commerciale la persona reale riceve una quota maggioritaria (royalty), la piattaforma
               una fee. Gli importi maturano in un wallet con payout a soglia. I prezzi dipendono dalla categoria d&apos;uso.
@@ -53,8 +61,14 @@ export default function TerminiPage() {
               SOUL/HUMAN sono ad alta fedeltà / identity-locked. La responsabilità sull&apos;uso finale dei contenuti
               ricade su chi genera.
             </Section>
+            <Section title="Responsabilità e foro competente">
+              <span className="font-mono text-[0.82rem] text-faint">[DA AVVOCATO: clausole su limitazione di
+              responsabilità, manleva, legge applicabile e foro competente — volutamente non redatte in bozza]</span>
+            </Section>
             <Section title="Contatti">
-              Per questioni contrattuali: <span className="text-foreground">legal@human2ai.example</span>.
+              Per questioni contrattuali: <span className="text-foreground">legal@human2ai.example</span>{" "}
+              <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>,
+              o dalla pagina <a href="/contatti" className="text-violet-light underline">/contatti</a>.
             </Section>
           </div>
         </main>

@@ -136,6 +136,8 @@ export default async function Home() {
                   <div className="mt-3 flex flex-col gap-2.5">
                     <Link href="/privacy" className="text-sm text-faint transition-colors hover:text-foreground">Privacy</Link>
                     <Link href="/termini" className="text-sm text-faint transition-colors hover:text-foreground">Termini</Link>
+                    <Link href="/cookie" className="text-sm text-faint transition-colors hover:text-foreground">Cookie</Link>
+                    <Link href="/contatti" className="text-sm text-faint transition-colors hover:text-foreground">Contatti</Link>
                   </div>
                 </div>
               </div>
