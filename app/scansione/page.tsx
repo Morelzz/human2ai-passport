@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { Building2, Users, Compass, MapPin } from "lucide-react";
+import { Building2, Users, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
+import { SediMap } from "@/components/marketing/SediMap";
+import { getSedi } from "@/lib/scan";
 
 export const metadata = {
   title: "La scansione umana",
@@ -20,8 +22,10 @@ export const metadata = {
 
 const BOOKING_HREF = "/scansione/prenota"; // H2 — il booking vero
 
-export default function ScansionePage() {
+export default async function ScansionePage() {
   const isDev = process.env.NODE_ENV !== "production";
+  // H4 — sedi per la mappa (tabella `sedi`; fallback Studio Void se assente).
+  const sedi = await getSedi();
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
@@ -218,15 +222,9 @@ export default function ScansionePage() {
               La rete cresce città per città.
             </p>
 
-            {/* Segnaposto: H4 lo sostituisce con la mappa Leaflet (tabella sedi) */}
-            <div className="mt-8 flex min-h-[260px] flex-col items-center justify-center gap-3 rounded-[2rem] border border-white/10 bg-obsidian-2 p-8 text-center">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-teal/35 bg-teal/10">
-                <MapPin className="h-5 w-5 text-teal" />
-              </span>
-              <p className="text-sm font-bold">Studio Void · Rimini</p>
-              <p className="max-w-xs text-xs leading-relaxed text-faint">
-                Sede certificata H2AI-SCAN · la mappa interattiva delle sedi arriva qui.
-              </p>
+            {/* H4 — mappa Leaflet: i pin vengono dalla tabella `sedi` */}
+            <div className="mt-8">
+              <SediMap sedi={sedi.map((s) => ({ slug: s.slug, name: s.name, city: s.city, lat: s.lat, lng: s.lng, status: s.status }))} />
             </div>
 
             <p className="mt-6 text-center text-sm leading-relaxed text-muted">

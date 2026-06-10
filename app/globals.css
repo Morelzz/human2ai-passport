@@ -285,3 +285,51 @@ html { scrollbar-width: thin; scrollbar-color: #2a2140 #000000; }
   .reveal { animation: none; opacity: 1; transform: none; }
   .glass-hover:hover { transform: none; }
 }
+
+/* ── H4 — Mappa sedi (Leaflet sul void) ─────────────────────────────────── */
+/* Tiles OSM scuriti via filtro: gratuiti, niente provider dark a pagamento. */
+.h2ai-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.72) contrast(0.9) saturate(0.35); }
+.h2ai-map .leaflet-container { background: #0a0a0f; font: inherit; }
+
+.h2ai-pin { display: block; width: 18px; height: 18px; border-radius: 9999px; }
+.h2ai-pin--attiva {
+  background: rgba(0, 168, 150, 0.3);
+  border: 2px solid #00d4be;
+  box-shadow: 0 0 14px rgba(0, 212, 190, 0.65);
+}
+.h2ai-pin--arrivo {
+  background: rgba(139, 71, 240, 0.16);
+  border: 2px dashed #8b47f0;
+  opacity: 0.85;
+}
+
+/* Popup in tema (di default Leaflet è bianco) */
+.h2ai-map .leaflet-popup-content-wrapper,
+.h2ai-map .leaflet-popup-tip {
+  background: #101018;
+  color: #f0f0f5;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
+}
+.h2ai-map .leaflet-popup-content { margin: 0.85rem 1rem; }
+.h2ai-pop-title { margin: 0; font-size: 0.85rem; font-weight: 700; }
+.h2ai-pop-sub { margin: 0.25rem 0 0; font-size: 0.72rem; color: #9ca3af; }
+.h2ai-pop-cta {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  background: #8b47f0;
+  color: #fff !important;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.h2ai-map .leaflet-control-attribution {
+  background: rgba(10, 10, 15, 0.75);
+  color: #6b7280;
+  font-size: 0.6rem;
+}
+.h2ai-map .leaflet-control-attribution a { color: #9a9a9a; }
