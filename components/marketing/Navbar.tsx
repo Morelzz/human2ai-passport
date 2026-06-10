@@ -10,6 +10,7 @@ import { ScrollProgress } from "@/components/motion/ScrollProgress";
 const LINKS = [
   { href: "/catalogo", label: "Catalogo" },
   { href: "/match", label: "Trova un volto" },
+  { href: "/scansione", label: "Scansione" },
   { href: "/prezzi", label: "Prezzi" },
   { href: "/trasparenza", label: "Trasparenza" },
   { href: "/blog", label: "Blog" },

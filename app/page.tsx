@@ -115,6 +115,7 @@ export default async function Home() {
                   <span className="label-mono text-violet-light">Piattaforma</span>
                   <div className="mt-3 flex flex-col gap-2.5">
                     <Link href="/match" className="text-sm text-faint transition-colors hover:text-foreground">Registro</Link>
+                    <Link href="/scansione" className="text-sm text-faint transition-colors hover:text-foreground">La scansione</Link>
                     <Link href="/prezzi" className="text-sm text-faint transition-colors hover:text-foreground">Prezzi</Link>
                     <Link href="/verify" className="text-sm text-faint transition-colors hover:text-foreground">Verifica</Link>
                     <Link href="/partner" className="text-sm text-faint transition-colors hover:text-foreground">Diventa partner</Link>
