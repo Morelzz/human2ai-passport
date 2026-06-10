@@ -207,21 +207,77 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         </p>
       </Card>
 
-      {/* Timeline */}
+      {/* Timeline — review C4: il consent ledger reso come timeline GRAFICA.
+          La linea CONTINUA per i consensi attivi; per i revocati SI INTERROMPE
+          alla revoca: l'interruzione è la prova. Solo rendering, zero logica. */}
       <Card i={4} label="TIMELINE DI CONSENSO">
-        <div className="flex flex-col gap-3">
-          {events.map((ev) => {
-            const isRevoked = ev.event_type === "REVOKED";
-            return (
-              <div key={ev.id} className="flex items-center gap-3">
-                <span className={`h-2 w-2 shrink-0 rounded-full ${isRevoked ? "bg-crimson" : "bg-teal"}`} />
-                <span className={`text-sm font-semibold ${isRevoked ? "text-crimson" : "text-teal"}`}>{labels[ev.event_type]}</span>
-                {ev.detail && <span className="text-sm text-muted">— {ev.detail}</span>}
-                <span className="ml-auto text-sm text-faint">{formatDate(ev.occurred_at)}</span>
-              </div>
-            );
-          })}
-        </div>
+        {(() => {
+          const isRevokedAvatar = Boolean(avatar.revoked_at);
+          // Fallback se il ledger è vuoto: la concessione dal passport stesso.
+          const items: ConsentEvent[] = events.length > 0 ? events : [{
+            id: "granted-fallback",
+            avatar_id: avatar.id,
+            event_type: "GRANTED",
+            detail: null,
+            occurred_at: avatar.consent_start,
+          }];
+          return (
+            <ol className="ml-0.5">
+              {items.map((ev) => {
+                const isRevokeEv = ev.event_type === "REVOKED";
+                const bad = isRevokeEv || ev.event_type === "CATEGORY_REMOVED";
+                const c = bad ? "#e0006f" : "#00d4be";
+                return (
+                  <li key={ev.id} className="relative flex gap-4 pb-6">
+                    {/* segmento di linea verso l'elemento successivo */}
+                    <span
+                      aria-hidden
+                      className="absolute bottom-0 left-[5px] top-4 w-px"
+                      style={{ background: isRevokeEv ? "linear-gradient(180deg, rgba(224,0,111,0.6), rgba(224,0,111,0.25))" : "rgba(255,255,255,0.13)" }}
+                    />
+                    <span
+                      className="relative z-10 mt-[3px] h-[11px] w-[11px] shrink-0 rounded-full"
+                      style={{ background: isRevokeEv ? c : "transparent", border: `2px solid ${c}`, boxShadow: `0 0 10px ${c}44` }}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                        <span className="text-sm font-semibold" style={{ color: c }}>{labels[ev.event_type]}</span>
+                        <span className="font-mono text-xs text-faint">{formatDate(ev.occurred_at)}</span>
+                      </div>
+                      {ev.detail && <p className="mt-0.5 text-sm leading-snug text-muted">{ev.detail}</p>}
+                    </div>
+                  </li>
+                );
+              })}
+
+              {/* Capolinea: la linea continua (attivo) o si interrompe (revocato) */}
+              <li className="relative flex gap-4">
+                {isRevokedAvatar ? (
+                  <>
+                    <span className="relative z-10 mt-[6px] flex h-[11px] w-[11px] shrink-0 items-center justify-center" aria-hidden>
+                      <span className="block h-[3px] w-[11px] rounded-full bg-crimson shadow-[0_0_10px_rgba(224,0,111,0.5)]" />
+                    </span>
+                    <p className="text-sm leading-relaxed">
+                      <span className="font-bold text-crimson">La timeline si interrompe qui.</span>{" "}
+                      <span className="text-muted">Questa persona ha cambiato idea — il sistema ha obbedito. Nessuna generazione futura.</span>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <span className="relative z-10 mt-[4px] h-[11px] w-[11px] shrink-0" aria-hidden>
+                      <span className="absolute inset-0 animate-ping rounded-full bg-teal opacity-50 motion-reduce:hidden" />
+                      <span className="relative block h-[11px] w-[11px] rounded-full border-2 border-teal bg-teal/30" />
+                    </span>
+                    <p className="text-sm leading-relaxed">
+                      <span className="font-bold text-teal">Consenso attivo.</span>{" "}
+                      <span className="text-muted">La timeline continua — e resta sempre revocabile.</span>
+                    </p>
+                  </>
+                )}
+              </li>
+            </ol>
+          );
+        })()}
         <div className="mt-4 flex flex-wrap gap-8 border-t border-white/6 pt-4">
           <div>
             <span className="text-xs text-muted">Autorizzato dal</span>
