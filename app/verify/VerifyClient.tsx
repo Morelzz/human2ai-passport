@@ -173,7 +173,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
   async function onFaceConsent() {
     if (!pendingFace || busy) return;
     setBusy(true);
-    setStage("Analizzo il volto sul tuo dispositivo…");
+    setStage("Analizzo il volto sul tuo dispositivo… (la prima analisi scarica i modelli: anche 30s)");
     try {
       const { analyzeFaceForVerify } = await import("@/lib/face-match");
       const analysis = await analyzeFaceForVerify(pendingFace);
