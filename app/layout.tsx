@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ViewTransitions } from "next-view-transitions";
 import "./globals.css";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { CookieBanner } from "@/components/legal/CookieBanner";
@@ -48,19 +49,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="it"
-      className={`${geistSans.variable} ${geistMono.variable}`}
-      suppressHydrationWarning
-    >
-      {/* NB: niente h-full/height:100% su html/body — rompe la misura dello
-          scroll di Lenis (lo scroll "scattava" e tornava in cima). */}
-      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
-        <SmoothScroll />
-        {children}
-        {/* F1 — banner cookie globale: default solo essenziali, scelta granulare */}
-        <CookieBanner />
-      </body>
-    </html>
+    // ONDATA MOBILE — View Transitions: le navigazioni coi Link di
+    // next-view-transitions usano document.startViewTransition (dove c'è) →
+    // transizioni di pagina "da app" + shared element sui ritratti
+    // (viewTransitionName vt-portrait-<handle>). Progressive enhancement:
+    // dove l'API manca, navigazione normale.
+    <ViewTransitions>
+      <html
+        lang="it"
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        suppressHydrationWarning
+      >
+        {/* NB: niente h-full/height:100% su html/body — rompe la misura dello
+            scroll di Lenis (lo scroll "scattava" e tornava in cima). */}
+        <body className="min-h-screen flex flex-col" suppressHydrationWarning>
+          <SmoothScroll />
+          {children}
+          {/* F1 — banner cookie globale: default solo essenziali, scelta granulare */}
+          <CookieBanner />
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

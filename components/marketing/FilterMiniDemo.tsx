@@ -34,7 +34,15 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
     try {
       const q = new URLSearchParams({ subject, use });
       const r = await fetch(`/api/filter?${q.toString()}`);
-      setRes(await r.json());
+      const data = (await r.json()) as FilterResponse;
+      setRes(data);
+      // Micro-aptica (dove supportata, es. Android): il consenso si SENTE —
+      // tocco breve per ALLOW, doppio colpo per BLOCK. Best-effort, mai errori.
+      try {
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          navigator.vibrate(data.decision === "ALLOW" ? 18 : [45, 60, 45]);
+        }
+      } catch { /* niente aptica: pazienza */ }
     } catch {
       setRes({ error: "Errore di rete — riprova." });
     }

@@ -112,7 +112,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             <div className="h-28 w-28 overflow-hidden rounded-2xl border bg-obsidian-3" style={{ borderColor: `${tier.color}55` }}>
               {portrait ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={portrait} alt={avatar.alias} className="h-full w-full object-cover" />
+                <img src={portrait} alt={avatar.alias} className="h-full w-full object-cover" style={{ viewTransitionName: `vt-portrait-${avatar.handle}` }} />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-4xl">👤</div>
               )}

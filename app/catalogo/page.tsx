@@ -1,4 +1,6 @@
-import Link from "next/link";
+// Link "view transition": le navigazioni verso i passport animano il ritratto
+// come shared element (vt-portrait-<handle>). API identica a next/link.
+import { Link } from "next-view-transitions";
 import { getPublicAvatars } from "@/lib/registry";
 import { TIER_CONFIG, Tier } from "@/lib/types";
 import { galleryFromRow, portraitFor } from "@/lib/sample-galleries";
@@ -94,6 +96,7 @@ export default async function CatalogoPage() {
                         loading="lazy"
                         decoding="async"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        style={{ viewTransitionName: `vt-portrait-${a.handle}` }}
                       />
                       <div aria-hidden className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.72),transparent_55%)]" />
                       {a.revoked_at && (

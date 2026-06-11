@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+// Link "view transition": il ritratto vola dalla card al passport (shared element).
+import { Link } from "next-view-transitions";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TIER_CONFIG, Tier } from "@/lib/types";
@@ -56,7 +57,7 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
                 <div className="relative aspect-[4/5] overflow-hidden bg-obsidian-3">
                   {src ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={src} alt={a.alias} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img src={src} alt={a.alias} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" style={{ viewTransitionName: `vt-portrait-${a.handle}` }} />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-4xl">👤</div>
                   )}
