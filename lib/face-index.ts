@@ -96,16 +96,30 @@ export interface FaceIndexMatch {
  * migliore tra gli avatar). La soglia la applica chi chiama: qui solo i numeri.
  */
 export function findFaceMatch(descriptor: number[], index: FaceIndex): FaceIndexMatch | null {
+  const ranked = rankFaceMatches(descriptor, index);
+  if (ranked.length === 0) return null;
+  return { ...ranked[0], avatarsChecked: ranked.length };
+}
+
+/**
+ * TUTTE le corrispondenze per avatar (distanza minima per handle), ordinate
+ * dalla più vicina. `allowedHandles` (filtri "restringi il cerchio") limita il
+ * confronto ai soli avatar compatibili coi metadati — il cerchio si stringe
+ * PRIMA del confronto biometrico, mai abbassando la soglia.
+ */
+export function rankFaceMatches(
+  descriptor: number[],
+  index: FaceIndex,
+  allowedHandles?: Set<string>
+): Array<{ handle: string; distance: number }> {
   const bestPerHandle = new Map<string, number>();
   for (const entry of index.entries) {
+    if (allowedHandles && !allowedHandles.has(entry.handle)) continue;
     const d = euclidean(descriptor, entry.descriptor);
     const prev = bestPerHandle.get(entry.handle);
     if (prev === undefined || d < prev) bestPerHandle.set(entry.handle, d);
   }
-  if (bestPerHandle.size === 0) return null;
-  let best: { handle: string; distance: number } | null = null;
-  for (const [handle, distance] of bestPerHandle) {
-    if (!best || distance < best.distance) best = { handle, distance };
-  }
-  return best ? { ...best, avatarsChecked: bestPerHandle.size } : null;
+  return [...bestPerHandle.entries()]
+    .map(([handle, distance]) => ({ handle, distance }))
+    .sort((a, b) => a.distance - b.distance);
 }

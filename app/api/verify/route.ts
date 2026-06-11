@@ -39,6 +39,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       valid: true,
       type: "content",
+      // Il token che ha matchato È il certificato: serve al link "Segnala
+      // abuso" del client (deep-link ?token= dai feed/badge).
+      certificate: token,
       alias: av?.alias ?? null,
       handle: av?.handle ?? null,
       tier: av?.tier ?? null,

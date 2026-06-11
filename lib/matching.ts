@@ -110,7 +110,7 @@ function parseRange(range: string | null): [number, number] | null {
   return [parseInt(m[1], 10), parseInt(m[2], 10)];
 }
 
-function fuzzyEq(a: string, b: string): boolean {
+export function fuzzyEq(a: string, b: string): boolean {
   const x = a.toLowerCase().trim();
   const y = b.toLowerCase().trim();
   return x === y || x.includes(y) || y.includes(x);
@@ -138,17 +138,23 @@ const ETHNIC_GROUPS: Record<string, string[]> = {
   "sud-asiatic": ["indian", "pakistan", "bengales", "cingales"],
   african: ["nigerian", "senegales", "ghanes", "etiop", "keniot"],
   latin: ["brasilian", "argentin", "messican", "colombian", "venezuelan", "perurian", "cilen"],
-  mediorental: ["arab", "marocchin", "egizian", "tunisin", "libanes", "iranian", "turc"],
-  arab: ["marocchin", "egizian", "tunisin", "libanes", "saudit", "mediorental"],
+  medioriental: ["arab", "marocchin", "egizian", "tunisin", "libanes", "iranian", "turc"],
+  arab: ["marocchin", "egizian", "tunisin", "libanes", "saudit", "medioriental"],
 };
 
-function ethnicityEq(a: string, b: string): boolean {
+export function ethnicityEq(a: string, b: string): boolean {
   // a = etnia dell'avatar (registro), b = etnia richiesta (brief/filtri)
   const x = stemEthnic(a);
   const y = stemEthnic(b);
   if (x === y || x.includes(y) || y.includes(x)) return true;
   const group = ETHNIC_GROUPS[y];
-  return Boolean(group?.some((g) => x === g || x.includes(g) || g.includes(x)));
+  if (group?.some((g) => x === g || x.includes(g) || g.includes(x))) return true;
+  // Simmetrico: il registro può archiviare il GRUPPO (IDENTITY_KIT, via
+  // self-onboarding: "caucasico", "asiatico"…) e la richiesta una nazionalità
+  // ("italiana", "giapponese") — il gruppo dell'avatar si espande verso la
+  // richiesta. Solo allargamento: nessun caso vero diventa falso.
+  const groupAv = ETHNIC_GROUPS[x];
+  return Boolean(groupAv?.some((g) => y === g || y.includes(g) || g.includes(y)));
 }
 
 // Modello a filtro rigido: l'avatar è un match SOLO se soddisfa OGNI attributo

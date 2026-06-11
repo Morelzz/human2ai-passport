@@ -21,9 +21,9 @@ export default async function VerifyPage({
             <span className="text-xs font-bold tracking-[0.14em] text-teal">VERIFICA</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Verifica un contenuto</h1>
             <p className="mt-3 leading-relaxed text-muted">
-              Incolla il <span className="text-foreground">token di un avatar</span> o il{" "}
-              <span className="text-foreground">certificato di un contenuto generato</span>: confermiamo
-              il consenso e a quale persona reale appartiene.
+              Carica un&apos;immagine: se è un contenuto <span className="text-foreground">Human2AI</span> leggiamo
+              la filigrana invisibile e ti mostriamo chi l&apos;ha autorizzato e con quale consenso. Se non lo è,
+              possiamo confrontare il volto col registro — <span className="text-foreground">a tutela della persona</span>.
             </p>
           </div>
           <VerifyClient initialToken={token ?? ""} />

@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase";
 import { extractStego } from "@/lib/stegano";
+import { galleryFromRow } from "@/lib/sample-galleries";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
   const supabase = createServerClient();
   const { data: gen } = await supabase
     .from("generations")
-    .select("created_at, category, certificate, avatars(handle, alias, tier, consent_start, revoked_at)")
+    .select("created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, approved_categories, excluded_categories)")
     .eq("certificate", cert)
     .maybeSingle();
 
@@ -41,6 +42,23 @@ export async function POST(req: Request) {
   }
 
   const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
+
+  // Catena del consenso: la timeline degli eventi rende il verdetto un atto
+  // ("ecco cosa questa persona ha autorizzato e quando"), non un sì/no.
+  // Best-effort: senza eventi la card usa consent_start/revoked_at.
+  let events: Array<{ event_type: string; detail: string | null; occurred_at: string }> = [];
+  if (av?.id) {
+    const { data: ev } = await supabase
+      .from("consent_events")
+      .select("event_type, detail, occurred_at")
+      .eq("avatar_id", av.id)
+      .order("occurred_at", { ascending: false })
+      .limit(20);
+    // I 20 più RECENTI (una revoca di ieri non deve mai sparire per
+    // troncamento), ri-ordinati in cronologia ascendente per la card.
+    events = (ev ?? []).reverse();
+  }
+
   return NextResponse.json({
     valid: true,
     marked: true,
@@ -54,5 +72,13 @@ export async function POST(req: Request) {
     revoked_at: av?.revoked_at ?? null,
     generated_at: gen.created_at,
     category: gen.category ?? null,
+    // Per il check "categoria d'uso coerente col consenso ATTUALE" e la
+    // correlazione visiva col ritratto pubblico dell'avatar.
+    approved_categories: av?.approved_categories ?? null,
+    excluded_categories: av?.excluded_categories ?? null,
+    // NB: gallery_urls vive nella migrazione avatar_public_profile (non ancora
+    // applicata): galleryFromRow usa la mappa fallback per handle.
+    has_portrait: av?.handle ? galleryFromRow(av.handle, undefined).length > 0 : false,
+    events,
   });
 }

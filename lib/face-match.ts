@@ -92,6 +92,134 @@ export async function descriptorForFile(file: File): Promise<number[] | null> {
   }
 }
 
+// ── Quality gate per /verify ────────────────────────────────────────────────
+// Nominare l'avatar sbagliato su un volto sgranato è il peccato capitale del
+// registro: prima del confronto biometrico misuriamo qualità e dimensione del
+// volto. Se il volto è PICCOLO ma nitido facciamo un upscale CONSERVATIVO
+// (interpolazione canvas: nessun dettaglio inventato — lo standard H2AI-SCAN
+// vieta gli upscaler generativi proprio perché inventano il volto) e
+// riproviamo. Se la qualità resta insufficiente: nessun confronto, onestà.
+
+export interface VerifyFaceAnalysis {
+  descriptor: number[] | null;
+  // ok = confronto affidabile; upscaled = ok dopo upscale conservativo;
+  // low = qualità insufficiente (NESSUN confronto); no_face = nessun volto.
+  quality: "ok" | "upscaled" | "low" | "no_face";
+  faceBox: number | null; // lato minore del box volto (px, post-upscale se usato)
+  blurVar: number | null; // varianza del Laplaciano (proxy di nitidezza)
+}
+
+const MIN_FACE_BOX = 72;   // sotto: si tenta l'upscale conservativo
+const MIN_FACE_BOX_HARD = 48; // sotto anche dopo upscale: confronto rifiutato
+const MIN_BLUR_VAR = 18;   // sotto: immagine troppo sfocata per pronunciarsi
+
+// Varianza del Laplaciano su una miniatura in scala di grigi (metrica classica
+// di nitidezza, economica: ~256px di lato).
+function laplacianVariance(img: HTMLImageElement | HTMLCanvasElement): number | null {
+  try {
+    const side = 256;
+    const w = "naturalWidth" in img ? img.naturalWidth : img.width;
+    const h = "naturalHeight" in img ? img.naturalHeight : img.height;
+    const scale = Math.min(1, side / Math.max(w, h));
+    const cw = Math.max(8, Math.round(w * scale));
+    const ch = Math.max(8, Math.round(h * scale));
+    const c = document.createElement("canvas");
+    c.width = cw; c.height = ch;
+    const ctx = c.getContext("2d");
+    if (!ctx) return null;
+    ctx.drawImage(img, 0, 0, cw, ch);
+    const { data } = ctx.getImageData(0, 0, cw, ch);
+    const gray = new Float32Array(cw * ch);
+    for (let i = 0; i < cw * ch; i++) {
+      gray[i] = 0.299 * data[i * 4] + 0.587 * data[i * 4 + 1] + 0.114 * data[i * 4 + 2];
+    }
+    let sum = 0, sumSq = 0, n = 0;
+    for (let y = 1; y < ch - 1; y++) {
+      for (let x = 1; x < cw - 1; x++) {
+        const i = y * cw + x;
+        const lap = gray[i - 1] + gray[i + 1] + gray[i - cw] + gray[i + cw] - 4 * gray[i];
+        sum += lap; sumSq += lap * lap; n++;
+      }
+    }
+    if (n === 0) return null;
+    const mean = sum / n;
+    return sumSq / n - mean * mean;
+  } catch {
+    return null;
+  }
+}
+
+// Upscale conservativo: interpolazione bicubica del canvas, nessuna AI.
+function upscaleCanvas(img: HTMLImageElement, scale: number): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = Math.round(img.naturalWidth * scale);
+  c.height = Math.round(img.naturalHeight * scale);
+  const ctx = c.getContext("2d")!;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, 0, 0, c.width, c.height);
+  return c;
+}
+
+async function detectBiggest(f: FaceApi, input: HTMLImageElement | HTMLCanvasElement) {
+  const det = await f
+    .detectAllFaces(input, new f.SsdMobilenetv1Options({ minConfidence: 0.3 }))
+    .withFaceLandmarks()
+    .withFaceDescriptors();
+  if (!det.length) return null;
+  return det.sort((a, b) => b.detection.box.area - a.detection.box.area)[0];
+}
+
+/** Analisi del volto per /verify: descrittore + verdetto di qualità.
+ *  Non lancia mai: in caso di errore quality="no_face". Tutto sul dispositivo. */
+export async function analyzeFaceForVerify(file: File): Promise<VerifyFaceAnalysis> {
+  try {
+    const f = await ensureModels();
+    const img = await fileToImage(file);
+    const blurVar = laplacianVariance(img);
+
+    let det = await detectBiggest(f, img);
+    let upscaled = false;
+    let boxMin = det ? Math.min(det.detection.box.width, det.detection.box.height) : null;
+
+    // Nessun volto su immagine piccola, o volto trovato ma minuscolo:
+    // upscale conservativo e seconda chance al detector.
+    const needsUpscale =
+      (!det && Math.min(img.naturalWidth, img.naturalHeight) < 600) ||
+      (det && boxMin !== null && boxMin < MIN_FACE_BOX);
+    if (needsUpscale) {
+      const target = boxMin ? Math.min(3, Math.max(2, (MIN_FACE_BOX * 2) / boxMin)) : 2;
+      const canvas = upscaleCanvas(img, target);
+      const det2 = await detectBiggest(f, canvas);
+      if (det2) {
+        det = det2;
+        boxMin = Math.min(det2.detection.box.width, det2.detection.box.height);
+        upscaled = true;
+      }
+    }
+
+    if (!det) return { descriptor: null, quality: "no_face", faceBox: null, blurVar };
+
+    // Sfocatura estrema o volto ancora troppo piccolo: NESSUN confronto.
+    // Meglio nessuna risposta che una percentuale calcolata su pixel che
+    // non contengono l'informazione.
+    const tooBlurry = blurVar !== null && blurVar < MIN_BLUR_VAR;
+    const tooSmall = boxMin !== null && boxMin < MIN_FACE_BOX_HARD;
+    if (tooBlurry || tooSmall) {
+      return { descriptor: null, quality: "low", faceBox: boxMin, blurVar };
+    }
+
+    return {
+      descriptor: Array.from(det.descriptor),
+      quality: upscaled ? "upscaled" : "ok",
+      faceBox: boxMin,
+      blurVar,
+    };
+  } catch {
+    return { descriptor: null, quality: "no_face", faceBox: null, blurVar: null };
+  }
+}
+
 /** Descrittore FaceNet da un URL immagine (richiede CORS; null = non calcolabile). */
 export async function descriptorForUrl(url: string): Promise<number[] | null> {
   try {
