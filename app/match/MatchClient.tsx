@@ -40,6 +40,11 @@ const GENDERS = [
 ];
 const HAIRS = ["Neri", "Castani", "Biondi", "Rossi", "Grigi", "Rasati", "Calvo"];
 const ETHNICITIES = ["Italiana", "Giapponese", "Cinese", "Indiana", "Nigeriana", "Afroamericana", "Caucasica", "Latina", "Araba"];
+// Filtri avanzati: stesso vocabolario di IDENTITY_KIT (lib/types.ts) — i valori
+// devono combaciare con quelli salvati alla creazione avatar.
+const EYES = ["Marroni", "Neri", "Azzurri", "Verdi", "Grigi", "Nocciola"];
+const HEIGHTS = [{ v: "bassa", l: "Bassa" }, { v: "media", l: "Media" }, { v: "alta", l: "Alta" }];
+const BUILDS = [{ v: "slim", l: "Slim" }, { v: "atletico", l: "Atletica" }, { v: "normale", l: "Normale" }, { v: "curvy", l: "Curvy" }, { v: "robusto", l: "Robusta" }];
 
 interface Attrs {
   gender: string | null;
@@ -47,6 +52,9 @@ interface Attrs {
   hair_color: string | null;
   age_min: number | null;
   age_max: number | null;
+  eye_color?: string | null;
+  height?: string | null;
+  body_type?: string | null;
 }
 
 interface MatchAvatar {
@@ -132,6 +140,9 @@ export default function MatchClient() {
   const [ageMax, setAgeMax] = useState(100);
   const [hair, setHair] = useState("");
   const [ethnicity, setEthnicity] = useState("");
+  const [eyes, setEyes] = useState("");
+  const [height, setHeight] = useState("");
+  const [build, setBuild] = useState("");
   const [category, setCategory] = useState("");
   // D3 — stato del salvataggio "avvisami" sull'empty state.
   const [alertState, setAlertState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -229,14 +240,14 @@ export default function MatchClient() {
     e.preventDefault();
     // Età: il range completo 18–100 = "indifferente" (nessun filtro).
     const ageActive = ageMin > 18 || ageMax < 100;
-    const hasChips = Boolean(gender || ethnicity || hair || ageActive);
+    const hasChips = Boolean(gender || ethnicity || hair || eyes || height || build || ageActive);
     const text = brief.trim();
     if (!hasChips && text.length < 5 && !category) {
-      setError("Descrivi chi cerchi, oppure usa i filtri classici o una categoria d'uso.");
+      setError("Descrivi chi cerchi, oppure usa i filtri avanzati o una categoria d'uso.");
       return;
     }
     // D1: la descrizione libera passa dal matching engine (Claude estrae gli
-    // attributi). Se selezioni i filtri classici, sono LORO a comandare.
+    // attributi). Se selezioni i filtri avanzati, sono LORO a comandare.
     // La categoria resta SEMPRE esplicita: il consenso è deliberato, mai inferito.
     const body = !hasChips && text.length >= 5
       ? { prompt: text, category: category || null }
@@ -247,6 +258,9 @@ export default function MatchClient() {
             hair_color: hair || null,
             age_min: ageActive ? ageMin : null,
             age_max: ageActive ? ageMax : null,
+            eye_color: eyes || null,
+            height: height || null,
+            body_type: build || null,
           },
           category: category || null,
         };
@@ -428,10 +442,10 @@ export default function MatchClient() {
           ))}
         </ChipGroup>
 
-        {/* Filtri classici: raffinamento opzionale, in alternativa al brief */}
+        {/* Filtri avanzati: raffinamento opzionale, in alternativa al brief */}
         <details className="group rounded-2xl border border-white/10 bg-obsidian-2">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-sm font-semibold text-muted transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden">
-            <span>Filtri classici <span className="font-normal text-faint">· in alternativa alla descrizione</span></span>
+            <span>Filtri avanzati <span className="font-normal text-faint">· in alternativa alla descrizione</span></span>
             <span aria-hidden className="text-faint transition-transform duration-300 group-open:rotate-180">⌄</span>
           </summary>
           <div className="flex flex-col gap-6 border-t border-white/6 p-4">
@@ -473,6 +487,24 @@ export default function MatchClient() {
             <ChipGroup label="Etnia">
               {ETHNICITIES.map((e) => (
                 <Chip key={e} active={ethnicity === e.toLowerCase()} onClick={() => toggle(ethnicity, e.toLowerCase(), setEthnicity)}>{e}</Chip>
+              ))}
+            </ChipGroup>
+
+            <ChipGroup label="Occhi">
+              {EYES.map((o) => (
+                <Chip key={o} active={eyes === o.toLowerCase()} onClick={() => toggle(eyes, o.toLowerCase(), setEyes)}>{o}</Chip>
+              ))}
+            </ChipGroup>
+
+            <ChipGroup label="Statura">
+              {HEIGHTS.map((h) => (
+                <Chip key={h.v} active={height === h.v} onClick={() => toggle(height, h.v, setHeight)}>{h.l}</Chip>
+              ))}
+            </ChipGroup>
+
+            <ChipGroup label="Corporatura">
+              {BUILDS.map((b) => (
+                <Chip key={b.v} active={build === b.v} onClick={() => toggle(build, b.v, setBuild)}>{b.l}</Chip>
               ))}
             </ChipGroup>
 
@@ -522,6 +554,9 @@ export default function MatchClient() {
                   a.gender,
                   a.ethnicity,
                   a.hair_color && `capelli ${a.hair_color}`,
+                  a.eye_color && `occhi ${a.eye_color}`,
+                  a.height && `statura ${a.height}`,
+                  a.body_type && `corporatura ${a.body_type}`,
                   (a.age_min != null || a.age_max != null) && `${a.age_min ?? 18}–${a.age_max ?? "100+"} anni`,
                   result.category,
                 ].filter(Boolean) as string[];

@@ -9,6 +9,10 @@ export interface PromptAttributes {
   hair_color: string | null;
   age_min: number | null;
   age_max: number | null;
+  // Filtri avanzati (stesso vocabolario di IDENTITY_KIT in lib/types.ts)
+  eye_color: string | null;
+  height: string | null;
+  body_type: string | null;
 }
 
 // --- 1. Estrazione attributi via Claude API (solo identità) ---
@@ -23,13 +27,18 @@ estrai SOLO le caratteristiche identitarie e rispondi ESCLUSIVAMENTE con JSON va
   "ethnicity": stringa breve in italiano (es. "giapponese","italiana","afroamericano") | null,
   "hair_color": stringa breve in italiano (es. "neri","castani","biondi","rossi","grigi","rasati") | null,
   "age_min": numero intero | null,
-  "age_max": numero intero | null
+  "age_max": numero intero | null,
+  "eye_color": "marroni"|"neri"|"azzurri"|"verdi"|"grigi"|"nocciola" | null,
+  "height": "bassa"|"media"|"alta" | null,
+  "body_type": "slim"|"atletico"|"normale"|"curvy"|"robusto" | null
 }
 Regole:
 - Estrai SOLO attributi fisici della persona. IGNORA del tutto azioni, ambientazioni,
   scene o usi commerciali (es. "che balla in spiaggia", "per una campagna"): non sono identità.
 - Se un attributo non è deducibile, usa null. NON inferire ciò che non è esplicito.
-- "giovane" ~ 20-30, "adulto" ~ 30-45, "maturo/anziano" ~ 50+. Stima un range sensato.`;
+- "giovane" ~ 20-30, "adulto" ~ 30-45, "maturo/anziano" ~ 50+. Stima un range sensato.
+- Per eye_color/height/body_type usa SOLO i valori elencati: mappa i sinonimi
+  ("magra/snella" -> "slim", "in forma" -> "atletico", "formosa" -> "curvy").`;
 
   const res = await client.messages.create({
     model: "claude-haiku-4-5-20251001",
@@ -53,6 +62,9 @@ Regole:
     hair_color: parsed.hair_color ? String(parsed.hair_color).toLowerCase() : null,
     age_min: typeof parsed.age_min === "number" ? parsed.age_min : null,
     age_max: typeof parsed.age_max === "number" ? parsed.age_max : null,
+    eye_color: parsed.eye_color ? String(parsed.eye_color).toLowerCase() : null,
+    height: parsed.height ? String(parsed.height).toLowerCase() : null,
+    body_type: parsed.body_type ? String(parsed.body_type).toLowerCase() : null,
   };
 }
 
@@ -66,7 +78,10 @@ export function normalizeIdentity(raw: unknown): PromptAttributes {
   const hair_color = typeof r.hair_color === "string" && r.hair_color.trim() ? r.hair_color.trim().toLowerCase() : null;
   const age_min = typeof r.age_min === "number" ? r.age_min : null;
   const age_max = typeof r.age_max === "number" ? r.age_max : null;
-  return { gender, ethnicity, hair_color, age_min, age_max };
+  const eye_color = typeof r.eye_color === "string" && r.eye_color.trim() ? r.eye_color.trim().toLowerCase() : null;
+  const height = typeof r.height === "string" && r.height.trim() ? r.height.trim().toLowerCase() : null;
+  const body_type = typeof r.body_type === "string" && r.body_type.trim() ? r.body_type.trim().toLowerCase() : null;
+  return { gender, ethnicity, hair_color, age_min, age_max, eye_color, height, body_type };
 }
 
 // --- 2. Punteggio di affinità avatar vs attributi ---
@@ -75,6 +90,9 @@ export interface ScorableAvatar {
   ethnicity: string | null;
   hair_color: string | null;
   age_range: string | null;
+  eye_color?: string | null;
+  height?: string | null;
+  body_type?: string | null;
   approved_categories: string[];
   excluded_categories: string[];
 }
@@ -186,6 +204,31 @@ export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes, categor
     reasons.push("età");
   }
 
+  // Filtri avanzati: stessa regola rigida (richiesto → deve combaciare).
+  if (attrs.eye_color) {
+    if (!av.eye_color || !fuzzyEq(av.eye_color, attrs.eye_color)) {
+      return { score: 0, allowed: false, reasons: ["occhi diversi"] };
+    }
+    score += 1;
+    reasons.push("occhi");
+  }
+
+  if (attrs.height) {
+    if (!av.height || !fuzzyEq(av.height, attrs.height)) {
+      return { score: 0, allowed: false, reasons: ["statura diversa"] };
+    }
+    score += 1;
+    reasons.push("statura");
+  }
+
+  if (attrs.body_type) {
+    if (!av.body_type || !fuzzyEq(av.body_type, attrs.body_type)) {
+      return { score: 0, allowed: false, reasons: ["corporatura diversa"] };
+    }
+    score += 1;
+    reasons.push("corporatura");
+  }
+
   return { score, allowed: true, reasons };
 }
 
@@ -197,5 +240,8 @@ export function specifiedCount(attrs: PromptAttributes, category: string | null)
   if (attrs.ethnicity) n++;
   if (attrs.hair_color) n++;
   if (attrs.age_min != null && attrs.age_max != null) n++;
+  if (attrs.eye_color) n++;
+  if (attrs.height) n++;
+  if (attrs.body_type) n++;
   return n;
 }

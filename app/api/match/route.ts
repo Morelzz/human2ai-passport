@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       attrs,
       category,
       results: [],
-      reason: "Descrivi almeno una caratteristica (genere, etnia, capelli, età) o scegli una categoria d'uso.",
+      reason: "Descrivi almeno una caratteristica (genere, etnia, capelli, occhi, statura, corporatura, età) o scegli una categoria d'uso.",
     });
   }
 
