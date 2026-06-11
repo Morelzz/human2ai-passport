@@ -53,7 +53,8 @@ interface VerifyResult {
     avatars_checked?: number;
     filtered?: boolean;
     candidates?: FaceCandidate[];
-    quality?: "ok" | "upscaled" | "low" | "no_face";
+    quality?: "ok" | "upscaled" | "low" | "no_face" | "error";
+    detail?: string;
   };
 }
 
@@ -177,10 +178,16 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
     try {
       const { analyzeFaceForVerify } = await import("@/lib/face-match");
       const analysis = await analyzeFaceForVerify(pendingFace);
-      if (!analysis.descriptor || analysis.quality === "no_face" || analysis.quality === "low") {
+      if (!analysis.descriptor || analysis.quality === "no_face" || analysis.quality === "low" || analysis.quality === "error") {
         setResult((prev) => prev ? {
           ...prev,
-          face: { scanned: true, face_found: analysis.quality !== "no_face", match: false, quality: analysis.quality },
+          face: {
+            scanned: analysis.quality !== "error",
+            face_found: analysis.quality !== "no_face" && analysis.quality !== "error",
+            match: false,
+            quality: analysis.quality,
+            detail: analysis.detail,
+          },
         } : prev);
       } else {
         descriptorRef.current = analysis.descriptor;
@@ -467,6 +474,18 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 </button>
               </div>
             </>
+          ) : face?.quality === "error" ? (
+            /* ── ERRORE TECNICO: distinto da "nessun volto" (mai confonderli) ── */
+            <>
+              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-[#f0b429]">ANALISI NON RIUSCITA SUL TUO DISPOSITIVO</h2>
+              <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
+                Non è un verdetto sull&apos;immagine: l&apos;analisi del volto si è interrotta per un problema
+                tecnico del browser (memoria/GPU). Ricarica la pagina e riprova; se persiste, prova da un altro browser.
+              </p>
+              {face.detail && (
+                <p className="mt-2 font-mono text-[0.65rem] text-faint">dettaglio tecnico: {face.detail}</p>
+              )}
+            </>
           ) : face?.quality === "low" ? (
             /* ── QUALITY GATE: meglio nessuna risposta che una inventata ── */
             <>
@@ -534,6 +553,9 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             <>
               <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">NESSUN VOLTO ANALIZZABILE</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">Nell&apos;immagine non è stato rilevato un volto su cui eseguire il confronto.</p>
+              {face.detail && (
+                <p className="mt-2 font-mono text-[0.65rem] text-faint">dettaglio tecnico: {face.detail}</p>
+              )}
             </>
           ) : face && face.scanned ? (
             <>

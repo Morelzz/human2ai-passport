@@ -103,10 +103,13 @@ export async function descriptorForFile(file: File): Promise<number[] | null> {
 export interface VerifyFaceAnalysis {
   descriptor: number[] | null;
   // ok = confronto affidabile; upscaled = ok dopo upscale conservativo;
-  // low = qualità insufficiente (NESSUN confronto); no_face = nessun volto.
-  quality: "ok" | "upscaled" | "low" | "no_face";
+  // low = qualità insufficiente (NESSUN confronto); no_face = nessun volto;
+  // error = l'analisi è FALLITA (eccezione: GPU/memoria/modelli) — da
+  // distinguere SEMPRE da no_face: "non c'è un volto" ≠ "non sono riuscito".
+  quality: "ok" | "upscaled" | "low" | "no_face" | "error";
   faceBox: number | null; // lato minore del box volto (px, post-upscale se usato)
   blurVar: number | null; // varianza del Laplaciano (proxy di nitidezza)
+  detail?: string; // diagnostica leggibile (dimensioni, messaggio errore)
 }
 
 const MIN_FACE_BOX = 72;   // sotto: si tenta l'upscale conservativo
@@ -222,7 +225,15 @@ export async function analyzeFaceForVerify(file: File): Promise<VerifyFaceAnalys
       }
     }
 
-    if (!det) return { descriptor: null, quality: "no_face", faceBox: null, blurVar };
+    if (!det) {
+      return {
+        descriptor: null,
+        quality: "no_face",
+        faceBox: null,
+        blurVar,
+        detail: `analizzata a ${inW}×${inH}px${upscaled ? " (+upscale)" : ""}, nitidezza ${blurVar === null ? "n/d" : Math.round(blurVar)}`,
+      };
+    }
 
     // Sfocatura estrema o volto ancora troppo piccolo: NESSUN confronto.
     // Meglio nessuna risposta che una percentuale calcolata su pixel che
@@ -239,8 +250,14 @@ export async function analyzeFaceForVerify(file: File): Promise<VerifyFaceAnalys
       faceBox: boxMin,
       blurVar,
     };
-  } catch {
-    return { descriptor: null, quality: "no_face", faceBox: null, blurVar: null };
+  } catch (e) {
+    return {
+      descriptor: null,
+      quality: "error",
+      faceBox: null,
+      blurVar: null,
+      detail: e instanceof Error ? `${e.name}: ${e.message}`.slice(0, 160) : "errore sconosciuto",
+    };
   }
 }
 
