@@ -149,16 +149,37 @@ function laplacianVariance(img: HTMLImageElement | HTMLCanvasElement): number | 
   }
 }
 
-// Upscale conservativo: interpolazione bicubica del canvas, nessuna AI.
-function upscaleCanvas(img: HTMLImageElement, scale: number): HTMLCanvasElement {
+type DetectInput = HTMLImageElement | HTMLCanvasElement;
+
+function inputSize(i: DetectInput): { w: number; h: number } {
+  return "naturalWidth" in i ? { w: i.naturalWidth, h: i.naturalHeight } : { w: i.width, h: i.height };
+}
+
+// Ri-scala via canvas (interpolazione, nessuna AI): usata sia per RIDURRE le
+// foto giganti sia per l'upscale conservativo dei volti piccoli.
+function scaleCanvas(img: DetectInput, scale: number): HTMLCanvasElement {
+  const { w, h } = inputSize(img);
   const c = document.createElement("canvas");
-  c.width = Math.round(img.naturalWidth * scale);
-  c.height = Math.round(img.naturalHeight * scale);
+  c.width = Math.max(1, Math.round(w * scale));
+  c.height = Math.max(1, Math.round(h * scale));
   const ctx = c.getContext("2d")!;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(img, 0, 0, c.width, c.height);
   return c;
+}
+
+// Le foto da studio/DSLR arrivano a 5000-8000px: oltre i limiti texture di
+// molte GPU (il detector muore in silenzio) e comunque inutili per FaceNet.
+// Normalizziamo a ≤2000px PRIMA di tutto: più robusto su ogni browser, più
+// veloce, e passa dal canvas (che assorbe anche l'orientamento EXIF).
+const MAX_DETECT_SIDE = 2000;
+
+function normalizeInput(img: HTMLImageElement): DetectInput {
+  const { w, h } = inputSize(img);
+  const maxSide = Math.max(w, h);
+  if (maxSide <= MAX_DETECT_SIDE) return img;
+  return scaleCanvas(img, MAX_DETECT_SIDE / maxSide);
 }
 
 async function detectBiggest(f: FaceApi, input: HTMLImageElement | HTMLCanvasElement) {
@@ -176,20 +197,23 @@ export async function analyzeFaceForVerify(file: File): Promise<VerifyFaceAnalys
   try {
     const f = await ensureModels();
     const img = await fileToImage(file);
-    const blurVar = laplacianVariance(img);
+    // Prima di tutto: dimensioni gestibili dal detector su QUALSIASI GPU.
+    const input = normalizeInput(img);
+    const blurVar = laplacianVariance(input);
 
-    let det = await detectBiggest(f, img);
+    let det = await detectBiggest(f, input);
     let upscaled = false;
     let boxMin = det ? Math.min(det.detection.box.width, det.detection.box.height) : null;
 
     // Nessun volto su immagine piccola, o volto trovato ma minuscolo:
     // upscale conservativo e seconda chance al detector.
+    const { w: inW, h: inH } = inputSize(input);
     const needsUpscale =
-      (!det && Math.min(img.naturalWidth, img.naturalHeight) < 600) ||
+      (!det && Math.min(inW, inH) < 600) ||
       (det && boxMin !== null && boxMin < MIN_FACE_BOX);
     if (needsUpscale) {
       const target = boxMin ? Math.min(3, Math.max(2, (MIN_FACE_BOX * 2) / boxMin)) : 2;
-      const canvas = upscaleCanvas(img, target);
+      const canvas = scaleCanvas(input, target);
       const det2 = await detectBiggest(f, canvas);
       if (det2) {
         det = det2;
