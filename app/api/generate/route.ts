@@ -11,6 +11,7 @@ import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
 import { prepareExtras } from "@/lib/echo-job";
+import { fetchPosePrompt } from "@/lib/poses";
 import { logBlockedRequest } from "@/lib/blocked";
 import sharp from "sharp";
 
@@ -39,10 +40,15 @@ function clauseForExtra(e: ExtraMeta): string {
   }
 }
 
-function buildEchoPrompt(scene: string, extras: ExtraMeta[]): string {
+function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null): string {
   const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
   let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
+  // Posa dalla libreria: direttiva TESTUALE (la whitelist è la libreria stessa,
+  // vedi lib/poses.ts — qui arriva solo testo nostro, mai del client).
+  if (poseText) {
+    base += ` The person's body pose: ${poseText}.`;
+  }
   const clauses = extras.map(clauseForExtra);
   if (clauses.length > 0) {
     base += " " + clauses.join("; ") + ". Apply each one faithfully and exactly as depicted.";
@@ -120,6 +126,19 @@ export async function POST(request: Request) {
   const echoSize = isEchoSize(body?.echoSize) ? body.echoSize : "1024x1024";
   const echoQuality = isEchoQuality(body?.echoQuality) ? body.echoQuality : "high";
 
+  // Posa dalla libreria: il client manda SOLO l'id; lo risolviamo in una
+  // direttiva TESTUALE di posa (mai l'immagine del manichino al motore: la
+  // metterebbe in scena). Posa inesistente → 400 PRIMA di toccare OpenAI.
+  const extraRefs: Array<{ data?: unknown; role?: unknown; desc?: unknown }> =
+    Array.isArray(body?.extraRefs) ? body.extraRefs.slice(0, 2) : [];
+  let poseText: string | null = null;
+  if (useEcho && body?.poseId) {
+    poseText = await fetchPosePrompt(String(body.poseId));
+    if (!poseText) {
+      return NextResponse.json({ error: "Posa non trovata nella libreria" }, { status: 400 });
+    }
+  }
+
   // ── ECHO COMMERCIALE → ASINCRONO ──────────────────────────────────────────
   // La chiamata a gpt-image-2 (con reference) dura da ~1 a ~3 minuti, oltre il
   // limite delle funzioni Vercel: NON generiamo qui. Mettiamo in coda un job,
@@ -135,7 +154,7 @@ export async function POST(request: Request) {
     if (identity.length === 0) {
       return NextResponse.json({ error: "ECHO non disponibile per questo avatar (reference-set assente)" }, { status: 400 });
     }
-    const extras = await prepareExtras(body?.extraRefs);
+    const extras = await prepareExtras(extraRefs);
     // Prezzo bloccato ora: dipende da categoria (valore) + size/quality (compute).
     const { gross_cents, fee_cents, net_cents, surcharge_cents } = splitEcho(category, echoSize, echoQuality);
     const params = {
@@ -144,6 +163,7 @@ export async function POST(request: Request) {
       echoSize,
       echoQuality,
       extras,
+      poseText,
       pricing: { gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents },
     };
     const { data: job, error: jobErr } = await admin
@@ -171,8 +191,8 @@ export async function POST(request: Request) {
     if (identity.length === 0) {
       return NextResponse.json({ error: "ECHO non disponibile per questo avatar (reference-set assente)" }, { status: 400 });
     }
-    // Immagini extra del cliente (capi/scenari), MAX 2. Totale immagini ≤ 10.
-    const rawExtras = Array.isArray(body?.extraRefs) ? body.extraRefs.slice(0, 2) : [];
+    // Immagini extra del cliente (capi/scenari + eventuale posa), MAX 2. Totale ≤ 10.
+    const rawExtras = extraRefs;
     const extraBuffers: Buffer[] = [];
     const extraMeta: ExtraMeta[] = [];
     for (const ex of rawExtras) {
@@ -189,7 +209,7 @@ export async function POST(request: Request) {
 
     let png: Buffer;
     try {
-      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta), references, size: echoSize, quality: echoQuality });
+      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta, poseText), references, size: echoSize, quality: echoQuality });
       png = echoResult.png;
       echoUsage = echoResult.usage;
     } catch (e) {

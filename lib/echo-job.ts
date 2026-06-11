@@ -43,6 +43,9 @@ export interface EchoJobParams {
   echoSize: EchoSize;
   echoQuality: EchoQuality;
   extras: EchoExtra[];
+  // Posa dalla libreria, già risolta in TESTO inglese all'enqueue (mai immagine:
+  // l'endpoint edits metterebbe il manichino in scena). Opzionale.
+  poseText?: string | null;
   pricing: EchoPricing;
 }
 
@@ -73,10 +76,15 @@ function clauseForExtra(e: ExtraMeta): string {
   }
 }
 
-export function buildEchoPrompt(scene: string, extras: ExtraMeta[]): string {
+export function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null): string {
   const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
   let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
+  // Posa dalla libreria: direttiva TESTUALE (la whitelist è la libreria stessa,
+  // vedi lib/poses.ts — qui arriva solo testo nostro, mai del client).
+  if (poseText) {
+    base += ` The person's body pose: ${poseText}.`;
+  }
   const clauses = extras.map(clauseForExtra);
   if (clauses.length > 0) {
     base += " " + clauses.join("; ") + ". Apply each one faithfully and exactly as depicted.";
@@ -139,7 +147,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
 
     // La chiamata lunga (può durare minuti): qui NON c'è cap di durata.
     const result = await generateEcho({
-      prompt: buildEchoPrompt(p.scene, extraMeta),
+      prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText),
       references,
       size: p.echoSize,
       quality: p.echoQuality,

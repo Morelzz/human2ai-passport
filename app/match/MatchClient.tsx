@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
 import { formatEur, grossForCategory, grossForEcho } from "@/lib/wallet";
@@ -157,8 +157,31 @@ export default function MatchClient() {
   const echoSize = ECHO_SIZE_GRID[echoFormat]?.[echoRes] ?? ECHO_SIZE_GRID[echoFormat]?.["2k"] ?? "1024x1024";
   // ECHO: fino a 2 immagini extra del cliente. Ogni box ha un RUOLO: noi
   // colleghiamo l'immagine al soggetto in automatico, l'utente non scrive nulla.
-  type EchoRef = { dataUrl: string; desc: string; role: string } | undefined;
+  // poseId presente = lo slot è occupato da una posa della LIBRERIA (il client
+  // non manda i byte: solo l'id; dataUrl qui è l'URL pubblico per l'anteprima).
+  type EchoRef = { dataUrl: string; desc: string; role: string; poseId?: string } | undefined;
   const [echoRefs, setEchoRefs] = useState<EchoRef[]>([]);
+
+  // Libreria pose: caricata una volta quando si sceglie ECHO; null = mai chiesta.
+  const [poseLib, setPoseLib] = useState<{ id: string; label: string; url: string }[] | null>(null);
+  const [poseOpenFor, setPoseOpenFor] = useState<number | null>(null);
+  useEffect(() => {
+    if (engine !== "echo" || poseLib !== null) return;
+    fetch("/api/poses")
+      .then((r) => r.json())
+      .then((j) => setPoseLib(Array.isArray(j?.poses) ? j.poses : []))
+      .catch(() => setPoseLib([]));
+  }, [engine, poseLib]);
+
+  function pickPose(i: number, pose: { id: string; label: string; url: string }) {
+    setEchoRefs((prev) => {
+      const next = [...prev];
+      next[i] = { dataUrl: pose.url, desc: pose.label, role: "posa", poseId: pose.id };
+      return next;
+    });
+    setPoseOpenFor(null);
+  }
+  const poseChosen = echoRefs.some((r) => r?.poseId);
 
   async function pickEcho(i: number, file: File | undefined) {
     if (!file) return;
@@ -276,8 +299,11 @@ export default function MatchClient() {
         echoSize,
         echoQuality,
         extraRefs: engine === "echo"
-          ? echoRefs.filter((r): r is { dataUrl: string; desc: string; role: string } => !!r?.dataUrl).map((r) => ({ data: r.dataUrl, desc: r.desc, role: r.role }))
+          ? echoRefs
+              .filter((r): r is NonNullable<EchoRef> => !!r?.dataUrl && !r?.poseId)
+              .map((r) => ({ data: r.dataUrl, desc: r.desc, role: r.role }))
           : undefined,
+        poseId: engine === "echo" ? (echoRefs.find((r) => r?.poseId)?.poseId ?? null) : null,
         model,
         styleId: modelSupportsStyles ? (styleId || null) : null,
       }),
@@ -696,7 +722,7 @@ export default function MatchClient() {
                                         <>
                                           <div className="relative">
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={ref.dataUrl} alt="" className="h-24 w-full rounded-lg object-cover" />
+                                            <img src={ref.dataUrl} alt="" className={`h-24 w-full rounded-lg ${ref.poseId ? "object-contain bg-white/[0.04]" : "object-cover"}`} />
                                             <button
                                               type="button"
                                               onClick={() => removeEcho(i)}
@@ -706,43 +732,79 @@ export default function MatchClient() {
                                               ✕
                                             </button>
                                           </div>
-                                          <select
-                                            value={ref.role}
-                                            onChange={(e) => updateEcho(i, { role: e.target.value })}
-                                            className="mt-2 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-1.5 text-xs text-foreground outline-none focus:border-teal/50"
-                                          >
-                                            <option value="outfit">Outfit / capo</option>
-                                            <option value="accessorio">Accessorio</option>
-                                            <option value="sfondo">Sfondo / scenario</option>
-                                            <option value="oggetto">Oggetto</option>
-                                          </select>
-                                          <input
-                                            value={ref.desc}
-                                            onChange={(e) => updateEcho(i, { desc: e.target.value })}
-                                            placeholder="descrizione (opzionale)"
-                                            className="mt-1.5 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
-                                          />
+                                          {ref.poseId ? (
+                                            <p className="mt-2 truncate text-xs text-teal">Posa · {ref.desc}</p>
+                                          ) : (
+                                            <>
+                                              <select
+                                                value={ref.role}
+                                                onChange={(e) => updateEcho(i, { role: e.target.value })}
+                                                className="mt-2 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-1.5 text-xs text-foreground outline-none focus:border-teal/50"
+                                              >
+                                                <option value="outfit">Outfit / capo</option>
+                                                <option value="accessorio">Accessorio</option>
+                                                <option value="sfondo">Sfondo / scenario</option>
+                                                <option value="oggetto">Oggetto</option>
+                                              </select>
+                                              <input
+                                                value={ref.desc}
+                                                onChange={(e) => updateEcho(i, { desc: e.target.value })}
+                                                placeholder="descrizione (opzionale)"
+                                                className="mt-1.5 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
+                                              />
+                                            </>
+                                          )}
                                         </>
                                       ) : (
-                                        <label className="flex h-[124px] cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-white/15 text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
-                                          <span className="text-2xl leading-none">+</span>
-                                          <span className="px-2 text-[0.68rem] leading-tight">{i === 0 ? "Outfit / capo" : "Scenario / altro"}</span>
-                                          <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={(e) => { pickEcho(i, e.target.files?.[0]); e.currentTarget.value = ""; }}
-                                          />
-                                        </label>
+                                        <div className="flex h-[124px] flex-col gap-1.5">
+                                          <label className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-white/15 text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
+                                            <span className="text-xl leading-none">+</span>
+                                            <span className="px-2 text-[0.66rem] leading-tight">{i === 0 ? "Outfit / capo" : "Scenario / altro"}</span>
+                                            <input
+                                              type="file"
+                                              accept="image/*"
+                                              className="hidden"
+                                              onChange={(e) => { pickEcho(i, e.target.files?.[0]); e.currentTarget.value = ""; }}
+                                            />
+                                          </label>
+                                          {!poseChosen && (poseLib?.length ?? 0) > 0 && (
+                                            <button
+                                              type="button"
+                                              onClick={() => setPoseOpenFor(poseOpenFor === i ? null : i)}
+                                              className={`rounded-lg border px-2 py-1.5 text-[0.66rem] transition-colors ${poseOpenFor === i ? "border-teal/50 text-teal" : "border-white/15 text-faint hover:border-teal/40 hover:text-teal"}`}
+                                            >
+                                              🧍 Posa dalla libreria
+                                            </button>
+                                          )}
+                                        </div>
                                       )}
                                     </div>
                                   );
                                 })}
                               </div>
+                              {poseOpenFor !== null && !poseChosen && (
+                                <div className="mt-2 rounded-xl border border-white/10 bg-obsidian p-2">
+                                  <p className="mb-2 px-1 text-[0.66rem] text-faint">Scegli la posa: il manichino guida SOLO il corpo, l&apos;identità resta della persona.</p>
+                                  <div className="grid max-h-56 grid-cols-4 gap-1.5 overflow-y-auto">
+                                    {(poseLib ?? []).map((p) => (
+                                      <button
+                                        key={p.id}
+                                        type="button"
+                                        onClick={() => pickPose(poseOpenFor, p)}
+                                        className="group rounded-lg border border-white/10 bg-white/[0.03] p-1 text-left transition-colors hover:border-teal/50"
+                                      >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={p.url} alt={p.label} className="h-16 w-full rounded object-contain" loading="lazy" />
+                                        <span className="mt-1 block truncate px-0.5 text-[0.6rem] text-faint group-hover:text-teal">{p.label}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                               <p className="mt-2 text-[0.68rem] leading-relaxed text-faint">
                                 Carica le immagini e scegli <span className="text-muted">cosa sono</span>: al collegamento pensiamo noi.
                                 Es. outfit + sfondo → {avatar.alias} indossa quell&apos;outfit in quell&apos;ambiente, automaticamente.
-                                Il campo &laquo;scena&raquo; sopra è solo per direzioni extra (posa, luce) ed è opzionale.
+                                Il campo &laquo;scena&raquo; sopra è solo per direzioni extra (luce, espressione) ed è opzionale.
                               </p>
                             </div>
                           )}
