@@ -46,6 +46,8 @@ export interface EchoJobParams {
   // Posa dalla libreria, già risolta in TESTO inglese all'enqueue (mai immagine:
   // l'endpoint edits metterebbe il manichino in scena). Opzionale.
   poseText?: string | null;
+  // Prefisso identità dai metadati verificati dell'avatar (identityPromptFor).
+  identityText?: string | null;
   pricing: EchoPricing;
 }
 
@@ -57,6 +59,75 @@ export interface EchoJobRow {
   buyer_id: string;
   attempts: number | null;
   params: EchoJobParams;
+}
+
+// ── Prefisso identità invisibile ─────────────────────────────────────────────
+// I metadati VERIFICATI dell'avatar (identikit confermato dalla persona)
+// diventano un ancoraggio testuale che lavora INSIEME alle reference: ogni
+// generazione parte già orientata sui tratti giusti. Regola: tratti immutabili
+// dichiarati come fatti; i CAPELLI descritti come tratto naturale senza vietare
+// lo styling (il cliente può legittimamente chiederli raccolti/coperti).
+// Valori non mappati → omessi (mai italiano grezzo nel prompt inglese).
+export interface AvatarIdentity {
+  gender?: string | null;
+  age_range?: string | null;
+  ethnicity?: string | null;
+  hair_color?: string | null;
+  eye_color?: string | null;
+  height?: string | null;
+  body_type?: string | null;
+  tattoos?: string | null;
+  facial_hair?: string | null;
+}
+
+const ETHNICITY_EN: Record<string, string> = {
+  italiana: "Italian", italiano: "Italian", spagnola: "Spanish", spagnolo: "Spanish",
+  francese: "French", tedesca: "German", tedesco: "German", giapponese: "Japanese",
+  cinese: "Chinese", indiana: "Indian", indiano: "Indian", nigeriana: "Nigerian",
+  nigeriano: "Nigerian", afroamericana: "African American", afroamericano: "African American",
+  caucasica: "Caucasian", caucasico: "Caucasian", latina: "Latina", latino: "Latino",
+  araba: "Arab", arabo: "Arab",
+};
+const HAIR_EN: Record<string, string> = {
+  neri: "black", castani: "brown", biondi: "blonde", rossi: "red", grigi: "grey",
+  rasati: "buzz-cut", calvo: "shaved (bald)",
+};
+const EYES_EN: Record<string, string> = {
+  azzurri: "blue", blu: "blue", verdi: "green", marroni: "brown", castani: "brown",
+  neri: "dark", grigi: "grey", nocciola: "hazel",
+};
+const HEIGHT_EN: Record<string, string> = { bassa: "short", media: "of average height", alta: "tall" };
+const BODY_EN: Record<string, string> = {
+  slim: "slim", magra: "slim", magro: "slim", "in forma": "fit", atletica: "athletic",
+  atletico: "athletic", normale: "average build", curvy: "curvy", robusta: "heavyset",
+  robusto: "heavyset", sovrappeso: "heavyset",
+};
+
+export function identityPromptFor(a: AvatarIdentity): string | null {
+  const gender = a.gender === "donna" ? "woman" : a.gender === "uomo" ? "man" : null;
+  const eth = a.ethnicity ? ETHNICITY_EN[a.ethnicity.toLowerCase().trim()] : null;
+  const parts: string[] = [];
+  parts.push(`${eth ? eth + " " : ""}${gender ?? "person"}`.trim());
+  if (a.age_range) parts.push(`apparent age ${a.age_range}`);
+  const height = a.height ? HEIGHT_EN[a.height.toLowerCase().trim()] : null;
+  if (height) parts.push(height);
+  const body = a.body_type ? BODY_EN[a.body_type.toLowerCase().trim()] : null;
+  if (body) parts.push(`${body} build`);
+  const eyes = a.eye_color ? EYES_EN[a.eye_color.toLowerCase().trim()] : null;
+  if (eyes) parts.push(`${eyes} eyes`);
+  if (a.tattoos && a.tattoos.toLowerCase() !== "nessuno" && a.tattoos.toLowerCase() !== "no") {
+    parts.push("with visible tattoos");
+  }
+  if (a.facial_hair && !["nessuna", "nessuno", "no"].includes(a.facial_hair.toLowerCase())) {
+    parts.push("with facial hair");
+  }
+  // Nessun dato utile (solo "person") → meglio nessun prefisso.
+  if (parts.length === 1 && parts[0] === "person") return null;
+  const article = /^[aeiou]/i.test(parts[0]) ? "an" : "a";
+  let s = `The person is ${article} ${parts.join(", ")}.`;
+  const hair = a.hair_color ? HAIR_EN[a.hair_color.toLowerCase().trim()] : null;
+  if (hair) s += ` Their natural hair is ${hair}.`;
+  return s;
 }
 
 // ── Prompt (spostato da /api/generate, invariato) ───────────────────────────
@@ -76,10 +147,14 @@ function clauseForExtra(e: ExtraMeta): string {
   }
 }
 
-export function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null): string {
+export function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null, identityText?: string | null): string {
   const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
   let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
+  // Ancoraggio identità dai metadati verificati (mai testo del client).
+  if (identityText) {
+    base += ` ${identityText}`;
+  }
   // Posa dalla libreria: direttiva TESTUALE (la whitelist è la libreria stessa,
   // vedi lib/poses.ts — qui arriva solo testo nostro, mai del client).
   if (poseText) {
@@ -147,7 +222,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
 
     // La chiamata lunga (può durare minuti): qui NON c'è cap di durata.
     const result = await generateEcho({
-      prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText),
+      prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText, p.identityText),
       references,
       size: p.echoSize,
       quality: p.echoQuality,

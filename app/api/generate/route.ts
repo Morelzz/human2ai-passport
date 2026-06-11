@@ -10,7 +10,7 @@ import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
 import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
-import { prepareExtras } from "@/lib/echo-job";
+import { prepareExtras, identityPromptFor } from "@/lib/echo-job";
 import { fetchPosePrompt } from "@/lib/poses";
 import { logBlockedRequest } from "@/lib/blocked";
 import sharp from "sharp";
@@ -40,10 +40,14 @@ function clauseForExtra(e: ExtraMeta): string {
   }
 }
 
-function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null): string {
+function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null, identityText?: string | null): string {
   const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
   let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
+  // Ancoraggio identità dai metadati verificati (mai testo del client).
+  if (identityText) {
+    base += ` ${identityText}`;
+  }
   // Posa dalla libreria: direttiva TESTUALE (la whitelist è la libreria stessa,
   // vedi lib/poses.ts — qui arriva solo testo nostro, mai del client).
   if (poseText) {
@@ -96,7 +100,7 @@ export async function POST(request: Request) {
   // Rivalida: l'avatar esiste, è SOUL, ha consenso attivo e copre la categoria d'uso.
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents, soul_ref, approved_categories, excluded_categories")
+    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents, soul_ref, approved_categories, excluded_categories, gender, age_range, ethnicity, hair_color, eye_color, height, body_type, tattoos, facial_hair")
     .eq("handle", handle)
     .maybeSingle();
 
@@ -138,6 +142,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Posa non trovata nella libreria" }, { status: 400 });
     }
   }
+  // Prefisso identità: i metadati verificati dell'avatar rafforzano le reference.
+  const identityText = useEcho ? identityPromptFor(avatar) : null;
 
   // ── ECHO COMMERCIALE → ASINCRONO ──────────────────────────────────────────
   // La chiamata a gpt-image-2 (con reference) dura da ~1 a ~3 minuti, oltre il
@@ -164,6 +170,7 @@ export async function POST(request: Request) {
       echoQuality,
       extras,
       poseText,
+      identityText,
       pricing: { gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents },
     };
     const { data: job, error: jobErr } = await admin
@@ -209,7 +216,7 @@ export async function POST(request: Request) {
 
     let png: Buffer;
     try {
-      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta, poseText), references, size: echoSize, quality: echoQuality });
+      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta, poseText, identityText), references, size: echoSize, quality: echoQuality });
       png = echoResult.png;
       echoUsage = echoResult.usage;
     } catch (e) {
