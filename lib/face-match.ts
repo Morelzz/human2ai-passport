@@ -25,9 +25,37 @@ type FaceApi = typeof import("@vladmandic/face-api");
 
 let api: FaceApi | null = null;
 let modelsReady = false;
+let backendReady = false;
+
+// TFJS NON sceglie sempre un backend funzionante da solo: su alcuni browser
+// seleziona 'wasm' senza averlo inizializzato (binari assenti) e OGNI analisi
+// muore con "backend 'wasm' has not yet been initialized" (visto dal vivo).
+// Inizializziamo esplicitamente: webgl → fallback cpu (lento ma funziona ovunque).
+async function ensureBackend(f: FaceApi): Promise<void> {
+  if (backendReady) return;
+  const tf = (f as unknown as {
+    tf?: { setBackend(n: string): Promise<boolean>; ready(): Promise<void>; getBackend(): string | undefined };
+  }).tf;
+  if (!tf) { backendReady = true; return; }
+  for (const backend of ["webgl", "cpu"]) {
+    try {
+      if (await tf.setBackend(backend)) {
+        await tf.ready();
+        backendReady = true;
+        return;
+      }
+    } catch {
+      /* prova il prossimo */
+    }
+  }
+  // Ultimo tentativo: qualunque backend sia attivo, almeno attenderne l'init.
+  try { await tf.ready(); } catch { /* l'errore emergerà con diagnostica in analisi */ }
+  backendReady = true;
+}
 
 async function ensureModels(): Promise<FaceApi> {
   if (!api) api = await import("@vladmandic/face-api");
+  await ensureBackend(api);
   if (!modelsReady) {
     await Promise.all([
       api.nets.ssdMobilenetv1.loadFromUri("/models"),
