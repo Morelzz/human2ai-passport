@@ -268,11 +268,12 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       >
         <label
           data-state={portalState}
-          className={`relative flex h-56 w-56 cursor-pointer items-center justify-center overflow-hidden rounded-full border transition-colors duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black sm:h-64 sm:w-64 ${ringClass} ${busy ? "cursor-wait" : ""}`}
+          className={`relative flex h-60 w-60 cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black sm:h-72 sm:w-72 ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
         >
           {preview ? (
+            // L'immagine si SCALA dentro al portale: soggetto sempre intero, mai tagliato.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview} alt="" className={`h-full w-full object-cover transition-opacity ${busy ? "opacity-40" : "opacity-80"}`} />
+            <img src={preview} alt="" className={`h-full w-full object-contain p-2 transition-opacity ${busy ? "opacity-40" : "opacity-90"}`} />
           ) : (
             <span className="px-8 text-center text-[0.8rem] leading-relaxed text-faint">
               <span aria-hidden className="mb-2 block text-2xl font-extralight text-muted">⌖</span>
@@ -519,8 +520,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               {/* Candidati: barre hairline, ~% sempre, primo evidenziato */}
               <div className="flex flex-col gap-2">
                 {(face.candidates ?? []).map((c, i) => (
-                  <div key={c.handle} className={`rounded-xl border p-3 ${i === 0 ? "border-crimson/30 bg-crimson/[0.04]" : "border-white/8"}`}>
-                    <div className="flex items-baseline justify-between gap-3">
+                  <div key={c.handle} className={`select-none rounded-xl border p-3 ${i === 0 ? "border-crimson/30 bg-crimson/[0.04]" : "border-white/8"}`}>
+                    <div className="flex cursor-default items-baseline justify-between gap-3">
                       <p className="m-0 text-[0.85rem] font-semibold text-foreground">
                         {c.alias} <span className="font-normal text-faint">@{c.handle}</span>
                         {c.status === "REVOCATO" && <span className="ml-2 text-[0.68rem] font-bold text-crimson">REVOCATO</span>}
@@ -599,22 +600,42 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 Conosci caratteristiche della persona? I filtri stringono il confronto ai soli avatar
                 con quei metadati <span className="text-muted">auto-dichiarati</span>. La soglia biometrica non cambia mai.
               </p>
-              <div className="flex flex-col gap-2.5">
-                <div className="flex flex-wrap gap-1.5">
-                  {F_GENDERS.map((g) => <FilterPill key={g.v} active={filters.gender === g.v} onClick={() => toggleFilter("gender", g.v)}>{g.l}</FilterPill>)}
+              <div className="flex flex-col gap-3">
+                <div>
+                  <p className="mb-1.5 mt-0 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-faint">Genere</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {F_GENDERS.map((g) => <FilterPill key={g.v} active={filters.gender === g.v} onClick={() => toggleFilter("gender", g.v)}>{g.l}</FilterPill>)}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {F_ETHNICITIES.map((e) => <FilterPill key={e} active={filters.ethnicity === e.toLowerCase()} onClick={() => toggleFilter("ethnicity", e.toLowerCase())}>{e}</FilterPill>)}
+                <div>
+                  <p className="mb-1.5 mt-0 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-faint">Etnia</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {F_ETHNICITIES.map((e) => <FilterPill key={e} active={filters.ethnicity === e.toLowerCase()} onClick={() => toggleFilter("ethnicity", e.toLowerCase())}>{e}</FilterPill>)}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {F_HAIRS.map((h) => <FilterPill key={h} active={filters.hair_color === h.toLowerCase()} onClick={() => toggleFilter("hair_color", h.toLowerCase())}>{h}</FilterPill>)}
+                <div>
+                  <p className="mb-1.5 mt-0 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-faint">Capelli</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {F_HAIRS.map((h) => <FilterPill key={h} active={filters.hair_color === h.toLowerCase()} onClick={() => toggleFilter("hair_color", h.toLowerCase())}>{h}</FilterPill>)}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {F_EYES.map((o) => <FilterPill key={o} active={filters.eye_color === o.toLowerCase()} onClick={() => toggleFilter("eye_color", o.toLowerCase())}>👁 {o}</FilterPill>)}
+                <div>
+                  <p className="mb-1.5 mt-0 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-faint">Occhi</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {F_EYES.map((o) => <FilterPill key={o} active={filters.eye_color === o.toLowerCase()} onClick={() => toggleFilter("eye_color", o.toLowerCase())}>{o}</FilterPill>)}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {F_HEIGHTS.map((h) => <FilterPill key={h.v} active={filters.height === h.v} onClick={() => toggleFilter("height", h.v)}>{h.l}</FilterPill>)}
-                  {F_BUILDS.map((b) => <FilterPill key={b.v} active={filters.body_type === b.v} onClick={() => toggleFilter("body_type", b.v)}>{b.l}</FilterPill>)}
+                <div>
+                  <p className="mb-1.5 mt-0 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-faint">Statura</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {F_HEIGHTS.map((h) => <FilterPill key={h.v} active={filters.height === h.v} onClick={() => toggleFilter("height", h.v)}>{h.l}</FilterPill>)}
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-1.5 mt-0 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-faint">Corporatura</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {F_BUILDS.map((b) => <FilterPill key={b.v} active={filters.body_type === b.v} onClick={() => toggleFilter("body_type", b.v)}>{b.l}</FilterPill>)}
+                  </div>
                 </div>
               </div>
             </div>
