@@ -139,6 +139,9 @@ export default function MatchClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MatchResponse | null>(null);
+  // Selezione: il compratore "blocca" UN volto tra i risultati → la vista si
+  // concentra su di lui (gli altri spariscono finché non torna alla lista).
+  const [selectedHandle, setSelectedHandle] = useState<string | null>(null);
 
   // Passo 2 — SCENA: direzione artistica libera, per ogni avatar trovato
   const [sceneByHandle, setSceneByHandle] = useState<Record<string, string>>({});
@@ -251,6 +254,7 @@ export default function MatchClient() {
     setError(null);
     setResult(null);
     setGenByHandle({});
+    setSelectedHandle(null);
     setAlertState("idle");
     const res = await fetch("/api/match", {
       method: "POST",
@@ -497,8 +501,20 @@ export default function MatchClient() {
           {result.matched && result.results && result.results.length > 0 ? (
             <>
               <p className="mb-1.5 font-mono text-sm font-bold tracking-wide text-teal">
-                <span className="text-faint">&gt;</span> SCANSIONE COMPLETATA · {result.results.length} {result.results.length === 1 ? "VOLTO CONSENZIENTE TROVATO" : "VOLTI CONSENZIENTI TROVATI"}
+                <span className="text-faint">&gt;</span>{" "}
+                {selectedHandle
+                  ? <>VOLTO SELEZIONATO · {result.results?.find((a) => a.handle === selectedHandle)?.alias?.toUpperCase()}</>
+                  : <>SCANSIONE COMPLETATA · {result.results.length} {result.results.length === 1 ? "VOLTO CONSENZIENTE TROVATO" : "VOLTI CONSENZIENTI TROVATI"}</>}
               </p>
+              {selectedHandle && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedHandle(null)}
+                  className="mb-3 rounded-full border border-white/15 px-3 py-1 text-[0.7rem] font-semibold text-muted transition-colors hover:border-teal/40 hover:text-teal"
+                >
+                  ← Tutti i risultati ({result.results.length})
+                </button>
+              )}
               {/* D1 — come il matching ha letto il brief (attributi normalizzati dal server) */}
               {(() => {
                 const a = result.attrs;
@@ -514,7 +530,7 @@ export default function MatchClient() {
                 ) : <span className="mb-4 block" />;
               })()}
               <div className="flex flex-col gap-4">
-                {result.results.map((avatar) => {
+                {(selectedHandle ? result.results.filter((a) => a.handle === selectedHandle) : result.results).map((avatar) => {
                   const gen = genByHandle[avatar.handle];
                   const generating = generatingHandle === avatar.handle;
                   // Stato "in lavorazione" mostrato durante la generazione (con
@@ -549,6 +565,15 @@ export default function MatchClient() {
                           <div className="mb-1 text-sm text-muted">@{avatar.handle}</div>
                           <span className="rounded-full px-2.5 py-0.5 text-[0.7rem] font-bold" style={{ background: tier.bg, color: tier.color }}>{tier.label}</span>
                         </div>
+                        {!selectedHandle && (result.results?.length ?? 0) > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedHandle(avatar.handle)}
+                            className="shrink-0 self-start rounded-full border border-teal/35 bg-teal/10 px-3.5 py-1.5 text-[0.72rem] font-bold text-teal transition-colors hover:bg-teal/20"
+                          >
+                            Seleziona
+                          </button>
+                        )}
                       </div>
                       <p className="mt-4 font-mono text-[0.7rem] tracking-wide text-teal/90">
                         <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
