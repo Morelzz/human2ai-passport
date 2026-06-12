@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { grantWelcomeVoltOnce } from "@/lib/volt";
 
 // Coda di revisione KYC — riservata agli operatori (role 'admin').
 // GET:  profili con kyc_status='pending' + URL FIRMATI temporanei (10 min)
@@ -80,6 +81,13 @@ export async function POST(request: Request) {
     .eq("id", userId)
     .eq("kyc_status", "pending"); // si decide solo ciò che è in attesa
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Bonus di benvenuto: 50 VOLT alla verifica dell'account, una sola volta
+  // (VOLT_SYSTEM §4.11, attivato 2026-06-12). Best-effort: se il sistema VOLT
+  // non è configurato, l'approvazione resta valida.
+  if (status === "approved") {
+    await grantWelcomeVoltOnce(userId);
+  }
 
   return NextResponse.json({ ok: true, status });
 }

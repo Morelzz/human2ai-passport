@@ -14,6 +14,7 @@ import OrgAvatars, { OrgAvatar } from "./OrgAvatars";
 import LinkWallet from "./LinkWallet";
 import { MarkContentsSeen } from "./MarkContentsSeen";
 import AnchorPanel from "./AnchorPanel";
+import VoltGrantPanel from "./VoltGrantPanel";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 
 const ROLE_LABEL: Record<string, string> = {
@@ -169,6 +170,7 @@ export default async function AccountPage() {
               Indice volti del registro →
             </Link>
             <AnchorPanel />
+            <VoltGrantPanel />
           </>
         )}
 
