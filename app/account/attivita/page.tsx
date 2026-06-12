@@ -5,6 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
+import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 
 export const metadata = {
   title: "Attività del mio volto",
@@ -136,6 +137,16 @@ export default async function AttivitaPage() {
                               >
                                 Verifica →
                               </Link>
+                            )}
+                            {g.certificate && (
+                              // Il seller condivide la generazione col PROPRIO volto:
+                              // cornice variante seller, QR verso il suo passport.
+                              <ShareStoryButton
+                                query={`cert=${encodeURIComponent(g.certificate)}&v=seller`}
+                                filename={`human2ai-story-${g.certificate.slice(0, 8)}.png`}
+                                label="Condividi ↗"
+                                className="rounded-full border border-violet/30 bg-violet/10 px-3 py-1.5 text-xs font-semibold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-50"
+                              />
                             )}
                           </div>
                         </li>

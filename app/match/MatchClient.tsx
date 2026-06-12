@@ -9,6 +9,7 @@ import { KineticText } from "@/components/motion/KineticText";
 import { ScannerFrame } from "@/components/motion/ScannerFrame";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 import { avatarArt } from "@/lib/avatar-art";
+import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 
 // ECHO (gpt-image-2): Formato × Risoluzione → dimensione in pixel valida per l'API.
 // Il quadrato non ha 4K (supererebbe il limite di pixel del modello).
@@ -917,6 +918,16 @@ export default function MatchClient() {
                             <a href={`/api/content/${gen.certificate}`} className="block rounded-xl border border-teal/30 bg-teal/10 px-4 py-3 text-center text-sm font-bold text-teal transition-colors hover:bg-teal/20">
                               Scarica con provenienza →
                             </a>
+                          )}
+                          {gen.certificate && (
+                            // Storia Instagram con cornice-certificato: la cornice è il formato,
+                            // non un overlay — da qui esce SOLO l'immagine certificata.
+                            <ShareStoryButton
+                              query={`cert=${encodeURIComponent(gen.certificate)}&v=buyer`}
+                              filename={`human2ai-story-${gen.certificate.slice(0, 8)}.png`}
+                              label="Condividi come Storia →"
+                              className="mt-2 block w-full rounded-xl border border-violet/30 bg-violet/10 px-4 py-3 text-center text-sm font-bold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-50"
+                            />
                           )}
 
                           {/* Genera ancora: stessa scena/immagini (variante) oppure ricomincia da capo */}
