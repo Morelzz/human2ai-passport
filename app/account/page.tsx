@@ -14,6 +14,7 @@ import OrgAvatars, { OrgAvatar } from "./OrgAvatars";
 import LinkWallet from "./LinkWallet";
 import { MarkContentsSeen } from "./MarkContentsSeen";
 import AnchorPanel from "./AnchorPanel";
+import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -318,9 +319,19 @@ export default async function AccountPage() {
                         {g.category ?? "—"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
                       </p>
                       {g.image_url && g.certificate && (
-                        <a href={`/api/content/${g.certificate}`} style={{ display: "block", textAlign: "center", padding: "0.4rem", borderRadius: 8, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
-                          Scarica
-                        </a>
+                        // Doppio pulsante a due colori: Scarica (viola) + Condividi (teal).
+                        // Condividi = Storia con cornice-certificato, mai l'immagine nuda.
+                        <div style={{ display: "flex", gap: "0.4rem" }}>
+                          <a href={`/api/content/${g.certificate}`} style={{ flex: 1, display: "block", textAlign: "center", padding: "0.4rem", borderRadius: 8, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
+                            Scarica
+                          </a>
+                          <ShareStoryButton
+                            query={`cert=${encodeURIComponent(g.certificate)}&v=buyer`}
+                            filename={`human2ai-story-${g.certificate.slice(0, 8)}.png`}
+                            label="Condividi"
+                            className="flex-1 rounded-lg border border-teal/30 bg-teal/10 px-2 py-[0.4rem] text-center text-[0.75rem] font-semibold text-teal transition-colors hover:bg-teal/20 disabled:opacity-50"
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
