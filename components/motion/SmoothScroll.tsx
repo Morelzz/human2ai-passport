@@ -23,6 +23,9 @@ export function SmoothScroll() {
     // CSS scroll-behavior:smooth è stato rimosso (era in conflitto con Lenis).
     const lenis = new Lenis({ duration: 1.1, smoothWheel: true, anchors: true });
     lenis.on("scroll", ScrollTrigger.update);
+    // Istanza esposta per gli scroll programmatici (Lenis sovrascrive i
+    // window.scrollTo nativi: chi vuole scrollare via codice passa da qui).
+    (window as Window & { __lenis?: Lenis }).__lenis = lenis;
     let raf = 0;
     const loop = (time: number) => {
       lenis.raf(time);
@@ -31,6 +34,7 @@ export function SmoothScroll() {
     raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
+      delete (window as Window & { __lenis?: Lenis }).__lenis;
       lenis.destroy();
     };
   }, []);

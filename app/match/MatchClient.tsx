@@ -138,7 +138,7 @@ function resizeImage(file: File, maxDim = 1024): Promise<string> {
   });
 }
 
-export default function MatchClient() {
+export default function MatchClient({ initialHandle = null }: { initialHandle?: string | null }) {
   // Passo 1 — CHI. Review D1: il BRIEF in linguaggio naturale è il centro
   // della ricerca; i filtri classici restano come raffinamento alternativo.
   const [brief, setBrief] = useState("");
@@ -180,6 +180,45 @@ export default function MatchClient() {
       .then((d) => { if (d?.configured) setVoltBalance(d.balance); })
       .catch(() => {});
   }, []);
+
+  // CTA "Genera con questo avatar" (dal passport): carica direttamente il
+  // volto in modalità selezionata, senza brief, e porta l'utente ai risultati.
+  useEffect(() => {
+    if (!initialHandle) return;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/match", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ handle: initialHandle }),
+        });
+        const json = await res.json();
+        if (res.ok && json.matched) {
+          setResult(json);
+          setSelectedHandle(initialHandle);
+          // Lenis sovrascrive gli scroll nativi: si usa la sua istanza. Cintura:
+          // se l'animazione non parte (RAF sospeso, ambienti headless), dopo un
+          // attimo si scatta con lo scroll nativo istantaneo.
+          setTimeout(() => {
+            const lenis = (window as Window & { __lenis?: { scrollTo: (t: string, o?: { offset?: number }) => void } }).__lenis;
+            if (lenis) lenis.scrollTo("#risultati", { offset: -90 });
+            else document.getElementById("risultati")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => {
+              if (window.scrollY < 50) document.getElementById("risultati")?.scrollIntoView({ block: "start" });
+            }, 1000);
+          }, 350);
+        } else {
+          setError(json.error ?? "Avatar non disponibile");
+        }
+      } catch {
+        setError("Errore di rete, riprova");
+      }
+      setLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialHandle]);
 
   // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
   // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
@@ -598,7 +637,7 @@ export default function MatchClient() {
       )}
 
       {result && (
-        <div className="mt-8">
+        <div className="mt-8" id="risultati">
           {result.matched && result.results && result.results.length > 0 ? (
             <>
               <p className="mb-1.5 font-mono text-sm font-bold tracking-wide text-teal">

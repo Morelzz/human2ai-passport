@@ -17,6 +17,34 @@ export async function POST(request: Request) {
   // Categoria d'uso scelta esplicitamente dal menu (consenso deliberato, non inferito).
   const category = body?.category ? String(body.category).trim() : null;
 
+  // MODALITÀ DIRETTA (CTA "Genera con questo avatar" dal passport): il client
+  // manda l'handle, niente brief. Stessa shape dei risultati; il gate del
+  // consenso resta intatto in /api/generate (qui cambia solo la porta d'ingresso).
+  const directHandle = body?.handle ? String(body.handle).trim() : null;
+  if (directHandle) {
+    const adminDirect = createServerClient();
+    const { data: av } = await adminDirect.from("avatars").select("*").eq("handle", directHandle).maybeSingle();
+    if (!av || !isPublicAvatar(av) || av.revoked_at) {
+      return NextResponse.json({ error: "Avatar non disponibile per la generazione" }, { status: 404 });
+    }
+    return NextResponse.json({
+      matched: true,
+      attrs: normalizeIdentity({}),
+      category,
+      direct: true,
+      results: [{
+        handle: av.handle,
+        alias: av.alias,
+        portrait_url: av.portrait_url,
+        tier: av.tier,
+        reasons: ["Scelto dal passaporto"],
+        gallery_count: galleryFromRow(av.handle, (av as Record<string, unknown>).gallery_urls).length,
+        approved_categories: av.approved_categories ?? [],
+        excluded_categories: av.excluded_categories ?? [],
+      }],
+    });
+  }
+
   // 1. Attributi di IDENTITÀ: dall'identikit strutturato (chip) se presente,
   //    altrimenti dal prompt libero via Claude (retro-compatibile).
   let attrs;

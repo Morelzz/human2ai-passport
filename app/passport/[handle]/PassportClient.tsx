@@ -234,6 +234,28 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         </Card>
       )}
 
+      {/* CTA: dal volto alla generazione, senza passare dal brief. Solo per
+          avatar ATTIVI: un consenso revocato non è generabile, niente pulsante. */}
+      {status === "ATTIVO" && (
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45 }}
+          className="mt-5"
+        >
+          <Link
+            href={`/match?avatar=${avatar.handle}`}
+            className="block w-full rounded-2xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-8 py-6 text-center text-xl font-extrabold tracking-tight text-white shadow-[0_12px_50px_rgba(107,33,232,0.4)] transition-all hover:brightness-110 sm:text-2xl"
+          >
+            ⚡ Genera con questo avatar →
+          </Link>
+          <p className="mt-2 text-center text-xs text-faint">
+            Vai dritto alla generazione: {avatar.alias} è già selezionat{avatar.gender === "Donna" ? "a" : "o"}, il consenso resta il filtro.
+          </p>
+        </motion.div>
+      )}
+
       {/* Identity kit */}
       <Card i={2} label="IDENTITY KIT" badge="IMMUTABILE">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
