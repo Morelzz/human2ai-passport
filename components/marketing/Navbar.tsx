@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "framer-
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
+import { VoltBadge } from "@/components/volt/VoltBadge";
 
 const LINKS = [
   { href: "/catalogo", label: "Catalogo" },
@@ -17,7 +18,7 @@ const LINKS = [
   { href: "/blog", label: "Blog" },
 ];
 
-export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; unseen?: number }) {
+export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 }: { firstName: string | null; unseen?: number; volt?: number | null; voltThreshold?: number }) {
   const [open, setOpen] = useState(false);
   const badge = unseen > 0 ? (unseen > 9 ? "9+" : String(unseen)) : null;
 
@@ -62,6 +63,8 @@ export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; un
               {l.label}
             </Link>
           ))}
+          {/* VOLT sempre visibile per chi è loggato (VOLT_SYSTEM §2), prima del menu profilo */}
+          {firstName && volt !== null && <VoltBadge initial={volt} threshold={voltThreshold} />}
           {firstName ? (
             // Review B3: pillola riconoscibile come UTENTE (non voce di menu):
             // avatar con iniziale + etichetta ACCOUNT sopra il nome.
@@ -92,14 +95,17 @@ export function Navbar({ firstName, unseen = 0 }: { firstName: string | null; un
           </Button>
         </div>
 
-        {/* Mobile: hamburger */}
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="Apri menu"
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-white/5 md:hidden"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
+        {/* Mobile: VOLT compatto + hamburger */}
+        <div className="flex items-center gap-2 md:hidden">
+          {firstName && volt !== null && <VoltBadge initial={volt} threshold={voltThreshold} />}
+          <button
+            onClick={() => setOpen(true)}
+            aria-label="Apri menu"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-white/5"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
       </nav>
     </header>
 
