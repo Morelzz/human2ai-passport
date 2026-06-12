@@ -20,6 +20,12 @@ export interface PostMeta {
   date: string; // YYYY-MM-DD
   author: string;
   tags: string[];
+  /** Categoria editoriale (es. "Regolamentazione", "Finanza", "Politica"). */
+  category: string;
+  /** Percorso copertina (es. /blog/slug-cover.jpg in public/). Vuoto = niente cover. */
+  cover: string;
+  /** Testo alternativo della copertina (accessibilità). */
+  coverAlt: string;
 }
 
 export interface Post extends PostMeta {
@@ -34,6 +40,9 @@ function toMeta(slug: string, data: Record<string, unknown>): PostMeta {
     date: String(data.date ?? "").slice(0, 10),
     author: String(data.author ?? "Redazione HUMAN2AI"),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+    category: String(data.category ?? "AI & Società"),
+    cover: String(data.cover ?? ""),
+    coverAlt: String(data.coverAlt ?? data.title ?? ""),
   };
 }
 

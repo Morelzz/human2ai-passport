@@ -64,6 +64,9 @@ che deve girare, non una cattedrale.
 
 ## Convenzioni di lavoro
 
+- **Stile dei testi (regola di Morelz): MAI usare trattini lunghi (— o –) negli
+  articoli, nei copy o in qualsiasi testo destinato al pubblico.** Usare virgole,
+  due punti o parentesi, come scrivono gli umani.
 - Spiega sempre brevemente cosa stai per fare prima di farlo.
 - Procedi a piccoli passi verificabili; dopo ogni step, dimmi cosa testare.
 - Codice commentato in italiano dove aiuta la comprensione.

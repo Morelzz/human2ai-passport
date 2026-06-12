@@ -17,13 +17,37 @@ const geistMono = Geist_Mono({
 });
 
 const SITE_URL = siteUrl();
-const TITLE = "Human2AI — Il registro dei volti consenzienti";
+const TITLE = "Human2AI | Il registro dei volti consenzienti";
 const DESCRIPTION =
   "Il filtro di tutela umana per l'IA: ogni volto ha un consenso verificabile, ogni generazione paga la persona reale.";
 
+// Dati strutturati globali: dicono a Google chi siamo (Organization) e come è
+// fatto il sito (WebSite). Letti su ogni pagina.
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#org`,
+      name: "HUMAN2AI",
+      url: SITE_URL,
+      logo: `${SITE_URL}/logo-shield.png`,
+      description: DESCRIPTION,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      name: "Human2AI",
+      url: SITE_URL,
+      inLanguage: "it-IT",
+      publisher: { "@id": `${SITE_URL}/#org` },
+    },
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: TITLE, template: "%s — Human2AI" },
+  title: { default: TITLE, template: "%s | Human2AI" },
   description: DESCRIPTION,
   applicationName: "Human2AI",
   keywords: ["Human2AI", "registro volti", "consenso AI", "identità AI", "diritto d'immagine", "deepfake", "royalty"],
@@ -63,6 +87,10 @@ export default function RootLayout({
         {/* NB: niente h-full/height:100% su html/body — rompe la misura dello
             scroll di Lenis (lo scroll "scattava" e tornava in cima). */}
         <body className="min-h-screen flex flex-col" suppressHydrationWarning>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+          />
           <SmoothScroll />
           {children}
           {/* F1 — banner cookie globale: default solo essenziali, scelta granulare */}
