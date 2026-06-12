@@ -13,6 +13,7 @@ import { uploadPublicImage } from "@/lib/storage";
 import { prepareExtras, identityPromptFor } from "@/lib/echo-job";
 import { fetchPosePrompt } from "@/lib/poses";
 import { logBlockedRequest } from "@/lib/blocked";
+import { spendVolt, grantVolt } from "@/lib/volt";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
@@ -173,21 +174,73 @@ export async function POST(request: Request) {
       identityText,
       pricing: { gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents },
     };
+    // VOLT: la spesa avviene QUI, insieme alla creazione del job (VOLT_SYSTEM
+    // §6.3): se il job poi fallisce, il worker storna. Id job pre-generato per
+    // legare il movimento. Sistema non configurato → si procede senza addebito
+    // (transizione pre-migrazione, mai un blocco).
+    const jobId = crypto.randomUUID();
+    let voltBalanceAfter: number | null = null;
+    const spent = await spendVolt(user.id, gross_cents, `ECHO:${jobId}`);
+    if (!spent.ok && spent.reason === "insufficient") {
+      return NextResponse.json(
+        { error: "Saldo VOLT insufficiente", volt: { needed: gross_cents, balance: spent.balance ?? 0, missing: gross_cents - (spent.balance ?? 0) } },
+        { status: 402 }
+      );
+    }
+    if (spent.ok) voltBalanceAfter = spent.balance;
     const { data: job, error: jobErr } = await admin
       .from("generation_jobs")
-      .insert({ engine: "echo", buyer_id: user.id, avatar_id: avatar.id, handle, params })
+      .insert({ id: jobId, engine: "echo", buyer_id: user.id, avatar_id: avatar.id, handle, params })
       .select("id")
       .single();
     if (jobErr || !job) {
+      if (spent.ok) await grantVolt(user.id, gross_cents, "refund", `job:${jobId}`);
       return NextResponse.json({ error: "Coda non disponibile: riprova" }, { status: 503 });
     }
-    return NextResponse.json({ ok: true, mode: "async", jobId: job.id, alias: avatar.alias, gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents });
+    return NextResponse.json({
+      ok: true, mode: "async", jobId: job.id, alias: avatar.alias, gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents,
+      volt: spent.ok ? { spent: gross_cents, balance: voltBalanceAfter } : undefined,
+    });
   }
 
   let cleanUrl: string | null = null; // URL pulito (serve al download commerciale)
   let previewData: string | null = null; // anteprima watermarkata (data-URL)
   let generationRef: string;
   let echoUsage: import("@/lib/engines/echo-cost").EchoUsage | undefined; // token reali ECHO
+
+  // ── VOLT (percorso sincrono commerciale) ──────────────────────────────────
+  // Spesa PRIMA del motore: mai bruciare compute non pagato. Su qualunque
+  // fallimento a valle si storna (riga 'refund' nel ledger + toast al client).
+  // Anteprima = gratuita, nessun addebito. Sistema non configurato → procede
+  // senza addebito (transizione pre-migrazione).
+  const genId = crypto.randomUUID();
+  const syncCost = isPreview
+    ? 0
+    : useEcho
+      ? splitEcho(category, echoSize, echoQuality).gross_cents
+      : splitRoyalty(grossForCategory(category)).gross_cents;
+  let voltCharged = false;
+  let voltBalanceAfter: number | null = null;
+  if (syncCost > 0) {
+    const tierLabel = useEcho ? "ECHO" : modelTierLabel(model);
+    const spent = await spendVolt(user.id, syncCost, `${tierLabel}:${genId}`);
+    if (!spent.ok && spent.reason === "insufficient") {
+      return NextResponse.json(
+        { error: "Saldo VOLT insufficiente", volt: { needed: syncCost, balance: spent.balance ?? 0, missing: syncCost - (spent.balance ?? 0) } },
+        { status: 402 }
+      );
+    }
+    if (spent.ok) {
+      voltCharged = true;
+      voltBalanceAfter = spent.balance;
+    }
+  }
+  // Storno del movimento se la generazione muore dopo la spesa.
+  const refundVolt = async () => {
+    if (!voltCharged) return null;
+    voltCharged = false;
+    return grantVolt(user.id, syncCost, "refund", `gen:${genId}`);
+  };
 
   if (useEcho) {
     if (!isEchoConfigured()) {
@@ -220,7 +273,8 @@ export async function POST(request: Request) {
       png = echoResult.png;
       echoUsage = echoResult.usage;
     } catch (e) {
-      return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined }, { status: 502 });
+      const refunded = await refundVolt();
+      return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined, volt_refunded: refunded !== null ? syncCost : undefined }, { status: 502 });
     }
     generationRef = "echo:gpt-image-2";
     if (isPreview) {
@@ -231,13 +285,15 @@ export async function POST(request: Request) {
       try {
         cleanUrl = await uploadPublicImage("generations", `${avatar.id}/${crypto.randomUUID()}.png`, png);
       } catch {
-        return NextResponse.json({ error: "Salvataggio immagine non riuscito" }, { status: 502 });
+        const refunded = await refundVolt();
+        return NextResponse.json({ error: "Salvataggio immagine non riuscito", volt_refunded: refunded !== null ? syncCost : undefined }, { status: 502 });
       }
     }
   } else {
     // Higgsfield Soul (terza parte invisibile). Richiede un avatar SOUL. Il prompt
     // inviato è SOLO la scena: l'identità arriva dal Soul (custom_reference_id).
     if (avatar.tier !== "SOUL") {
+      await refundVolt();
       return NextResponse.json({ error: "Solo avatar SOUL sono generabili con questo motore" }, { status: 403 });
     }
     let engineResult;
@@ -251,10 +307,12 @@ export async function POST(request: Request) {
         preview: isPreview,
       });
     } catch {
-      return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
+      const refunded = await refundVolt();
+      return NextResponse.json({ error: "Generazione non riuscita sul motore", volt_refunded: refunded !== null ? syncCost : undefined }, { status: 502 });
     }
     if (engineResult.status !== "completed") {
-      return NextResponse.json({ error: "Generazione non riuscita sul motore" }, { status: 502 });
+      const refunded = await refundVolt();
+      return NextResponse.json({ error: "Generazione non riuscita sul motore", volt_refunded: refunded !== null ? syncCost : undefined }, { status: 502 });
     }
     generationRef = engineResult.generationRef;
     cleanUrl = engineResult.imageUrl;
@@ -285,7 +343,8 @@ export async function POST(request: Request) {
   // --- COMMERCIALE ---
   // Il download commerciale (con filigrana invisibile) richiede un URL pulito raggiungibile.
   if (!cleanUrl) {
-    return NextResponse.json({ error: "Immagine non disponibile" }, { status: 502 });
+    const refunded = await refundVolt();
+    return NextResponse.json({ error: "Immagine non disponibile", volt_refunded: refunded !== null ? syncCost : undefined }, { status: 502 });
   }
   // Economia. ECHO usa il modello "compute a parte": valore-categoria (royalty
   // 80/20 alla persona) + supplemento-compute (tutto alla piattaforma, copre il
@@ -309,7 +368,7 @@ export async function POST(request: Request) {
   }
 
   // Credenziale d'uscita: hash anonimo (nessun dato biometrico) — seme del C2PA.
-  const genId = crypto.randomUUID();
+  // genId pre-generato in alto (lega anche il movimento VOLT della spesa).
   const certificate = crypto
     .createHash("sha256")
     .update(`${avatar.id}|${genId}|${scene}|${new Date().toISOString().slice(0, 10)}`)
@@ -333,7 +392,8 @@ export async function POST(request: Request) {
     engine_ref: generationRef,
   });
   if (genErr) {
-    return NextResponse.json({ error: "Generazione non registrata: riprova" }, { status: 500 });
+    const refunded = await refundVolt();
+    return NextResponse.json({ error: "Generazione non registrata: riprova", volt_refunded: refunded !== null ? syncCost : undefined }, { status: 500 });
   }
 
   // Accredita la royalty NETTA + incrementa utilizzi (accumulo, non payout).
@@ -365,5 +425,6 @@ export async function POST(request: Request) {
     fee_cents,
     royalty_cents: net_cents,
     surcharge_cents,
+    volt: voltCharged || syncCost > 0 ? { spent: voltCharged ? syncCost : 0, balance: voltBalanceAfter } : undefined,
   });
 }

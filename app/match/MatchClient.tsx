@@ -10,6 +10,9 @@ import { ScannerFrame } from "@/components/motion/ScannerFrame";
 import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
 import { avatarArt } from "@/lib/avatar-art";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
+import { voltStr, VOLT_STRINGS, voltLoadingLine, voltSuccessMission } from "@/lib/strings/volt";
+
+const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
 // ECHO (gpt-image-2): Formato × Risoluzione → dimensione in pixel valida per l'API.
 // Il quadrato non ha 4K (supererebbe il limite di pixel del modello).
@@ -90,6 +93,9 @@ interface GenResult {
   royalty_cents?: number;
   surcharge_cents?: number;
   size?: string;
+  // VOLT: spesa e saldo dopo la generazione (assenti se sistema non configurato)
+  volt?: { spent: number; balance: number | null };
+  voltMission?: string | null;
 }
 
 // Guardia fotorealismo (ECHO): termini che spingono verso uno stile NON reale e
@@ -162,6 +168,18 @@ export default function MatchClient() {
   const [enhancingHandle, setEnhancingHandle] = useState<string | null>(null);
   const [enhancedByHandle, setEnhancedByHandle] = useState<Record<string, string | null>>({});
   const [genByHandle, setGenByHandle] = useState<Record<string, GenResult>>({});
+  // VOLT: saldo per il preview costo (null = sistema non configurato), gate
+  // di saldo insufficiente (4.7) e riga di loading "elettrica" (4.5).
+  const [voltBalance, setVoltBalance] = useState<number | null>(null);
+  const [voltGate, setVoltGate] = useState<{ needed: number; missing: number; balance: number } | null>(null);
+  const [loadingLine, setLoadingLine] = useState("Generazione…");
+
+  useEffect(() => {
+    fetch("/api/volt")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.configured) setVoltBalance(d.balance); })
+      .catch(() => {});
+  }, []);
 
   // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
   // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
@@ -306,6 +324,8 @@ export default function MatchClient() {
   async function generate(handle: string, mode: "preview" | "commercial") {
     setGeneratingHandle(handle);
     setError(null);
+    setVoltGate(null);
+    setLoadingLine(voltLoadingLine());
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -328,16 +348,36 @@ export default function MatchClient() {
       }),
     });
     const json = await res.json();
-    if (!res.ok) { setGeneratingHandle(null); setError(json.error ?? "Errore"); return; }
+    // Saldo VOLT insufficiente (402): gate dedicato, mai punitivo (4.7).
+    if (res.status === 402 && json.volt) {
+      setGeneratingHandle(null);
+      setVoltGate(json.volt);
+      return;
+    }
+    if (!res.ok) {
+      setGeneratingHandle(null);
+      setError(json.error ?? "Errore");
+      // Generazione morta dopo la spesa: il server ha stornato, allinea il badge.
+      if (json.volt_refunded) {
+        window.dispatchEvent(new Event("volt:refetch"));
+        setError(`${json.error ?? "Errore"} ${voltStr("gen.refund.toast", { n: FMT_VOLT.format(json.volt_refunded) })}`);
+      }
+      return;
+    }
+    // Spesa riuscita: badge aggiornato senza refresh (VOLT_SYSTEM §2).
+    if (json.volt) {
+      setVoltBalance(json.volt.balance);
+      window.dispatchEvent(new CustomEvent("volt:update", { detail: { balance: json.volt.balance } }));
+    }
     // ECHO commerciale = ASINCRONO: il server ha messo in coda un job, un worker
     // lo genera (può durare minuti). Restiamo "in lavorazione" e interroghiamo lo
     // stato finché non è pronto. L'utente può anche lasciare la pagina e tornare.
     if (json.mode === "async" && json.jobId) {
-      await pollJob(handle, json.jobId, json.alias ?? "");
+      await pollJob(handle, json.jobId, json.alias ?? "", json.volt);
       return;
     }
     setGeneratingHandle(null);
-    setGenByHandle((m) => ({ ...m, [handle]: json }));
+    setGenByHandle((m) => ({ ...m, [handle]: { ...json, voltMission: json.volt ? voltSuccessMission(json.alias ?? "") : null } }));
   }
 
   // A1 — chiede a Claude una versione migliorata della scena (solo su click).
@@ -363,7 +403,7 @@ export default function MatchClient() {
   }
 
   // Interroga /api/generate/job/[id] finché il job non è done/error (max ~6 min).
-  async function pollJob(handle: string, jobId: string, alias: string) {
+  async function pollJob(handle: string, jobId: string, alias: string, volt?: GenResult["volt"]) {
     const startedAt = Date.now();
     while (Date.now() - startedAt < 6 * 60 * 1000) {
       await new Promise((r) => setTimeout(r, 3000));
@@ -376,13 +416,20 @@ export default function MatchClient() {
         continue; // singolo errore di rete: riprova al prossimo giro
       }
       if (pj.status === "done") {
-        setGenByHandle((m) => ({ ...m, [handle]: { ...pj, mode: "commercial", alias } }));
+        setGenByHandle((m) => ({ ...m, [handle]: { ...pj, mode: "commercial", alias, volt, voltMission: volt ? voltSuccessMission(alias) : null } }));
         setGeneratingHandle(null);
         return;
       }
       if (pj.status === "error") {
         setGeneratingHandle(null);
-        setError(pj.error ?? "Generazione non riuscita");
+        // Job fallito = il worker ha stornato i VOLT: riallinea badge e saldo.
+        window.dispatchEvent(new Event("volt:refetch"));
+        if (volt?.spent) {
+          setVoltBalance((b) => (b === null ? b : b + volt.spent));
+          setError(`${pj.error ?? "Generazione non riuscita"}. ${voltStr("gen.refund.toast", { n: FMT_VOLT.format(volt.spent) })}`);
+        } else {
+          setError(pj.error ?? "Generazione non riuscita");
+        }
         return;
       }
       // pending | running → continua a interrogare
@@ -396,6 +443,27 @@ export default function MatchClient() {
   const echoSurcharge = echoSurchargeCents(echoSize, echoQuality);
   const priceCents = engine === "echo" ? grossForEcho(category || null, echoSize, echoQuality) : baseGross;
   const priceLabel = formatEur(priceCents);
+  // Etichetta del bottone Genera: il costo vive DENTRO il bottone (VOLT_SYSTEM
+  // §4.4); con sistema VOLT non configurato si torna al prezzo in euro.
+  const genCta = voltBalance !== null ? voltStr("gen.cta", { n: FMT_VOLT.format(priceCents) }) : `Genera la tua scena · ${priceLabel}`;
+
+  // Gate saldo insufficiente (4.7): mai punitivo, numeri sempre espliciti.
+  const voltGatePanel = voltGate ? (
+    <div className="mt-3 rounded-xl border border-amber-400/30 bg-amber-400/5 p-4">
+      <p className="text-sm font-bold text-amber-300">{VOLT_STRINGS["volt.insufficient.title"]}</p>
+      <p className="mt-1 text-xs leading-relaxed text-muted">
+        {voltStr("volt.insufficient.body", { n: FMT_VOLT.format(voltGate.needed), delta: FMT_VOLT.format(voltGate.missing) })}
+      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <Link href="/account/volt" className="rounded-full bg-[#8b47f0] px-4 py-2 text-xs font-bold text-white transition-all hover:brightness-110">
+          {VOLT_STRINGS["volt.insufficient.cta"]}
+        </Link>
+        <button type="button" onClick={() => setVoltGate(null)} className="rounded-full border border-white/12 px-4 py-2 text-xs font-semibold text-muted transition-colors hover:text-foreground">
+          {VOLT_STRINGS["volt.insufficient.secondary"]}
+        </button>
+      </div>
+    </div>
+  ) : null;
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
@@ -881,10 +949,16 @@ export default function MatchClient() {
                             </div>
                           )}
 
+                          {voltBalance !== null && voltBalance >= priceCents && (
+                            <p className="mt-4 text-center text-[0.7rem] text-faint">
+                              {voltStr("gen.cost.preview", { n: FMT_VOLT.format(priceCents), saldo: FMT_VOLT.format(voltBalance - priceCents) })}
+                            </p>
+                          )}
                           <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                            className="mt-4 w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
-                            {generating ? "Generazione…" : `Genera la tua scena · ${priceLabel}`}
+                            className="mt-2 w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+                            {generating ? loadingLine : genCta}
                           </button>
+                          {voltGatePanel}
                           {inProgress}
                           <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">Output pulito, full-res, con certificato e royalty a {avatar.alias}.</p>
                           <Link href={`/passport/${avatar.handle}`} className="mt-3 block rounded-xl border border-violet/30 bg-violet/10 px-4 py-3 text-center text-sm font-semibold text-foreground transition-colors hover:bg-violet/20">
@@ -894,6 +968,14 @@ export default function MatchClient() {
                       ) : (
                         <div className="mt-5 rounded-xl border border-teal/25 bg-obsidian p-5">
                           <p className="mb-1 text-sm font-bold text-teal">✓ Generazione certificata</p>
+                          {gen.volt && (
+                            <p className="mb-1 text-[0.72rem] font-semibold text-foreground">
+                              {voltStr("gen.success.body", { n: FMT_VOLT.format(gen.volt.spent), saldo: gen.volt.balance !== null ? FMT_VOLT.format(gen.volt.balance) : "—" })}
+                            </p>
+                          )}
+                          {gen.voltMission && (
+                            <p className="mb-1 text-[0.7rem] italic text-violet-light">{gen.voltMission}</p>
+                          )}
                           {gen.size && (
                             <p className="mb-3 text-[0.72rem] font-semibold text-violet-light">Motore ECHO · {echoResLabel(gen.size)} · {gen.size.replace("x", "×")} px</p>
                           )}
@@ -934,8 +1016,9 @@ export default function MatchClient() {
                           <div className="mt-4 grid gap-2 border-t border-white/8 pt-4">
                             <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
                               className="w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-5 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50">
-                              {generating ? "Generazione…" : `↻ Genera un'altra variante · ${priceLabel}`}
+                              {generating ? loadingLine : `↻ ${genCta}`}
                             </button>
+                            {voltGatePanel}
                             {inProgress}
                             <button onClick={() => resetGeneration(avatar.handle)} disabled={generating}
                               className="w-full rounded-xl border border-white/12 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">

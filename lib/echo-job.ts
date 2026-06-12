@@ -298,6 +298,29 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
   } catch (e) {
     const msg = e instanceof Error ? e.message : "errore sconosciuto";
     await admin.from("generation_jobs").update({ status: "error", finished_at: nowIso(), error: msg.slice(0, 500) }).eq("id", job.id);
+    // VOLT: la spesa è avvenuta all'enqueue (ref ECHO:<jobId>); il job è morto →
+    // storno automatico (VOLT_SYSTEM §6.3). Idempotente: massimo uno storno per job.
+    try {
+      const { grantVolt } = await import("@/lib/volt");
+      const { count } = await admin
+        .from("volt_transactions")
+        .select("id", { head: true, count: "exact" })
+        .eq("user_id", job.buyer_id)
+        .eq("type", "refund")
+        .eq("ref", `job:${job.id}`);
+      const { count: spentCount } = await admin
+        .from("volt_transactions")
+        .select("id", { head: true, count: "exact" })
+        .eq("user_id", job.buyer_id)
+        .eq("type", "generation")
+        .eq("ref", `ECHO:${job.id}`);
+      if ((spentCount ?? 0) > 0 && (count ?? 0) === 0) {
+        await grantVolt(job.buyer_id, job.params.pricing.gross_cents, "refund", `job:${job.id}`);
+        console.log(`[ECHO job ${job.id}] VOLT stornati: ${job.params.pricing.gross_cents}`);
+      }
+    } catch {
+      /* sistema VOLT non configurato: nessuno storno necessario */
+    }
     console.error(`[ECHO job ${job.id}] error: ${msg}`);
   }
 }
