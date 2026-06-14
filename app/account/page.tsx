@@ -18,6 +18,7 @@ import VoltGrantPanel from "./VoltGrantPanel";
 import { revenueStatsFor, type RevenueStats } from "@/lib/account-stats";
 import { RoyaltyCharts } from "@/components/account/RoyaltyCharts";
 import { ContentsGrid, type GridItem } from "@/components/account/ContentsGrid";
+import { voltBalance, LOW_BALANCE_THRESHOLD } from "@/lib/volt";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -124,6 +125,9 @@ export default async function AccountPage() {
     };
   });
 
+  // Saldo VOLT (null = sistema non configurato: la card si nasconde).
+  const volt = await voltBalance(user.id);
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -168,6 +172,30 @@ export default async function AccountPage() {
             </>
           )}
         </div>
+
+        {/* Saldo VOLT: i crediti che alimentano le generazioni. Visibile a tutti
+            (nascosto solo se il sistema VOLT non è configurato). */}
+        {volt !== null && (
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+            <div>
+              <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
+                <span aria-hidden style={{ fontSize: "1.4rem" }}>⚡</span>
+                <span style={{ color: volt <= 0 ? "#B8005C" : volt < LOW_BALANCE_THRESHOLD ? "#f59e0b" : "#f0f0f5", fontSize: "2.2rem", fontWeight: 800, lineHeight: 1 }}>
+                  {volt.toLocaleString("it-IT")}
+                </span>
+              </div>
+              {volt < LOW_BALANCE_THRESHOLD && (
+                <p style={{ color: "#6b7280", fontSize: "0.75rem", margin: "0.4rem 0 0" }}>
+                  {volt <= 0 ? "Energia esaurita: ricarica per generare." : "Batteria quasi scarica."}
+                </p>
+              )}
+            </div>
+            <Link href="/account/volt" style={{ flexShrink: 0, padding: "0.7rem 1.4rem", borderRadius: 999, background: "#8b47f0", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+              Ricarica
+            </Link>
+          </div>
+        )}
 
         {role === "admin" && (
           <>
@@ -341,6 +369,21 @@ export default async function AccountPage() {
             <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
               Ogni contenuto è certificato e la persona reale è stata remunerata.
             </p>
+          </div>
+        )}
+
+        {/* Reclutamento: il buyer è anche una persona reale. L'account stesso
+            invita a mettere il proprio volto nel registro (e a guadagnarci). */}
+        {role === "buyer" && (
+          <div style={{ background: "linear-gradient(135deg, rgba(107,33,232,0.12), rgba(184,0,92,0.08))", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "#f0f0f5", fontSize: "1.05rem", fontWeight: 700, margin: "0 0 0.4rem" }}>Metti il tuo volto nel registro</p>
+            <p style={{ color: "#9a9a9a", fontSize: "0.85rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
+              Sei una persona reale: il tuo volto può entrare nel registro, restare sotto il tuo
+              consenso e farti guadagnare ogni volta che viene usato. Tu decidi tutto, sempre.
+            </p>
+            <Link href="/scansione" style={{ display: "inline-block", padding: "0.7rem 1.4rem", borderRadius: 999, background: "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+              Scopri come entrare →
+            </Link>
           </div>
         )}
 
