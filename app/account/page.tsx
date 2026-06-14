@@ -15,7 +15,9 @@ import LinkWallet from "./LinkWallet";
 import { MarkContentsSeen } from "./MarkContentsSeen";
 import AnchorPanel from "./AnchorPanel";
 import VoltGrantPanel from "./VoltGrantPanel";
-import { ShareStoryButton } from "@/components/share/ShareStoryButton";
+import { revenueStatsFor, type RevenueStats } from "@/lib/account-stats";
+import { RoyaltyCharts } from "@/components/account/RoyaltyCharts";
+import { ContentsGrid, type GridItem } from "@/components/account/ContentsGrid";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -56,6 +58,7 @@ export default async function AccountPage() {
   let usageCount = 0;
   let payouts: { id: string; amount_cents: number; status: string; created_at: string }[] = [];
   let demand: DemandSummary | null = null;
+  let revenue: RevenueStats | null = null; // serie 30g + categorie (dolore #1: revenue visibili)
   if (role === "seller") {
     const admin = createServerClient();
     const { data: av } = await admin
@@ -71,6 +74,7 @@ export default async function AccountPage() {
     // E3 — la domanda reale vista da questo volto (null se la tabella manca)
     if (av) demand = await demandForAvatar(admin, av as unknown as ScorableAvatar);
     if (av?.id) {
+      revenue = await revenueStatsFor(av.id, new Date());
       const { data: ledger } = await admin
         .from("payouts")
         .select("id, amount_cents, status, created_at")
@@ -95,6 +99,7 @@ export default async function AccountPage() {
   }
 
   // Contenuti acquistati dall'utente (generazioni commerciali = quelle col certificato).
+  // Limite 60: la griglia mostra 6 e fa "Carica altri" sul resto (anti-limbo).
   const admin2 = createServerClient();
   const { data: gens } = await admin2
     .from("generations")
@@ -102,13 +107,22 @@ export default async function AccountPage() {
     .eq("buyer_id", user.id)
     .not("certificate", "is", null)
     .order("created_at", { ascending: false })
-    .limit(12);
+    .limit(60);
   type MyGen = {
     id: string; certificate: string | null; image_url: string | null;
     gross_cents: number | null; category: string | null; tier: string | null; created_at: string;
     avatars: { alias: string; handle: string } | { alias: string; handle: string }[] | null;
   };
   const myGenerations: MyGen[] = (gens ?? []) as MyGen[];
+  // Adatta al formato della griglia (alias/handle appiattiti).
+  const gridItems: GridItem[] = myGenerations.map((g) => {
+    const av = Array.isArray(g.avatars) ? g.avatars[0] : g.avatars;
+    return {
+      id: g.id, certificate: g.certificate, image_url: g.image_url,
+      category: g.category, tier: g.tier, created_at: g.created_at,
+      alias: av?.alias ?? "—", handle: av?.handle ?? "",
+    };
+  });
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
@@ -224,11 +238,33 @@ export default async function AccountPage() {
           <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO WALLET</p>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.3rem" }}>
-              <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>Royalty accumulate</span>
-              <span style={{ color: "#00A896", fontSize: "1.5rem", fontWeight: 800 }}>{formatEur(royaltyCents)}</span>
+            {/* Revenue-hero: il guadagno in grande (dolore #1 risolto), col passo
+                degli ultimi 30 giorni e gli utilizzi totali. */}
+            <div style={{ marginBottom: "1.1rem" }}>
+              <span style={{ color: "#6b7280", fontSize: "0.8rem" }}>Royalty accumulate</span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.7rem", flexWrap: "wrap", marginTop: "0.15rem" }}>
+                <span style={{ color: "#00A896", fontSize: "2.6rem", fontWeight: 800, lineHeight: 1 }}>{formatEur(royaltyCents)}</span>
+                {revenue && revenue.last30Cents > 0 && (
+                  <span style={{ color: "#8b47f0", fontSize: "0.85rem", fontWeight: 700 }}>
+                    +{formatEur(revenue.last30Cents)} <span style={{ color: "#6b7280", fontWeight: 500 }}>ultimi 30 giorni</span>
+                    {revenue.deltaPct !== null && (
+                      <span style={{ color: revenue.deltaPct >= 0 ? "#00A896" : "#B8005C", marginLeft: "0.4rem" }}>
+                        {revenue.deltaPct >= 0 ? "▲" : "▼"} {Math.abs(revenue.deltaPct)}%
+                      </span>
+                    )}
+                  </span>
+                )}
+              </div>
+              <p style={{ color: "#374151", fontSize: "0.78rem", margin: "0.5rem 0 0" }}>{usageCount} utilizzi totali</p>
             </div>
-            <p style={{ color: "#374151", fontSize: "0.78rem", margin: "0 0 0.9rem" }}>{usageCount} utilizzi totali</p>
+
+            {/* Grafici royalty (30 giorni + per categoria) */}
+            {revenue && (
+              <div style={{ marginBottom: "1.2rem" }}>
+                <RoyaltyCharts stats={revenue} />
+              </div>
+            )}
+
             <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#00d4be", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginBottom: "1.2rem" }}>
               Attività del mio volto →
             </Link>
@@ -301,45 +337,7 @@ export default async function AccountPage() {
         {myGenerations.length > 0 && (
           <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>I MIEI CONTENUTI</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "1rem" }}>
-              {myGenerations.map((g) => {
-                const av = Array.isArray(g.avatars) ? g.avatars[0] : g.avatars;
-                return (
-                  <div key={g.id} style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
-                    {g.image_url && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={g.image_url} alt="contenuto" style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", background: "#1c1c28", display: "block" }} />
-                    )}
-                    <div style={{ padding: "0.7rem 0.8rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.4rem", margin: "0 0 0.15rem" }}>
-                        <p style={{ color: "#f0f0f5", fontSize: "0.82rem", fontWeight: 600, margin: 0 }}>{av?.alias ?? "—"}</p>
-                        {g.tier && (
-                          <span title="Motore di generazione" style={{ flexShrink: 0, fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: "#8b47f0", background: "rgba(107,33,232,0.14)", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 999, padding: "0.1rem 0.45rem" }}>{g.tier}</span>
-                        )}
-                      </div>
-                      <p style={{ color: "#374151", fontSize: "0.7rem", margin: "0 0 0.5rem" }}>
-                        {g.category ?? "—"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
-                      </p>
-                      {g.image_url && g.certificate && (
-                        // Doppio pulsante a due colori: Scarica (viola) + Condividi (teal).
-                        // Condividi = Storia con cornice-certificato, mai l'immagine nuda.
-                        <div style={{ display: "flex", gap: "0.4rem" }}>
-                          <a href={`/api/content/${g.certificate}`} style={{ flex: 1, display: "block", textAlign: "center", padding: "0.4rem", borderRadius: 8, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 600, fontSize: "0.75rem", textDecoration: "none" }}>
-                            Scarica
-                          </a>
-                          <ShareStoryButton
-                            query={`cert=${encodeURIComponent(g.certificate)}&v=buyer`}
-                            filename={`human2ai-story-${g.certificate.slice(0, 8)}.png`}
-                            label="Condividi"
-                            className="flex-1 rounded-lg border border-teal/30 bg-teal/10 px-2 py-[0.4rem] text-center text-[0.75rem] font-semibold text-teal transition-colors hover:bg-teal/20 disabled:opacity-50"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ContentsGrid items={gridItems} shareVariant="buyer" />
             <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
               Ogni contenuto è certificato e la persona reale è stata remunerata.
             </p>
