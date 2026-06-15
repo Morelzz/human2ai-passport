@@ -10,7 +10,7 @@ import { VoltBadge } from "@/components/volt/VoltBadge";
 
 const LINKS = [
   { href: "/catalogo", label: "Catalogo" },
-  { href: "/match", label: "Trova un volto" },
+  { href: "/match", label: "Casting" },
   { href: "/scansione", label: "Scansione" },
   { href: "/academy", label: "Academy" },
   { href: "/prezzi", label: "Prezzi" },

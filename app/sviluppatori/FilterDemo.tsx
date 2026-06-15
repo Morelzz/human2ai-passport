@@ -17,7 +17,7 @@ type FilterResponse = {
 };
 
 export default function FilterDemo() {
-  const [subject, setSubject] = useState("mario-r");
+  const [subject, setSubject] = useState("random");
   const [use, setUse] = useState("");
   const [loading, setLoading] = useState(false);
   const [res, setRes] = useState<FilterResponse | null>(null);

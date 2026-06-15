@@ -11,16 +11,24 @@ import { avatarArt } from "./avatar-art";
 // watermarkata via /api/sample/[handle]/[index].
 // Modulo PURO (niente import server): usabile anche dai client component.
 
-// Repertorio di Random (mario-r) RIGENERATO con ECHO (identity-lock, 2026-06-10,
-// scelta Morelz: più fedele del vecchio set Higgsfield). File su Supabase
-// Storage `generations/repertorio/mario-r/` — [0] è anche il ritratto.
+// Repertorio di Random (handle 'random', ex 'mario-r') RIGENERATO con ECHO
+// (identity-lock, 2026-06-10, scelta Morelz: più fedele del vecchio set
+// Higgsfield). File su Supabase Storage `generations/repertorio/random/`: [0]
+// è anche il ritratto. La chiave 'mario-r' resta come alias storico finché il
+// rename non è stabile e i vecchi link non scadono (pulizia successiva).
 const SUPA = "https://ktjebfavzherochwhtis.supabase.co/storage/v1/object/public/generations/repertorio";
 const SAMPLE_GALLERIES: Record<string, string[]> = {
+  random: [
+    `${SUPA}/random/00.png`, // headshot studio (= ritratto)
+    `${SUPA}/random/01.png`, // outdoor golden hour, t-shirt bianca
+    `${SUPA}/random/02.png`, // nel suo studio d'arte (Random è un artista)
+    `${SUPA}/random/03.png`, // street style notturno, luci città
+  ],
   "mario-r": [
-    `${SUPA}/mario-r/00.png`, // headshot studio (= ritratto)
-    `${SUPA}/mario-r/01.png`, // outdoor golden hour, t-shirt bianca
-    `${SUPA}/mario-r/02.png`, // nel suo studio d'arte (Random è un artista)
-    `${SUPA}/mario-r/03.png`, // street style notturno, luci città
+    `${SUPA}/mario-r/00.png`,
+    `${SUPA}/mario-r/01.png`,
+    `${SUPA}/mario-r/02.png`,
+    `${SUPA}/mario-r/03.png`,
   ],
   // Ambassador (2026-06-11): repertori ECHO con identity-lock.
   asia: [

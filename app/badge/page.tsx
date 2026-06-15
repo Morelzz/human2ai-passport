@@ -37,7 +37,7 @@ export default async function BadgePage({
             </p>
           </div>
 
-          <BadgeClient initialHandle={handle ?? "mario-r"} />
+          <BadgeClient initialHandle={handle ?? "random"} />
         </main>
       </div>
     </div>

@@ -48,7 +48,7 @@ export default function AnchorPanel() {
         <>
           <p style={{ color: "#00A896", fontSize: "0.78rem", fontWeight: 700, margin: "0 0 0.8rem" }}>● Attiva su {cfg.chain}</p>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="handle avatar (es. mario-r)"
+            <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="handle avatar (es. random)"
               style={{ flex: 1, minWidth: 160, background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#f0f0f5", fontSize: "0.85rem", padding: "0.55rem 0.7rem", outline: "none" }} />
             <button onClick={anchor} disabled={busy || !handle.trim()}
               style={{ padding: "0.55rem 1rem", borderRadius: 8, border: "none", background: busy || !handle.trim() ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.82rem", cursor: busy || !handle.trim() ? "default" : "pointer" }}>

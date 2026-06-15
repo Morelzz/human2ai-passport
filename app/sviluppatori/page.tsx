@@ -13,7 +13,7 @@ export const metadata = {
 export default function SviluppatoriPage() {
   const exampleResponse = `{
   "human2ai": "consent-filter",
-  "subject": "mario-r",
+  "subject": "random",
   "requested_use": "Fashion",
   "allowed": true,
   "decision": "ALLOW",
@@ -23,7 +23,7 @@ export default function SviluppatoriPage() {
   "proof": {
     "token": "…",
     "verify_url": "…/verify?token=…",
-    "passport_url": "…/passport/mario-r"
+    "passport_url": "…/passport/random"
   }
 }`;
 

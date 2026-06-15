@@ -94,7 +94,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
     <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       <div>
         <label style={labelStyle}>AVATAR (HANDLE)</label>
-        <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@mario-r" style={inputStyle} />
+        <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@random" style={inputStyle} />
       </div>
 
       <div>

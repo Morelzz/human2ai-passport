@@ -83,7 +83,7 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
             id="h"
             value={handle}
             onChange={(e) => setHandle(normalizeHandle(e.target.value))}
-            placeholder="mario-r"
+            placeholder="random"
             spellCheck={false}
             autoCapitalize="none"
             className="w-full bg-transparent py-3 font-mono text-sm text-foreground outline-none placeholder:text-faint"

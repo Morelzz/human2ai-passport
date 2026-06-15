@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase";
 import { Avatar, ConsentEvent, TIER_CONFIG } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
@@ -6,6 +6,10 @@ import { galleryFromRow } from "@/lib/sample-galleries";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import PassportClient from "./PassportClient";
+
+// Handle storici rinominati: redirect permanente (308) al nuovo handle, per i
+// vecchi link gia' indicizzati. (0.4 naming: 'mario-r' e' diventato 'random'.)
+const OLD_HANDLE_REDIRECTS: Record<string, string> = { "mario-r": "random" };
 
 interface Props {
   params: Promise<{ handle: string }>;
@@ -46,7 +50,11 @@ export default async function PassportPage({ params }: Props) {
     .eq("handle", handle)
     .single();
 
-  if (error || !avatar) notFound();
+  if (error || !avatar) {
+    const renamed = OLD_HANDLE_REDIRECTS[handle];
+    if (renamed) permanentRedirect(`/passport/${renamed}`);
+    notFound();
+  }
   // Gate: i passport non ancora approvati non sono pubblici.
   if ((avatar.verification_status ?? "approved") !== "approved") notFound();
 
