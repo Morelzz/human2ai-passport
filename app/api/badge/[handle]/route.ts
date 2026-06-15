@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
+import { isPublicAvatar } from "@/lib/registry";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Badge "Volto Verificato" — endpoint SVG embeddabile (Fase 4: lo standard).
@@ -59,15 +60,15 @@ export async function GET(
 
   const { data: avatar, error } = await supabase
     .from("avatars")
-    .select("alias, verification_status, revoked_at")
+    .select("alias, verification_status, revoked_at, protection_only")
     .eq("handle", handle)
     .single();
 
-  // Stesso gate del registro pubblico: niente badge per avatar non approvati.
+  // Stesso gate del registro pubblico (isPublicAvatar): niente badge per avatar
+  // non approvati NE' per i volti in sola protezione (VETO), che non devono mai
+  // comparire su una superficie pubblica.
   if (error || !avatar) return new Response("Not found", { status: 404 });
-  if ((avatar.verification_status ?? "approved") !== "approved") {
-    return new Response("Not found", { status: 404 });
-  }
+  if (!isPublicAvatar(avatar)) return new Response("Not found", { status: 404 });
 
   const alias = (avatar.alias as string) ?? handle;
   const aliasShort = alias.length > 20 ? alias.slice(0, 19) + "…" : alias;

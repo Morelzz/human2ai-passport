@@ -1,5 +1,6 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase";
+import { isPublicAvatar } from "@/lib/registry";
 import { Avatar, ConsentEvent, TIER_CONFIG } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
 import { galleryFromRow } from "@/lib/sample-galleries";
@@ -22,10 +23,10 @@ export async function generateMetadata({ params }: Props) {
   const sb = createServerClient();
   const { data: a } = await sb
     .from("avatars")
-    .select("alias, revoked_at, verification_status")
+    .select("alias, revoked_at, verification_status, protection_only")
     .eq("handle", handle)
     .single();
-  if (!a || (a.verification_status ?? "approved") !== "approved") return { title: "Passaporto del volto" };
+  if (!a || !isPublicAvatar(a)) return { title: "Passaporto del volto" };
   const title = `${a.alias} — Passaporto del volto`;
   const description = a.revoked_at
     ? `${a.alias} ha revocato il consenso: questo volto non è più generabile. La revoca è la prova che il sistema obbedisce.`
@@ -55,8 +56,9 @@ export default async function PassportPage({ params }: Props) {
     if (renamed) permanentRedirect(`/passport/${renamed}`);
     notFound();
   }
-  // Gate: i passport non ancora approvati non sono pubblici.
-  if ((avatar.verification_status ?? "approved") !== "approved") notFound();
+  // Gate: i passport non approvati non sono pubblici; e i volti in SOLA
+  // PROTEZIONE (VETO) non compaiono mai su una superficie pubblica (isPublicAvatar).
+  if (!isPublicAvatar(avatar)) notFound();
 
   const { data: events } = await supabase
     .from("consent_events")
