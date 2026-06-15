@@ -27,10 +27,16 @@ export async function POST(request: Request) {
   // L'avatar deve appartenere all'utente
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, handle, approved_categories, excluded_categories, revoked_at")
+    .select("id, handle, approved_categories, excluded_categories, revoked_at, protection_only")
     .eq("owner_id", user.id)
     .maybeSingle();
   if (!avatar) return NextResponse.json({ error: "Nessun avatar da gestire" }, { status: 404 });
+
+  // Fase 2.1 (VETO): un profilo in sola protezione ha TUTTE le categorie bloccate
+  // e non modificabili verso ALLOW. Qui ogni azione di consenso e' vietata.
+  if ((avatar as { protection_only?: boolean }).protection_only) {
+    return NextResponse.json({ error: "Profilo in sola protezione: il consenso e' bloccato su tutte le categorie e non e' modificabile." }, { status: 403 });
+  }
 
   const today = new Date().toISOString().slice(0, 10);
   const approved: string[] = avatar.approved_categories ?? [];

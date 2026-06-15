@@ -16,6 +16,9 @@ import { Tier } from "@/lib/types";
 
 type RegistryRow = {
   verification_status?: string | null;
+  // Fase 2.1 (VETO): i volti in sola protezione NON compaiono in nessuna
+  // superficie pubblica (esistono solo per il faceprint difensivo).
+  protection_only?: boolean | null;
 };
 
 export type PublicAvatar = RegistryRow & {
@@ -31,7 +34,8 @@ export type PublicAvatar = RegistryRow & {
 } & Record<string, unknown>;
 
 export function isPublicAvatar(a: RegistryRow): boolean {
-  return (a.verification_status ?? "approved") === "approved";
+  // protection_only = registrazione inversa (VETO): mai pubblico, mai matchabile.
+  return (a.verification_status ?? "approved") === "approved" && !a.protection_only;
 }
 
 // Tutti gli avatar del registro pubblico, ordinati per ingresso (consent_start).
