@@ -100,6 +100,12 @@ export async function POST(request: Request) {
   if (!TIERS.includes(tier)) {
     return NextResponse.json({ error: "Livello non valido" }, { status: 400 });
   }
+  // SOUL/HUMAN sono identity-locked (motore ECHO): senza reference l'avatar
+  // nascerebbe non generabile. Richiediamo almeno una foto (anche lato client).
+  const providedRefCount = Array.isArray(body.references) ? body.references.length : 0;
+  if ((tier === "SOUL" || tier === "HUMAN") && providedRefCount === 0) {
+    return NextResponse.json({ error: "Per il livello SOUL o HUMAN carica almeno una foto: bloccano l'identità reale per le generazioni fedeli." }, { status: 400 });
+  }
 
   // Tutti i campi dell'identity kit sono obbligatori e devono essere tra le opzioni valide
   const kit: Record<string, string> = {
@@ -203,6 +209,14 @@ export async function POST(request: Request) {
     } catch {
       /* storage non disponibile: l'avatar resta valido, le reference si potranno ricaricare */
     }
+  }
+
+  // Se l'utente HA fornito foto ma NESSUNA e' stata salvata (storage ko o payload
+  // troncato), non lasciare un avatar non generabile: rollback e chiedi di riprovare.
+  if (rawRefs.length > 0 && refsStored === 0) {
+    await admin.from("consent_events").delete().eq("avatar_id", id);
+    await admin.from("avatars").delete().eq("id", id);
+    return NextResponse.json({ error: "Non siamo riusciti a salvare le tue foto, riprova (se persiste usa immagini piu' leggere o meno foto)." }, { status: 502 });
   }
 
   // Per le org: link tokenizzato che la persona deve aprire per confermare il consenso.

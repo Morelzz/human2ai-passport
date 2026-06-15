@@ -79,6 +79,12 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!kitComplete) { setError("Completa tutti i campi dell'identity kit"); return; }
+    // SOUL/HUMAN (identity-lock, motore ECHO) richiedono almeno una foto: senza,
+    // l'avatar nascerebbe non generabile.
+    if ((tier === "SOUL" || tier === "HUMAN") && refs.every((d) => !d)) {
+      setError(`Per il livello ${tier} carica almeno una foto: bloccano l'identità reale per le generazioni fedeli.`);
+      return;
+    }
     setError(null);
     setLoading(true);
     const res = await fetch("/api/avatar/create", {
@@ -90,9 +96,12 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
         references: refs.map((d, slot) => (d ? { slot, data: d } : null)).filter(Boolean),
       }),
     });
-    const json = await res.json();
+    let json: { error?: string; consent_url?: string; handle?: string } = {};
+    try { json = await res.json(); } catch { /* es. 413: risposta senza JSON */ }
     if (!res.ok) {
-      setError(json.error ?? "Errore");
+      setError(res.status === 413
+        ? "Le foto sono troppo grandi o troppe per l'invio: riprova con meno foto o immagini più leggere."
+        : (json.error ?? "Errore nella creazione, riprova."));
       setLoading(false);
       return;
     }
