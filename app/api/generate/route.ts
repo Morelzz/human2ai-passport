@@ -101,11 +101,17 @@ export async function POST(request: Request) {
   // Rivalida: l'avatar esiste, è SOUL, ha consenso attivo e copre la categoria d'uso.
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents, soul_ref, approved_categories, excluded_categories, gender, age_range, ethnicity, hair_color, eye_color, height, body_type, tattoos, facial_hair")
+    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents, soul_ref, approved_categories, excluded_categories, gender, age_range, ethnicity, hair_color, eye_color, height, body_type, tattoos, facial_hair, protection_only")
     .eq("handle", handle)
     .maybeSingle();
 
   if (!avatar) return NextResponse.json({ error: "Avatar inesistente" }, { status: 404 });
+  // Fase 2.2 (VETO): un volto in sola protezione NON e' mai generabile, in nessuna
+  // categoria e nemmeno in preview. Blocco assoluto in input + log protected_face.
+  if ((avatar as { protection_only?: boolean }).protection_only) {
+    logBlockedRequest(admin, { source: "generate", reason: "protected_face", category });
+    return NextResponse.json({ error: "Questo volto e' registrato in sola protezione: la generazione e' vietata." }, { status: 403 });
+  }
   if (avatar.revoked_at) {
     // Ogni blocco del filtro viene loggato (forma della domanda, mai chi chiede):
     // alimenta il Transparency Report e la heatmap della domanda scoperta.
