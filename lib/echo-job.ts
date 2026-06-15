@@ -18,6 +18,7 @@ import { getReferenceSet } from "@/lib/references";
 import { generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/echo";
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
+import { scanGeneratedImageForProtected } from "@/lib/face-scan-server";
 
 type Admin = ReturnType<typeof createServerClient>;
 
@@ -270,12 +271,25 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     const references = [...identity.slice(0, 10 - extraBuffers.length), ...extraBuffers];
 
     // La chiamata lunga (può durare minuti): qui NON c'è cap di durata.
-    const result = await generateEcho({
-      prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText, p.identityText),
-      references,
-      size: p.echoSize,
-      quality: p.echoQuality,
-    });
+    // Fase 2.3 (VETO): dopo ogni generazione, scan dei volti generati contro
+    // l'indice protetti; se somiglia a un protetto, scarta e rigenera (limite
+    // tentativi). Lo scan e' dormiente finche' tfjs-node non e' installato.
+    const MAX_ATTEMPTS = 2;
+    let result!: Awaited<ReturnType<typeof generateEcho>>;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      result = await generateEcho({
+        prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText, p.identityText),
+        references,
+        size: p.echoSize,
+        quality: p.echoQuality,
+      });
+      const scan = await scanGeneratedImageForProtected(result.png);
+      if (!scan.blocked) break;
+      console.warn(`[ECHO job ${job.id}] output somiglia a un volto protetto (dist ${scan.distance?.toFixed(3)}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
+      if (attempt === MAX_ATTEMPTS) {
+        throw new Error("Il risultato somigliava a un volto registrato come protetto: generazione annullata per tutela, nessun costo a tuo carico.");
+      }
+    }
 
     // Carica il PNG pulito (il download imporrà la filigrana invisibile).
     const cleanUrl = await uploadPublicImage("generations", `${job.avatar_id}/${crypto.randomUUID()}.png`, result.png);
