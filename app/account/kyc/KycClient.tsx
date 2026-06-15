@@ -98,8 +98,12 @@ export default function KycClient() {
       body: JSON.stringify({ user_id: userId, action }),
     });
     setBusy(null);
-    if (res.ok) setItems((xs) => xs.filter((x) => x.id !== userId));
-    else { const j = await res.json().catch(() => ({})); setError(j.error ?? "Errore"); }
+    if (res.ok) { setItems((xs) => xs.filter((x) => x.id !== userId)); setError(null); }
+    else {
+      const j = await res.json().catch(() => ({}));
+      setError(j.error ?? "Errore");
+      if (res.status === 409) load(); // coda stale: ricarica per riallineare
+    }
   }
 
   return (
@@ -108,8 +112,15 @@ export default function KycClient() {
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Verifiche identità (KYC)</h1>
       <p style={{ color: "#6b7280", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
         Persone in attesa di verifica. Approva solo se <strong>documento, selfie e foto sono la stessa persona</strong> e
-        il documento è leggibile. I link alle immagini scadono dopo 10 minuti (ricarica la pagina se servono di nuovo).
+        il documento è leggibile. I link alle immagini scadono dopo 1 ora; se servono di nuovo usa &quot;Ricarica coda&quot;.
       </p>
+
+      {!loading && !error && (
+        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", margin: "0 0 1.5rem" }}>
+          <span style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700 }}>{items.length} in attesa</span>
+          <button onClick={() => load()} style={{ padding: "0.4rem 0.9rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.12)", background: "#12121a", color: "#9aa0aa", fontWeight: 600, fontSize: "0.78rem", cursor: "pointer" }}>↻ Ricarica coda</button>
+        </div>
+      )}
 
       {error && <p style={{ color: "#B8005C", fontSize: "0.85rem" }}>{error}</p>}
       {loading && <p style={{ color: "#6b7280", fontSize: "0.9rem" }}>Carico la coda…</p>}

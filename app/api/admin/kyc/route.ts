@@ -4,14 +4,14 @@ import { createServerClient } from "@/lib/supabase";
 import { grantWelcomeVoltOnce } from "@/lib/volt";
 
 // Coda di revisione KYC — riservata agli operatori (role 'admin').
-// GET:  profili con kyc_status='pending' + URL FIRMATI temporanei (10 min)
+// GET:  profili con kyc_status='pending' + URL FIRMATI temporanei (1 ora)
 //       dei file nel bucket privato 'documents' (mai URL pubblici: sono
 //       documenti d'identità).
 // POST: { user_id, action: 'approve'|'reject' } -> aggiorna kyc_status.
 // La revisione è MANUALE per scelta (fase attuale): il face-match automatico
 // (AWS Rekognition / Stripe Identity) si innesterà sopra lo stesso campo.
 
-const SIGNED_URL_TTL = 600; // secondi
+const SIGNED_URL_TTL = 3600; // 1 ora: una review di molte persone non scade a meta'
 
 async function requireAdmin() {
   const auth = await createAuthClient();
@@ -31,10 +31,12 @@ export async function GET() {
     .from("profiles")
     .select("id, email, full_name, role, created_at")
     .eq("kyc_status", "pending")
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .limit(100); // guardia: oltre, servira' la paginazione (follow-up)
 
-  const items = [];
-  for (const p of pending ?? []) {
+  // Ogni candidato in PARALLELO (50 persone in serie erano lente e a rischio
+  // timeout della funzione): lista file -> URL firmati + eventuale face-match.json.
+  const items = await Promise.all((pending ?? []).map(async (p) => {
     // I file della candidatura vivono in documents/<user_id>/
     const { data: files } = await admin.storage.from("documents").list(p.id);
     const images = (files ?? []).filter((f) => f.name !== "face-match.json");
@@ -56,8 +58,8 @@ export async function GET() {
       }
     }
 
-    items.push({ ...p, files: signed, face_match: faceMatch });
-  }
+    return { ...p, files: signed, face_match: faceMatch };
+  }));
 
   return NextResponse.json({ items });
 }
@@ -75,16 +77,21 @@ export async function POST(request: Request) {
 
   const admin = createServerClient();
   const status = action === "approve" ? "approved" : "rejected";
-  const { error } = await admin
+  const { data: changed, error } = await admin
     .from("profiles")
     .update({ kyc_status: status })
     .eq("id", userId)
-    .eq("kyc_status", "pending"); // si decide solo ciò che è in attesa
+    .eq("kyc_status", "pending") // si decide solo ciò che è in attesa
+    .select("id");
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  // 0 righe = un altro operatore l'ha già deciso (o non era pending): segnalalo,
+  // invece di far credere a entrambi di aver deciso (coda condivisa).
+  if (!changed || changed.length === 0) {
+    return NextResponse.json({ error: "Questa verifica è già stata decisa da un altro operatore (ricarica la coda)." }, { status: 409 });
+  }
 
-  // Bonus di benvenuto: 50 VOLT alla verifica dell'account, una sola volta
-  // (VOLT_SYSTEM §4.11, attivato 2026-06-12). Best-effort: se il sistema VOLT
-  // non è configurato, l'approvazione resta valida.
+  // Bonus di benvenuto: 50 VOLT alla verifica dell'account, una sola volta, e
+  // SOLO se l'approvazione ha effettivamente transitato la riga (idempotente comunque).
   if (status === "approved") {
     await grantWelcomeVoltOnce(userId);
   }
