@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
-import { executeEchoJob, type EchoJobRow } from "@/lib/echo-job";
+import { executeEchoJob, reapStaleJobs, type EchoJobRow } from "@/lib/echo-job";
 
 export const runtime = "nodejs";
 // Esegue la chiamata lunga a OpenAI: va lanciata su un host SENZA cap di durata
@@ -20,6 +20,10 @@ export async function POST(request: Request) {
 
   const admin = createServerClient();
 
+  // Prima del claim: libera i job orfani rimasti 'running' (worker morto a meta',
+  // altrimenti restano per sempre e mangiano i VOLT spesi all'enqueue). Idempotente.
+  await reapStaleJobs(admin);
+
   // Prendi il job pending più vecchio.
   const { data: job } = await admin
     .from("generation_jobs")
@@ -34,7 +38,7 @@ export async function POST(request: Request) {
   // Claim atomico: solo chi riesce a flippare pending→running lo esegue.
   const { data: claimed } = await admin
     .from("generation_jobs")
-    .update({ status: "running" })
+    .update({ status: "running", started_at: new Date().toISOString() })
     .eq("id", job.id)
     .eq("status", "pending")
     .select("id");

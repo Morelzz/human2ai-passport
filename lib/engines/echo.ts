@@ -16,6 +16,26 @@ const GEN_URL = "https://api.openai.com/v1/images/generations";
 const EDIT_URL = "https://api.openai.com/v1/images/edits";
 const MODEL = "gpt-image-2";
 
+// Timeout della chiamata a OpenAI: oltre, la consideriamo appesa e la abortiamo
+// (un fetch bloccato terrebbe occupata l'unica corsia del worker all'infinito).
+// Il 4K high gira ~150s: 4 minuti danno margine abbondante.
+const ECHO_TIMEOUT_MS = 240_000;
+
+async function fetchEcho(url: string, init: RequestInit): Promise<Response> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ECHO_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...init, signal: ctrl.signal });
+  } catch (e) {
+    if (e instanceof Error && e.name === "AbortError") {
+      throw new Error("Il motore di generazione non ha risposto in tempo. Riprova: nessun costo per te.");
+    }
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 // Risoluzioni e qualità supportate da gpt-image-2 (lati multipli di 16, lato lungo
 // ≤3840, rapporto ≤3:1, pixel 0,65M–8,29M). Quadrato/Verticale/Orizzontale a varie risoluzioni.
 export type EchoSize =
@@ -124,7 +144,7 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
       form.append("image[]", new Blob([new Uint8Array(buf)], { type: "image/jpeg" }), `ref-${i}.jpg`);
     });
 
-    const res = await fetch(EDIT_URL, {
+    const res = await fetchEcho(EDIT_URL, {
       method: "POST",
       headers: { Authorization: `Bearer ${key}` }, // niente Content-Type: lo imposta FormData col boundary
       body: form,
@@ -136,7 +156,7 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
   }
 
   // ── Senza reference: text-to-image ───────────────────────────────────────
-  const res = await fetch(GEN_URL, {
+  const res = await fetchEcho(GEN_URL, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({ model: MODEL, prompt: input.prompt, size, quality, n: 1 }),

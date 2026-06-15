@@ -200,6 +200,55 @@ export async function prepareExtras(rawExtras: unknown): Promise<EchoExtra[]> {
   return out;
 }
 
+// Storno VOLT idempotente di un job (la spesa e' avvenuta all'enqueue, ref
+// ECHO:<id>). grantVolt e' no-op su un refund job:<id> gia' presente (fix
+// volt_idempotency); storniamo solo se la spesa esiste davvero.
+async function refundJobVolt(admin: Admin, jobId: string, buyerId: string, grossCents: number | undefined): Promise<void> {
+  if (!grossCents || grossCents <= 0) return;
+  try {
+    const { grantVolt } = await import("@/lib/volt");
+    const { count: spentCount } = await admin
+      .from("volt_transactions")
+      .select("id", { head: true, count: "exact" })
+      .eq("user_id", buyerId)
+      .eq("type", "generation")
+      .eq("ref", `ECHO:${jobId}`);
+    if ((spentCount ?? 0) > 0) {
+      await grantVolt(buyerId, grossCents, "refund", `job:${jobId}`);
+    }
+  } catch {
+    /* sistema VOLT non configurato: nessuno storno necessario */
+  }
+}
+
+// REAPER: i job rimasti 'running' troppo a lungo = worker morto a meta'. Senza
+// questo restano per sempre (il poller pesca solo 'pending'), mangiano i VOLT
+// spesi all'enqueue e tengono il client su uno spinner morto. Li chiudiamo in
+// errore e li storniamo (idempotente). Va chiamato a ogni tick prima del claim.
+export async function reapStaleJobs(admin: Admin, staleMs = 10 * 60 * 1000): Promise<number> {
+  const cutoff = new Date(Date.now() - staleMs).toISOString();
+  const { data: stale } = await admin
+    .from("generation_jobs")
+    .select("id, buyer_id, params")
+    .eq("status", "running")
+    .lt("started_at", cutoff);
+  let reaped = 0;
+  for (const job of (stale ?? []) as { id: string; buyer_id: string; params: EchoJobParams }[]) {
+    const { data: done } = await admin
+      .from("generation_jobs")
+      .update({ status: "error", finished_at: new Date().toISOString(), error: "job orfano: worker interrotto, rilasciato dal reaper" })
+      .eq("id", job.id)
+      .eq("status", "running")
+      .select("id");
+    if (done && done.length > 0) {
+      reaped++;
+      await refundJobVolt(admin, job.id, job.buyer_id, job.params?.pricing?.gross_cents);
+    }
+  }
+  if (reaped > 0) console.log(`[reaper] ${reaped} job orfani chiusi e stornati`);
+  return reaped;
+}
+
 // WORKER: esegue UN job ECHO end-to-end e ne riscrive l'esito. Non lancia: gli
 // errori vengono registrati sul job (status 'error') così il poller prosegue.
 export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<void> {
@@ -298,29 +347,9 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
   } catch (e) {
     const msg = e instanceof Error ? e.message : "errore sconosciuto";
     await admin.from("generation_jobs").update({ status: "error", finished_at: nowIso(), error: msg.slice(0, 500) }).eq("id", job.id);
-    // VOLT: la spesa è avvenuta all'enqueue (ref ECHO:<jobId>); il job è morto →
-    // storno automatico (VOLT_SYSTEM §6.3). Idempotente: massimo uno storno per job.
-    try {
-      const { grantVolt } = await import("@/lib/volt");
-      const { count } = await admin
-        .from("volt_transactions")
-        .select("id", { head: true, count: "exact" })
-        .eq("user_id", job.buyer_id)
-        .eq("type", "refund")
-        .eq("ref", `job:${job.id}`);
-      const { count: spentCount } = await admin
-        .from("volt_transactions")
-        .select("id", { head: true, count: "exact" })
-        .eq("user_id", job.buyer_id)
-        .eq("type", "generation")
-        .eq("ref", `ECHO:${job.id}`);
-      if ((spentCount ?? 0) > 0 && (count ?? 0) === 0) {
-        await grantVolt(job.buyer_id, job.params.pricing.gross_cents, "refund", `job:${job.id}`);
-        console.log(`[ECHO job ${job.id}] VOLT stornati: ${job.params.pricing.gross_cents}`);
-      }
-    } catch {
-      /* sistema VOLT non configurato: nessuno storno necessario */
-    }
+    // La spesa è avvenuta all'enqueue (ref ECHO:<jobId>); il job è morto → storno
+    // automatico (VOLT_SYSTEM §6.3), idempotente (fix volt_idempotency).
+    await refundJobVolt(admin, job.id, job.buyer_id, job.params.pricing.gross_cents);
     console.error(`[ECHO job ${job.id}] error: ${msg}`);
   }
 }

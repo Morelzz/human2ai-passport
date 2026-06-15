@@ -441,10 +441,11 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
     setEnhancingHandle(null);
   }
 
-  // Interroga /api/generate/job/[id] finché il job non è done/error (max ~6 min).
+  // Interroga /api/generate/job/[id] finché il job non è done/error (cap ~20 min,
+  // poi rimanda a «I miei contenuti»: il job prosegue comunque lato server).
   async function pollJob(handle: string, jobId: string, alias: string, volt?: GenResult["volt"]) {
     const startedAt = Date.now();
-    while (Date.now() - startedAt < 6 * 60 * 1000) {
+    while (Date.now() - startedAt < 20 * 60 * 1000) {
       await new Promise((r) => setTimeout(r, 3000));
       let pj: GenResult & { status?: string; error?: string };
       try {
@@ -474,7 +475,9 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       // pending | running → continua a interrogare
     }
     setGeneratingHandle(null);
-    setError("La generazione sta richiedendo troppo: riprova tra poco (il job potrebbe completarsi comunque).");
+    // Non è un fallimento: la coda può essere piena. Il job prosegue lato server e
+    // comparirà in «I miei contenuti» appena pronto (niente falso "non riuscita").
+    setError("La generazione è ancora in corso (la coda può essere piena). Puoi lasciare la pagina: la trovi in «I miei contenuti» appena è pronta.");
   }
 
   const baseGross = grossForCategory(category || null);
