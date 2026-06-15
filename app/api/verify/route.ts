@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
+import { isPublicAvatar } from "@/lib/registry";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -10,11 +11,14 @@ export async function GET(req: NextRequest) {
   // 1. È il TOKEN di un avatar?
   const { data: avatar } = await supabase
     .from("avatars")
-    .select("handle, alias, tier, consent_start, revoked_at, token_hash")
+    .select("handle, alias, tier, consent_start, revoked_at, token_hash, verification_status, protection_only")
     .eq("token_hash", token)
     .maybeSingle();
 
-  if (avatar) {
+  // Solo gli avatar PUBBLICI sono verificabili per token (isPublicAvatar, fonte
+  // unica). Un volto in sola protezione (VETO) non si rivela MAI, neanche
+  // conoscendone il token; un avatar non approvato non e' nel registro pubblico.
+  if (avatar && isPublicAvatar(avatar)) {
     return NextResponse.json({
       valid: true,
       type: "avatar",

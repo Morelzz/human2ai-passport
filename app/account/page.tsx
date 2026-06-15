@@ -159,18 +159,26 @@ export default async function AccountPage() {
       .eq("protection_only", true)
       .maybeSingle();
     if (prot?.handle && !prot.revoked_at) {
-      const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const cutoffIso = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      // Solo i 5 piu' recenti per la lista; il totale e gli ultimi 30 giorni sono
+      // conteggi ESATTI lato DB (niente sottostima oltre i 5 mostrati, anche con
+      // molti alert su uno stesso volto).
       const { data: alertRows, count } = await admin2
         .from("protection_alerts")
         .select("id, similarity, created_at", { count: "exact" })
         .eq("handle", prot.handle)
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(5);
+      const { count: last30 } = await admin2
+        .from("protection_alerts")
+        .select("id", { count: "exact", head: true })
+        .eq("handle", prot.handle)
+        .gte("created_at", cutoffIso);
       const rows = (alertRows ?? []) as ProtectionAlert[];
       protection = {
-        recent: rows.slice(0, 5),
+        recent: rows,
         total: count ?? rows.length,
-        last30: rows.filter((a) => new Date(a.created_at).getTime() >= cutoff).length,
+        last30: last30 ?? 0,
       };
     }
   }
