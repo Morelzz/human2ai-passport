@@ -19,6 +19,7 @@ import { revenueStatsFor, type RevenueStats } from "@/lib/account-stats";
 import { RoyaltyCharts } from "@/components/account/RoyaltyCharts";
 import { ContentsGrid, type GridItem } from "@/components/account/ContentsGrid";
 import { voltBalance, LOW_BALANCE_THRESHOLD } from "@/lib/volt";
+import { ActiveJobs, type ActiveJob } from "@/components/account/ActiveJobs";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -128,6 +129,21 @@ export default async function AccountPage() {
   // Saldo VOLT (null = sistema non configurato: la card si nasconde).
   const volt = await voltBalance(user.id);
 
+  // Job di generazione asincroni IN CORSO (ECHO): stato chiaro su /account invece
+  // di una pagina muta (Fase 1.5 / finding 6.5). Solo i propri job, max 10.
+  const { data: activeJobsRaw } = await admin2
+    .from("generation_jobs")
+    .select("id, status, params")
+    .eq("buyer_id", user.id)
+    .in("status", ["pending", "running"])
+    .order("created_at", { ascending: false })
+    .limit(10);
+  const activeJobs: ActiveJob[] = (activeJobsRaw ?? []).map((j) => ({
+    id: j.id as string,
+    status: j.status as string,
+    category: (j.params as { category?: string | null } | null)?.category ?? null,
+  }));
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -196,6 +212,9 @@ export default async function AccountPage() {
             </Link>
           </div>
         )}
+
+        {/* Generazioni asincrone in corso: stato live, niente pagina muta (Fase 1.5). */}
+        {activeJobs.length > 0 && <ActiveJobs initial={activeJobs} />}
 
         {role === "admin" && (
           <>
