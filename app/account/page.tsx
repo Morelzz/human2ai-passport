@@ -144,6 +144,37 @@ export default async function AccountPage() {
     category: (j.params as { category?: string | null } | null)?.category ?? null,
   }));
 
+  // VETO (Fase 2.5) — lo scudo visto dal TITOLARE. Se l'utente ha un volto in
+  // SOLA PROTEZIONE attiva, gli mostriamo che la protezione è attiva e gli
+  // eventuali tentativi di uso del suo volto rilevati su Human2AI (è il titolare
+  // che scopre l'abuso, non chi cerca). Query a parte dal blocco creatore: chi
+  // protegge il proprio volto di norma è un compratore, non un creatore.
+  type ProtectionAlert = { id: string; similarity: number | null; created_at: string };
+  let protection: { recent: ProtectionAlert[]; total: number; last30: number } | null = null;
+  {
+    const { data: prot } = await admin2
+      .from("avatars")
+      .select("handle, revoked_at")
+      .eq("owner_id", user.id)
+      .eq("protection_only", true)
+      .maybeSingle();
+    if (prot?.handle && !prot.revoked_at) {
+      const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const { data: alertRows, count } = await admin2
+        .from("protection_alerts")
+        .select("id, similarity, created_at", { count: "exact" })
+        .eq("handle", prot.handle)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      const rows = (alertRows ?? []) as ProtectionAlert[];
+      protection = {
+        recent: rows.slice(0, 5),
+        total: count ?? rows.length,
+        last30: rows.filter((a) => new Date(a.created_at).getTime() >= cutoff).length,
+      };
+    }
+  }
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -215,6 +246,67 @@ export default async function AccountPage() {
 
         {/* Generazioni asincrone in corso: stato live, niente pagina muta (Fase 1.5). */}
         {activeJobs.length > 0 && <ActiveJobs initial={activeJobs} />}
+
+        {/* VETO (Fase 2.5) — lo scudo visto dal titolare: protezione attiva +
+            eventuali tentativi di uso del suo volto rilevati su Human2AI. "Veto"
+            è il nome interno: in pubblico si parla solo di "volto protetto". */}
+        {protection && (
+          <div style={{ background: "#0d0d14", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È PROTETTO</p>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00A896", display: "inline-block", flexShrink: 0 }} />
+              <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 700 }}>
+                Protezione attiva: dentro Human2AI il tuo volto non può essere generato né concesso.
+              </span>
+            </div>
+
+            {protection.total > 0 ? (
+              <>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", margin: "1.1rem 0 0.3rem" }}>
+                  <span style={{ color: "#f0f0f5", fontSize: "1.8rem", fontWeight: 800 }}>{protection.total}</span>
+                  <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>
+                    {protection.total === 1 ? "volta il tuo volto è stato riconosciuto" : "volte il tuo volto è stato riconosciuto"} in immagini caricate su Human2AI
+                    {protection.last30 > 0 && ` (${protection.last30} negli ultimi 30 giorni)`}
+                  </span>
+                </div>
+                <p style={{ color: "#9a9a9a", fontSize: "0.82rem", lineHeight: 1.6, margin: "0.5rem 0 0" }}>
+                  Qualcuno ha caricato qui un&apos;immagine in cui compare il tuo volto: può essere un contenuto creato fuori da Human2AI. Conserviamo la traccia per te.
+                </p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginTop: "1rem" }}>
+                  {protection.recent.map((a) => (
+                    <div key={a.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "0.45rem" }}>
+                      <span style={{ color: "#6b7280", fontSize: "0.8rem" }}>
+                        {new Date(a.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
+                      </span>
+                      {a.similarity !== null && (
+                        <span style={{ color: "#8b47f0", fontSize: "0.8rem", fontWeight: 700 }}>somiglianza ~{a.similarity}%</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {protection.total > protection.recent.length && (
+                  <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.6rem 0 0" }}>
+                    e altri {protection.total - protection.recent.length} eventi più vecchi.
+                  </p>
+                )}
+
+                <Link href="/proteggi" style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "1.1rem" }}>
+                  Gestisci la tua protezione →
+                </Link>
+              </>
+            ) : (
+              <p style={{ color: "#9a9a9a", fontSize: "0.82rem", lineHeight: 1.6, margin: "1rem 0 0" }}>
+                Nessun tentativo rilevato finora. Se qualcuno carica su Human2AI un&apos;immagine col tuo volto, lo vedrai qui.
+              </p>
+            )}
+
+            <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+              Dentro Human2AI la protezione è garantita lato server. Fuori da qui possiamo avvisarti e aiutarti a chiedere la rimozione, non impedirlo in assoluto. La tutela legale è in revisione.
+            </p>
+          </div>
+        )}
 
         {role === "admin" && (
           <>
@@ -392,8 +484,10 @@ export default async function AccountPage() {
         )}
 
         {/* Reclutamento: il buyer è anche una persona reale. L'account stesso
-            invita a mettere il proprio volto nel registro (e a guadagnarci). */}
-        {role === "buyer" && (
+            invita a mettere il proprio volto nel registro (e a guadagnarci).
+            Non si mostra a chi ha PROTETTO il volto: proteggere e concedere lo
+            stesso volto si escludono (guardia 1:1 server-side, modulo VETO). */}
+        {role === "buyer" && !protection && (
           <div style={{ background: "linear-gradient(135deg, rgba(107,33,232,0.12), rgba(184,0,92,0.08))", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "#f0f0f5", fontSize: "1.05rem", fontWeight: 700, margin: "0 0 0.4rem" }}>Metti il tuo volto nel registro</p>
             <p style={{ color: "#9a9a9a", fontSize: "0.85rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
