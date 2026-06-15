@@ -278,6 +278,12 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             {copied ? "Copiato" : "Copia token"}
           </button>
           <Link href="/verify" className="rounded-lg border border-violet/30 bg-violet/10 px-3 py-2 text-sm text-violet-light transition-colors hover:bg-violet/20">Verifica →</Link>
+          {/* Badge embeddabile (Fase 4): da qui prendi il codice per metterlo
+              sul tuo sito. Solo per i volti attivi: per un revocato il badge
+              direbbe "consenso revocato", non ha senso incorporarne uno nuovo. */}
+          {!avatar.revoked_at && (
+            <Link href={`/badge?handle=${avatar.handle}`} className="rounded-lg border border-teal/30 bg-teal/10 px-3 py-2 text-sm text-teal transition-colors hover:bg-teal/20">Incorpora il badge →</Link>
+          )}
         </div>
         <p className="mt-3 text-xs leading-relaxed text-faint">
           Identificativo univoco e certificato di questo volto. Prova che è reale.
