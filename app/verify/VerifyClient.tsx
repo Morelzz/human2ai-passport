@@ -35,6 +35,10 @@ interface VerifyResult {
   category?: string | null;
   marked?: boolean;
   source?: "image" | "token";
+  // /verify: la filigrana e' stata DAVVERO letta dai pixel? false = non l'abbiamo
+  // potuta leggere (JPEG/screenshot non la conservano, o immagine troppo grande
+  // per il server) → NON e' un verdetto, e l'analisi del volto va offerta lo stesso.
+  wm_checked?: boolean;
   certificate?: string;
   // Esteso (esito "autorità"): categorie correnti + catena del consenso.
   approved_categories?: string[] | null;
@@ -152,21 +156,43 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       return URL.createObjectURL(file);
     });
     setBusy(true);
-    setStage("Leggo la filigrana invisibile…");
-    try {
-      const fd = new FormData();
-      fd.append("image", file);
-      const res = await fetch("/api/verify-image", { method: "POST", body: fd });
-      const data = await res.json();
-      setResult({ ...data, source: "image" });
-      if (!data.valid && !data.marked) {
-        // Nessuna filigrana: l'analisi del volto NON parte da sola.
-        // Prima il consenso di chi verifica (il descrittore è dato biometrico).
-        setPendingFace(file);
+
+    // (1) Filigrana invisibile: vive nei LSB di un PNG lossless. Un JPEG o uno
+    //     screenshot NON puo' contenerla, e Vercel rifiuta i body oltre ~4,5MB
+    //     (le foto da fotocamera arrivano a 15-20MB → 413). In quei casi NON
+    //     tentiamo l'upload (eviterebbe solo un errore) e NON ridimensioniamo
+    //     (distruggerebbe la filigrana): si va dritti all'analisi del volto.
+    //     wm_checked dice se i pixel sono stati davvero letti.
+    const WM_MAX_BYTES = 4.4 * 1024 * 1024; // margine sotto il cap di Vercel
+    const canReadWatermark = file.type === "image/png" && file.size <= WM_MAX_BYTES;
+    let certified = false;
+    if (canReadWatermark) {
+      setStage("Leggo la filigrana invisibile…");
+      try {
+        const fd = new FormData();
+        fd.append("image", file);
+        const res = await fetch("/api/verify-image", { method: "POST", body: fd });
+        if (res.ok) {
+          const data = await res.json();
+          setResult({ ...data, source: "image", wm_checked: true });
+          certified = Boolean(data.valid || data.marked);
+        } else {
+          // 413/5xx: filigrana non leggibile, MA non e' un verdetto sull'immagine.
+          setResult({ valid: false, source: "image", wm_checked: false });
+        }
+      } catch {
+        setResult({ valid: false, source: "image", wm_checked: false });
       }
-    } catch {
-      setResult({ valid: false, source: "image" });
+    } else {
+      setResult({ valid: false, source: "image", wm_checked: false });
     }
+
+    // (2) Se non e' un contenuto certificato H2AI, offri SEMPRE l'analisi del
+    //     volto: e' sul dispositivo, indipendente dall'upload, ed e' la tutela
+    //     della persona. Non deve morire se la filigrana non si e' potuta leggere.
+    //     Il descrittore e' dato biometrico → parte solo dopo il consenso esplicito.
+    if (!certified) setPendingFace(file);
+
     setStage(null);
     setBusy(false);
   }
@@ -453,9 +479,11 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             /* ── GATE DI CONSENSO: il confronto biometrico non parte da solo ──
                (si arriva qui SOLO senza filigrana: il caso marked ha il suo stato) */
             <>
-              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">NESSUNA FILIGRANA TROVATA</h2>
+              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">{result.wm_checked ? "NESSUNA FILIGRANA TROVATA" : "FILIGRANA NON VERIFICATA"}</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
-                Questa immagine non porta la filigrana Human2AI (o è stata rimossa da screenshot/ricompressione).
+                {result.wm_checked
+                  ? "Questa immagine non porta la filigrana Human2AI (o è stata rimossa da screenshot/ricompressione)."
+                  : "La filigrana invisibile vive solo nei PNG originali scaricati da Human2AI: un JPEG, uno screenshot o un'immagine molto grande non la conservano. Posso comunque confrontare il volto con il registro."}
               </p>
               <div className="mt-4 rounded-2xl border border-white/10 bg-obsidian p-4">
                 <p className="m-0 text-[0.85rem] font-semibold text-foreground">
