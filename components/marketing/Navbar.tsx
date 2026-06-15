@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/catalogo", label: "Catalogo" },
   { href: "/match", label: "Casting" },
   { href: "/scansione", label: "Scansione" },
+  { href: "/proteggi", label: "Proteggi" },
   { href: "/academy", label: "Academy" },
   { href: "/prezzi", label: "Prezzi" },
   { href: "/trasparenza", label: "Trasparenza" },
