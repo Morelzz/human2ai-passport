@@ -9,6 +9,8 @@ import {
 } from "@/lib/face-index";
 import { similarityFromDistance } from "@/lib/face-similarity";
 import { fuzzyEq, ethnicityEq } from "@/lib/matching";
+import { loadProtectedIndex } from "@/lib/protected-index";
+import { logProtectionAlert } from "@/lib/protection-alert";
 
 export const runtime = "nodejs";
 
@@ -93,6 +95,26 @@ export async function POST(request: Request) {
   }
   const filters = sanitizeFilters(body?.filters);
   const filtersActive = Object.keys(filters).length > 0;
+
+  // Fase 2.5 (VETO): se il volto e' di una persona in SOLA PROTEZIONE, NON si
+  // rivela MAI chi e'. Solo "volto protetto" + alert al titolare (e' lui che
+  // scopre l'abuso, non chi cerca: invertirlo sarebbe uno strumento di stalking).
+  const protectedIndex = await loadProtectedIndex();
+  if (protectedIndex && protectedIndex.entries.length > 0) {
+    const pranked = rankFaceMatches(descriptor, protectedIndex);
+    const pbest = pranked[0];
+    if (pbest && pbest.distance <= FACE_MATCH_MAX_DISTANCE) {
+      logProtectionAlert(pbest.handle, similarityFromDistance(pbest.distance), filtersActive);
+      return NextResponse.json({
+        match: true,
+        protected: true,
+        scanned: true,
+        avatars_checked: pranked.length,
+        filtered: filtersActive,
+        // NESSUNA identita': niente handle/alias/passport. Mai.
+      });
+    }
+  }
 
   const index = await loadFaceIndex();
   if (!index || index.entries.length === 0) {

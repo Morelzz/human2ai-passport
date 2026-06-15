@@ -45,6 +45,7 @@ interface VerifyResult {
     scanned: boolean;
     face_found: boolean;
     match: boolean;
+    protected?: boolean; // VETO 2.5: volto in sola protezione, identita' mai rivelata
     handle?: string;
     alias?: string;
     status?: string;
@@ -499,6 +500,22 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 Non &laquo;miglioriamo&raquo; la foto con l&apos;AI inventando un volto: l&apos;identità è il prodotto —
                 o c&apos;è, o non ci pronunciamo. Se puoi, carica il <span className="text-foreground">file originale</span> (non uno screenshot).
               </p>
+            </>
+          ) : face?.protected ? (
+            /* ── VOLTO PROTETTO (VETO): non riveliamo MAI chi e' ── */
+            <>
+              <div className="mb-4 flex items-start gap-3">
+                <span aria-hidden className="mt-1 h-3 w-3 shrink-0 rounded-full bg-violet" />
+                <div>
+                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-violet-light">VOLTO PROTETTO — GENERAZIONE VIETATA</h2>
+                  <p className="m-0 text-[0.8rem] text-muted">Questa persona si &egrave; registrata per NON essere generata.</p>
+                </div>
+              </div>
+              <p className="rounded-xl border border-violet/20 bg-violet/[0.06] p-3 text-[0.8rem] leading-relaxed text-muted">
+                Per tutela non riveliamo di chi si tratta. Il titolare del volto &egrave; stato avvisato: sar&agrave; lui,
+                se vorr&agrave;, a procedere. Dentro Human2AI questo volto non &egrave; generabile; fuori restano allerta precoce e rimozione assistita.
+              </p>
+              <p className="mt-2 text-[0.66rem] text-faint">In revisione legale.</p>
             </>
           ) : face?.match ? (
             /* ── VOLTO RICONOSCIUTO (contenuto non certificato) ── */
