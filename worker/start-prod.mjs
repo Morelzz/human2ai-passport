@@ -3,7 +3,7 @@
 //   1) avvia il server Next (`next start`) → serve /api/jobs/run SENZA il cap di
 //      durata di Vercel, quindi le generazioni lunghe (2K/4K) girano qui;
 //   2) avvia il poller (worker/poll.mjs) che pinga il server nello STESSO
-//      container ed esegue un job pending alla volta.
+//      container; ogni tick esegue fino a WORKER_CONCURRENCY job in parallelo.
 //
 // Railway: imposta lo Start Command su `npm run start:railway`. Servono le env:
 //   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,

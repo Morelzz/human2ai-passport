@@ -16,6 +16,10 @@
 //   WORKER_SECRET  segreto condiviso con /api/jobs/run (obbligatorio)
 //   WORKER_IDLE_MS attesa quando non ci sono job (default 4000)
 //   WORKER_BUSY_MS attesa dopo un job processato (default 500)
+//
+// La CONCORRENZA (quanti job per tick) e' decisa LATO SERVER da /api/jobs/run via
+// env WORKER_CONCURRENCY (default 3): il poller resta un loop semplice, ma ogni
+// tick puo' ora restituire piu' job processati in parallelo (campo `processed`).
 // ──────────────────────────────────────────────────────────────────────────
 
 const BASE = (process.env.WORKER_URL || "http://localhost:3000").replace(/\/$/, "");
@@ -42,7 +46,11 @@ async function tick() {
       return IDLE_MS;
     }
     if (json.idle) return IDLE_MS;
-    if (json.jobId) console.log(`[worker] job ${json.jobId} processato`);
+    const n = json.processed ?? (json.jobId ? 1 : 0);
+    if (n > 0) {
+      const ids = Array.isArray(json.jobIds) ? ` (${json.jobIds.join(", ")})` : "";
+      console.log(`[worker] ${n} job processat${n === 1 ? "o" : "i"}${ids}`);
+    }
     return BUSY_MS; // c'era lavoro: ricontrolla subito
   } catch (e) {
     console.error("[worker] rete:", e?.message ?? e);
