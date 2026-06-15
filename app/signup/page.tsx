@@ -25,7 +25,7 @@ export default function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: { data: { full_name: fullName, role } },
     });
 
     if (error) {
@@ -34,13 +34,9 @@ export default function SignupPage() {
       return;
     }
 
-    if (data.user) {
-      await supabase
-        .from("profiles")
-        .update({ full_name: fullName, role })
-        .eq("id", data.user.id);
-    }
-
+    // role e full_name viaggiano nel metadata (options.data): il trigger
+    // handle_new_user popola il profilo alla creazione utente, robusto anche con
+    // la conferma email attiva (qui non c'e' sessione per fare un UPDATE sotto RLS).
     if (data.session) {
       router.push("/account");
       router.refresh();
