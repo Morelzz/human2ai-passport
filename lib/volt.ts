@@ -106,7 +106,11 @@ export async function voltTransactions(userId: string, limit = 5): Promise<VoltT
   return (data ?? []) as VoltTransaction[];
 }
 
-// Bonus di benvenuto idempotente: accredita solo se non già ricevuto.
+// Bonus di benvenuto idempotente. La garanzia vera è a livello DB: grant_volt è
+// no-op su un (user,'bonus','welcome') già presente (controllo dentro l'advisory
+// lock) più l'unique index volt_tx_idem (vedi supabase/volt_idempotency.sql).
+// Questo pre-check è solo un fast-path che restituisce il booleano accurato: anche
+// con doppio click admin o retry non si accredita due volte.
 export async function grantWelcomeVoltOnce(userId: string): Promise<boolean> {
   const admin = createServerClient();
   const { count, error } = await admin
