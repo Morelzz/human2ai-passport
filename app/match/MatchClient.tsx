@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { TIER_CONFIG, Tier, CATEGORIES } from "@/lib/types";
 import { formatEur, grossForCategory, grossForEcho } from "@/lib/wallet";
@@ -1115,13 +1115,16 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
 }
 
 function ChipGroup({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  // Gruppo di toggle con etichetta programmatica: lo screen reader annuncia il
+  // contesto ("Genere", "Capelli"...) entrando nel gruppo di chip.
+  const gid = useId();
   return (
     <div>
       <div className="mb-2.5 flex items-baseline gap-2">
-        <span className="text-sm font-semibold text-muted">{label}</span>
+        <span id={gid} className="text-sm font-semibold text-muted">{label}</span>
         {hint && <span className="text-[0.7rem] text-faint">· {hint}</span>}
       </div>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      <div role="group" aria-labelledby={gid} className="flex flex-wrap gap-2">{children}</div>
     </div>
   );
 }
