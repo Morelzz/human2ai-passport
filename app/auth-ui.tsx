@@ -1,6 +1,7 @@
 "use client";
 
 // Componenti UI condivisi tra /login e /signup.
+import { useId } from "react";
 import { Logo } from "@/app/Nav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 
@@ -13,10 +14,13 @@ export const labelStyle: React.CSSProperties = {
 };
 
 export function Field({ label, value, onChange, type }: { label: string; value: string; onChange: (v: string) => void; type: string }) {
+  // useId: label e input associati per l'accessibilita' (screen reader).
+  const id = useId();
   return (
     <div>
-      <label style={labelStyle}>{label}</label>
+      <label htmlFor={id} style={labelStyle}>{label}</label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}

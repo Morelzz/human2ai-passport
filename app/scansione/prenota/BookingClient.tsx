@@ -75,8 +75,8 @@ export function BookingClient({
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-muted">Sede *</label>
-        <select value={sede} onChange={(e) => setSede(e.target.value)} required className={inp}>
+        <label htmlFor="bk-sede" className="mb-1.5 block text-xs font-semibold text-muted">Sede *</label>
+        <select id="bk-sede" value={sede} onChange={(e) => setSede(e.target.value)} required className={inp}>
           {sedi.map((s) => (
             <option key={s.slug} value={s.slug}>{s.name} · {s.city}</option>
           ))}
@@ -84,26 +84,26 @@ export function BookingClient({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Laura Conti" />
+          <label htmlFor="bk-name" className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
+          <input id="bk-name" value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Laura Conti" />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Email *</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@esempio.it" />
+          <label htmlFor="bk-email" className="mb-1.5 block text-xs font-semibold text-muted">Email *</label>
+          <input id="bk-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@esempio.it" />
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Telefono <span className="font-normal text-faint">· opzionale</span></label>
-          <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inp} placeholder="+39 …" />
+          <label htmlFor="bk-phone" className="mb-1.5 block text-xs font-semibold text-muted">Telefono <span className="font-normal text-faint">· opzionale</span></label>
+          <input id="bk-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={inp} placeholder="+39 …" />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Data *</label>
-          <input type="date" value={date} min={minDate} onChange={(e) => setDate(e.target.value)} required className={inp} />
+          <label htmlFor="bk-date" className="mb-1.5 block text-xs font-semibold text-muted">Data *</label>
+          <input id="bk-date" type="date" value={date} min={minDate} onChange={(e) => setDate(e.target.value)} required className={inp} />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Ora *</label>
-          <select value={time} onChange={(e) => setTime(e.target.value)} required className={inp}>
+          <label htmlFor="bk-time" className="mb-1.5 block text-xs font-semibold text-muted">Ora *</label>
+          <select id="bk-time" value={time} onChange={(e) => setTime(e.target.value)} required className={inp}>
             <option value="">Seleziona…</option>
             {HOURS.map((h) => (
               <option key={h} value={h}>{h}</option>
@@ -112,8 +112,8 @@ export function BookingClient({
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-muted">Note <span className="font-normal text-faint">· opzionale</span></label>
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className={`${inp} resize-y`} placeholder="C'è qualcosa che dovremmo sapere?" />
+        <label htmlFor="bk-notes" className="mb-1.5 block text-xs font-semibold text-muted">Note <span className="font-normal text-faint">· opzionale</span></label>
+        <textarea id="bk-notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className={`${inp} resize-y`} placeholder="C'è qualcosa che dovremmo sapere?" />
       </div>
 
       {/* Honeypot: invisibile agli umani, i bot lo compilano */}

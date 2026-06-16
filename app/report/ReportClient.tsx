@@ -93,13 +93,13 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
   return (
     <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       <div>
-        <label style={labelStyle}>AVATAR (HANDLE)</label>
-        <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@random" style={inputStyle} />
+        <label htmlFor="rp-handle" style={labelStyle}>AVATAR (HANDLE)</label>
+        <input id="rp-handle" value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@random" style={inputStyle} />
       </div>
 
       <div>
-        <label style={labelStyle}>CERTIFICATO CONTENUTO (OPZIONALE)</label>
-        <input value={certificate} onChange={(e) => setCertificate(e.target.value)} placeholder="SHA-256 del contenuto generato…" style={{ ...inputStyle, fontFamily: "monospace", fontSize: "0.82rem" }} />
+        <label htmlFor="rp-cert" style={labelStyle}>CERTIFICATO CONTENUTO (OPZIONALE)</label>
+        <input id="rp-cert" value={certificate} onChange={(e) => setCertificate(e.target.value)} placeholder="SHA-256 del contenuto generato…" style={{ ...inputStyle, fontFamily: "monospace", fontSize: "0.82rem" }} />
         <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.4rem 0 0" }}>Indica l&apos;handle dell&apos;avatar oppure il certificato di un contenuto.</p>
       </div>
 
@@ -116,13 +116,13 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
       </div>
 
       <div>
-        <label style={labelStyle}>DETTAGLI (OPZIONALE)</label>
-        <textarea value={details} onChange={(e) => setDetails(e.target.value)} rows={4} placeholder="Descrivi cosa è successo…" style={{ ...inputStyle, resize: "vertical" }} />
+        <label htmlFor="rp-details" style={labelStyle}>DETTAGLI (OPZIONALE)</label>
+        <textarea id="rp-details" value={details} onChange={(e) => setDetails(e.target.value)} rows={4} placeholder="Descrivi cosa è successo…" style={{ ...inputStyle, resize: "vertical" }} />
       </div>
 
       <div>
-        <label style={labelStyle}>LA TUA EMAIL (OPZIONALE, PER RICONTATTO)</label>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="tu@esempio.com" style={inputStyle} />
+        <label htmlFor="rp-email" style={labelStyle}>LA TUA EMAIL (OPZIONALE, PER RICONTATTO)</label>
+        <input id="rp-email" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="tu@esempio.com" style={inputStyle} />
       </div>
 
       {error && <p style={{ color: "#B8005C", fontSize: "0.85rem", margin: 0 }}>{error}</p>}
