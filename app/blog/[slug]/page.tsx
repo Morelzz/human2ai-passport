@@ -14,7 +14,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) return { title: "Articolo non trovato" };
-  const ogImages = post.cover ? [{ url: post.cover, alt: post.coverAlt }] : undefined;
+  // Ogni articolo ha un'immagine social: il cover se presente, altrimenti la
+  // card brandizzata col titolo (app/blog/[slug]/opengraph-image.tsx). Riferita
+  // per URL ESPLICITO: con openGraph sovrascritto la card file-based non si
+  // auto-inietta (lezione /verify), quindi la puntiamo a mano.
+  const ogImageUrl = post.cover || `${siteUrl()}/blog/${slug}/opengraph-image`;
+  const ogImages = [{ url: ogImageUrl, alt: post.coverAlt || post.title }];
   return {
     title: post.title,
     description: post.description,
@@ -31,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       tags: post.tags,
       images: ogImages,
     },
-    twitter: { card: "summary_large_image", title: post.title, description: post.description, images: post.cover ? [post.cover] : undefined },
+    twitter: { card: "summary_large_image", title: post.title, description: post.description, images: [ogImageUrl] },
   };
 }
 

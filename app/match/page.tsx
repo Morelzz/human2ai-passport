@@ -4,6 +4,15 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import MatchClient from "./MatchClient";
 
+// SEO: title/description propri (prima generici dal template del layout). La
+// pagina e' gated (redirect a /login per gli anonimi), ma il title serve la tab
+// del browser e i link condivisi; la card social resta quella di default.
+export const metadata = {
+  title: "Genera con un volto verificato",
+  description:
+    "Scegli un volto del registro, consenziente per la tua categoria, e genera contenuti che pagano la persona reale. Solo identita' verificate, mai volti inventati.",
+};
+
 export default async function MatchPage({ searchParams }: { searchParams: Promise<{ avatar?: string }> }) {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
