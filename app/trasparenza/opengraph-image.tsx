@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { geistOgFonts } from "@/lib/og-fonts";
 
 // OG card dedicata di /trasparenza (transparency report): stessa estetica della
 // card di default. Le due pill riprendono i due numeri manifesto della pagina
@@ -6,13 +7,14 @@ import { ImageResponse } from "next/og";
 // niente numeri live (pre-campagna sarebbero piccoli, es. 0 protetti) e nessuna
 // dipendenza dal DB nella generazione della card. La pagina non sovrascrive
 // openGraph nei metadata -> questa card file-based si aggancia da sola. Copy
-// senza accenti (font di sistema di next/og): solo glifi gia' provati (· e ✓).
+// senza accenti (font di sistema next/og: solo · e ✓). Titolo in Geist peso 200.
 
 export const alt = "Transparency report · Human2AI";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function Image() {
+export default async function Image() {
+  const fonts = await geistOgFonts();
   return new ImageResponse(
     (
       <div
@@ -25,7 +27,7 @@ export default function Image() {
           background: "#000000",
           color: "#f0f0f5",
           padding: "64px 72px",
-          fontFamily: "sans-serif",
+          fontFamily: "Geist",
         }}
       >
         {/* Testata */}
@@ -36,7 +38,7 @@ export default function Image() {
 
         {/* Messaggio */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <div style={{ display: "flex", fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#ffffff", maxWidth: 1000 }}>
+          <div style={{ display: "flex", fontWeight: 200, fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#ffffff", maxWidth: 1000 }}>
             Numeri, non promesse.
           </div>
           <div style={{ display: "flex", fontSize: 30, color: "#9a9a9a", lineHeight: 1.4, maxWidth: 900 }}>
@@ -58,6 +60,6 @@ export default function Image() {
         </div>
       </div>
     ),
-    size
+    fonts.length ? { ...size, fonts } : size
   );
 }

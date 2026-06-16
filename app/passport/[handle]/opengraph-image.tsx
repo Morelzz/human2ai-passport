@@ -4,12 +4,15 @@ import { createServerClient } from "@/lib/supabase";
 import { isPublicAvatar } from "@/lib/registry";
 import { TIER_CONFIG, Tier } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
+import { geistOgFonts } from "@/lib/og-fonts";
+import { checkIcon, crossIcon } from "@/lib/og-icons";
 
 // Review C5 — OG card dinamica del passport: ogni volto ha la sua social
 // card (nome, tier, stato verificato/revocato, token) generata da Next al
 // volo. La convenzione opengraph-image la aggancia da sola ai metadata.
 // Card tipografica pura sul void (niente ritratto: la prova è il registro,
 // non la foto) — coerente Dala: nero, hairline, un colore di stato.
+// Il nome (titolo display) usa Geist peso 200; il resto resta Geist 400.
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -24,6 +27,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
   const revoked = Boolean(avatar.revoked_at);
   const tier = TIER_CONFIG[avatar.tier as Tier] ?? { label: avatar.tier, color: "#8b47f0" };
   const statusColor = revoked ? "#e0006f" : "#00d4be";
+  const fonts = await geistOgFonts();
 
   return new ImageResponse(
     (
@@ -37,7 +41,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
           background: "#000000",
           color: "#f0f0f5",
           padding: "64px 72px",
-          fontFamily: "sans-serif",
+          fontFamily: "Geist",
         }}
       >
         {/* Testata */}
@@ -51,7 +55,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
 
         {/* Nome + stato */}
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          <div style={{ display: "flex", fontSize: 108, letterSpacing: "-0.04em", lineHeight: 1, color: "#ffffff" }}>
+          <div style={{ display: "flex", fontWeight: 200, fontSize: 108, letterSpacing: "-0.04em", lineHeight: 1, color: "#ffffff" }}>
             {avatar.alias}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -68,7 +72,8 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
                 letterSpacing: "0.06em",
               }}
             >
-              {revoked ? "✕ CONSENSO REVOCATO" : "✓ UMANO VERIFICATO"}
+              <img width={24} height={24} src={revoked ? crossIcon(statusColor) : checkIcon(statusColor)} />
+              {revoked ? "CONSENSO REVOCATO" : "UMANO VERIFICATO"}
             </div>
             <div
               style={{
@@ -97,6 +102,6 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
         </div>
       </div>
     ),
-    size
+    fonts.length ? { ...size, fonts } : size
   );
 }
