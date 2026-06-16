@@ -57,13 +57,11 @@ export const metadata: Metadata = {
     siteName: "Human2AI",
     title: TITLE,
     description: DESCRIPTION,
-    images: [{ url: "/logo-shield.png", width: 1024, height: 1024, alt: "Human2AI" }],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/logo-shield.png"],
   },
 };
 

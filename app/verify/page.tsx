@@ -3,31 +3,13 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import VerifyClient from "./VerifyClient";
 
 // Il portale della campagna: i link /verify (e i deep-link ?token=) vengono
-// condivisi da badge, segnalazioni e feed. Metadata propri perche' la card
-// social non resti generica (l'og:title non eredita il titolo pagina).
+// condivisi da badge, segnalazioni e feed. Solo title/description propri (SEO +
+// tab del browser); la card social e' quella di default del sito
+// (app/opengraph-image.tsx), ereditata dal layout senza override di openGraph.
 export const metadata = {
   title: "Verifica un contenuto",
   description:
     "Carica un'immagine: se è un contenuto Human2AI leggiamo la filigrana invisibile e mostriamo chi l'ha autorizzato e con quale consenso, a tutela della persona.",
-  // NB: i metadata fanno SHALLOW-merge col layout: sovrascrivendo openGraph/twitter
-  // qui devo ripetere i campi ereditati (type/locale/siteName/images, card large),
-  // altrimenti si perdono (og:image, twitter:card) e la card peggiora.
-  openGraph: {
-    type: "website",
-    locale: "it_IT",
-    siteName: "Human2AI",
-    title: "Verifica un contenuto | Human2AI",
-    description:
-      "Scopri se un'immagine è un contenuto Human2AI certificato: chi l'ha autorizzato e con quale consenso, a tutela della persona reale.",
-    images: [{ url: "/logo-shield.png", width: 1024, height: 1024, alt: "Human2AI" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Verifica un contenuto | Human2AI",
-    description:
-      "Scopri se un'immagine è un contenuto Human2AI certificato: chi l'ha autorizzato e con quale consenso.",
-    images: ["/logo-shield.png"],
-  },
 };
 
 export default async function VerifyPage({
