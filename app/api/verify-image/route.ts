@@ -8,40 +8,64 @@ export const runtime = "nodejs";
 // Verifica "filtro": data un'immagine, estrae la filigrana invisibile (certificato
 // nascosto nei pixel) e conferma se è un contenuto Human2AI, di chi, e lo stato consenso.
 export async function POST(req: Request) {
-  // Preferito: multipart/form-data (file binario, niente bloat base64).
-  // Fallback: JSON { image: dataURL } per retrocompatibilità.
-  let buf: Buffer;
+  // Risolve il CERTIFICATO da una di tre sorgenti, in ordine:
+  //  - multipart/form-data { image }: il SERVER legge i pixel (sharp). Path dei
+  //    PNG piccoli (≤4,4MB, sotto il cap ~4,5MB oltre cui Vercel risponde 413).
+  //  - JSON { certificate }: il client AFFERMA di aver letto la filigrana SUL
+  //    DISPOSITIVO (PNG grandi, non ricevibili dal server) e manda solo il codice.
+  //    Il server NON ha visto i pixel: di questo path non può garantire "marked".
+  //  - JSON { image: dataURL }: retrocompatibilità (il server legge i pixel).
+  // serverExtracted = la filigrana l'ha estratta IL SERVER (prova di marcatura).
+  let cert: string | null = null;
+  let serverExtracted = false;
   const ctype = req.headers.get("content-type") ?? "";
   if (ctype.includes("multipart/form-data")) {
     const form = await req.formData().catch(() => null);
     const file = form?.get("image");
     if (!(file instanceof File)) return NextResponse.json({ valid: false, error: "Nessuna immagine" }, { status: 400 });
-    buf = Buffer.from(await file.arrayBuffer());
+    cert = await extractStego(Buffer.from(await file.arrayBuffer()));
+    serverExtracted = true;
   } else {
     const body = await req.json().catch(() => null);
-    const image = typeof body?.image === "string" ? body.image : "";
-    if (!image) return NextResponse.json({ valid: false, error: "Nessuna immagine" }, { status: 400 });
-    const b64 = image.includes(",") ? image.split(",")[1] : image;
-    try { buf = Buffer.from(b64, "base64"); } catch { return NextResponse.json({ valid: false, marked: false }); }
+    const certIn = typeof body?.certificate === "string" ? body.certificate.trim() : "";
+    if (certIn) {
+      cert = certIn; // asserito dal client, non estratto qui
+    } else {
+      const image = typeof body?.image === "string" ? body.image : "";
+      if (!image) return NextResponse.json({ valid: false, error: "Nessuna immagine" }, { status: 400 });
+      const b64 = image.includes(",") ? image.split(",")[1] : image;
+      let buf: Buffer;
+      try { buf = Buffer.from(b64, "base64"); } catch { return NextResponse.json({ valid: false, marked: false }); }
+      if (!buf.length) return NextResponse.json({ valid: false, marked: false });
+      cert = await extractStego(buf);
+      serverExtracted = true;
+    }
   }
-  if (!buf.length) return NextResponse.json({ valid: false, marked: false });
 
-  const cert = await extractStego(buf);
   if (!cert) return NextResponse.json({ valid: false, marked: false });
 
   const supabase = createServerClient();
   const { data: gen } = await supabase
     .from("generations")
-    .select("created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, approved_categories, excluded_categories)")
+    .select("created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, approved_categories, excluded_categories, protection_only)")
     .eq("certificate", cert)
     .maybeSingle();
 
   if (!gen) {
-    // Marcato Human2AI ma il certificato non è nel registro (raro: dato rimosso).
-    return NextResponse.json({ valid: false, marked: true, certificate: cert });
+    // Cert non nel registro. "marked" SOLO se a leggere la filigrana è stato il
+    // server (multipart/dataURL): sul path JSON il client lo afferma, noi no.
+    return NextResponse.json({ valid: false, marked: serverExtracted, certificate: cert });
   }
 
   const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
+
+  // VETO (guardrail non negoziabile): un volto in SOLA PROTEZIONE non si rivela
+  // MAI, su nessuna superficie. Un protetto non ha generazioni (la gen è bloccata
+  // a monte), quindi è una rete di sicurezza: se mai un cert puntasse a un
+  // protetto, restituiamo "marcato ma identità non divulgabile", senza dati.
+  if (av?.protection_only) {
+    return NextResponse.json({ valid: false, marked: serverExtracted, certificate: cert });
+  }
 
   // Catena del consenso: la timeline degli eventi rende il verdetto un atto
   // ("ecco cosa questa persona ha autorizzato e quando"), non un sì/no.

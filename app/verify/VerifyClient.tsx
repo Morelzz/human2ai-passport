@@ -158,32 +158,66 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
     setBusy(true);
 
     // (1) Filigrana invisibile: vive nei LSB di un PNG lossless. Un JPEG o uno
-    //     screenshot NON puo' contenerla, e Vercel rifiuta i body oltre ~4,5MB
-    //     (le foto da fotocamera arrivano a 15-20MB → 413). In quei casi NON
-    //     tentiamo l'upload (eviterebbe solo un errore) e NON ridimensioniamo
-    //     (distruggerebbe la filigrana): si va dritti all'analisi del volto.
-    //     wm_checked dice se i pixel sono stati davvero letti.
+    //     screenshot NON puo' contenerla. Vercel rifiuta i body oltre ~4,5MB
+    //     (le foto da fotocamera arrivano a 15-20MB → 413): per i PNG GRANDI
+    //     leggiamo la filigrana SUL DISPOSITIVO, a risoluzione nativa (mai
+    //     ridimensionati: il resize la distruggerebbe), e al server mandiamo
+    //     solo il certificato. wm_checked dice se i pixel sono stati letti davvero.
     const WM_MAX_BYTES = 4.4 * 1024 * 1024; // margine sotto il cap di Vercel
-    const canReadWatermark = file.type === "image/png" && file.size <= WM_MAX_BYTES;
+    const isPng = file.type === "image/png";
     let certified = false;
-    if (canReadWatermark) {
+    const applyLookup = (data: VerifyResult) => {
+      setResult({ ...data, source: "image", wm_checked: true });
+      certified = Boolean(data.valid || data.marked);
+    };
+
+    if (isPng && file.size <= WM_MAX_BYTES) {
+      // PNG piccolo: legge il server (sharp = riferimento esatto dei pixel).
       setStage("Leggo la filigrana invisibile…");
       try {
         const fd = new FormData();
         fd.append("image", file);
         const res = await fetch("/api/verify-image", { method: "POST", body: fd });
-        if (res.ok) {
-          const data = await res.json();
-          setResult({ ...data, source: "image", wm_checked: true });
-          certified = Boolean(data.valid || data.marked);
-        } else {
-          // 413/5xx: filigrana non leggibile, MA non e' un verdetto sull'immagine.
-          setResult({ valid: false, source: "image", wm_checked: false });
-        }
+        if (res.ok) applyLookup(await res.json());
+        // 413/5xx: filigrana non leggibile, MA non e' un verdetto sull'immagine.
+        else setResult({ valid: false, source: "image", wm_checked: false });
       } catch {
         setResult({ valid: false, source: "image", wm_checked: false });
       }
+    } else if (isPng) {
+      // PNG GRANDE: niente upload (sarebbe un 413). Leggo la filigrana qui e
+      // mando al server solo il certificato (payload minuscolo).
+      setStage("Leggo la filigrana sul tuo dispositivo…");
+      try {
+        const { readWatermarkFromFile } = await import("@/lib/stegano-browser");
+        const cert = await readWatermarkFromFile(file);
+        if (cert) {
+          const res = await fetch("/api/verify-image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ certificate: cert }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            // La filigrana l'abbiamo letta NOI sul dispositivo: "marcata" è verità
+            // del client (il server, che non ha visto i pixel, torna marked:false se
+            // il cert è sconosciuto). Esito onesto: certificato (valid) oppure
+            // "filigrana trovata, certificato sconosciuto".
+            setResult({ ...data, source: "image", wm_checked: true, marked: true });
+            certified = true; // un watermark c'è: non si passa all'analisi del volto
+          } else {
+            setResult({ valid: false, source: "image", wm_checked: false });
+          }
+        } else {
+          // Pixel letti davvero: nessuna filigrana → wm_checked TRUE (esito onesto).
+          setResult({ valid: false, source: "image", wm_checked: true });
+        }
+      } catch {
+        // Lettura on-device non riuscita (memoria/canvas): non e' un verdetto.
+        setResult({ valid: false, source: "image", wm_checked: false });
+      }
     } else {
+      // JPEG/screenshot/altro: non puo' contenere la filigrana invisibile.
       setResult({ valid: false, source: "image", wm_checked: false });
     }
 
@@ -322,10 +356,11 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
         </label>
         <p aria-live="polite" className="mt-3 h-5 text-center text-[0.75rem] text-violet-light">{stage ?? ""}</p>
         <p className="max-w-md text-center text-[0.68rem] leading-relaxed text-faint">
-          L&apos;immagine viene inviata al server <span className="text-muted">solo per leggere la filigrana</span>:
-          elaborata al volo, mai salvata. L&apos;analisi del volto invece avviene interamente
-          <span className="text-muted"> sul tuo dispositivo</span> — al server arriva solo un vettore numerico,
-          mai conservato. La filigrana sopravvive ai PNG scaricati da Human2AI; screenshot e ricompressioni possono cancellarla.
+          Per leggere la filigrana l&apos;immagine <span className="text-muted">può essere inviata al server</span>
+          (elaborata al volo, mai salvata); i file grandi vengono letti direttamente
+          <span className="text-muted"> sul tuo dispositivo</span>. L&apos;analisi del volto avviene comunque tutta
+          sul tuo dispositivo: al server arriva solo un vettore numerico, mai conservato.
+          La filigrana sopravvive ai PNG scaricati da Human2AI; screenshot e ricompressioni possono cancellarla.
         </p>
       </div>
 
