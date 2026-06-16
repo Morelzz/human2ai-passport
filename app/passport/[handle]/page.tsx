@@ -87,6 +87,11 @@ export default async function PassportPage({ params }: Props) {
   // Atto di proprietà: il token unico è il titolo. I campi on-chain (Base) sono
   // opzionali finché non si applica ownership.sql / non si ancora la prima volta.
   const a = avatar as Record<string, unknown>;
+  // Badge del passport: personaggio pubblico (notorietà) e volto reale (non demo).
+  // is_public_figure resta dormiente per il pricing (in attesa del parere legale):
+  // qui lo usiamo SOLO come badge display.
+  const isPublicFigure = (a.is_public_figure as boolean) ?? false;
+  const isRealPerson = !((a.is_demo as boolean) ?? false);
   const ownership = {
     owner: av.alias,
     ownerVerified,
@@ -110,7 +115,8 @@ export default async function PassportPage({ params }: Props) {
           status={status}
           tier={tier}
           tokenShort={tokenShort}
-          ownerVerified={ownerVerified}
+          isPublicFigure={isPublicFigure}
+          isRealPerson={isRealPerson}
           galleryCount={galleryFromRow(handle, (avatar as Record<string, unknown>).gallery_urls).length}
           ownership={ownership}
         />

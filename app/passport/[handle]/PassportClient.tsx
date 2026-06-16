@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Copy, Check, ShieldCheck, BadgeCheck, AlertTriangle, Fingerprint, Link2 } from "lucide-react";
+import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Fingerprint, Link2 } from "lucide-react";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -13,7 +13,8 @@ interface Props {
   status: "ATTIVO" | "REVOCATO";
   tier: { label: string; color: string; bg: string; description: string };
   tokenShort: string;
-  ownerVerified?: boolean;
+  isPublicFigure?: boolean;
+  isRealPerson?: boolean;
   galleryCount?: number;
   ownership: {
     owner: string;
@@ -80,7 +81,7 @@ function SocialPill({ kind, value }: { kind: "instagram" | "facebook"; value: st
   );
 }
 
-export default function PassportClient({ avatar, events, status, tier, tokenShort, ownerVerified, galleryCount = 0, ownership }: Props) {
+export default function PassportClient({ avatar, events, status, tier, tokenShort, isPublicFigure, isRealPerson = true, galleryCount = 0, ownership }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyToken() {
@@ -103,6 +104,11 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+      {/* Back: il passport è una scheda del catalogo, serve una via d'uscita
+          chiara su mobile (prima si restava incastrati dentro l'avatar). */}
+      <Link href="/catalogo" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground">
+        <ArrowLeft className="h-4 w-4" /> Catalogo
+      </Link>
       {/* Header card */}
       <motion.div custom={0} variants={fade} initial="hidden" animate="show" className="glass relative overflow-hidden rounded-3xl p-6 sm:p-8">
         <div aria-hidden className="absolute inset-0" style={{ background: `radial-gradient(70% 90% at 15% 0%, ${tier.color}22, transparent 65%)` }} />
@@ -122,12 +128,19 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           {/* Info */}
           <div className="min-w-[200px] flex-1">
             <div className="mb-3 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal">
-                <ShieldCheck className="h-3.5 w-3.5" /> HUMAN2AI VERIFIED
-              </span>
-              {ownerVerified && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/30 bg-violet/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-violet-light">
+              {/* Ogni volto del registro è una persona reale verificata (gli
+                  ambassador conosciuti di persona, i creatori via KYC). Badge
+                  unico: niente più "HUMAN2AI VERIFIED" doppione. Mai sui demo. */}
+              {isRealPerson && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal">
                   <BadgeCheck className="h-3.5 w-3.5" /> PERSONA REALE VERIFICATA
+                </span>
+              )}
+              {/* Volto noto (personaggio pubblico): badge premium di notorietà.
+                  Solo display, il pricing public-figure resta dormiente. */}
+              {isPublicFigure && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/30 bg-violet/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-violet-light">
+                  <Sparkles className="h-3.5 w-3.5" /> NOTORIETÀ VERIFICATA
                 </span>
               )}
             </div>
