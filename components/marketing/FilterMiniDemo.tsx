@@ -44,7 +44,7 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
         }
       } catch { /* niente aptica: pazienza */ }
     } catch {
-      setRes({ error: "Errore di rete — riprova." });
+      setRes({ error: "Errore di rete, riprova." });
     }
     setLoading(false);
   }
@@ -108,7 +108,7 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
                 ? <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: "#00d4be" }} />
                 : <ShieldX className="h-5 w-5 shrink-0" style={{ color: "#e0006f" }} />}
               <span className="text-base font-extrabold" style={{ color: allow ? "#00d4be" : "#e0006f" }}>
-                {res.decision} — {allow ? "generazione autorizzata" : "generazione non autorizzata"}
+                {res.decision}: {allow ? "generazione autorizzata" : "generazione non autorizzata"}
               </span>
             </div>
             {res.reason && <p className="mt-2 text-sm leading-relaxed text-muted">{res.reason}</p>}

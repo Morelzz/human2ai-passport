@@ -36,7 +36,7 @@ export function Trust() {
           <p className="mt-5 max-w-2xl leading-relaxed text-muted">
             Ogni volto ha un passaporto pubblico e un identificativo certificato: chiunque, in un clic,
             verifica che dietro un contenuto c&apos;è una persona reale, consenziente e pagata.
-            Non chiediamo fiducia — la rendiamo verificabile.
+            Non chiediamo fiducia, la rendiamo verificabile.
           </p>
 
           <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">

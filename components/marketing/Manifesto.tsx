@@ -24,7 +24,7 @@ const PRINCIPLES: Principle[] = [
   {
     n: "03",
     title: "L'ordine si ribalta.",
-    body: "Per anni le intelligenze artificiali si sono nutrite di noi senza chiedere. Qui è l'AI a lavorare per le persone — non le persone a essere materia prima dell'AI.",
+    body: "Per anni le intelligenze artificiali si sono nutrite di noi senza chiedere. Qui è l'AI a lavorare per le persone, non le persone a essere materia prima dell'AI.",
     color: "#00A896",
   },
   {

@@ -50,7 +50,7 @@ export function Hero({ count, blockedMonth }: { count: number; blockedMonth: num
 
           <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[#bdbdbd] sm:mx-0">
             Il filtro che impedisce all&apos;AI di generare un essere umano senza il permesso
-            di una persona reale — <span className="text-foreground">riconosciuta, protetta e pagata</span>, ogni volta.
+            di una persona reale: <span className="text-foreground">riconosciuta, protetta e pagata</span>, ogni volta.
           </motion.p>
 
           <motion.div variants={item} className="mt-9 flex flex-wrap justify-center gap-3 sm:justify-start">
@@ -65,7 +65,7 @@ export function Hero({ count, blockedMonth }: { count: number; blockedMonth: num
           {/* Review C3 — il contatore manifesto: stessa fonte di /trasparenza */}
           <motion.p variants={item} className="mt-2 text-xs tracking-[0.05em] text-[#9a9a9a]">
             <span className="font-mono font-bold text-crimson-light">{blockedMonth}</span>{" "}
-            {blockedMonth === 1 ? "generazione rifiutata" : "generazioni rifiutate"} questo mese —{" "}
+            {blockedMonth === 1 ? "generazione rifiutata" : "generazioni rifiutate"} questo mese,{" "}
             <span className="text-foreground">e questo è il punto.</span>
           </motion.p>
         </motion.div>

@@ -29,7 +29,7 @@ export function Audiences() {
               Il tuo volto, alle tue condizioni.
             </h3>
             <p className="mt-4 max-w-md leading-relaxed text-muted">
-              Decidi tu in quali mondi la tua immagine può apparire — e in quali mai.
+              Decidi tu in quali mondi la tua immagine può apparire, e in quali mai.
               Ogni volta che viene usata, guadagni. Ogni volta che cambi idea, comandi tu.
               Niente è venduto. Niente è per sempre. Tutto è tuo.
             </p>
