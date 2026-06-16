@@ -57,6 +57,24 @@ export async function POST(request: Request) {
 
   const admin = createServerClient();
 
+  // Enterprise: l'azienda deve aver superato il KYB prima di onboardare il roster.
+  // Recupera l'organizzazione del titolare e lega l'avatar a org_id.
+  let orgId: string | null = null;
+  if (isEnterprise) {
+    const { data: org } = await admin
+      .from("organizations")
+      .select("id, kyb_status")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+    if (!org) {
+      return NextResponse.json({ error: "Registra prima la tua azienda (KYB)." }, { status: 403 });
+    }
+    if (org.kyb_status !== "approved") {
+      return NextResponse.json({ error: "La tua azienda è in verifica: potrai onboardare avatar dopo l'approvazione del KYB." }, { status: 403 });
+    }
+    orgId = org.id;
+  }
+
   // 3. Vincolo 1:1 SOLO per i privati. Le organizzazioni possono averne molti.
   if (!isEnterprise) {
     const { count } = await admin
@@ -164,6 +182,7 @@ export async function POST(request: Request) {
     usage_count: 0,
     royalty_accrued_cents: 0,
     is_demo: false,
+    org_id: orgId,
     // Gate: privato verificato -> live subito; org -> attende la revisione operatori.
     verification_status: isEnterprise ? "pending_review" : "approved",
     consent_token: consentToken,

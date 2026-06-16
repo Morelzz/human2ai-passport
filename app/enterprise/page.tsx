@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Lock, CalendarRange, UserCheck, BadgeCheck, HeartHandshake, RefreshCcw } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
@@ -36,6 +37,17 @@ export default function EnterprisePage() {
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
             La licenza prioritaria a tempo: ingaggi un volto verificato del registro per la tua
             categoria merceologica, per 6 o 12 mesi. Nessun concorrente potrà usarlo lì, finché è tuo.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <a href="#richiesta" className="rounded-full bg-violet-light px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-white transition hover:brightness-110 focus-ring">
+              Riserva un volto
+            </a>
+            <Link href="/enterprise/register" className="rounded-full border border-white/15 px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition hover:border-violet/50 focus-ring">
+              Registra la tua agenzia
+            </Link>
+          </div>
+          <p className="mt-3 text-xs text-faint">
+            Sei un&apos;agenzia che gestisce dei volti? Registra l&apos;azienda, supera il KYB e onboarda il tuo roster.
           </p>
         </section>
 
@@ -91,7 +103,7 @@ export default function EnterprisePage() {
 
         {/* Form */}
         <Reveal>
-          <section className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
+          <section id="richiesta" className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
             <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(184,0,92,0.10),transparent_70%)]" />
               <div className="relative">

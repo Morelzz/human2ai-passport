@@ -88,10 +88,17 @@ export default async function AccountPage() {
   }
   const isVerifiedSeller = role === "seller" && profile?.kyc_status === "approved";
 
-  // Organizzazioni (Enterprise): tutti gli avatar onboardati dall'agenzia.
+  // Organizzazioni (Enterprise): stato KYB dell'azienda + avatar onboardati.
   let orgAvatars: OrgAvatar[] = [];
+  let orgKyb: { name: string; kyb_status: string } | null = null;
   if (role === "enterprise") {
     const adminOrg = createServerClient();
+    const { data: org } = await adminOrg
+      .from("organizations")
+      .select("name, kyb_status")
+      .eq("owner_id", user.id)
+      .maybeSingle();
+    orgKyb = (org as { name: string; kyb_status: string } | null) ?? null;
     const { data: list } = await adminOrg
       .from("avatars")
       .select("handle, alias, verification_status, person_consented_at, consent_token, soul_ref, royalty_accrued_cents, usage_count")
@@ -324,6 +331,9 @@ export default async function AccountPage() {
             <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Coda di revisione operatori →
             </Link>
+            <Link href="/account/kyb-review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
+              Verifiche aziende (KYB) →
+            </Link>
             <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#f0f0f5", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Segnalazioni di abuso →
             </Link>
@@ -337,7 +347,7 @@ export default async function AccountPage() {
 
         {role === "enterprise" && (
           <>
-            <OrgAvatars avatars={orgAvatars} />
+            <OrgAvatars avatars={orgAvatars} kyb={orgKyb} />
             <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#00d4be", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
               Attività dei tuoi volti →
             </Link>
