@@ -63,22 +63,22 @@ export function InquiryForm({
     <form onSubmit={submit} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Azienda / brand *</label>
-          <input value={company} onChange={(e) => setCompany(e.target.value)} required className={inp} placeholder="Es. Acme S.r.l." />
+          <label htmlFor="inq-company" className="mb-1.5 block text-xs font-semibold text-muted">Azienda / brand *</label>
+          <input id="inq-company" value={company} onChange={(e) => setCompany(e.target.value)} required className={inp} placeholder="Es. Acme S.r.l." />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Laura Conti" />
+          <label htmlFor="inq-name" className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
+          <input id="inq-name" value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Laura Conti" />
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Email di lavoro *</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@azienda.it" />
+          <label htmlFor="inq-email" className="mb-1.5 block text-xs font-semibold text-muted">Email di lavoro *</label>
+          <input id="inq-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@azienda.it" />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Budget indicativo <span className="font-normal text-faint">· opzionale</span></label>
-          <select value={budget} onChange={(e) => setBudget(e.target.value)} className={inp}>
+          <label htmlFor="inq-budget" className="mb-1.5 block text-xs font-semibold text-muted">Budget indicativo <span className="font-normal text-faint">· opzionale</span></label>
+          <select id="inq-budget" value={budget} onChange={(e) => setBudget(e.target.value)} className={inp}>
             <option value="">Seleziona…</option>
             {BUDGETS.map((b) => (
               <option key={b} value={b}>{b}</option>
@@ -87,8 +87,8 @@ export function InquiryForm({
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-muted">{messageLabel} *</label>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} required rows={4} className={`${inp} resize-y`} placeholder={messagePlaceholder} />
+        <label htmlFor="inq-message" className="mb-1.5 block text-xs font-semibold text-muted">{messageLabel} *</label>
+        <textarea id="inq-message" value={message} onChange={(e) => setMessage(e.target.value)} required rows={4} className={`${inp} resize-y`} placeholder={messagePlaceholder} />
       </div>
 
       {/* Honeypot: invisibile agli umani, i bot lo compilano */}

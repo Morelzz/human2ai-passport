@@ -53,17 +53,17 @@ export function ContactForm() {
     <form onSubmit={submit} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Laura Conti" />
+          <label htmlFor="ct-name" className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
+          <input id="ct-name" value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Laura Conti" />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Email *</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@esempio.it" />
+          <label htmlFor="ct-email" className="mb-1.5 block text-xs font-semibold text-muted">Email *</label>
+          <input id="ct-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@esempio.it" />
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-muted">Oggetto *</label>
-        <select value={subject} onChange={(e) => setSubject(e.target.value)} required className={inp}>
+        <label htmlFor="ct-subject" className="mb-1.5 block text-xs font-semibold text-muted">Oggetto *</label>
+        <select id="ct-subject" value={subject} onChange={(e) => setSubject(e.target.value)} required className={inp}>
           <option value="">Seleziona…</option>
           {SUBJECTS.map((s) => (
             <option key={s} value={s}>{s}</option>
@@ -71,8 +71,8 @@ export function ContactForm() {
         </select>
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-muted">Messaggio *</label>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} required rows={5} className={`${inp} resize-y`} placeholder="Raccontaci cosa ti serve…" />
+        <label htmlFor="ct-message" className="mb-1.5 block text-xs font-semibold text-muted">Messaggio *</label>
+        <textarea id="ct-message" value={message} onChange={(e) => setMessage(e.target.value)} required rows={5} className={`${inp} resize-y`} placeholder="Raccontaci cosa ti serve…" />
       </div>
 
       {/* Honeypot: invisibile agli umani, i bot lo compilano */}

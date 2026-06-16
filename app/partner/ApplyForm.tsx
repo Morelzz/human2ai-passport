@@ -52,27 +52,27 @@ export function ApplyForm() {
     <form onSubmit={submit} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Giulia Ferri" />
+          <label htmlFor="ap-name" className="mb-1.5 block text-xs font-semibold text-muted">Nome e cognome *</label>
+          <input id="ap-name" value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Giulia Ferri" />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Città *</label>
-          <input value={city} onChange={(e) => setCity(e.target.value)} required className={inp} placeholder="Es. Bologna" />
+          <label htmlFor="ap-city" className="mb-1.5 block text-xs font-semibold text-muted">Città *</label>
+          <input id="ap-city" value={city} onChange={(e) => setCity(e.target.value)} required className={inp} placeholder="Es. Bologna" />
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Email *</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@studio.it" />
+          <label htmlFor="ap-email" className="mb-1.5 block text-xs font-semibold text-muted">Email *</label>
+          <input id="ap-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inp} placeholder="nome@studio.it" />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-muted">Portfolio <span className="font-normal text-faint">· sito o profilo</span></label>
-          <input value={portfolio} onChange={(e) => setPortfolio(e.target.value)} className={inp} placeholder="https://…" />
+          <label htmlFor="ap-portfolio" className="mb-1.5 block text-xs font-semibold text-muted">Portfolio <span className="font-normal text-faint">· sito o profilo</span></label>
+          <input id="ap-portfolio" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} className={inp} placeholder="https://…" />
         </div>
       </div>
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-muted">Raccontaci di te <span className="font-normal text-faint">· opzionale</span></label>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} className={`${inp} resize-y`} placeholder="Che lavoro fai, che attrezzatura usi, perché ti interessa…" />
+        <label htmlFor="ap-message" className="mb-1.5 block text-xs font-semibold text-muted">Raccontaci di te <span className="font-normal text-faint">· opzionale</span></label>
+        <textarea id="ap-message" value={message} onChange={(e) => setMessage(e.target.value)} rows={3} className={`${inp} resize-y`} placeholder="Che lavoro fai, che attrezzatura usi, perché ti interessa…" />
       </div>
 
       {/* Honeypot: invisibile agli umani, i bot lo compilano */}
