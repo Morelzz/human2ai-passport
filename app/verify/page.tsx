@@ -2,6 +2,25 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import VerifyClient from "./VerifyClient";
 
+// Il portale della campagna: i link /verify (e i deep-link ?token=) vengono
+// condivisi da badge, segnalazioni e feed. Metadata propri perche' la card
+// social non resti generica (l'og:title non eredita il titolo pagina).
+export const metadata = {
+  title: "Verifica un contenuto",
+  description:
+    "Carica un'immagine: se è un contenuto Human2AI leggiamo la filigrana invisibile e mostriamo chi l'ha autorizzato e con quale consenso, a tutela della persona.",
+  openGraph: {
+    title: "Verifica un contenuto | Human2AI",
+    description:
+      "Scopri se un'immagine è un contenuto Human2AI certificato: chi l'ha autorizzato e con quale consenso, a tutela della persona reale.",
+  },
+  twitter: {
+    title: "Verifica un contenuto | Human2AI",
+    description:
+      "Scopri se un'immagine è un contenuto Human2AI certificato: chi l'ha autorizzato e con quale consenso.",
+  },
+};
+
 export default async function VerifyPage({
   searchParams,
 }: {
