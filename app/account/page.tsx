@@ -235,6 +235,16 @@ export default async function AccountPage() {
           )}
         </div>
 
+        {/* Azienda: chi si è registrato come "Azienda" al signup nasce buyer con
+            l'intento enterprise nel metadata. Finché non completa il KYB resta
+            buyer: qui glielo ricordiamo con un CTA diretto al form (dopo il KYB
+            diventa enterprise e questo blocco sparisce). */}
+        {role === "buyer" && (user.user_metadata as { account_intent?: string } | null)?.account_intent === "enterprise" && (
+          <Link href="/enterprise/register" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+            Completa la registrazione della tua azienda →
+          </Link>
+        )}
+
         {/* Saldo VOLT: i crediti che alimentano le generazioni. Visibile a tutti
             (nascosto solo se il sistema VOLT non è configurato). */}
         {volt !== null && (
@@ -505,7 +515,7 @@ export default async function AccountPage() {
             invita a mettere il proprio volto nel registro (e a guadagnarci).
             Non si mostra a chi ha PROTETTO il volto: proteggere e concedere lo
             stesso volto si escludono (guardia 1:1 server-side, modulo VETO). */}
-        {role === "buyer" && !protection && (
+        {role === "buyer" && !protection && (user.user_metadata as { account_intent?: string } | null)?.account_intent !== "enterprise" && (
           <div style={{ background: "linear-gradient(135deg, rgba(107,33,232,0.12), rgba(184,0,92,0.08))", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "#f0f0f5", fontSize: "1.05rem", fontWeight: 700, margin: "0 0 0.4rem" }}>Metti il tuo volto nel registro</p>
             <p style={{ color: "#9a9a9a", fontSize: "0.85rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
