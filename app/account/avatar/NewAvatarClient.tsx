@@ -146,13 +146,13 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
 
         <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
           <div>
-            <label style={lbl}>Nome pubblico</label>
-            <input value={alias} onChange={(e) => setAlias(e.target.value)} required style={inp} />
+            <label htmlFor="av-alias" style={lbl}>Nome pubblico</label>
+            <input id="av-alias" value={alias} onChange={(e) => setAlias(e.target.value)} required style={inp} />
           </div>
 
           <div>
-            <label style={lbl}>Handle (l&apos;indirizzo del tuo passport)</label>
-            <input value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase())} placeholder="es. riccardo-t" required style={inp} />
+            <label htmlFor="av-handle" style={lbl}>Handle (l&apos;indirizzo del tuo passport)</label>
+            <input id="av-handle" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase())} placeholder="es. riccardo-t" required style={inp} />
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.35rem 0 0" }}>
               human2ai…/passport/<strong>{handle || "tuo-handle"}</strong>
             </p>
@@ -166,16 +166,16 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
               <div>
-                <label style={lbl}>Nome e cognome (pubblico sul passport)</label>
-                <input value={realName} onChange={(e) => setRealName(e.target.value)} placeholder="es. Manuel Caso" style={inp} />
+                <label htmlFor="av-realname" style={lbl}>Nome e cognome (pubblico sul passport)</label>
+                <input id="av-realname" value={realName} onChange={(e) => setRealName(e.target.value)} placeholder="es. Manuel Caso" style={inp} />
               </div>
               <div>
-                <label style={lbl}>Instagram</label>
-                <input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@tuo-profilo o URL" style={inp} />
+                <label htmlFor="av-instagram" style={lbl}>Instagram</label>
+                <input id="av-instagram" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@tuo-profilo o URL" style={inp} />
               </div>
               <div>
-                <label style={lbl}>Facebook</label>
-                <input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="tuo-profilo o URL" style={inp} />
+                <label htmlFor="av-facebook" style={lbl}>Facebook</label>
+                <input id="av-facebook" value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="tuo-profilo o URL" style={inp} />
               </div>
             </div>
           </div>
