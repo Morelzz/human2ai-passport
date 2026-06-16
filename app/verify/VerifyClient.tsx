@@ -481,7 +481,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                         <p key={i} className="m-0 text-[0.75rem] leading-relaxed text-muted">
                           <span className={`font-semibold ${color}`}>{meta.label}</span>
                           {ev.detail ? <span className="text-faint"> · {ev.detail}</span> : null}
-                          <span className="font-mono text-[0.68rem] text-faint"> — {formatDate(ev.occurred_at)}</span>
+                          <span className="font-mono text-[0.68rem] text-faint"> · {formatDate(ev.occurred_at)}</span>
                         </p>
                       );
                     })}
@@ -560,7 +560,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 che non contengono l&apos;informazione sarebbe un&apos;invenzione.
               </p>
               <p className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-[0.78rem] leading-relaxed text-muted">
-                Non &laquo;miglioriamo&raquo; la foto con l&apos;AI inventando un volto: l&apos;identità è il prodotto —
+                Non &laquo;miglioriamo&raquo; la foto con l&apos;AI inventando un volto: l&apos;identità è il prodotto,
                 o c&apos;è, o non ci pronunciamo. Se puoi, carica il <span className="text-foreground">file originale</span> (non uno screenshot).
               </p>
             </>
@@ -570,7 +570,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               <div className="mb-4 flex items-start gap-3">
                 <span aria-hidden className="mt-1 h-3 w-3 shrink-0 rounded-full bg-violet" />
                 <div>
-                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-violet-light">VOLTO PROTETTO — GENERAZIONE VIETATA</h2>
+                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-violet-light">VOLTO PROTETTO: GENERAZIONE VIETATA</h2>
                   <p className="m-0 text-[0.8rem] text-muted">Questa persona si &egrave; registrata per NON essere generata.</p>
                 </div>
               </div>
@@ -586,7 +586,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               <div className="mb-4 flex items-start gap-3">
                 <span aria-hidden className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-crimson/15 text-crimson">⚠</span>
                 <div>
-                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">CONTENUTO NON CERTIFICATO — VOLTO RICONOSCIUTO</h2>
+                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">CONTENUTO NON CERTIFICATO: VOLTO RICONOSCIUTO</h2>
                   <p className="m-0 text-[0.8rem] text-muted">Nessuna filigrana Human2AI, ma il volto corrisponde a una persona del registro.</p>
                 </div>
               </div>
@@ -655,7 +655,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           ) : (
             <>
               <h2 className={`m-0 font-mono text-[0.95rem] font-bold tracking-wide ${result.marked ? "text-[#f0b429]" : "text-crimson"}`}>
-                {result.source === "token" ? "NON VALIDO" : result.marked ? "FILIGRANA TROVATA — CERTIFICATO SCONOSCIUTO" : "NESSUNA FILIGRANA"}
+                {result.source === "token" ? "NON VALIDO" : result.marked ? "FILIGRANA TROVATA: CERTIFICATO SCONOSCIUTO" : "NESSUNA FILIGRANA"}
               </h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 {result.source === "token"
@@ -726,7 +726,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             <p className="mt-4 text-[0.68rem] leading-relaxed text-faint">
               Il riconoscimento del volto è calcolato sul tuo dispositivo ed è un <span className="text-muted">indizio</span>,
               mai una prova: la prova di autorizzazione è la filigrana col certificato. Anche con un solo
-              candidato compatibile, il verdetto resta un indizio forte — non un&apos;identificazione certa.
+              candidato compatibile, il verdetto resta un indizio forte, non un&apos;identificazione certa.
             </p>
           )}
         </div>

@@ -128,7 +128,7 @@ export default async function TrasparenzaPage() {
                 Presto, generare un volto <span className="text-crimson">senza consenso</span> sarà <span className="text-gradient">impossibile</span>.
               </h2>
               <p className="mt-5 max-w-2xl leading-relaxed text-muted">
-                Human2AI non è un generatore: è il <span className="text-foreground">registro dei diritti d&apos;immagine</span> —
+                Human2AI non è un generatore: è il <span className="text-foreground">registro dei diritti d&apos;immagine</span>,
                 la &quot;SIAE dei volti umani&quot;. La nostra missione è rendere la <span className="text-foreground">certificazione del consenso obbligatoria</span>:
                 un filtro che si aggancia sopra i sistemi di IA generativa più potenti, così che <span className="text-foreground">nessun
                 essere umano venga più generato nell&apos;anonimato</span> e <span className="text-foreground">ogni persona venga retribuita</span> ogni volta che il suo volto viene usato.
@@ -136,7 +136,7 @@ export default async function TrasparenzaPage() {
               <div className="mt-7 grid gap-3 sm:grid-cols-3">
                 {[
                   { t: "Il filtro umano", d: "Prima di ogni generazione di un volto, il passaggio dal consenso verificato." },
-                  { t: "Ogni uso pagato", d: "Royalty alla persona reale, tracciabili e portabili — anche on-chain." },
+                  { t: "Ogni uso pagato", d: "Royalty alla persona reale, tracciabili e portabili, anche on-chain." },
                   { t: "Prova ovunque", d: "Filigrana invisibile + certificato: l'origine è verificabile su qualsiasi piattaforma." },
                 ].map((b) => (
                   <div key={b.t} className="rounded-xl border border-white/8 bg-white/[0.02] p-4">

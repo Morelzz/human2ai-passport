@@ -6,7 +6,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import ProteggiClient from "./ProteggiClient";
 
 export const metadata = {
-  title: "Proteggi il tuo volto — Human2AI",
+  title: "Proteggi il tuo volto",
   description: "Registra il tuo volto perche' NON venga generato dall'AI dentro Human2AI. Diritto all'oblio generativo.",
 };
 

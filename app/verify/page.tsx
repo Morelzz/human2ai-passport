@@ -23,7 +23,7 @@ export default async function VerifyPage({
             <p className="mt-3 leading-relaxed text-muted">
               Carica un&apos;immagine: se è un contenuto <span className="text-foreground">Human2AI</span> leggiamo
               la filigrana invisibile e ti mostriamo chi l&apos;ha autorizzato e con quale consenso. Se non lo è,
-              possiamo confrontare il volto col registro — <span className="text-foreground">a tutela della persona</span>.
+              possiamo confrontare il volto col registro, <span className="text-foreground">a tutela della persona</span>.
             </p>
           </div>
           <VerifyClient initialToken={token ?? ""} />

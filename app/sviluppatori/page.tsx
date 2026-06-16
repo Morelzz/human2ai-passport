@@ -3,7 +3,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import FilterDemo from "./FilterDemo";
 
 export const metadata = {
-  title: "Il Filtro Human2AI (API) — Sviluppatori",
+  title: "Il Filtro Human2AI (API) · Sviluppatori",
   description:
     "Prima di generare un essere umano, qualsiasi sistema può chiedere a Human2AI se quella persona ha acconsentito. Il filtro del consenso, via API.",
 };

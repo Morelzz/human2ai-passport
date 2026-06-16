@@ -13,7 +13,7 @@ import { truncateToken } from "@/lib/token";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Passaporto del volto — Human2AI";
+export const alt = "Passaporto del volto · Human2AI";
 
 export default async function Image({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;

@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props) {
     .eq("handle", handle)
     .single();
   if (!a || !isPublicAvatar(a)) return { title: "Passaporto del volto" };
-  const title = `${a.alias} — Passaporto del volto`;
+  const title = `${a.alias} · Passaporto del volto`;
   const description = a.revoked_at
     ? `${a.alias} ha revocato il consenso: questo volto non è più generabile. La revoca è la prova che il sistema obbedisce.`
     : `${a.alias} è una persona reale, verificata e consenziente del registro Human2AI. Ogni utilizzo del suo volto è autorizzato, tracciato e pagato.`;
