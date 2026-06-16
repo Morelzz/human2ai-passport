@@ -180,6 +180,19 @@ body {
   color: #fff;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   A11y — anello di focus visibile e coerente col brand.
+   Solo da TASTIERA (:focus-visible), mai al click del mouse. `:has(:focus-visible)`
+   copre i riquadri di upload (una <label> che avvolge un <input> sr-only): il
+   focus sull'input invisibile illumina il box. Si usa `outline` (non box-shadow)
+   così l'anello NON viene tagliato dai contenitori con overflow:hidden.
+   ────────────────────────────────────────────────────────────────────────── */
+.focus-ring:focus-visible,
+.focus-ring:has(:focus-visible) {
+  outline: 2px solid var(--color-violet-light);
+  outline-offset: 2px;
+}
+
 /* Scrollbar custom: sottile, scura, pollice viola con glow all'hover. */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: #000000; }

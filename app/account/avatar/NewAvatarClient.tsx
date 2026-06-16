@@ -188,7 +188,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.6rem" }}>
               {POSES.map((p, slot) => (
-                <label key={p.key} title={p.tip}
+                <label key={p.key} title={p.tip} className="focus-ring"
                   style={{ cursor: "pointer", border: `1px dashed ${refs[slot] ? "#6B21E8" : "rgba(255,255,255,0.14)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: refs[slot] ? "rgba(107,33,232,0.08)" : "transparent", aspectRatio: "3 / 4", overflow: "hidden", position: "relative" }}>
                   {refs[slot] ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -199,7 +199,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
                       <span style={{ color: "#6b7280", fontSize: "0.58rem", fontWeight: 600, textAlign: "center", lineHeight: 1.15 }}>{p.label}</span>
                     </>
                   )}
-                  <input type="file" accept="image/*" onChange={(e) => { pickPhoto(slot, e.target.files?.[0]); e.currentTarget.value = ""; }} style={{ display: "none" }} />
+                  <input type="file" accept="image/*" aria-label={`Carica foto: ${p.label}`} onChange={(e) => { pickPhoto(slot, e.target.files?.[0]); e.currentTarget.value = ""; }} className="sr-only" />
                 </label>
               ))}
             </div>
@@ -224,7 +224,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
                     {IDENTITY_KIT[field].map((opt) => {
                       const on = kit[field] === opt;
                       return (
-                        <button key={opt} type="button" onClick={() => setKit({ ...kit, [field]: opt })}
+                        <button key={opt} type="button" aria-pressed={on} className="focus-ring" onClick={() => setKit({ ...kit, [field]: opt })}
                           style={{ padding: "0.3rem 0.7rem", borderRadius: 999, fontSize: "0.76rem", fontWeight: 600, cursor: "pointer", background: on ? "rgba(107,33,232,0.15)" : "#12121a", color: on ? "#fff" : "#6b7280", border: `1px solid ${on ? "#6B21E8" : "rgba(255,255,255,0.08)"}` }}>
                           {opt}
                         </button>
@@ -243,7 +243,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
                 const cfg = TIER_CONFIG[t];
                 const on = tier === t;
                 return (
-                  <button key={t} type="button" onClick={() => setTier(t)} style={{ padding: "0.6rem", borderRadius: 10, cursor: "pointer", textAlign: "left", background: on ? cfg.bg : "#12121a", border: `1px solid ${on ? cfg.color : "rgba(255,255,255,0.08)"}` }}>
+                  <button key={t} type="button" aria-pressed={on} className="focus-ring" onClick={() => setTier(t)} style={{ padding: "0.6rem", borderRadius: 10, cursor: "pointer", textAlign: "left", background: on ? cfg.bg : "#12121a", border: `1px solid ${on ? cfg.color : "rgba(255,255,255,0.08)"}` }}>
                     <div style={{ color: cfg.color, fontWeight: 700, fontSize: "0.8rem" }}>{cfg.label}</div>
                     <div style={{ color: "#6b7280", fontSize: "0.7rem" }}>{cfg.description}</div>
                   </button>
@@ -304,7 +304,7 @@ function Chips({ list, selected, accent, onToggle }: { list: readonly string[]; 
       {list.map((c) => {
         const on = selected.includes(c);
         return (
-          <button key={c} type="button" onClick={() => onToggle(c)} style={{ padding: "0.3rem 0.75rem", borderRadius: 999, fontSize: "0.78rem", cursor: "pointer", fontWeight: 600, background: on ? accent + "22" : "#12121a", color: on ? accent : "#6b7280", border: `1px solid ${on ? accent : "rgba(255,255,255,0.08)"}` }}>
+          <button key={c} type="button" aria-pressed={on} className="focus-ring" onClick={() => onToggle(c)} style={{ padding: "0.3rem 0.75rem", borderRadius: 999, fontSize: "0.78rem", cursor: "pointer", fontWeight: 600, background: on ? accent + "22" : "#12121a", color: on ? accent : "#6b7280", border: `1px solid ${on ? accent : "rgba(255,255,255,0.08)"}` }}>
             {c}
           </button>
         );
@@ -314,4 +314,6 @@ function Chips({ list, selected, accent, onToggle }: { list: readonly string[]; 
 }
 
 const lbl: React.CSSProperties = { display: "block", color: "#6b7280", fontSize: "0.78rem", marginBottom: "0.5rem", letterSpacing: "0.04em" };
-const inp: React.CSSProperties = { width: "100%", padding: "0.7rem 0.9rem", borderRadius: 10, background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", color: "#f0f0f5", fontSize: "0.9rem", outline: "none" };
+// NB: niente outline:"none" — l'anello di focus del browser deve restare
+// visibile (a11y). Lo stile dei box resta il border; il focus aggiunge l'outline.
+const inp: React.CSSProperties = { width: "100%", padding: "0.7rem 0.9rem", borderRadius: 10, background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", color: "#f0f0f5", fontSize: "0.9rem" };

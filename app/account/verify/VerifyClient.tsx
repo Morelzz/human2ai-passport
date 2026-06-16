@@ -145,7 +145,7 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
           <div className="grid grid-cols-4 gap-2.5">
             {POSES.map((p, slot) => (
               <label key={p.key} title={p.tip}
-                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}>
+                className={`focus-ring relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}>
                 {poseSlots[slot] ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={poseSlots[slot]!.url} alt={p.label} className="absolute inset-0 h-full w-full object-cover" />
@@ -155,7 +155,7 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
                     <span className="text-center text-[0.58rem] font-semibold leading-tight text-muted">{p.label}</span>
                   </>
                 )}
-                <input type="file" accept="image/*" className="hidden"
+                <input type="file" accept="image/*" aria-label={`Carica foto: ${p.label}`} className="sr-only"
                   onChange={(e) => {
                     const s = slotFrom(e.target.files?.[0]);
                     if (s) setPoseSlots((a) => { const n = [...a]; n[slot] = s; return n; });
@@ -187,7 +187,7 @@ function PickBox({ label, hint, slot, aspect, onPick }: {
 }) {
   return (
     <label
-      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}
+      className={`focus-ring relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}
       style={{ aspectRatio: aspect === "3/2" ? "3 / 2" : "3 / 4" }}>
       {slot ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -202,7 +202,7 @@ function PickBox({ label, hint, slot, aspect, onPick }: {
       {slot && (
         <span className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-2 py-0.5 text-[0.62rem] font-bold text-violet-light">Cambia</span>
       )}
-      <input type="file" accept="image/*" className="hidden"
+      <input type="file" accept="image/*" aria-label={`Carica ${label}`} className="sr-only"
         onChange={(e) => { onPick(e.target.files?.[0]); e.currentTarget.value = ""; }} />
     </label>
   );

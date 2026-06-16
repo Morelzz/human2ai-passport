@@ -928,13 +928,14 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                         </>
                                       ) : (
                                         <div className="flex h-[124px] flex-col gap-1.5">
-                                          <label className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-white/15 text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
+                                          <label className="focus-ring flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-white/15 text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
                                             <span className="text-xl leading-none">+</span>
                                             <span className="px-2 text-[0.66rem] leading-tight">{i === 0 ? "Outfit / capo" : "Scenario / altro"}</span>
                                             <input
                                               type="file"
                                               accept="image/*"
-                                              className="hidden"
+                                              aria-label={i === 0 ? "Carica un outfit o un capo" : "Carica uno scenario o altro"}
+                                              className="sr-only"
                                               onChange={(e) => { pickEcho(i, e.target.files?.[0]); e.currentTarget.value = ""; }}
                                             />
                                           </label>
@@ -942,7 +943,8 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                             <button
                                               type="button"
                                               onClick={() => setPoseOpenFor(poseOpenFor === i ? null : i)}
-                                              className={`rounded-lg border px-2 py-1.5 text-[0.66rem] transition-colors ${poseOpenFor === i ? "border-teal/50 text-teal" : "border-white/15 text-faint hover:border-teal/40 hover:text-teal"}`}
+                                              aria-expanded={poseOpenFor === i}
+                                              className={`focus-ring rounded-lg border px-2 py-1.5 text-[0.66rem] transition-colors ${poseOpenFor === i ? "border-teal/50 text-teal" : "border-white/15 text-faint hover:border-teal/40 hover:text-teal"}`}
                                             >
                                               🧍 Posa dalla libreria
                                             </button>
@@ -962,7 +964,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                         key={p.id}
                                         type="button"
                                         onClick={() => pickPose(poseOpenFor, p)}
-                                        className="group rounded-lg border border-white/10 bg-white/[0.03] p-1 text-left transition-colors hover:border-teal/50"
+                                        className="focus-ring group rounded-lg border border-white/10 bg-white/[0.03] p-1 text-left transition-colors hover:border-teal/50"
                                       >
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img src={p.url} alt={p.label} className="h-16 w-full rounded object-contain" loading="lazy" />
@@ -1129,7 +1131,8 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
+      aria-pressed={active}
+      className={`focus-ring rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
         active ? "border border-violet bg-violet/20 text-foreground" : "border border-white/10 bg-obsidian-2 text-muted hover:text-foreground"
       }`}
     >

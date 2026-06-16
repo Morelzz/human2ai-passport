@@ -93,7 +93,8 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-2.5 py-1 text-[0.68rem] font-semibold transition-colors ${
+      aria-pressed={active}
+      className={`focus-ring rounded-full border px-2.5 py-1 text-[0.68rem] font-semibold transition-colors ${
         active ? "border-teal/60 bg-teal/15 text-teal" : "border-white/12 text-faint hover:border-white/30 hover:text-muted"
       }`}
     >
@@ -533,7 +534,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   type="button"
                   onClick={onFaceConsent}
                   disabled={busy}
-                  className="mt-1 rounded-full bg-[#8b47f0] px-5 py-2 text-[0.82rem] font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="focus-ring mt-1 rounded-full bg-[#8b47f0] px-5 py-2 text-[0.82rem] font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   Acconsento all&apos;analisi del volto
                 </button>
