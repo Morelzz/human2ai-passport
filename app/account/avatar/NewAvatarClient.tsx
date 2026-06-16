@@ -58,7 +58,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
         setKit((k) => ({ ...k, ...s }));
         const n = Object.keys(s).length;
         setAnalyzeNote(n > 0
-          ? `Pre-compilati ${n} campi da Claude — controllali e conferma. L'etnia dichiarala tu (dato sensibile).`
+          ? `Pre-compilati ${n} campi da Claude, controllali e conferma. L'etnia dichiarala tu (dato sensibile).`
           : "Nessun campo proposto con sicurezza: compila l'identikit a mano.");
       }
     } catch {
@@ -119,7 +119,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
         {consentUrl ? (
           <div style={{ background: "#12121a", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 18, padding: "2rem" }}>
-            <p style={{ color: "#00A896", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>✓ Avatar creato — in attesa del consenso</p>
+            <p style={{ color: "#00A896", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>✓ Avatar creato, in attesa del consenso</p>
             <p style={{ color: "#6b7280", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.2rem" }}>
               Condividi questo link con la persona. Solo lei, aprendolo, conferma il consenso.
               Dopo la conferma, l&apos;avatar passa alla revisione dei nostri operatori.

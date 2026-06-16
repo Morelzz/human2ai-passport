@@ -72,7 +72,7 @@ export default async function AttivitaPage() {
             <span className="text-xs font-bold tracking-[0.14em] text-teal">IL TUO VOLTO</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Attività del mio volto</h1>
             <p className="mt-3 leading-relaxed text-muted">
-              Ogni volta che qualcuno genera con la tua identità, lo vedi qui — con la royalty che hai guadagnato.
+              Ogni volta che qualcuno genera con la tua identità, lo vedi qui, con la royalty che hai guadagnato.
             </p>
           </div>
 
@@ -105,7 +105,7 @@ export default async function AttivitaPage() {
                 <p className="mb-3 text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">Utilizzi recenti</p>
                 {feed.length === 0 ? (
                   <div className="glass rounded-2xl p-6 text-sm leading-relaxed text-muted">
-                    Ancora nessun utilizzo. Quando qualcuno genera con il tuo volto, comparirà qui — con la tua royalty.
+                    Ancora nessun utilizzo. Quando qualcuno genera con il tuo volto, comparirà qui, con la tua royalty.
                   </div>
                 ) : (
                   <ul className="space-y-2.5">

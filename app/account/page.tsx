@@ -353,7 +353,7 @@ export default async function AccountPage() {
                 {soulActive ? (
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
                     <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00A896", display: "inline-block" }} />
-                    <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 700 }}>Soul attivo — il tuo avatar è generabile</span>
+                    <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 700 }}>Soul attivo, il tuo avatar è generabile</span>
                   </div>
                 ) : (
                   <div style={{ background: "#0a0a0f", border: "1px solid rgba(107,33,232,0.25)", borderRadius: 12, padding: "1.1rem" }}>
@@ -470,7 +470,7 @@ export default async function AccountPage() {
                   </span>
                 </div>
                 <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(107,33,232,0.12)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "0.8rem" }}>
-                  Apri nuove categorie — decidi tu →
+                  Apri nuove categorie, decidi tu →
                 </Link>
               </>
             )}

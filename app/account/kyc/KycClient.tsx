@@ -150,7 +150,7 @@ export default function KycClient() {
                 <>
                   <MatchBadge title="documento ↔ selfie" pair={p.face_match.doc_selfie} />
                   <MatchBadge title={p.face_match.selfie_photo?.checked ? `selfie ↔ foto (migliore di ${p.face_match.selfie_photo.checked})` : "selfie ↔ foto"} pair={p.face_match.selfie_photo} />
-                  <span style={{ alignSelf: "center", color: "#374151", fontSize: "0.68rem" }}>pre-screening sul dispositivo — la decisione resta tua</span>
+                  <span style={{ alignSelf: "center", color: "#374151", fontSize: "0.68rem" }}>pre-screening sul dispositivo, la decisione resta tua</span>
                 </>
               ) : (
                 <span style={{ color: "#374151", fontSize: "0.72rem" }}>Nessun pre-screening automatico per questa candidatura.</span>

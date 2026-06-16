@@ -66,7 +66,7 @@ export default function FaceIndexClient() {
       for (const a of avatars) {
         done++;
         for (const s of a.sources) {
-          setProgress(`${a.alias} (${done}/${avatars.length}) — ${s.name}…`);
+          setProgress(`${a.alias} (${done}/${avatars.length}) · ${s.name}…`);
           // Foto senza volto rilevabile (es. pose di spalle) si saltano da sole.
           const d = await descriptorForUrl(s.url);
           if (d) entries.push({ handle: a.handle, source: s.name, descriptor: d });
@@ -127,7 +127,7 @@ export default function FaceIndexClient() {
                   </p>
                 </>
               ) : (
-                <p style={{ color: "#e0b34d", fontWeight: 700, margin: 0 }}>Indice mai costruito — il fallback di /verify è spento.</p>
+                <p style={{ color: "#e0b34d", fontWeight: 700, margin: 0 }}>Indice mai costruito, il fallback di /verify è spento.</p>
               )}
             </div>
             <button onClick={rebuild} disabled={building || totalSources === 0}
@@ -160,7 +160,7 @@ export default function FaceIndexClient() {
           </div>
 
           <p style={{ color: "#374151", fontSize: "0.7rem", lineHeight: 1.5, margin: "1.2rem 0 0" }}>
-            Nota: gli avatar revocati restano nell&apos;indice di proposito — la tutela del volto vale
+            Nota: gli avatar revocati restano nell&apos;indice di proposito, la tutela del volto vale
             soprattutto per chi ha revocato. Un avatar uscito dal registro non viene mai nominato da
             /verify anche se presente in un indice vecchio (ricontrollo live a ogni verifica).
           </p>
