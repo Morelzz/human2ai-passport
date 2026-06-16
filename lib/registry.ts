@@ -44,3 +44,15 @@ export async function getPublicAvatars(sb = createServerClient()): Promise<Publi
   const { data } = await sb.from("avatars").select("*").order("consent_start");
   return ((data ?? []) as PublicAvatar[]).filter(isPublicAvatar);
 }
+
+// Fase 4.1 (campagna): quante persone hanno registrato il proprio volto per NON
+// essere generate (VETO, protection_only). È il secondo numero MANIFESTO di
+// /trasparenza, accanto alle richieste rifiutate. Solo aggregato, nessun dato
+// personale. Difensivo: colonna/tabella assente → 0, mai un crash.
+export async function countProtectedFaces(sb = createServerClient()): Promise<number> {
+  const { count } = await sb
+    .from("avatars")
+    .select("id", { count: "exact", head: true })
+    .eq("protection_only", true);
+  return count ?? 0;
+}

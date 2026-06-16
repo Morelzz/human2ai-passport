@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase";
-import { getPublicAvatars } from "@/lib/registry";
+import { getPublicAvatars, countProtectedFaces } from "@/lib/registry";
 import { countBlockedThisMonth } from "@/lib/blocked";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
@@ -37,6 +37,10 @@ export default async function TrasparenzaPage() {
   const { count: blockedTotal } = await sb.from("blocked_requests").select("id", { count: "exact", head: true });
   const blockedMonth = await countBlockedThisMonth(sb);
 
+  // Fase 4.1: il SECONDO numero manifesto — le persone che hanno registrato il
+  // proprio volto per non essere generate (VETO). Reale dal DB, fonte unica.
+  const protectedFaces = await countProtectedFaces(sb);
+
   const stats = [
     { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#8b47f0" },
     { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "#00A896" },
@@ -64,21 +68,43 @@ export default async function TrasparenzaPage() {
             </p>
           </div>
 
-          {/* Il numero MANIFESTO: il filtro che blocca. Mostrato con orgoglio. */}
-          <div className="reveal glass relative mb-10 overflow-hidden rounded-[2rem] p-8 text-center sm:p-10">
-            <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(184,0,92,0.16),transparent_70%)]" />
-            <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#B8005C,transparent)]" />
-            <div className="relative">
-              <span className="label-mono text-crimson-light">Il filtro al lavoro</span>
-              <div className="mt-4 font-mono text-6xl font-extrabold leading-none text-crimson sm:text-7xl">
-                {blockedMonth ?? 0}
+          {/* I DUE numeri MANIFESTO (Fase 4.1): il filtro che blocca (richieste
+              rifiutate) e le persone che hanno detto no (volti protetti). Reali dal DB. */}
+          <div className="reveal mb-10 grid gap-4 sm:grid-cols-2">
+            {/* 1. Il filtro al lavoro: richieste rifiutate questo mese (crimson) */}
+            <div className="glass relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(184,0,92,0.16),transparent_70%)]" />
+              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#B8005C,transparent)]" />
+              <div className="relative">
+                <span className="label-mono text-crimson-light">Il filtro al lavoro</span>
+                <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-crimson sm:text-6xl">
+                  {blockedMonth ?? 0}
+                </div>
+                <p className="mx-auto mt-4 max-w-xs text-balance text-base font-semibold leading-snug text-foreground sm:text-lg">
+                  richieste di generare un essere umano <span className="text-crimson">rifiutate questo mese</span> per mancanza di consenso.
+                </p>
+                <p className="mt-2 text-sm text-faint">
+                  {blockedTotal ?? 0} da sempre.
+                </p>
               </div>
-              <p className="mx-auto mt-4 max-w-md text-balance text-lg font-semibold leading-snug text-foreground">
-                richieste di generare un essere umano <span className="text-crimson">rifiutate questo mese</span> per mancanza di consenso.
-              </p>
-              <p className="mt-2 text-sm text-faint">
-                {blockedTotal ?? 0} da sempre · ogni blocco è il filtro che fa il suo lavoro.
-              </p>
+            </div>
+
+            {/* 2. Il diritto di dire no: volti protetti (violet) — VETO */}
+            <div className="glass relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(107,33,232,0.18),transparent_70%)]" />
+              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#6B21E8,transparent)]" />
+              <div className="relative">
+                <span className="label-mono text-violet-light">Il diritto di dire no</span>
+                <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-violet-light sm:text-6xl">
+                  {protectedFaces ?? 0}
+                </div>
+                <p className="mx-auto mt-4 max-w-xs text-balance text-base font-semibold leading-snug text-foreground sm:text-lg">
+                  volti registrati <span className="text-violet-light">per non essere mai generati</span> dall&apos;IA.
+                </p>
+                <p className="mt-2 text-sm text-faint">
+                  Dentro Human2AI non sono generabili; fuori, allerta precoce e rimozione assistita.
+                </p>
+              </div>
             </div>
           </div>
 
