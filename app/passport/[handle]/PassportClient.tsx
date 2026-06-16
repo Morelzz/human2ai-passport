@@ -149,7 +149,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ background: tier.bg, borderColor: `${tier.color}44` }}>
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: tier.color }} />
               <span className="text-xs font-bold tracking-wide" style={{ color: tier.color }}>{tier.label}</span>
-              <span className="text-xs" style={{ color: `${tier.color}99` }}>— {tier.description}</span>
+              <span className="text-xs" style={{ color: `${tier.color}99` }}>· {tier.description}</span>
             </div>
 
             <div>
@@ -207,7 +207,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             </p>
           ) : (
             <p className="text-xs text-muted">
-              <span className="font-semibold text-foreground">Pronto per l&apos;ancoraggio on-chain</span> — la proprietà verrà ancorata su Base (identità soulbound).
+              <span className="font-semibold text-foreground">Pronto per l&apos;ancoraggio on-chain</span>, la proprietà verrà ancorata su Base (identità soulbound).
             </p>
           )}
         </div>
@@ -220,7 +220,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
 
       {/* Repertorio */}
       {galleryCount > 0 && (
-        <Card i={1} label="REPERTORIO — ESEMPI GENERATI">
+        <Card i={1} label="REPERTORIO: ESEMPI GENERATI">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {Array.from({ length: galleryCount }).map((_, idx) => (
               // eslint-disable-next-line @next/next/no-img-element
@@ -342,7 +342,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
                     </span>
                     <p className="text-sm leading-relaxed">
                       <span className="font-bold text-crimson">La timeline si interrompe qui.</span>{" "}
-                      <span className="text-muted">Questa persona ha cambiato idea — il sistema ha obbedito. Nessuna generazione futura.</span>
+                      <span className="text-muted">Questa persona ha cambiato idea, il sistema ha obbedito. Nessuna generazione futura.</span>
                     </p>
                   </>
                 ) : (
@@ -353,7 +353,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
                     </span>
                     <p className="text-sm leading-relaxed">
                       <span className="font-bold text-teal">Consenso attivo.</span>{" "}
-                      <span className="text-muted">La timeline continua — e resta sempre revocabile.</span>
+                      <span className="text-muted">La timeline continua, e resta sempre revocabile.</span>
                     </p>
                   </>
                 )}

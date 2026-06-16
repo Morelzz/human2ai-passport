@@ -59,7 +59,7 @@ export function BookingClient({
       <div className="glass rounded-2xl border-teal/30 p-8 text-center">
         <p className="text-lg font-bold text-teal">✓ Richiesta ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
-          Grazie {name.split(" ")[0]}. Ti confermiamo data e ora a {email} — e ricorda:{" "}
+          Grazie {name.split(" ")[0]}. Ti confermiamo data e ora a {email}, e ricorda:{" "}
           <span className="text-foreground">vieni come sei</span>.
         </p>
         <p className="mx-auto mt-3 max-w-sm text-xs leading-relaxed text-faint">
@@ -132,7 +132,7 @@ export function BookingClient({
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">
         Slot soggetto a conferma: ti scriviamo noi. Oggi il pagamento si salda in studio
-        (l&apos;online arriva a breve). Usiamo questi dati solo per la tua sessione —{" "}
+        (l&apos;online arriva a breve). Usiamo questi dati solo per la tua sessione,{" "}
         <Link href="/privacy" className="text-violet-light underline">privacy</Link>.
       </p>
     </form>

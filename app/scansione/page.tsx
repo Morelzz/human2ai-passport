@@ -45,7 +45,7 @@ export default async function ScansionePage() {
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
             La scansione è l&apos;ingresso nel registro: una sessione fotografica professionale
-            che cattura il tuo volto com&apos;è davvero — e lo trasforma in un avatar che lavora
+            che cattura il tuo volto com&apos;è davvero, e lo trasforma in un avatar che lavora
             per te, alle tue condizioni.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
@@ -67,7 +67,7 @@ export default async function ScansionePage() {
                   Icon: Building2,
                   n: "01",
                   t: "In studio, da noi.",
-                  d: "La via maestra: una sessione nello studio Void di Rimini, con il protocollo completo H2AI-SCAN. Il risultato è il massimo livello di fedeltà — l'avatar SOUL o HUMAN, identico a te.",
+                  d: "La via maestra: una sessione nello studio Void di Rimini, con il protocollo completo H2AI-SCAN. Il risultato è il massimo livello di fedeltà: l'avatar SOUL o HUMAN, identico a te.",
                   c: "#8b47f0",
                 },
                 {
@@ -109,7 +109,7 @@ export default async function ScansionePage() {
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
               Lo standard è pubblico, perché gli standard vivono alla luce. Questi sono i
-              requisiti che ogni scansione deve rispettare per entrare nel registro —
+              requisiti che ogni scansione deve rispettare per entrare nel registro,
               chiunque la esegua.
             </p>
 
@@ -125,7 +125,7 @@ export default async function ScansionePage() {
                 stabile e costante per l&apos;intera sessione.
                 {isDev && (
                   <span className="mt-2 block rounded-lg border border-[#f0b429]/35 bg-[#f0b429]/10 px-3 py-2 font-mono text-[0.72rem] text-[#d9a72e]">
-                    [Parametri minimi: risoluzione, ottica — DA MORELZ] · segnaposto visibile solo in dev
+                    [Parametri minimi: risoluzione, ottica, DA MORELZ] · segnaposto visibile solo in dev
                   </span>
                 )}
               </SpecRow>
@@ -144,7 +144,7 @@ export default async function ScansionePage() {
               <div className="glass rounded-2xl border-teal/25 p-6">
                 <span className="label-mono text-teal">Consentito</span>
                 <p className="mt-3 text-sm leading-relaxed text-muted">
-                  Correzione colore; rimozione delle imperfezioni temporanee —
+                  Correzione colore; rimozione delle imperfezioni temporanee,
                   occhiaie, un brufolo, i segni di una giornata storta.{" "}
                   <strong className="text-foreground">Il tempo passa, tu resti.</strong>
                 </p>
@@ -153,7 +153,7 @@ export default async function ScansionePage() {
                 <span className="label-mono text-crimson-light">Vietato, sempre</span>
                 <p className="mt-3 text-sm leading-relaxed text-muted">
                   Qualsiasi modifica alla geometria del volto. Proporzioni, naso, mascella, occhi:
-                  non si toccano. La struttura umana resta al cento per cento —{" "}
+                  non si toccano. La struttura umana resta al cento per cento,{" "}
                   <strong className="text-foreground">perché l&apos;identità non è una base di partenza. È il prodotto.</strong>
                 </p>
               </div>
@@ -165,14 +165,14 @@ export default async function ScansionePage() {
               <p className="mt-3 text-sm leading-relaxed text-muted">
                 Le immagini selezionate vengono portate alla massima risoluzione con upscaling
                 conservativo: più informazione per i motori, nessun dettaglio inventato. Ogni
-                avatar viene poi verificato contro le foto originali —{" "}
+                avatar viene poi verificato contro le foto originali,{" "}
                 <strong className="text-foreground">se non sei tu, non esce.</strong>
               </p>
             </div>
 
             <p className="mt-8 text-balance text-center text-sm leading-relaxed text-muted">
-              I requisiti sono gratuiti. La maestria si impara: il protocollo completo —
-              esecuzione, postproduzione, certificazione — è il corso avanzato della{" "}
+              I requisiti sono gratuiti. La maestria si impara: il protocollo completo,
+              esecuzione, postproduzione, certificazione, è il corso avanzato della{" "}
               <span className="text-foreground">HUMAN2AI Academy</span>, la porta del{" "}
               <Link href="/partner" className="text-violet-light underline-offset-2 hover:underline">programma Capture Partner</Link>.
             </p>
@@ -188,7 +188,7 @@ export default async function ScansionePage() {
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
               La scansione dura meno di quanto pensi e non richiede di saper &laquo;posare&raquo;.
-              Bastano poche attenzioni — e il resto lo facciamo noi.
+              Bastano poche attenzioni, e il resto lo facciamo noi.
             </p>
             <div className="mt-8 flex flex-col gap-3">
               {[
@@ -196,7 +196,7 @@ export default async function ScansionePage() {
                 { t: "Capelli in ordine, non in posa.", d: "Come li porti normalmente. Niente acconciature che non rifaresti mai." },
                 { t: "Abiti semplici, tinta unita.", d: "Niente loghi, niente fantasie fitte: in scansione conta il volto, il resto è rumore." },
                 { t: "Riposa la sera prima.", d: "Sembra un consiglio della nonna; è un consiglio tecnico. Un volto riposato dà più informazione pulita ai motori." },
-                { t: "Cosa succede in sessione:", d: "sali su una piastra che ruota da sola, la camera resta ferma, scattiamo circa cento fotografie in pochi minuti. Non devi fare niente — è il punto: devi solo essere te." },
+                { t: "Cosa succede in sessione:", d: "sali su una piastra che ruota da sola, la camera resta ferma, scattiamo circa cento fotografie in pochi minuti. Non devi fare niente, è il punto: devi solo essere te." },
                 { t: "E dopo:", d: "selezioniamo le immagini migliori, le lavoriamo secondo lo standard, e costruiamo il tuo avatar. Quando entra nel registro, ricevi il tuo passaporto pubblico: da quel momento il tuo volto lavora solo se tu dici sì." },
               ].map((x) => (
                 <div key={x.t} className="glass flex gap-4 rounded-2xl p-5">

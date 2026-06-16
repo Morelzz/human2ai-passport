@@ -47,7 +47,7 @@ export default async function PrenotaPage({ searchParams }: { searchParams: Prom
 
           {esito === "ok" && (
             <div className="mt-6 rounded-2xl border border-teal/30 bg-teal/10 p-5 text-sm font-semibold text-teal">
-              ✓ Pagamento ricevuto. Sessione confermata. Ti aspettiamo — e ricorda: vieni come sei.
+              ✓ Pagamento ricevuto. Sessione confermata. Ti aspettiamo, e ricorda: vieni come sei.
             </div>
           )}
           {esito === "annullato" && (

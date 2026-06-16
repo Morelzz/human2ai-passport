@@ -90,7 +90,7 @@ export function ContactForm() {
         {sending ? "Invio…" : "Invia il messaggio"}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">
-        Usiamo questi dati solo per risponderti. Niente spam, niente cessioni —{" "}
+        Usiamo questi dati solo per risponderti. Niente spam, niente cessioni,{" "}
         <Link href="/privacy" className="text-violet-light underline">informativa privacy</Link>.
       </p>
     </form>

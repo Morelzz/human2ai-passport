@@ -1,4 +1,4 @@
-# SITE COPY — HUMAN2AI
+# SITE COPY: HUMAN2AI
 
 > Deck dei testi del sito. Fonte di verità dei copy della landing.
 > **Istruzioni:** ogni blocco ha un titolo `### [POSIZIONE]` che dice dove va nella pagina, una
@@ -10,7 +10,7 @@
 
 ---
 
-### [HERO] — Above the fold, prima schermata
+### [HERO]: Above the fold, prima schermata
 
 > Intento: una sola frase che ferma. Deve dire la tesi in un colpo. H1 enorme, sottotitolo più
 > piccolo, due CTA. Niente immagini di stock: solo testo + il marchio.
@@ -20,7 +20,7 @@
 
 **Sottotitolo:**
 > HUMAN2AI è il filtro che impedisce a un'intelligenza artificiale di creare un essere umano
-> senza il permesso di un essere umano reale — riconosciuto, protetto e pagato ogni volta.
+> senza il permesso di un essere umano reale, riconosciuto, protetto e pagato ogni volta.
 
 **CTA primaria (button):** Esplora il Registro Volti
 **CTA secondaria (link):** Come funziona
@@ -32,7 +32,7 @@
 
 ---
 
-### [TENSIONE] — Subito sotto l'hero, la ragione per cui esiste
+### [TENSIONE]: Subito sotto l'hero, la ragione per cui esiste
 
 > Intento: nominare il problema senza piagnistei. Due frasi corte, una pausa, poi la svolta.
 > È la sezione che crea il "perché ora". Sfondo scuro, testo grande centrato.
@@ -41,11 +41,11 @@
 > Volti senza nome, senza consenso, senza nessuno dietro a cui rispondere.
 >
 > Noi abbiamo scelto la strada opposta.
-> Su HUMAN2AI ogni essere umano generato **esiste davvero** — e ha detto di sì.
+> Su HUMAN2AI ogni essere umano generato **esiste davvero**, e ha detto di sì.
 
 ---
 
-### [MANIFESTO / VISION] — Sezione dedicata, la più importante
+### [MANIFESTO / VISION]: Sezione dedicata, la più importante
 
 > Intento: i temi più forti di HUMAN2AI, in forma di manifesto. Sei blocchi, ognuno un principio.
 > Titolo della sezione + sei principi. Ogni principio: una riga-titolo forte + una/due righe di
@@ -53,27 +53,27 @@
 
 **Titolo sezione:** Il nostro patto
 
-**01 — Nessun volto finto.**
+**01: Nessun volto finto.**
 > Ogni persona generata su HUMAN2AI è reale. Ha un nome, un contratto, un compenso.
 > Non creiamo esseri umani: diamo voce a quelli che esistono e hanno scelto di esserci.
 
-**02 — Il permesso viene prima della generazione.**
+**02: Il permesso viene prima della generazione.**
 > Prima di creare un essere umano, chiediamo il permesso a un essere umano.
 > Se nessuna persona reale ha acconsentito, l'AI non produce nulla. È un confine, non un'opzione.
 
-**03 — L'ordine si ribalta.**
+**03: L'ordine si ribalta.**
 > Per anni le intelligenze artificiali si sono nutrite di noi senza chiedere.
-> Qui è l'AI a lavorare per le persone — non le persone a essere materia prima dell'AI.
+> Qui è l'AI a lavorare per le persone, non le persone a essere materia prima dell'AI.
 
-**04 — Il tuo volto resta tuo.**
+**04: Il tuo volto resta tuo.**
 > Concedi, non cedi. Decidi tu dove può apparire e dove no, e puoi revocare quando vuoi.
 > Il consenso non è una firma sola: è una linea del tempo che controlli tu.
 
-**05 — Non devi essere un modello. Devi essere reale.**
+**05: Non devi essere un modello. Devi essere reale.**
 > Il guadagno passivo dal proprio volto non è più un privilegio di chi sta in copertina.
 > Ogni persona può mettere a reddito la propria immagine, con dignità e con regole chiare.
 
-**06 — Ogni immagine porta la sua prova.**
+**06: Ogni immagine porta la sua prova.**
 > Ogni contenuto generato esce con la prova certificata di chi c'è dietro.
 > In un mondo che non distingue più il vero dal sintetico, noi rendiamo il vero verificabile.
 
@@ -82,33 +82,33 @@
 
 ---
 
-### [COME FUNZIONA] — Tre passi, dopo il manifesto
+### [COME FUNZIONA]: Tre passi, dopo il manifesto
 
 > Intento: spiegare il meccanismo senza svelare i motori (Higgsfield/HeyGen restano invisibili).
 > Tre step orizzontali, numerati. Frasi cortissime.
 
 **Titolo sezione:** Come funziona
 
-**01 — Una persona reale entra.**
+**01: Una persona reale entra.**
 > Viene verificata, firma il proprio consenso e sceglie dove la sua immagine può vivere.
 
-**02 — Una richiesta arriva.**
+**02: Una richiesta arriva.**
 > Chi crea descrive ciò che gli serve. Il sistema cerca una persona reale che abbia acconsentito.
 > Se non la trova, non genera. Punto.
 
-**03 — Il valore torna alla persona.**
+**03: Il valore torna alla persona.**
 > A ogni utilizzo, una royalty matura nel portafoglio di chi ha messo il proprio volto.
 > Il valore generato dall'AI torna all'essere umano da cui nasce.
 
 ---
 
-### [PER CHI METTE IL VOLTO] — Sezione "Sellers"
+### [PER CHI METTE IL VOLTO]: Sezione "Sellers"
 
 > Intento: parlare alla persona comune, non al modello professionista. Caldo ma sobrio.
 
 **Titolo:** Il tuo volto, alle tue condizioni.
 
-> Decidi tu in quali mondi la tua immagine può apparire — e in quali mai.
+> Decidi tu in quali mondi la tua immagine può apparire, e in quali mai.
 > Ogni volta che viene usata, guadagni. Ogni volta che cambi idea, comandi tu.
 > Niente è venduto. Niente è per sempre. Tutto è tuo.
 
@@ -116,7 +116,7 @@
 
 ---
 
-### [PER I BRAND] — Sezione "Buyers"
+### [PER I BRAND]: Sezione "Buyers"
 
 > Intento: vendere sicurezza legale e autenticità, non "immagini fighe". Tono professionale.
 
@@ -130,7 +130,7 @@
 
 ---
 
-### [FIDUCIA / PROVENIENZA] — Sezione vicino al fondo
+### [FIDUCIA / PROVENIENZA]: Sezione vicino al fondo
 
 > Intento: rendere tangibile il fossato (passport, token, verifica pubblica). Sobrio, "infrastruttura".
 
@@ -144,7 +144,7 @@
 
 ---
 
-### [CTA FINALE] — Chiusura pagina
+### [CTA FINALE]: Chiusura pagina
 
 > Intento: chiudere col concetto forte, una riga sola + button.
 
@@ -158,14 +158,14 @@
 
 ---
 
-### [MICROCOPY] — Frasi corte sparse (footer, badge, stati vuoti, messaggi di sistema)
+### [MICROCOPY]: Frasi corte sparse (footer, badge, stati vuoti, messaggi di sistema)
 
 > Intento: piccoli testi funzionali ma sempre on-brand. Usali dove serve.
 
 - **Footer payoff:** Real Humans. Real Rights. Real Earnings.
 - **Badge sotto un'immagine generata:** ✔ Dietro questo contenuto c'è una persona reale e consenziente.
 - **Messaggio di blocco (nessun match):** Nessuna persona reale ha acconsentito a questa richiesta.
-  Non possiamo generarla — e questo è esattamente il punto.
+  Non possiamo generarla, e questo è esattamente il punto.
 - **Stato avatar revocato:** Questa persona ha ritirato il consenso. Il suo volto non è più generabile.
 - **Tooltip token:** Identificativo univoco e certificato di questo volto. Prova che è reale.
 - **Empty state catalogo:** Ancora nessun volto in questa categoria. Le persone arrivano prima dell'AI.

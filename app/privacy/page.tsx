@@ -29,13 +29,13 @@ export default function PrivacyPage() {
               sede legale, P.IVA della società una volta costituita]</span>. Fino ad allora, il riferimento operativo è il
               fondatore della piattaforma, raggiungibile ai contatti in fondo a questa pagina.
             </Section>
-            <Section title="Base giuridica — e perché qui è speciale">
+            <Section title="Base giuridica: e perché qui è speciale">
               Il cuore della piattaforma sono <strong className="text-foreground">dati biometrici</strong> (il tuo volto, le
               foto di referenza, il selfie di verifica): per il GDPR sono &laquo;categorie particolari&raquo; (Art. 9) e li
               trattiamo <strong className="text-foreground">solo con il tuo consenso esplicito</strong>, raccolto al momento
               della creazione dell&apos;avatar e revocabile in ogni momento. Per i dati di account vale il contratto
               (Art. 6.1.b); per sicurezza e prevenzione abusi il legittimo interesse (Art. 6.1.f).
-              <span className="mt-2 block font-mono text-[0.78rem] text-faint">[DA AVVOCATO: formula di consenso esplicito e DPIA — valutazione d&apos;impatto ex Art. 35]</span>
+              <span className="mt-2 block font-mono text-[0.78rem] text-faint">[DA AVVOCATO: formula di consenso esplicito e DPIA, valutazione d&apos;impatto ex Art. 35]</span>
             </Section>
             <Section title="Dati che raccogliamo">
               Dati di account (email, nome), <strong className="text-foreground">immagini del volto</strong> (le foto di
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
               <strong className="text-foreground">cancellate alla revoca del consenso</strong> (&laquo;cancello, non
               cassaforte&raquo;). Documenti KYC: solo il tempo necessario alla verifica e agli obblighi di legge{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: termine esatto]</span>. Certificati delle
-              generazioni: permanenti, perché sono la prova — ma sono hash anonimi, non dati personali.
+              generazioni: permanenti, perché sono la prova, ma sono hash anonimi, non dati personali.
             </Section>
             <Section title="Le tue foto: dove vivono e per quanto">
               Le foto che carichi per creare l&apos;avatar (il &laquo;reference-set&raquo;) vengono ridimensionate sul tuo
@@ -77,7 +77,7 @@ export default function PrivacyPage() {
             <Section title="Trasparenza sui contenuti sintetici (EU AI Act)">
               Ogni immagine generata dalla piattaforma esce <strong className="text-foreground">dichiaratamente
               sintetica</strong>: porta un certificato verificabile, una filigrana invisibile e metadati di provenienza.
-              È la direzione degli obblighi di trasparenza dell&apos;AI Act europeo — per noi non è un adempimento,
+              È la direzione degli obblighi di trasparenza dell&apos;AI Act europeo, per noi non è un adempimento,
               è il prodotto. <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: mappatura puntuale degli obblighi di etichettatura applicabili]</span>
             </Section>
             <Section title="Sicurezza">
@@ -87,7 +87,7 @@ export default function PrivacyPage() {
             <Section title="Fornitori che ci aiutano (sub-processor)">
               Per erogare il servizio ci appoggiamo a fornitori selezionati, che trattano i dati solo per nostro conto e
               limitatamente a ciò che serve: <strong className="text-foreground">Supabase</strong> (database, autenticazione
-              e archiviazione cifrata delle foto), <strong className="text-foreground">Anthropic (Claude)</strong> — solo se
+              e archiviazione cifrata delle foto), <strong className="text-foreground">Anthropic (Claude)</strong>, solo se
               scegli di far analizzare le foto per pre-compilare l&apos;identikit, <strong className="text-foreground">OpenAI</strong> e
               <strong className="text-foreground"> Higgsfield</strong> per la generazione delle immagini quando autorizzata.
               Alcuni di questi fornitori hanno sede fuori dall&apos;UE: i trasferimenti avvengono con le garanzie previste dal
@@ -97,7 +97,7 @@ export default function PrivacyPage() {
               Per qualsiasi richiesta sulla privacy: <span className="text-foreground">privacy@human2ai.example</span>{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>.
               Responsabile della protezione dei dati (DPO):{" "}
-              <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: nomina del DPO se dovuta ex Art. 37 — probabile, dato il trattamento biometrico su larga scala]</span>.
+              <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: nomina del DPO se dovuta ex Art. 37, probabile, dato il trattamento biometrico su larga scala]</span>.
               Puoi anche scriverci dalla pagina <a href="/contatti" className="text-violet-light underline">/contatti</a>.
             </Section>
           </div>

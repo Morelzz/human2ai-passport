@@ -29,7 +29,7 @@ export default async function BlogIndexPage() {
             </h1>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               AI, diritto d&apos;immagine, consenso, provenienza. Quello che sta succedendo
-              ai volti umani nell&apos;era generativa — e come tenerli in mani umane.
+              ai volti umani nell&apos;era generativa, e come tenerli in mani umane.
             </p>
           </div>
 

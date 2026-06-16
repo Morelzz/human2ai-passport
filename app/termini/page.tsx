@@ -45,8 +45,8 @@ export default function TerminiPage() {
               Generando ottieni una <strong className="text-foreground">licenza d&apos;uso</strong> del contenuto, nei
               limiti della categoria autorizzata. <strong className="text-foreground">Il volto resta della persona,
               sempre</strong>: nessun utilizzo trasferisce la titolarità dell&apos;immagine, e l&apos;identità non è
-              vendibile né cedibile — né dalla persona, né da noi, né da te.
-              <span className="mt-2 block font-mono text-[0.78rem] text-faint">[DA AVVOCATO: clausole puntuali della licenza — durata, territorio, sublicenza]</span>
+              vendibile né cedibile, né dalla persona, né da noi, né da te.
+              <span className="mt-2 block font-mono text-[0.78rem] text-faint">[DA AVVOCATO: clausole puntuali della licenza: durata, territorio, sublicenza]</span>
             </Section>
             <Section title="Royalty e pagamenti">
               Su ogni generazione commerciale la persona reale riceve una quota maggioritaria (royalty), la piattaforma
@@ -63,7 +63,7 @@ export default function TerminiPage() {
             </Section>
             <Section title="Responsabilità e foro competente">
               <span className="font-mono text-[0.82rem] text-faint">[DA AVVOCATO: clausole su limitazione di
-              responsabilità, manleva, legge applicabile e foro competente — volutamente non redatte in bozza]</span>
+              responsabilità, manleva, legge applicabile e foro competente, volutamente non redatte in bozza]</span>
             </Section>
             <Section title="Contatti">
               Per questioni contrattuali: <span className="text-foreground">legal@human2ai.example</span>{" "}

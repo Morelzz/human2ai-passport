@@ -40,7 +40,7 @@ export function ApplyForm() {
         <p className="text-lg font-bold text-teal">✓ Candidatura ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. I primi partner verranno contattati per il percorso
-          di certificazione — ti scriviamo a {email}.
+          di certificazione, ti scriviamo a {email}.
         </p>
       </div>
     );

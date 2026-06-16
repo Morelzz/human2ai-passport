@@ -45,7 +45,7 @@ export default async function AcademyPage() {
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Tre percorsi, tre pubblici: chi vuole capire, chi vuole creare, chi vuole farne un
-              mestiere. I corsi aprono per gradi — questo è il disegno, onesto e completo.
+              mestiere. I corsi aprono per gradi, questo è il disegno, onesto e completo.
             </p>
           </div>
 
@@ -92,7 +92,7 @@ export default async function AcademyPage() {
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted">
                 Lo standard H2AI-SCAN è <Link href="/scansione#standard" className="text-teal underline-offset-2 hover:underline">pubblico e gratuito</Link>.
-                La maestria — esecuzione, postproduzione, certificazione — si impara qui, e chi supera
+                La maestria, esecuzione, postproduzione, certificazione, si impara qui, e chi supera
                 l&apos;esame diventa un punto di scansione sulla mappa.
               </p>
               <p className="mt-6">

@@ -95,8 +95,8 @@ export default function FilterDemo() {
           >
             <span className="h-2 w-2 rounded-full" style={{ background: allow ? "#00d4be" : "#e0006f" }} />
             {res.decision}
-            {block && " — generazione non autorizzata"}
-            {allow && " — generazione autorizzata"}
+            {block && ": generazione non autorizzata"}
+            {allow && ": generazione autorizzata"}
           </div>
           {res.reason && <p className="mt-2 text-sm text-muted">{res.reason}</p>}
 
