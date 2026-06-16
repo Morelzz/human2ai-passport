@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // B4/B2 — form di richiesta commerciale condiviso (kind: studio | enterprise).
 // Stessi campi, copy adattabile via prop. Honeypot anti-bot invisibile.
-const BUDGETS = ["< 1.000 €", "1.000–5.000 €", "5.000–20.000 €", "> 20.000 €", "Da definire"];
+const BUDGETS = ["< 1.000 €", "1.000-5.000 €", "5.000-20.000 €", "> 20.000 €", "Da definire"];
 
 export function InquiryForm({
   kind,

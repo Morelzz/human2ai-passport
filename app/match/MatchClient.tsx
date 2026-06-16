@@ -517,7 +517,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         </span>
         <span className="text-teal">REGISTRO ATTIVO</span>
         <span className="text-faint">/</span>
-        <span className="text-violet-light">PASSO 1 — CHI</span>
+        <span className="text-violet-light">PASSO 1: CHI</span>
       </div>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
         <KineticText text="Descrivi chi cerchi" />
@@ -536,7 +536,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
             id="brief"
             value={brief}
             onChange={(e) => setBrief(e.target.value)}
-            placeholder={'Es. "donna 30–40, mediterranea, sorriso naturale, capelli castani"'}
+            placeholder={'Es. "donna 30-40, mediterranea, sorriso naturale, capelli castani"'}
             rows={3}
             className="w-full resize-y rounded-2xl border border-white/10 bg-obsidian px-4 py-3.5 text-base text-foreground outline-none transition-colors focus:border-violet/50"
           />
@@ -668,7 +668,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                   a.eye_color && `occhi ${a.eye_color}`,
                   a.height && `statura ${a.height}`,
                   a.body_type && `corporatura ${a.body_type}`,
-                  (a.age_min != null || a.age_max != null) && `${a.age_min ?? 18}–${a.age_max ?? "100+"} anni`,
+                  (a.age_min != null || a.age_max != null) && `${a.age_min ?? 18}-${a.age_max ?? "100+"} anni`,
                   result.category,
                 ].filter(Boolean) as string[];
                 return parts.length > 0 ? (
@@ -686,7 +686,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                       <span className="mt-0.5 inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-violet-light border-t-transparent" aria-hidden />
                       <div className="text-[0.8rem] leading-relaxed text-foreground">
                         <span className="font-semibold">Generazione in corso…</span>
-                        {engine === "echo" ? " ECHO lavora alla massima fedeltà: può richiedere 1–3 minuti." : ""}
+                        {engine === "echo" ? " ECHO lavora alla massima fedeltà: può richiedere 1-3 minuti." : ""}
                         <br />
                         <span className="text-faint">Puoi restare qui o tornare dopo: la trovi in <Link href="/account" className="text-violet-light underline">I miei contenuti</Link>.</span>
                       </div>
@@ -767,7 +767,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                       {!gen ? (
                         <>
                           <div className="mt-5">
-                            <label className="mb-2 block text-xs font-bold tracking-[0.1em] text-violet-light">PASSO 2 — SCENA / DIREZIONE</label>
+                            <label className="mb-2 block text-xs font-bold tracking-[0.1em] text-violet-light">PASSO 2: SCENA / DIREZIONE</label>
                             <textarea
                               value={sceneByHandle[avatar.handle] ?? ""}
                               onChange={(e) => setSceneByHandle((m) => ({ ...m, [avatar.handle]: e.target.value }))}
@@ -779,7 +779,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             {/* A1 — Prompt Enhancer: mai automatico, parte solo da qui */}
                             <div className="mt-2 flex items-center justify-between gap-3">
                               <p className="text-[0.7rem] leading-relaxed text-faint">
-                                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias} — {engine === "echo" ? "identità bloccata dalle sue foto reali" : "garantito dal Soul"}.
+                                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, {engine === "echo" ? "identità bloccata dalle sue foto reali" : "garantito dal Soul"}.
                               </p>
                               <button
                                 type="button"
@@ -821,7 +821,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                               <div className="mt-2 flex items-start gap-2 rounded-lg border border-[#f0b429]/40 bg-[#f0b429]/10 p-3 text-[0.72rem] leading-relaxed text-[#f0b429]">
                                 <span aria-hidden>⚠️</span>
                                 <span>
-                                  ECHO è <span className="font-semibold">fotorealistico</span>: «{styleRisk.join("», «")}» può far perdere l&apos;identità reale di {avatar.alias} (e spendere una generazione per un risultato fuori target). Per la massima fedeltà descrivi una <span className="font-semibold">scena reale</span> — luogo, luce, abbigliamento, posa.
+                                  ECHO è <span className="font-semibold">fotorealistico</span>: «{styleRisk.join("», «")}» può far perdere l&apos;identità reale di {avatar.alias} (e spendere una generazione per un risultato fuori target). Per la massima fedeltà descrivi una <span className="font-semibold">scena reale</span>: luogo, luce, abbigliamento, posa.
                                 </span>
                               </div>
                             )}
@@ -1078,7 +1078,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
             <div className="rounded-2xl border border-crimson/30 bg-crimson/5 p-6">
               <p className="mb-2 text-base font-bold text-crimson">⛔ Richiesta bloccata</p>
               <p className="text-sm font-semibold leading-relaxed text-foreground">
-                Nessuna persona reale ha acconsentito a questa richiesta — e questo è il punto.
+                Nessuna persona reale ha acconsentito a questa richiesta, e questo è il punto.
               </p>
               {result.reason && <p className="mt-2 text-sm leading-relaxed text-muted">{result.reason}</p>}
 

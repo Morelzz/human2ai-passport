@@ -6,7 +6,7 @@ import { KineticText } from "@/components/motion/KineticText";
 import { InquiryForm } from "@/components/business/InquiryForm";
 
 export const metadata = {
-  title: "Enterprise — Roster riservato",
+  title: "Enterprise: Roster riservato",
   description:
     "Licenza prioritaria a tempo: riserva un volto verificato per la tua categoria merceologica. Il volto resta della persona, il tuo brand ha l'esclusiva di categoria.",
 };

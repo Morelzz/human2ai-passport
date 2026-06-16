@@ -10,7 +10,7 @@ import { KineticText } from "@/components/motion/KineticText";
 export const metadata = {
   title: "Prezzi",
   description:
-    "Chi mette il volto non paga mai. Chi genera paga solo l'uso commerciale — e la persona reale riceve l'80% di ogni generazione.",
+    "Chi mette il volto non paga mai. Chi genera paga solo l'uso commerciale, e la persona reale riceve l'80% di ogni generazione.",
 };
 
 const feePct = PLATFORM_FEE_BPS / 100;
@@ -43,7 +43,7 @@ export default function PrezziPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
             Il valore qui dentro sono le persone. Per questo entrare nel registro è gratis, per sempre.
-            Paga solo chi genera contenuti commerciali — e di ogni generazione, l&apos;{100 - feePct}% va
+            Paga solo chi genera contenuti commerciali, e di ogni generazione, l&apos;{100 - feePct}% va
             alla persona reale.
           </p>
         </section>
@@ -67,7 +67,7 @@ export default function PrezziPage() {
                     "Avatar creato e mantenuto da noi",
                     `Royalty dell'${100 - feePct}% su ogni utilizzo del tuo volto`,
                     "Wallet, storico utilizzi e payout a soglia",
-                    "Consenso revocabile in ogni momento — il sistema obbedisce",
+                    "Consenso revocabile in ogni momento, il sistema obbedisce",
                   ].map((f) => (
                     <li key={f} className="flex gap-2.5 text-sm leading-snug text-muted">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal" />
@@ -147,7 +147,7 @@ export default function PrezziPage() {
             <div className="mx-auto mt-6 max-w-2xl text-center">
               <p className="text-xs leading-relaxed text-faint">
                 I formati ad alta risoluzione del motore fotoreale aggiungono un supplemento di calcolo,
-                mostrato in chiaro prima di generare. Pacchetti di crediti in definizione — oggi paghi
+                mostrato in chiaro prima di generare. Pacchetti di crediti in definizione, oggi paghi
                 a consumo, senza abbonamento.
               </p>
             </div>

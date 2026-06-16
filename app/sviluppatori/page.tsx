@@ -57,8 +57,8 @@ export default function SviluppatoriPage() {
               <code className="text-foreground">GET /api/filter?subject=<span className="text-teal">&lt;handle&gt;</span>&amp;use=<span className="text-teal">&lt;categoria&gt;</span></code>
             </pre>
             <ul className="mt-4 space-y-2 text-sm text-muted">
-              <li><code className="font-mono text-violet-light">subject</code> — l&apos;handle della persona nel registro (obbligatorio).</li>
-              <li><code className="font-mono text-violet-light">use</code> — la categoria d&apos;uso da verificare (opzionale): Business, Fashion, Beauty, Sport, …</li>
+              <li><code className="font-mono text-violet-light">subject</code>: l&apos;handle della persona nel registro (obbligatorio).</li>
+              <li><code className="font-mono text-violet-light">use</code>: la categoria d&apos;uso da verificare (opzionale): Business, Fashion, Beauty, Sport, …</li>
             </ul>
           </section>
 
@@ -78,7 +78,7 @@ export default function SviluppatoriPage() {
           <p className="mt-10 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 text-sm leading-relaxed text-muted">
             <span className="font-semibold text-foreground">Nota.</span> Questa è una demo pubblica in sola
             lettura. In produzione il filtro precede ogni generazione e ogni contenuto autorizzato esce con
-            <span className="text-foreground"> filigrana invisibile</span> e <span className="text-foreground">certificato verificabile</span> —
+            <span className="text-foreground"> filigrana invisibile</span> e <span className="text-foreground">certificato verificabile</span>,
             così la prova viaggia ovunque, anche fuori dalla piattaforma.
           </p>
         </main>
