@@ -20,7 +20,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
-export function Hero({ count, blockedMonth }: { count: number; blockedMonth: number }) {
+export function Hero({ count, blockedMonth, protectedFaces }: { count: number; blockedMonth: number; protectedFaces: number }) {
   return (
     <section className="relative flex min-h-[92vh] items-center overflow-hidden">
       {/* Video di sfondo a tutto schermo (loop con dip-to-dark) */}
@@ -67,6 +67,15 @@ export function Hero({ count, blockedMonth }: { count: number; blockedMonth: num
             <span className="font-mono font-bold text-crimson-light">{blockedMonth}</span>{" "}
             {blockedMonth === 1 ? "generazione rifiutata" : "generazioni rifiutate"} questo mese,{" "}
             <span className="text-foreground">e questo è il punto.</span>
+          </motion.p>
+
+          {/* Fase 4.1 sul fronte home — il SECONDO numero manifesto: i volti
+              registrati per non essere mai generati (VETO). Stessa fonte di
+              /trasparenza. Regge a 0 (pre-campagna): la punchline è il diritto. */}
+          <motion.p variants={item} className="mt-1 text-xs tracking-[0.05em] text-[#9a9a9a]">
+            <span className="font-mono font-bold text-violet-light">{protectedFaces}</span>{" "}
+            {protectedFaces === 1 ? "volto protetto" : "volti protetti"} dall&apos;IA, perché{" "}
+            <span className="text-foreground">dire no è un diritto.</span>
           </motion.p>
         </motion.div>
       </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPublicAvatars } from "@/lib/registry";
+import { getPublicAvatars, countProtectedFaces } from "@/lib/registry";
 import { createServerClient } from "@/lib/supabase";
 import { countBlockedThisMonth } from "@/lib/blocked";
 import { Tier } from "@/lib/types";
@@ -28,8 +28,12 @@ export default async function Home() {
   // contatori di catalogo e trasparenza.
   const approved = await getPublicAvatars();
 
-  // Review C3 — il numero manifesto nell'hero: stessa fonte di /trasparenza.
-  const blockedMonth = await countBlockedThisMonth(createServerClient());
+  // Review C3 / Fase 4.1 — i DUE numeri manifesto nell'hero, stessa fonte di
+  // /trasparenza: (1) richieste rifiutate dal filtro del consenso questo mese,
+  // (2) volti registrati per non essere mai generati (VETO). Un solo client.
+  const sb = createServerClient();
+  const blockedMonth = await countBlockedThisMonth(sb);
+  const protectedFaces = await countProtectedFaces(sb);
 
   // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
   // i volti REALI (con galleria: Mario/Random e gli ambassador) restano in
@@ -66,7 +70,7 @@ export default async function Home() {
 
       <div className="relative z-[2]">
         <SiteNav />
-        <Hero count={approved.length} blockedMonth={blockedMonth} />
+        <Hero count={approved.length} blockedMonth={blockedMonth} protectedFaces={protectedFaces} />
         <Reveal><Tension /></Reveal>
         <Reveal><Manifesto /></Reveal>
         {/* Niente <Reveal>: la sezione è PINNATA da ScrollTrigger e un antenato
