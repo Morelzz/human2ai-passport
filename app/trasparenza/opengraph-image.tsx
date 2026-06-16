@@ -1,0 +1,63 @@
+import { ImageResponse } from "next/og";
+
+// OG card dedicata di /trasparenza (transparency report): stessa estetica della
+// card di default. Le due pill riprendono i due numeri manifesto della pagina
+// (richieste rifiutate = crimson, volti protetti = viola). STATICA di proposito:
+// niente numeri live (pre-campagna sarebbero piccoli, es. 0 protetti) e nessuna
+// dipendenza dal DB nella generazione della card. La pagina non sovrascrive
+// openGraph nei metadata -> questa card file-based si aggancia da sola. Copy
+// senza accenti (font di sistema di next/og): solo glifi gia' provati (· e ✓).
+
+export const alt = "Transparency report · Human2AI";
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
+
+export default function Image() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          background: "#000000",
+          color: "#f0f0f5",
+          padding: "64px 72px",
+          fontFamily: "sans-serif",
+        }}
+      >
+        {/* Testata */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#f0f0f5" }}>HUMAN2AI</div>
+          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "#9a9a9a" }}>· TRANSPARENCY REPORT</div>
+        </div>
+
+        {/* Messaggio */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div style={{ display: "flex", fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#ffffff", maxWidth: 1000 }}>
+            Numeri, non promesse.
+          </div>
+          <div style={{ display: "flex", fontSize: 30, color: "#9a9a9a", lineHeight: 1.4, maxWidth: 900 }}>
+            Richieste rifiutate, volti protetti, royalty pagate: i numeri reali del registro, letti in tempo reale.
+          </div>
+        </div>
+
+        {/* Chiusura: le due pill = i due numeri manifesto della pagina */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ display: "flex", border: "2px solid #e0006f", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#e0006f", letterSpacing: "0.06em" }}>
+              RICHIESTE RIFIUTATE
+            </div>
+            <div style={{ display: "flex", border: "2px solid #a78bfa", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#a78bfa", letterSpacing: "0.06em" }}>
+              VOLTI PROTETTI
+            </div>
+          </div>
+          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #8b47f0, #e0006f, #00d4be)" }} />
+        </div>
+      </div>
+    ),
+    size
+  );
+}
