@@ -15,7 +15,13 @@ import { embedStego, extractStego } from "@/lib/stegano";
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
-  if (process.env.NODE_ENV === "production") return new Response("Not found", { status: 404 });
+  // dev-only: questa utility tocca filesystem, storage e crediti ECHO reali.
+  // Mai raggiungibile in un deploy. Doppia guardia: fuori da NODE_ENV=development
+  // (copre Vercel e il worker Railway, dove vale "production"), oppure su un
+  // qualunque ambiente Vercel (VERCEL_ENV è sempre valorizzato lì), rispondiamo 404.
+  if (process.env.NODE_ENV !== "development" || process.env.VERCEL_ENV) {
+    return new Response("Not found", { status: 404 });
+  }
   if (!isEchoConfigured()) {
     return Response.json({ ok: false, error: "ECHO non configurato: manca OPENAI_API_KEY." }, { status: 503 });
   }
