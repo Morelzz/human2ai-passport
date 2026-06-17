@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { CONTACT_SUBJECTS } from "@/lib/contact";
 
 // F2 — form contatti pubblico: nome, email, oggetto (select), messaggio.
 // Honeypot anti-bot invisibile, microcopy privacy sotto il bottone.
-const SUBJECTS = ["Sono un brand", "Voglio mettere il mio volto", "Ingaggio reale", "Stampa", "Partner", "Legale", "Altro"];
 
 export function ContactForm({ prefill }: { prefill?: { subject?: string; message?: string } } = {}) {
   const [name, setName] = useState("");
@@ -65,7 +65,7 @@ export function ContactForm({ prefill }: { prefill?: { subject?: string; message
         <label htmlFor="ct-subject" className="mb-1.5 block text-xs font-semibold text-muted">Oggetto *</label>
         <select id="ct-subject" value={subject} onChange={(e) => setSubject(e.target.value)} required className={inp}>
           <option value="">Seleziona…</option>
-          {SUBJECTS.map((s) => (
+          {CONTACT_SUBJECTS.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>

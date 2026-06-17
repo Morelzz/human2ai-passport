@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { CONTACT_SUBJECTS } from "@/lib/contact";
 
 // F2 — riceve i messaggi del form /contatti (pubblico, niente account).
 // Honeypot anti-bot come negli altri form; salvataggio su contact_messages.
 // La "notifica" oggi è la riga su Supabase: l'email di avviso arriverà
 // quando sceglieremo un provider di posta transazionale.
-
-const SUBJECTS = ["Sono un brand", "Voglio mettere il mio volto", "Stampa", "Partner", "Legale", "Altro"];
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -28,7 +27,7 @@ export async function POST(request: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Email non valida" }, { status: 400 });
   }
-  if (!SUBJECTS.includes(subject)) {
+  if (!CONTACT_SUBJECTS.includes(subject)) {
     return NextResponse.json({ error: "Scegli un oggetto dal menu" }, { status: 400 });
   }
   if (message.length > 4000) {
