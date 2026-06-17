@@ -7,7 +7,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const labelStyle: React.CSSProperties = {
   display: "block",
-  color: "rgba(242,233,216,0.70)",
+  color: "var(--text-muted)",
   fontSize: "0.75rem",
   marginBottom: "0.35rem",
   letterSpacing: "0.04em",
@@ -29,9 +29,9 @@ export function Field({ label, value, onChange, type }: { label: string; value: 
           width: "100%",
           padding: "0.7rem 0.9rem",
           borderRadius: 10,
-          background: "#141A24",
-          border: "1px solid rgba(255,255,255,0.08)",
-          color: "#F2E9D8",
+          background: "var(--surface)",
+          border: "1px solid var(--hairline-soft)",
+          color: "var(--text)",
           fontSize: "0.9rem",
           outline: "none",
         }}
@@ -45,7 +45,7 @@ export function submitStyle(loading: boolean): React.CSSProperties {
     padding: "0.8rem",
     borderRadius: 10,
     border: "none",
-    background: loading ? "#1E2530" : "#F2A93B",
+    background: loading ? "var(--elevated)" : "#F2A93B",
     color: "#412402",
     fontWeight: 700,
     fontSize: "0.9rem",

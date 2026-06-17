@@ -52,7 +52,7 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
             >
               <Link
                 href={`/passport/${a.handle}`}
-                className="group block w-[68vw] max-w-[260px] overflow-hidden rounded-2xl border border-white/8 bg-obsidian-2 transition-colors hover:border-white/20 sm:w-[240px]"
+                className="group block w-[68vw] max-w-[260px] overflow-hidden rounded-2xl border border-border bg-obsidian-2 transition-colors hover:border-edge sm:w-[240px]"
               >
                 <div className="relative aspect-[4/5] overflow-hidden bg-obsidian-3">
                   {src ? (
@@ -81,7 +81,7 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
         {/* Card finale: esplora tutti */}
         <Link
           href="/match"
-          className="flex w-[68vw] max-w-[260px] shrink-0 snap-start flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-6 text-center transition-colors hover:border-violet/40 hover:bg-violet/5 sm:w-[240px]"
+          className="flex w-[68vw] max-w-[260px] shrink-0 snap-start flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-white/[0.02] p-6 text-center transition-colors hover:border-violet/40 hover:bg-violet/5 sm:w-[240px]"
         >
           <span className="flex h-12 w-12 items-center justify-center rounded-full border border-violet/30 bg-violet/10">
             <ArrowRight className="h-5 w-5 text-violet-light" />

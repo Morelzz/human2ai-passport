@@ -77,7 +77,7 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
         <label htmlFor="h" className="mb-2 block text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">
           Handle dell&apos;avatar
         </label>
-        <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-obsidian px-3 focus-within:border-teal/50">
+        <div className="flex items-center gap-2 rounded-xl border border-border bg-obsidian px-3 focus-within:border-teal/50">
           <span className="text-muted">@</span>
           <input
             id="h"
@@ -100,7 +100,7 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
       <div className="glass rounded-2xl p-5">
         <div className="mb-4 flex items-center justify-between">
           <span className="text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">Anteprima</span>
-          <div className="flex gap-1 rounded-lg border border-white/10 p-0.5">
+          <div className="flex gap-1 rounded-lg border border-border p-0.5">
             {SIZES.map((s) => (
               <button
                 key={s.key}
@@ -115,7 +115,7 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
           </div>
         </div>
 
-        <div className="flex min-h-[120px] items-center justify-center rounded-xl border border-white/[0.06] bg-[radial-gradient(60%_80%_at_50%_0%,rgba(242,169,59,0.10),transparent_70%)] p-6">
+        <div className="flex min-h-[120px] items-center justify-center rounded-xl border border-border bg-[radial-gradient(60%_80%_at_50%_0%,rgba(242,169,59,0.10),transparent_70%)] p-6">
           {handle ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -208,7 +208,7 @@ function SnippetBox({
           {copied ? "Copiato!" : "Copia"}
         </button>
       </div>
-      <pre className="overflow-x-auto rounded-xl border border-white/10 bg-obsidian p-3.5 text-xs leading-relaxed text-muted">
+      <pre className="overflow-x-auto rounded-xl border border-border bg-obsidian p-3.5 text-xs leading-relaxed text-muted">
         <code>{code}</code>
       </pre>
     </div>

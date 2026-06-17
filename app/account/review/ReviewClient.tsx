@@ -51,45 +51,45 @@ export default function ReviewClient() {
 
   return (
       <section style={{ maxWidth: 760, margin: "0 auto", padding: "3rem 1.5rem" }}>
-        <span style={{ color: "#EE7A70", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
+        <span style={{ color: "var(--blocked-c)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
         <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Coda di revisione</h1>
-        <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
           Avatar onboardati da organizzazioni, in attesa di verifica. Approva solo se l&apos;identità
           è coerente (documento, selfie e foto della stessa persona). Solo gli approvati vanno live.
         </p>
 
-        {error && <p style={{ color: "#EE7A70", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</p>}
+        {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</p>}
         {loading ? (
-          <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem" }}>Caricamento…</p>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Caricamento…</p>
         ) : items.length === 0 ? (
-          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
-            <p style={{ color: "#7FAE96", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessun avatar in attesa</p>
-            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
+          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+            <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessun avatar in attesa</p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {items.map((a) => (
-              <div key={a.id} style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+              <div key={a.id} style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div style={{ fontWeight: 700, fontSize: "1.02rem" }}>{a.alias}</div>
-                  <div style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", marginBottom: "0.4rem" }}>@{a.handle}</div>
-                  <div style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.76rem", marginBottom: "0.4rem" }}>
+                  <div style={{ color: "var(--text-muted)", fontSize: "0.8rem", marginBottom: "0.4rem" }}>@{a.handle}</div>
+                  <div style={{ color: "var(--text-faint)", fontSize: "0.76rem", marginBottom: "0.4rem" }}>
                     {[a.gender, a.age_range, a.ethnicity, a.hair_color].filter(Boolean).join(" · ") || "—"}
                   </div>
                   {a.person_consented_at ? (
-                    <span style={{ color: "#7FAE96", fontSize: "0.72rem", fontWeight: 700 }}>● consenso persona confermato</span>
+                    <span style={{ color: "var(--verified-c)", fontSize: "0.72rem", fontWeight: 700 }}>● consenso persona confermato</span>
                   ) : (
-                    <span style={{ color: "#EE7A70", fontSize: "0.72rem", fontWeight: 700 }}>● in attesa del consenso della persona</span>
+                    <span style={{ color: "var(--blocked-c)", fontSize: "0.72rem", fontWeight: 700 }}>● in attesa del consenso della persona</span>
                   )}
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button onClick={() => decide(a.id, "reject")} disabled={busy === a.id}
-                    style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "1px solid rgba(238,122,112,0.4)", background: "transparent", color: "#EE7A70", fontWeight: 700, fontSize: "0.82rem", cursor: busy === a.id ? "default" : "pointer" }}>
+                    style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "1px solid rgba(238,122,112,0.4)", background: "transparent", color: "var(--blocked-c)", fontWeight: 700, fontSize: "0.82rem", cursor: busy === a.id ? "default" : "pointer" }}>
                     Rifiuta
                   </button>
                   <button onClick={() => decide(a.id, "approve")} disabled={busy === a.id || !a.person_consented_at}
                     title={!a.person_consented_at ? "La persona non ha ancora confermato il consenso" : ""}
-                    style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "none", background: busy === a.id || !a.person_consented_at ? "#1E2530" : "#7FAE96", color: busy === a.id || !a.person_consented_at ? "rgba(242,233,216,0.70)" : "#16352A", fontWeight: 800, fontSize: "0.82rem", cursor: busy === a.id || !a.person_consented_at ? "not-allowed" : "pointer" }}>
+                    style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "none", background: busy === a.id || !a.person_consented_at ? "var(--elevated)" : "var(--verified-c)", color: busy === a.id || !a.person_consented_at ? "var(--text-muted)" : "#16352A", fontWeight: 800, fontSize: "0.82rem", cursor: busy === a.id || !a.person_consented_at ? "not-allowed" : "pointer" }}>
                     {busy === a.id ? "…" : "Approva"}
                   </button>
                 </div>

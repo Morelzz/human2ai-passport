@@ -46,33 +46,33 @@ export default function LinkWallet({ initialWallet, handle }: { initialWallet: s
   const short = wallet ? `${wallet.slice(0, 6)}…${wallet.slice(-4)}` : null;
 
   return (
-    <div style={{ background: "#0C0F17", border: "1px solid rgba(242,169,59,0.25)", borderRadius: 12, padding: "1rem" }}>
+    <div style={{ background: "var(--bg)", border: "1px solid rgba(242,169,59,0.25)", borderRadius: 12, padding: "1rem" }}>
       <p style={{ color: "#F2A93B", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.5rem" }}>
         WALLET DI PROPRIETÀ
       </p>
       {short ? (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.6rem", flexWrap: "wrap" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 600 }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#7FAE96" }} />
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "var(--text)", fontSize: "0.85rem", fontWeight: 600 }}>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--verified-c)" }} />
             {short}
           </span>
           <button onClick={connect} disabled={busy}
-            style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(242,233,216,0.70)", borderRadius: 8, padding: "0.35rem 0.7rem", fontSize: "0.78rem", cursor: busy ? "default" : "pointer" }}>
+            style={{ background: "transparent", border: "1px solid var(--hairline)", color: "var(--text-muted)", borderRadius: 8, padding: "0.35rem 0.7rem", fontSize: "0.78rem", cursor: busy ? "default" : "pointer" }}>
             {busy ? "…" : "Cambia"}
           </button>
         </div>
       ) : (
         <>
-          <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", lineHeight: 1.5, margin: "0 0 0.8rem" }}>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", lineHeight: 1.5, margin: "0 0 0.8rem" }}>
             Collega il tuo wallet: quando ancoreremo l&apos;identità su Base, il token soulbound del tuo volto sarà mintato qui.
           </p>
           <button onClick={connect} disabled={busy}
-            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "#1E2530" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
             {busy ? "Connessione…" : "Collega wallet (Phantom)"}
           </button>
         </>
       )}
-      {err && <p style={{ color: "#EE7A70", fontSize: "0.76rem", margin: "0.6rem 0 0" }}>{err}</p>}
+      {err && <p style={{ color: "var(--blocked-c)", fontSize: "0.76rem", margin: "0.6rem 0 0" }}>{err}</p>}
     </div>
   );
 }

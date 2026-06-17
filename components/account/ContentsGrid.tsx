@@ -43,7 +43,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
   }, [items, cat, engine, avatar]);
 
   const shown = filtered.slice(0, visible);
-  const sel = "rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-foreground focus:border-violet/50 focus:outline-none";
+  const sel = "rounded-lg border border-border bg-white/[0.03] px-3 py-1.5 text-xs text-foreground focus:border-violet/50 focus:outline-none";
 
   function resetPage<T>(setter: (v: T) => void) {
     return (v: T) => {
@@ -84,7 +84,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {shown.map((g) => (
-              <div key={g.id} className="overflow-hidden rounded-xl border border-white/8 bg-[#141A24]">
+              <div key={g.id} className="overflow-hidden rounded-xl border border-border bg-obsidian-2">
                 {g.image_url && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={g.image_url} alt="contenuto" className="block aspect-[3/4] w-full bg-obsidian-3 object-cover" />
@@ -128,7 +128,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
           {visible < filtered.length && (
             <button
               onClick={() => setVisible((v) => v + PAGE)}
-              className="mt-4 w-full rounded-xl border border-white/12 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground"
+              className="mt-4 w-full rounded-xl border border-border bg-white/[0.03] px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground"
             >
               Carica altri ({filtered.length - visible} rimasti)
             </button>

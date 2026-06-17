@@ -55,7 +55,7 @@ export default function SignupPage() {
   return (
     <Shell title="Crea il tuo account">
       {done ? (
-        <p style={{ color: "#7FAE96", fontSize: "0.9rem", lineHeight: 1.6 }}>
+        <p style={{ color: "var(--verified-c)", fontSize: "0.9rem", lineHeight: 1.6 }}>
           Account creato. Controlla la tua email per confermare, poi{" "}
           <Link href="/login" style={{ color: "#F2A93B" }}>accedi</Link>
           {accountType === "enterprise" ? " e completa la registrazione della tua azienda." : "."}
@@ -81,9 +81,9 @@ export default function SignupPage() {
                     cursor: "pointer",
                     fontSize: "0.78rem",
                     fontWeight: 600,
-                    background: accountType === r ? "rgba(242,169,59,0.15)" : "#141A24",
-                    color: accountType === r ? "#F2E9D8" : "rgba(242,233,216,0.70)",
-                    border: `1px solid ${accountType === r ? "#F2A93B" : "rgba(255,255,255,0.08)"}`,
+                    background: accountType === r ? "rgba(242,169,59,0.15)" : "var(--surface)",
+                    color: accountType === r ? "var(--text)" : "var(--text-muted)",
+                    border: `1px solid ${accountType === r ? "#F2A93B" : "var(--hairline-soft)"}`,
                   }}
                 >
                   {r === "buyer" ? "Compratore" : r === "seller" ? "Creatore" : "Azienda"}
@@ -91,7 +91,7 @@ export default function SignupPage() {
               ))}
             </div>
             {/* Una riga d'aiuto: cosa significano i 3 tipi, senza sovraccaricare. */}
-            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.72rem", margin: "0.5rem 0 0", lineHeight: 1.5 }}>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.72rem", margin: "0.5rem 0 0", lineHeight: 1.5 }}>
               {accountType === "buyer"
                 ? "Compri e generi con i volti del registro."
                 : accountType === "seller"
@@ -100,13 +100,13 @@ export default function SignupPage() {
             </p>
           </div>
 
-          {error && <p style={{ color: "#EE7A70", fontSize: "0.8rem", margin: 0 }}>{error}</p>}
+          {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.8rem", margin: 0 }}>{error}</p>}
 
           <button type="submit" disabled={loading} style={submitStyle(loading)}>
             {loading ? "Creazione…" : "Crea account"}
           </button>
 
-          <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
             Hai già un account?{" "}
             <Link href="/login" style={{ color: "#F2A93B" }}>Accedi</Link>
           </p>

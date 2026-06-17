@@ -46,7 +46,7 @@ export default function FilterDemo() {
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
         <div>
           <label htmlFor="subj" className="mb-1 block text-xs text-muted">subject (handle)</label>
-          <div className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-obsidian px-3 focus-within:border-teal/50">
+          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-obsidian px-3 focus-within:border-teal/50">
             <span className="text-muted">@</span>
             <input
               id="subj"
@@ -63,7 +63,7 @@ export default function FilterDemo() {
             id="use"
             value={use}
             onChange={(e) => setUse(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-obsidian px-3 py-2.5 text-sm text-foreground outline-none focus:border-teal/50"
+            className="w-full rounded-xl border border-border bg-obsidian px-3 py-2.5 text-sm text-foreground outline-none focus:border-teal/50"
           >
             <option value="">(qualsiasi)</option>
             {CATEGORIES.map((c) => (
@@ -90,17 +90,17 @@ export default function FilterDemo() {
             className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold"
             style={{
               background: allow ? "rgba(127,174,150,0.14)" : "rgba(238,122,112,0.14)",
-              color: allow ? "#9CC6B2" : "#F2958C",
+              color: allow ? "var(--verified-c)" : "var(--blocked-c)",
             }}
           >
-            <span className="h-2 w-2 rounded-full" style={{ background: allow ? "#9CC6B2" : "#F2958C" }} />
+            <span className="h-2 w-2 rounded-full" style={{ background: allow ? "var(--verified-c)" : "var(--blocked-c)" }} />
             {res.decision}
             {block && ": generazione non autorizzata"}
             {allow && ": generazione autorizzata"}
           </div>
           {res.reason && <p className="mt-2 text-sm text-muted">{res.reason}</p>}
 
-          <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-obsidian p-3.5 text-xs leading-relaxed text-muted">
+          <pre className="mt-4 overflow-x-auto rounded-xl border border-border bg-obsidian p-3.5 text-xs leading-relaxed text-muted">
             <code>{JSON.stringify(res, null, 2)}</code>
           </pre>
         </div>

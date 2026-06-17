@@ -85,6 +85,12 @@ export default function RootLayout({
         {/* NB: niente h-full/height:100% su html/body — rompe la misura dello
             scroll di Lenis (lo scroll "scattava" e tornava in cima). */}
         <body className="min-h-screen flex flex-col" suppressHydrationWarning>
+          {/* Anti-lampo tema: imposta data-theme PRIMA del paint (scuro = default) */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){try{var t=localStorage.getItem('semblic-theme');document.documentElement.dataset.theme=(t==='light'||t==='dark')?t:'dark';}catch(e){document.documentElement.dataset.theme='dark';}})();`,
+            }}
+          />
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

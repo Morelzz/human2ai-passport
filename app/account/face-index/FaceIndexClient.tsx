@@ -95,34 +95,34 @@ export default function FaceIndexClient() {
 
   return (
     <section style={{ maxWidth: 860, margin: "0 auto", padding: "3rem 1.5rem" }}>
-      <span style={{ color: "#7FAE96", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
+      <span style={{ color: "var(--verified-c)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Indice volti del registro</h1>
-      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
+      <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
         L&apos;indice permette a <strong>/verify</strong> di riconoscere il volto di un avatar anche quando
         un&apos;immagine <strong>non ha la filigrana</strong> (contenuti generati fuori da Semblic): la persona
         può così scoprire l&apos;abuso e fare ricorso. I descrittori si calcolano <strong>in questo browser</strong>;
         al server arrivano solo vettori numerici, mai foto.
       </p>
-      <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.78rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
+      <p style={{ color: "var(--text-faint)", fontSize: "0.78rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
         Ricostruisci l&apos;indice dopo ogni nuovo avatar approvato o nuovo set di reference.
         Si indicizzano solo foto reali: i ritratti segnaposto del seed (forme, non volti) vengono saltati.
       </p>
 
-      {error && <p style={{ color: "#EE7A70", fontSize: "0.85rem" }}>{error}</p>}
-      {doneMsg && <p style={{ color: "#9CC6B2", fontSize: "0.85rem", fontWeight: 700 }}>{doneMsg}</p>}
-      {loading && <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem" }}>Carico il registro…</p>}
+      {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.85rem" }}>{error}</p>}
+      {doneMsg && <p style={{ color: "var(--verified-c)", fontSize: "0.85rem", fontWeight: 700 }}>{doneMsg}</p>}
+      {loading && <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Carico il registro…</p>}
 
       {!loading && (
         <>
           {/* Stato attuale */}
-          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.2rem 1.5rem", marginBottom: "1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.8rem" }}>
+          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.2rem 1.5rem", marginBottom: "1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.8rem" }}>
             <div>
               {index ? (
                 <>
-                  <p style={{ color: "#F2E9D8", fontWeight: 700, margin: 0 }}>
+                  <p style={{ color: "var(--text)", fontWeight: 700, margin: 0 }}>
                     {index.total} volt{index.total === 1 ? "o" : "i"} indicizzat{index.total === 1 ? "o" : "i"} · {Object.keys(index.per_handle).length} avatar
                   </p>
-                  <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.78rem", margin: "0.15rem 0 0" }}>
+                  <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", margin: "0.15rem 0 0" }}>
                     ultima costruzione: {new Date(index.built_at).toLocaleString("it-IT")}
                   </p>
                 </>
@@ -131,27 +131,27 @@ export default function FaceIndexClient() {
               )}
             </div>
             <button onClick={rebuild} disabled={building || totalSources === 0}
-              style={{ padding: "0.7rem 1.4rem", borderRadius: 999, border: "none", background: building || totalSources === 0 ? "#1E2530" : "#F2A93B", color: building || totalSources === 0 ? "rgba(242,233,216,0.45)" : "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: building || totalSources === 0 ? "default" : "pointer" }}>
+              style={{ padding: "0.7rem 1.4rem", borderRadius: 999, border: "none", background: building || totalSources === 0 ? "var(--elevated)" : "#F2A93B", color: building || totalSources === 0 ? "var(--text-faint)" : "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: building || totalSources === 0 ? "default" : "pointer" }}>
               {building ? "Costruzione in corso…" : index ? "Ricostruisci indice" : "Costruisci indice"}
             </button>
           </div>
 
-          {progress && <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem", margin: "0 0 1.2rem" }}>⏳ {progress}</p>}
+          {progress && <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", margin: "0 0 1.2rem" }}>⏳ {progress}</p>}
 
           {/* Avatar e sorgenti */}
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
             {avatars.map((a) => (
-              <div key={a.handle} style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "0.8rem 1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.8rem", flexWrap: "wrap" }}>
+              <div key={a.handle} style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 12, padding: "0.8rem 1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.8rem", flexWrap: "wrap" }}>
                 <div>
-                  <span style={{ color: "#F2E9D8", fontWeight: 700, fontSize: "0.9rem" }}>{a.alias}</span>
-                  <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", marginLeft: "0.5rem" }}>@{a.handle}</span>
-                  {a.revoked && <span style={{ color: "#EE7A70", fontSize: "0.72rem", fontWeight: 700, marginLeft: "0.5rem" }}>REVOCATO</span>}
+                  <span style={{ color: "var(--text)", fontWeight: 700, fontSize: "0.9rem" }}>{a.alias}</span>
+                  <span style={{ color: "var(--text-muted)", fontSize: "0.8rem", marginLeft: "0.5rem" }}>@{a.handle}</span>
+                  {a.revoked && <span style={{ color: "var(--blocked-c)", fontSize: "0.72rem", fontWeight: 700, marginLeft: "0.5rem" }}>REVOCATO</span>}
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                  <span style={{ color: a.sources.length ? "rgba(242,233,216,0.70)" : "rgba(242,233,216,0.45)", fontSize: "0.78rem" }}>
+                  <span style={{ color: a.sources.length ? "var(--text-muted)" : "var(--text-faint)", fontSize: "0.78rem" }}>
                     {a.sources.length} foto sorgente
                   </span>
-                  <span style={{ color: index?.per_handle?.[a.handle] ? "#9CC6B2" : "rgba(242,233,216,0.45)", fontSize: "0.78rem", fontWeight: 700 }}>
+                  <span style={{ color: index?.per_handle?.[a.handle] ? "var(--verified-c)" : "var(--text-faint)", fontSize: "0.78rem", fontWeight: 700 }}>
                     {index?.per_handle?.[a.handle] ?? 0} nell&apos;indice
                   </span>
                 </div>
@@ -159,7 +159,7 @@ export default function FaceIndexClient() {
             ))}
           </div>
 
-          <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.7rem", lineHeight: 1.5, margin: "1.2rem 0 0" }}>
+          <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", lineHeight: 1.5, margin: "1.2rem 0 0" }}>
             Nota: gli avatar revocati restano nell&apos;indice di proposito, la tutela del volto vale
             soprattutto per chi ha revocato. Un avatar uscito dal registro non viene mai nominato da
             /verify anche se presente in un indice vecchio (ricontrollo live a ogni verifica).

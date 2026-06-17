@@ -53,7 +53,7 @@ export default function SviluppatoriPage() {
           {/* Endpoint */}
           <section className="mt-12">
             <h2 className="text-xl font-bold">L&apos;endpoint</h2>
-            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-obsidian p-4 text-sm leading-relaxed">
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-border bg-obsidian p-4 text-sm leading-relaxed">
               <code className="text-foreground">GET /api/filter?subject=<span className="text-teal">&lt;handle&gt;</span>&amp;use=<span className="text-teal">&lt;categoria&gt;</span></code>
             </pre>
             <ul className="mt-4 space-y-2 text-sm text-muted">
@@ -70,12 +70,12 @@ export default function SviluppatoriPage() {
               con il motivo e la <span className="text-foreground">prova pubblica</span> (token, link di verifica, passaporto).
               Il consenso è una timeline: una revoca rende <code className="font-mono">BLOCK</code> in tempo reale.
             </p>
-            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-obsidian p-4 text-xs leading-relaxed text-muted">
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-border bg-obsidian p-4 text-xs leading-relaxed text-muted">
               <code>{exampleResponse}</code>
             </pre>
           </section>
 
-          <p className="mt-10 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 text-sm leading-relaxed text-muted">
+          <p className="mt-10 rounded-2xl border border-border bg-white/[0.02] p-5 text-sm leading-relaxed text-muted">
             <span className="font-semibold text-foreground">Nota.</span> Questa è una demo pubblica in sola
             lettura. In produzione il filtro precede ogni generazione e ogni contenuto autorizzato esce con
             <span className="text-foreground"> filigrana invisibile</span> e <span className="text-foreground">certificato verificabile</span>,

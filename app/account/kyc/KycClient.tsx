@@ -25,9 +25,9 @@ interface PendingKyc {
 
 // Lettura della distanza FaceNet: <=0.5 alta, <=0.6 media, oltre bassa.
 function matchTone(pair: MatchPair): { label: string; color: string; bg: string } {
-  if (pair.distance <= 0.5) return { label: "alta", color: "#9CC6B2", bg: "rgba(127,174,150,0.12)" };
+  if (pair.distance <= 0.5) return { label: "alta", color: "var(--verified-c)", bg: "rgba(127,174,150,0.12)" };
   if (pair.distance <= 0.6) return { label: "media", color: "#F2A93B", bg: "rgba(242,169,59,0.1)" };
-  return { label: "bassa", color: "#EE7A70", bg: "rgba(238,122,112,0.1)" };
+  return { label: "bassa", color: "var(--blocked-c)", bg: "rgba(238,122,112,0.1)" };
 }
 
 // La percentuale si DERIVA sempre dalla distanza (fonte unica, stessa curva
@@ -39,15 +39,15 @@ function simPercent(distance: number): number {
 function MatchBadge({ title, pair }: { title: string; pair: MatchPair | null }) {
   if (!pair) {
     return (
-      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 999, padding: "0.3rem 0.8rem", color: "rgba(242,233,216,0.70)", fontSize: "0.74rem", fontWeight: 600 }}>
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", border: "1px solid var(--hairline-soft)", borderRadius: 999, padding: "0.3rem 0.8rem", color: "var(--text-muted)", fontSize: "0.74rem", fontWeight: 600 }}>
         {title}: non calcolabile
       </span>
     );
   }
   const t = matchTone(pair);
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", border: `1px solid ${t.color}44`, background: t.bg, borderRadius: 999, padding: "0.3rem 0.8rem", fontSize: "0.74rem", fontWeight: 700 }}>
-      <span style={{ color: "rgba(242,233,216,0.70)", fontWeight: 600 }}>{title}:</span>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", border: `1px solid color-mix(in oklab, ${t.color} 27%, transparent)`, background: t.bg, borderRadius: 999, padding: "0.3rem 0.8rem", fontSize: "0.74rem", fontWeight: 700 }}>
+      <span style={{ color: "var(--text-muted)", fontWeight: 600 }}>{title}:</span>
       <span style={{ color: t.color }}>{simPercent(pair.distance)}% · {t.label}</span>
     </span>
   );
@@ -108,37 +108,37 @@ export default function KycClient() {
 
   return (
     <section style={{ maxWidth: 860, margin: "0 auto", padding: "3rem 1.5rem" }}>
-      <span style={{ color: "#7FAE96", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
+      <span style={{ color: "var(--verified-c)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Verifiche identità (KYC)</h1>
-      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
+      <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
         Persone in attesa di verifica. Approva solo se <strong>documento, selfie e foto sono la stessa persona</strong> e
         il documento è leggibile. I link alle immagini scadono dopo 1 ora; se servono di nuovo usa &quot;Ricarica coda&quot;.
       </p>
 
       {!loading && !error && (
         <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", margin: "0 0 1.5rem" }}>
-          <span style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 700 }}>{items.length} in attesa</span>
-          <button onClick={() => load()} style={{ padding: "0.4rem 0.9rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.12)", background: "#141A24", color: "rgba(242,233,216,0.70)", fontWeight: 600, fontSize: "0.78rem", cursor: "pointer" }}>↻ Ricarica coda</button>
+          <span style={{ color: "var(--text)", fontSize: "0.85rem", fontWeight: 700 }}>{items.length} in attesa</span>
+          <button onClick={() => load()} style={{ padding: "0.4rem 0.9rem", borderRadius: 8, border: "1px solid var(--hairline)", background: "var(--surface)", color: "var(--text-muted)", fontWeight: 600, fontSize: "0.78rem", cursor: "pointer" }}>↻ Ricarica coda</button>
         </div>
       )}
 
-      {error && <p style={{ color: "#EE7A70", fontSize: "0.85rem" }}>{error}</p>}
-      {loading && <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem" }}>Carico la coda…</p>}
+      {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.85rem" }}>{error}</p>}
+      {loading && <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Carico la coda…</p>}
       {!loading && items.length === 0 && !error && (
-        <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
-          <p style={{ color: "#7FAE96", fontWeight: 700, margin: 0 }}>✓ Nessuna verifica in attesa</p>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+          <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: 0 }}>✓ Nessuna verifica in attesa</p>
         </div>
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
         {items.map((p) => (
-          <div key={p.id} style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem" }}>
+          <div key={p.id} style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
               <div>
-                <p style={{ color: "#F2E9D8", fontWeight: 700, fontSize: "1rem", margin: 0 }}>{p.full_name || "(senza nome)"}</p>
-                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", margin: "0.15rem 0 0" }}>{p.email}</p>
+                <p style={{ color: "var(--text)", fontWeight: 700, fontSize: "1rem", margin: 0 }}>{p.full_name || "(senza nome)"}</p>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", margin: "0.15rem 0 0" }}>{p.email}</p>
               </div>
-              <span style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.75rem" }}>
+              <span style={{ color: "var(--text-faint)", fontSize: "0.75rem" }}>
                 candidatura del {new Date(p.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
               </span>
             </div>
@@ -150,23 +150,23 @@ export default function KycClient() {
                 <>
                   <MatchBadge title="documento ↔ selfie" pair={p.face_match.doc_selfie} />
                   <MatchBadge title={p.face_match.selfie_photo?.checked ? `selfie ↔ foto (migliore di ${p.face_match.selfie_photo.checked})` : "selfie ↔ foto"} pair={p.face_match.selfie_photo} />
-                  <span style={{ alignSelf: "center", color: "rgba(242,233,216,0.45)", fontSize: "0.68rem" }}>pre-screening sul dispositivo, la decisione resta tua</span>
+                  <span style={{ alignSelf: "center", color: "var(--text-faint)", fontSize: "0.68rem" }}>pre-screening sul dispositivo, la decisione resta tua</span>
                 </>
               ) : (
-                <span style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem" }}>Nessun pre-screening automatico per questa candidatura.</span>
+                <span style={{ color: "var(--text-faint)", fontSize: "0.72rem" }}>Nessun pre-screening automatico per questa candidatura.</span>
               )}
             </div>
 
             {p.files.length === 0 ? (
-              <p style={{ color: "#EE7A70", fontSize: "0.82rem" }}>Nessun file trovato per questa candidatura.</p>
+              <p style={{ color: "var(--blocked-c)", fontSize: "0.82rem" }}>Nessun file trovato per questa candidatura.</p>
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "0.8rem", marginBottom: "1.2rem" }}>
                 {p.files.map((f) => (
                   <a key={f.name} href={f.url} target="_blank" rel="noreferrer"
-                    style={{ display: "block", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden", background: "#141A24", textDecoration: "none" }}>
+                    style={{ display: "block", border: "1px solid var(--hairline-soft)", borderRadius: 12, overflow: "hidden", background: "var(--surface)", textDecoration: "none" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={f.url} alt={labelFor(f.name)} style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", display: "block", background: "#1E2530" }} />
-                    <span style={{ display: "block", padding: "0.4rem 0.6rem", color: "rgba(242,233,216,0.70)", fontSize: "0.72rem", fontWeight: 600 }}>{labelFor(f.name)}</span>
+                    <img src={f.url} alt={labelFor(f.name)} style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", display: "block", background: "var(--elevated)" }} />
+                    <span style={{ display: "block", padding: "0.4rem 0.6rem", color: "var(--text-muted)", fontSize: "0.72rem", fontWeight: 600 }}>{labelFor(f.name)}</span>
                   </a>
                 ))}
               </div>
@@ -174,11 +174,11 @@ export default function KycClient() {
 
             <div style={{ display: "flex", gap: "0.6rem" }}>
               <button onClick={() => decide(p.id, "approve")} disabled={busy === p.id}
-                style={{ flex: 1, padding: "0.7rem", borderRadius: 10, border: "1px solid rgba(127,174,150,0.4)", background: "rgba(127,174,150,0.12)", color: "#9CC6B2", fontWeight: 700, fontSize: "0.85rem", cursor: busy === p.id ? "default" : "pointer", opacity: busy === p.id ? 0.6 : 1 }}>
+                style={{ flex: 1, padding: "0.7rem", borderRadius: 10, border: "1px solid rgba(127,174,150,0.4)", background: "rgba(127,174,150,0.12)", color: "var(--verified-c)", fontWeight: 700, fontSize: "0.85rem", cursor: busy === p.id ? "default" : "pointer", opacity: busy === p.id ? 0.6 : 1 }}>
                 ✓ Approva
               </button>
               <button onClick={() => decide(p.id, "reject")} disabled={busy === p.id}
-                style={{ flex: 1, padding: "0.7rem", borderRadius: 10, border: "1px solid rgba(238,122,112,0.4)", background: "rgba(238,122,112,0.1)", color: "#EE7A70", fontWeight: 700, fontSize: "0.85rem", cursor: busy === p.id ? "default" : "pointer", opacity: busy === p.id ? 0.6 : 1 }}>
+                style={{ flex: 1, padding: "0.7rem", borderRadius: 10, border: "1px solid rgba(238,122,112,0.4)", background: "rgba(238,122,112,0.1)", color: "var(--blocked-c)", fontWeight: 700, fontSize: "0.85rem", cursor: busy === p.id ? "default" : "pointer", opacity: busy === p.id ? 0.6 : 1 }}>
                 ✕ Rifiuta
               </button>
             </div>

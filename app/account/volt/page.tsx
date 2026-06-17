@@ -71,7 +71,7 @@ export default async function VoltPage() {
                 {VOLT_PACKS.map((p) => (
                   <div key={p.id} className={`glass glass-hover relative rounded-2xl p-5 ${p.popular ? "border border-violet/40" : ""}`}>
                     {p.popular && (
-                      <span className="absolute -top-2.5 right-4 rounded-full bg-[#F2A93B] px-2.5 py-0.5 text-[0.62rem] font-bold text-[#0C0F17]">
+                      <span className="absolute -top-2.5 right-4 rounded-full bg-[#F2A93B] px-2.5 py-0.5 text-[0.62rem] font-bold text-[#412402]">
                         {VOLT_STRINGS["recharge.packs.popular"]}
                       </span>
                     )}
@@ -84,7 +84,7 @@ export default async function VoltPage() {
                     <button
                       disabled
                       title={VOLT_STRINGS["recharge.soon"]}
-                      className="mt-4 w-full cursor-not-allowed rounded-xl border border-white/12 bg-white/[0.04] px-4 py-2.5 text-sm font-bold text-muted"
+                      className="mt-4 w-full cursor-not-allowed rounded-xl border border-border bg-white/[0.04] px-4 py-2.5 text-sm font-bold text-muted"
                     >
                       {voltStr("recharge.cta", { n: FMT.format(p.volt + p.bonus), prezzo: (p.priceCents / 100).toLocaleString("it-IT", { minimumFractionDigits: 2 }) })}
                     </button>

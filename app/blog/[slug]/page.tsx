@@ -89,7 +89,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
             {/* Copertina hero (se presente nel frontmatter) */}
             {post.cover && (
-              <div className="relative mt-6 aspect-[16/9] overflow-hidden rounded-3xl border border-white/10">
+              <div className="relative mt-6 aspect-[16/9] overflow-hidden rounded-3xl border border-border">
                 <Image
                   src={post.cover}
                   alt={post.coverAlt}

@@ -11,7 +11,7 @@ function shareUrl(): string {
 }
 
 const BTN =
-  "inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-bold tracking-wide text-muted transition-colors hover:border-white/25 hover:text-foreground";
+  "inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-bold tracking-wide text-muted transition-colors hover:border-border hover:text-foreground";
 
 export function ShareBar({ title }: { title: string }) {
   const [copied, setCopied] = useState(false);

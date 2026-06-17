@@ -497,10 +497,10 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         {voltStr("volt.insufficient.body", { n: FMT_VOLT.format(voltGate.needed), delta: FMT_VOLT.format(voltGate.missing) })}
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <Link href="/account/volt" className="rounded-full bg-[#F2A93B] px-4 py-2 text-xs font-bold text-[#0C0F17] transition-all hover:brightness-110">
+        <Link href="/account/volt" className="rounded-full bg-[#F2A93B] px-4 py-2 text-xs font-bold text-on-amber transition-all hover:brightness-110">
           {VOLT_STRINGS["volt.insufficient.cta"]}
         </Link>
-        <button type="button" onClick={() => setVoltGate(null)} className="rounded-full border border-white/12 px-4 py-2 text-xs font-semibold text-muted transition-colors hover:text-foreground">
+        <button type="button" onClick={() => setVoltGate(null)} className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted transition-colors hover:text-foreground">
           {VOLT_STRINGS["volt.insufficient.secondary"]}
         </button>
       </div>
@@ -538,7 +538,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
             onChange={(e) => setBrief(e.target.value)}
             placeholder={'Es. "donna 30-40, mediterranea, sorriso naturale, capelli castani"'}
             rows={3}
-            className="w-full resize-y rounded-2xl border border-white/10 bg-obsidian px-4 py-3.5 text-base text-foreground outline-none transition-colors focus:border-violet/50"
+            className="w-full resize-y rounded-2xl border border-border bg-obsidian px-4 py-3.5 text-base text-foreground outline-none transition-colors focus:border-violet/50"
           />
           {/* Review D4 — principio vincolante, dichiarato dove serve */}
           <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
@@ -554,12 +554,12 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         </ChipGroup>
 
         {/* Filtri avanzati: raffinamento opzionale, in alternativa al brief */}
-        <details className="group rounded-2xl border border-white/10 bg-obsidian-2">
+        <details className="group rounded-2xl border border-border bg-obsidian-2">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-sm font-semibold text-muted transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden">
             <span>Filtri avanzati <span className="font-normal text-faint">· in alternativa alla descrizione</span></span>
             <span aria-hidden className="text-faint transition-transform duration-300 group-open:rotate-180">⌄</span>
           </summary>
-          <div className="flex flex-col gap-6 border-t border-white/6 p-4">
+          <div className="flex flex-col gap-6 border-t border-border p-4">
             <ChipGroup label="Genere">
               {GENDERS.map((g) => (
                 <Chip key={g.v} active={gender === g.v} onClick={() => toggle(gender, g.v, setGender)}>{g.l}</Chip>
@@ -571,7 +571,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                 <span className="text-sm font-semibold text-muted">Età</span>
                 <span className="text-[0.7rem] text-faint">· dai {ageMin} ai {ageMax >= 100 ? "100+" : ageMax} anni</span>
               </div>
-              <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-obsidian p-4">
+              <div className="flex flex-col gap-3 rounded-xl border border-border bg-obsidian p-4">
                 <label className="flex items-center gap-3">
                   <span className="w-7 text-[0.7rem] text-faint">Da</span>
                   <input type="range" min={18} max={100} value={ageMin}
@@ -653,7 +653,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                 <button
                   type="button"
                   onClick={() => setSelectedHandle(null)}
-                  className="mb-3 rounded-full border border-white/15 px-3 py-1 text-[0.7rem] font-semibold text-muted transition-colors hover:border-teal/40 hover:text-teal"
+                  className="mb-3 rounded-full border border-border px-3 py-1 text-[0.7rem] font-semibold text-muted transition-colors hover:border-teal/40 hover:text-teal"
                 >
                   ← Tutti i risultati ({result.results.length})
                 </button>
@@ -758,7 +758,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             {Array.from({ length: avatar.gallery_count }).map((_, i) => (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`} loading="lazy"
-                                className="h-[150px] w-[112px] shrink-0 rounded-lg border border-white/8 bg-obsidian-3 object-cover" />
+                                className="h-[150px] w-[112px] shrink-0 rounded-lg border border-border bg-obsidian-3 object-cover" />
                             ))}
                           </div>
                         </div>
@@ -773,7 +773,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                               onChange={(e) => setSceneByHandle((m) => ({ ...m, [avatar.handle]: e.target.value }))}
                               placeholder="Es. che balla in spiaggia al tramonto, luce dorata, look estivo, 35mm"
                               rows={2}
-                              className="w-full resize-y rounded-xl border border-white/10 bg-obsidian px-3 py-3 text-sm text-foreground outline-none focus:border-violet/50"
+                              className="w-full resize-y rounded-xl border border-border bg-obsidian px-3 py-3 text-sm text-foreground outline-none focus:border-violet/50"
                             />
 
                             {/* A1 — Prompt Enhancer: mai automatico, parte solo da qui */}
@@ -810,7 +810,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                   <button
                                     type="button"
                                     onClick={() => setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }))}
-                                    className="rounded-lg border border-white/15 px-3 py-1.5 text-[0.72rem] font-semibold text-muted transition-colors hover:bg-white/5"
+                                    className="rounded-lg border border-border px-3 py-1.5 text-[0.72rem] font-semibold text-muted transition-colors hover:bg-white/5"
                                   >
                                     Tieni la mia
                                   </button>
@@ -888,7 +888,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                 {[0, 1].map((i) => {
                                   const ref = echoRefs[i];
                                   return (
-                                    <div key={i} className="rounded-xl border border-white/10 bg-obsidian p-2">
+                                    <div key={i} className="rounded-xl border border-border bg-obsidian p-2">
                                       {ref?.dataUrl ? (
                                         <>
                                           <div className="relative">
@@ -910,7 +910,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                               <select
                                                 value={ref.role}
                                                 onChange={(e) => updateEcho(i, { role: e.target.value })}
-                                                className="mt-2 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2 py-1.5 text-xs text-foreground outline-none focus:border-teal/50"
+                                                className="mt-2 w-full rounded-lg border border-border bg-obsidian-2 px-2 py-1.5 text-xs text-foreground outline-none focus:border-teal/50"
                                               >
                                                 <option value="outfit">Outfit / capo</option>
                                                 <option value="accessorio">Accessorio</option>
@@ -921,14 +921,14 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                                 value={ref.desc}
                                                 onChange={(e) => updateEcho(i, { desc: e.target.value })}
                                                 placeholder="descrizione (opzionale)"
-                                                className="mt-1.5 w-full rounded-lg border border-white/10 bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
+                                                className="mt-1.5 w-full rounded-lg border border-border bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
                                               />
                                             </>
                                           )}
                                         </>
                                       ) : (
                                         <div className="flex h-[124px] flex-col gap-1.5">
-                                          <label className="focus-ring flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-white/15 text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
+                                          <label className="focus-ring flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
                                             <span className="text-xl leading-none">+</span>
                                             <span className="px-2 text-[0.66rem] leading-tight">{i === 0 ? "Outfit / capo" : "Scenario / altro"}</span>
                                             <input
@@ -944,7 +944,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                               type="button"
                                               onClick={() => setPoseOpenFor(poseOpenFor === i ? null : i)}
                                               aria-expanded={poseOpenFor === i}
-                                              className={`focus-ring rounded-lg border px-2 py-1.5 text-[0.66rem] transition-colors ${poseOpenFor === i ? "border-teal/50 text-teal" : "border-white/15 text-faint hover:border-teal/40 hover:text-teal"}`}
+                                              className={`focus-ring rounded-lg border px-2 py-1.5 text-[0.66rem] transition-colors ${poseOpenFor === i ? "border-teal/50 text-teal" : "border-border text-faint hover:border-teal/40 hover:text-teal"}`}
                                             >
                                               🧍 Posa dalla libreria
                                             </button>
@@ -956,7 +956,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                 })}
                               </div>
                               {poseOpenFor !== null && !poseChosen && (
-                                <div className="mt-2 rounded-xl border border-white/10 bg-obsidian p-2">
+                                <div className="mt-2 rounded-xl border border-border bg-obsidian p-2">
                                   <p className="mb-2 px-1 text-[0.66rem] text-faint">Scegli la posa: il manichino guida SOLO il corpo, l&apos;identità resta della persona.</p>
                                   <div className="grid max-h-56 grid-cols-4 gap-1.5 overflow-y-auto">
                                     {(poseLib ?? []).map((p) => (
@@ -964,7 +964,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                                         key={p.id}
                                         type="button"
                                         onClick={() => pickPose(poseOpenFor, p)}
-                                        className="focus-ring group rounded-lg border border-white/10 bg-white/[0.03] p-1 text-left transition-colors hover:border-teal/50"
+                                        className="focus-ring group rounded-lg border border-border bg-white/[0.03] p-1 text-left transition-colors hover:border-teal/50"
                                       >
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img src={p.url} alt={p.label} className="h-16 w-full rounded object-contain" loading="lazy" />
@@ -1027,7 +1027,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             // eslint-disable-next-line @next/next/no-img-element
                             // Mostra la versione con filigrana invisibile (se c'è il certificato),
                             // così l'immagine che l'utente vede/salva porta già il codice nascosto.
-                            <img src={gen.certificate ? `/api/content/${gen.certificate}` : gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-white/8 bg-obsidian-3" />
+                            <img src={gen.certificate ? `/api/content/${gen.certificate}` : gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-border bg-obsidian-3" />
                           )}
                           <div className="mb-4 rounded-lg bg-obsidian-2 p-4">
                             <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
@@ -1057,7 +1057,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                           )}
 
                           {/* Genera ancora: stessa scena/immagini (variante) oppure ricomincia da capo */}
-                          <div className="mt-4 grid gap-2 border-t border-white/8 pt-4">
+                          <div className="mt-4 grid gap-2 border-t border-border pt-4">
                             <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
                               className="w-full rounded-xl bg-[#F2A93B] px-5 py-3 text-sm font-bold text-[#412402] transition-all hover:brightness-110 disabled:opacity-50">
                               {generating ? loadingLine : `↻ ${genCta}`}
@@ -1065,7 +1065,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             {voltGatePanel}
                             {inProgress}
                             <button onClick={() => resetGeneration(avatar.handle)} disabled={generating}
-                              className="w-full rounded-xl border border-white/12 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">
+                              className="w-full rounded-xl border border-border bg-white/[0.03] px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">
                               Nuova scena (cambia prompt e immagini) →
                             </button>
                           </div>
@@ -1136,7 +1136,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       onClick={onClick}
       aria-pressed={active}
       className={`focus-ring rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
-        active ? "border border-violet bg-violet/20 text-foreground" : "border border-white/10 bg-obsidian-2 text-muted hover:text-foreground"
+        active ? "border border-violet bg-violet/20 text-foreground" : "border border-border bg-obsidian-2 text-muted hover:text-foreground"
       }`}
     >
       {children}

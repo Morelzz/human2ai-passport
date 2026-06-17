@@ -66,7 +66,7 @@ export default async function AcademyPage() {
                     </div>
                     <h2 className="mt-4 text-lg font-extrabold leading-tight">{corso.titolo}</h2>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">{corso.descrizione}</p>
-                    <div className="mt-5 border-t border-white/6 pt-4">
+                    <div className="mt-5 border-t border-border pt-4">
                       <p className="text-xs font-semibold" style={{ color: ui.c }}>{ui.accesso}</p>
                       <p className="mt-0.5 text-[0.7rem] text-faint">Per: {corso.pubblico}</p>
                       {corso.certificante && (
@@ -75,7 +75,7 @@ export default async function AcademyPage() {
                           <Link href="/partner" className="text-violet-light underline-offset-2 hover:underline">Capture Partner</Link>.
                         </p>
                       )}
-                      <span className="mt-3 inline-block rounded-full border border-white/15 px-3 py-1 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-muted">
+                      <span className="mt-3 inline-block rounded-full border border-border px-3 py-1 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-muted">
                         {corso.pubblicato ? "Disponibile" : "In preparazione"}
                       </span>
                     </div>

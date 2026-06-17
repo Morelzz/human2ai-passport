@@ -110,7 +110,7 @@ export function HowItWorks() {
         <div
           data-progress
           className="h-full w-full origin-left"
-          style={{ background: "linear-gradient(90deg, #F2A93B 0%, #EE7A70 50%, #7FAE96 100%)", transform: "scaleX(0)" }}
+          style={{ background: "linear-gradient(90deg, #F2A93B 0%, var(--blocked-c) 50%, var(--verified-c) 100%)", transform: "scaleX(0)" }}
         />
       </div>
 

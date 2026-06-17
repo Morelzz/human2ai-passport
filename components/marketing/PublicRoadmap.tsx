@@ -72,6 +72,8 @@ const PHASES: Phase[] = [
   },
 ];
 
+// Accenti decorativi della timeline (usati anche con append alpha esadecimale,
+// es. `${c}66`): restano hex costanti, leggibili nei due temi.
 const COLOR: Record<Status, string> = {
   done: "#7FAE96",
   current: "#EE7A70",
@@ -249,7 +251,7 @@ function IconNode({ phase, reduce, delay }: { phase: Phase; reduce: boolean; del
         transition={{ duration: isCurrent ? 8 : 22, repeat: Infinity, ease: "linear" }}
       />
       {/* Disco interno scuro = crea l'anello */}
-      <span aria-hidden className="absolute inset-[2.5px] rounded-full" style={{ background: `radial-gradient(circle at 50% 30%, ${c}2e, #0C0F17 78%)` }} />
+      <span aria-hidden className="absolute inset-[2.5px] rounded-full" style={{ background: `radial-gradient(circle at 50% 30%, ${c}2e, var(--bg) 78%)` }} />
 
       {/* Icona */}
       <Icon className="relative z-10 h-6 w-6" style={{ color: c }} strokeWidth={1.8} />
@@ -274,7 +276,7 @@ function PhaseCard({ phase }: { phase: Phase }) {
       {/* Accento superiore nel colore di stato */}
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${c}, transparent)` }} />
       <div className="flex items-center gap-2">
-        <span className="text-[0.64rem] font-bold uppercase tracking-[0.12em]" style={{ color: isCurrent ? c : "rgba(242,233,216,0.70)" }}>
+        <span className="text-[0.64rem] font-bold uppercase tracking-[0.12em]" style={{ color: isCurrent ? c : "var(--text-muted)" }}>
           {phase.horizon.split(" · ")[0]}
         </span>
         {isCurrent && (
@@ -287,7 +289,7 @@ function PhaseCard({ phase }: { phase: Phase }) {
       <p className="mt-0.5 text-[0.68rem] text-faint">{phase.horizon.replace(/^[^·]+· /, "")}</p>
 
       <h3 className="mt-2 text-lg font-extrabold leading-tight">{phase.title}</h3>
-      <p className="mt-2 text-sm font-semibold leading-snug" style={{ color: isCurrent ? "#F2E9D8" : "rgba(242,233,216,0.70)" }}>
+      <p className="mt-2 text-sm font-semibold leading-snug" style={{ color: isCurrent ? "var(--text)" : "var(--text-muted)" }}>
         {phase.promise}
       </p>
       <p className="mt-2.5 text-sm leading-relaxed text-muted">{phase.body}</p>

@@ -34,31 +34,31 @@ export default function AnchorPanel() {
   }
 
   return (
-    <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>ANCORAGGIO ON-CHAIN (BASE)</p>
+    <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+      <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>ANCORAGGIO ON-CHAIN (BASE)</p>
 
       {!cfg ? (
-        <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem", margin: 0 }}>Verifica configurazione…</p>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>Verifica configurazione…</p>
       ) : !cfg.configured ? (
-        <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem", lineHeight: 1.6, margin: 0 }}>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.6, margin: 0 }}>
           Blockchain non ancora configurata{cfg.chain ? ` (rete: ${cfg.chain})` : ""}. Imposta le env
-          <span style={{ color: "rgba(242,233,216,0.70)" }}> BASE_RPC_URL, RELAYER_PRIVATE_KEY, IDENTITY_CONTRACT</span> e deploya i contratti (vedi docs/GO-LIVE.md).
+          <span style={{ color: "var(--text-muted)" }}> BASE_RPC_URL, RELAYER_PRIVATE_KEY, IDENTITY_CONTRACT</span> e deploya i contratti (vedi docs/GO-LIVE.md).
         </p>
       ) : (
         <>
-          <p style={{ color: "#7FAE96", fontSize: "0.78rem", fontWeight: 700, margin: "0 0 0.8rem" }}>● Attiva su {cfg.chain}</p>
+          <p style={{ color: "var(--verified-c)", fontSize: "0.78rem", fontWeight: 700, margin: "0 0 0.8rem" }}>● Attiva su {cfg.chain}</p>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="handle avatar (es. random)"
-              style={{ flex: 1, minWidth: 160, background: "#0C0F17", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#F2E9D8", fontSize: "0.85rem", padding: "0.55rem 0.7rem", outline: "none" }} />
+              style={{ flex: 1, minWidth: 160, background: "var(--bg)", border: "1px solid var(--hairline)", borderRadius: 8, color: "var(--text)", fontSize: "0.85rem", padding: "0.55rem 0.7rem", outline: "none" }} />
             <button onClick={anchor} disabled={busy || !handle.trim()}
-              style={{ padding: "0.55rem 1rem", borderRadius: 8, border: "none", background: busy || !handle.trim() ? "#1E2530" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.82rem", cursor: busy || !handle.trim() ? "default" : "pointer" }}>
+              style={{ padding: "0.55rem 1rem", borderRadius: 8, border: "none", background: busy || !handle.trim() ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.82rem", cursor: busy || !handle.trim() ? "default" : "pointer" }}>
               {busy ? "Ancoraggio…" : "Ancora"}
             </button>
           </div>
         </>
       )}
 
-      {msg && <p style={{ color: msg.ok ? "#7FAE96" : "#EE7A70", fontSize: "0.8rem", margin: "0.8rem 0 0" }}>{msg.text}</p>}
+      {msg && <p style={{ color: msg.ok ? "var(--verified-c)" : "var(--blocked-c)", fontSize: "0.8rem", margin: "0.8rem 0 0" }}>{msg.text}</p>}
     </div>
   );
 }

@@ -51,7 +51,7 @@ export default async function PrenotaPage({ searchParams }: { searchParams: Prom
             </div>
           )}
           {esito === "annullato" && (
-            <div className="mt-6 rounded-2xl border border-white/15 bg-white/[0.03] p-5 text-sm text-muted">
+            <div className="mt-6 rounded-2xl border border-border bg-white/[0.03] p-5 text-sm text-muted">
               Pagamento annullato: la tua richiesta resta valida, puoi saldare in studio o riprovare.
             </div>
           )}

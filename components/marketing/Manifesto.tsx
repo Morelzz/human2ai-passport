@@ -19,13 +19,13 @@ const PRINCIPLES: Principle[] = [
     n: "02",
     title: "Il permesso viene prima della generazione.",
     body: "Prima di creare un essere umano, chiediamo il permesso a un essere umano. Se nessuna persona reale ha acconsentito, l'AI non produce nulla. È un confine, non un'opzione.",
-    color: "#EE7A70",
+    color: "var(--blocked-c)",
   },
   {
     n: "03",
     title: "L'ordine si ribalta.",
     body: "Per anni le intelligenze artificiali si sono nutrite di noi senza chiedere. Qui è l'AI a lavorare per le persone, non le persone a essere materia prima dell'AI.",
-    color: "#7FAE96",
+    color: "var(--verified-c)",
   },
   {
     n: "04",
@@ -37,13 +37,13 @@ const PRINCIPLES: Principle[] = [
     n: "05",
     title: "Non devi essere un modello. Devi essere reale.",
     body: "Il guadagno passivo dal proprio volto non è più un privilegio di chi sta in copertina. Ogni persona può mettere a reddito la propria immagine, con dignità e con regole chiare.",
-    color: "#EE7A70",
+    color: "var(--blocked-c)",
   },
   {
     n: "06",
     title: "Ogni immagine porta la sua prova.",
     body: "Ogni contenuto generato esce con la prova certificata di chi c'è dietro. In un mondo che non distingue più il vero dal sintetico, noi rendiamo il vero verificabile.",
-    color: "#7FAE96",
+    color: "var(--verified-c)",
   },
 ];
 
@@ -82,7 +82,7 @@ export function Manifesto() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-70px" }}
             transition={{ duration: 0.65, delay: (i % 2) * 0.05, ease: EASE }}
-            className="grid grid-cols-1 gap-x-8 gap-y-3 border-t border-white/10 py-9 sm:py-12 md:grid-cols-[5rem_1fr]"
+            className="grid grid-cols-1 gap-x-8 gap-y-3 border-t border-border py-9 sm:py-12 md:grid-cols-[5rem_1fr]"
           >
             <span
               className="font-mono text-4xl font-extrabold leading-none sm:text-5xl"
@@ -108,7 +108,7 @@ export function Manifesto() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.8, ease: EASE }}
-        className="mt-16 border-t border-white/10 pt-14 text-center text-3xl font-extrabold tracking-tight sm:text-5xl"
+        className="mt-16 border-t border-border pt-14 text-center text-3xl font-extrabold tracking-tight sm:text-5xl"
       >
         <span className="text-gradient">Real Humans. Real Rights. Real Earnings.</span>
       </motion.p>

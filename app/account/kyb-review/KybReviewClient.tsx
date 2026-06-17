@@ -54,28 +54,28 @@ export default function KybReviewClient() {
 
   return (
     <section style={{ maxWidth: 760, margin: "0 auto", padding: "3rem 1.5rem" }}>
-      <span style={{ color: "#EE7A70", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
+      <span style={{ color: "var(--blocked-c)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Verifiche aziende (KYB)</h1>
-      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
+      <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
         Aziende che hanno chiesto l&apos;accesso enterprise. Verifica ragione sociale, partita IVA e
         sito prima di approvare: solo dopo l&apos;azienda potrà onboardare il proprio roster.
       </p>
 
-      {error && <p style={{ color: "#EE7A70", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</p>}
+      {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.85rem", marginBottom: "1rem" }}>{error}</p>}
       {loading ? (
-        <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem" }}>Caricamento…</p>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Caricamento…</p>
       ) : items.length === 0 ? (
-        <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
-          <p style={{ color: "#7FAE96", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessuna azienda in attesa</p>
-          <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+          <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessuna azienda in attesa</p>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {items.map((o) => (
-            <div key={o.id} style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+            <div key={o.id} style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
               <div style={{ flex: 1, minWidth: 220 }}>
                 <div style={{ fontWeight: 700, fontSize: "1.02rem" }}>{o.name}</div>
-                <div style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", marginBottom: "0.4rem" }}>
+                <div style={{ color: "var(--text-muted)", fontSize: "0.8rem", marginBottom: "0.4rem" }}>
                   {[o.vat_number, o.country].filter(Boolean).join(" · ") || "—"}
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
@@ -85,16 +85,16 @@ export default function KybReviewClient() {
                       {o.website} ↗
                     </a>
                   )}
-                  {o.contact_email && <span style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.76rem" }}>{o.contact_email}</span>}
+                  {o.contact_email && <span style={{ color: "var(--text-faint)", fontSize: "0.76rem" }}>{o.contact_email}</span>}
                 </div>
               </div>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 <button onClick={() => decide(o.id, "reject")} disabled={busy === o.id}
-                  style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "1px solid rgba(238,122,112,0.4)", background: "transparent", color: "#EE7A70", fontWeight: 700, fontSize: "0.82rem", cursor: busy === o.id ? "default" : "pointer" }}>
+                  style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "1px solid rgba(238,122,112,0.4)", background: "transparent", color: "var(--blocked-c)", fontWeight: 700, fontSize: "0.82rem", cursor: busy === o.id ? "default" : "pointer" }}>
                   Rifiuta
                 </button>
                 <button onClick={() => decide(o.id, "approve")} disabled={busy === o.id}
-                  style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "none", background: busy === o.id ? "#1E2530" : "#7FAE96", color: busy === o.id ? "rgba(242,233,216,0.70)" : "#16352A", fontWeight: 800, fontSize: "0.82rem", cursor: busy === o.id ? "not-allowed" : "pointer" }}>
+                  style={{ padding: "0.55rem 1rem", borderRadius: 9, border: "none", background: busy === o.id ? "var(--elevated)" : "var(--verified-c)", color: busy === o.id ? "var(--text-muted)" : "#16352A", fontWeight: 800, fontSize: "0.82rem", cursor: busy === o.id ? "not-allowed" : "pointer" }}>
                   {busy === o.id ? "…" : "Approva"}
                 </button>
               </div>

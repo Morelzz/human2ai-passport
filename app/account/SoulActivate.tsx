@@ -32,7 +32,7 @@ export default function SoulActivate() {
 
   if (done) {
     return (
-      <p style={{ color: "#7FAE96", fontSize: "0.88rem", fontWeight: 700, margin: 0 }}>
+      <p style={{ color: "var(--verified-c)", fontSize: "0.88rem", fontWeight: 700, margin: 0 }}>
         ✓ Soul attivato! Il tuo avatar ora è generabile.
       </p>
     );
@@ -40,9 +40,9 @@ export default function SoulActivate() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
-      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.84rem", lineHeight: 1.6, margin: 0 }}>
-        Carica <strong style={{ color: "rgba(242,233,216,0.70)" }}>{MIN}-{MAX} foto nitide</strong> del tuo volto
-        (angolazioni e luci diverse). Creeremo il tuo <strong style={{ color: "rgba(242,233,216,0.70)" }}>Soul</strong>:
+      <p style={{ color: "var(--text-muted)", fontSize: "0.84rem", lineHeight: 1.6, margin: 0 }}>
+        Carica <strong style={{ color: "var(--text-muted)" }}>{MIN}-{MAX} foto nitide</strong> del tuo volto
+        (angolazioni e luci diverse). Creeremo il tuo <strong style={{ color: "var(--text-muted)" }}>Soul</strong>:
         il modello che garantisce la tua identità in ogni generazione.
       </p>
 
@@ -60,13 +60,13 @@ export default function SoulActivate() {
       <button
         onClick={activate}
         disabled={loading || count < MIN}
-        style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading || count < MIN ? "#1E2530" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.88rem", cursor: loading || count < MIN ? "default" : "pointer" }}
+        style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading || count < MIN ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.88rem", cursor: loading || count < MIN ? "default" : "pointer" }}
       >
         {loading ? "Creazione del Soul… (può richiedere qualche minuto)" : "Attiva il mio Soul"}
       </button>
 
-      {error && <p style={{ color: "#EE7A70", fontSize: "0.82rem", margin: 0 }}>{error}</p>}
-      <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: 0, lineHeight: 1.5 }}>
+      {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.82rem", margin: 0 }}>{error}</p>}
+      <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: 0, lineHeight: 1.5 }}>
         La creazione del Soul è a carico nostro. Operazione una tantum.
       </p>
     </div>

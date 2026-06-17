@@ -37,13 +37,13 @@ export default function LoginPage() {
         <Field label="Email" value={email} onChange={setEmail} type="email" />
         <Field label="Password" value={password} onChange={setPassword} type="password" />
 
-        {error && <p style={{ color: "#EE7A70", fontSize: "0.8rem", margin: 0 }}>{error}</p>}
+        {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.8rem", margin: 0 }}>{error}</p>}
 
         <button type="submit" disabled={loading} style={submitStyle(loading)}>
           {loading ? "Accesso…" : "Accedi"}
         </button>
 
-        <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
           Non hai un account?{" "}
           <Link href="/signup" style={{ color: "#F2A93B" }}>Registrati</Link>
         </p>

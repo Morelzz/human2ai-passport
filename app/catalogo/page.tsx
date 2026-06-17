@@ -86,7 +86,7 @@ export default async function CatalogoPage() {
                   <Link
                     key={a.handle}
                     href={`/passport/${a.handle}`}
-                    className="group block overflow-hidden rounded-2xl border border-white/8 bg-obsidian-2 transition-colors hover:border-white/20"
+                    className="group block overflow-hidden rounded-2xl border border-border bg-obsidian-2 transition-colors hover:border-edge"
                   >
                     <div className="relative aspect-[4/5] overflow-hidden bg-obsidian-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}

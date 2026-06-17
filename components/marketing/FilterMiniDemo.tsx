@@ -72,7 +72,7 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
               id="fmd-subject"
               value={subject}
               onChange={(e) => { setSubject(e.target.value); setRes(null); }}
-              className="w-full rounded-xl border border-white/10 bg-obsidian px-3 py-2.5 text-sm text-foreground outline-none focus:border-teal/50"
+              className="w-full rounded-xl border border-border bg-obsidian px-3 py-2.5 text-sm text-foreground outline-none focus:border-teal/50"
             >
               {avatars.map((a) => (
                 <option key={a.handle} value={a.handle}>
@@ -87,7 +87,7 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
               id="fmd-use"
               value={use}
               onChange={(e) => { setUse(e.target.value); setRes(null); }}
-              className="w-full rounded-xl border border-white/10 bg-obsidian px-3 py-2.5 text-sm text-foreground outline-none focus:border-teal/50"
+              className="w-full rounded-xl border border-border bg-obsidian px-3 py-2.5 text-sm text-foreground outline-none focus:border-teal/50"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -105,9 +105,9 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
           <div className="mt-6 rounded-2xl border p-5" style={{ borderColor: allow ? "rgba(127,174,150,0.35)" : "rgba(238,122,112,0.35)", background: allow ? "rgba(127,174,150,0.07)" : "rgba(238,122,112,0.07)" }}>
             <div className="flex items-center gap-2.5">
               {allow
-                ? <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: "#9CC6B2" }} />
-                : <ShieldX className="h-5 w-5 shrink-0" style={{ color: "#F2958C" }} />}
-              <span className="text-base font-extrabold" style={{ color: allow ? "#9CC6B2" : "#F2958C" }}>
+                ? <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: "var(--verified-c)" }} />
+                : <ShieldX className="h-5 w-5 shrink-0" style={{ color: "var(--blocked-c)" }} />}
+              <span className="text-base font-extrabold" style={{ color: allow ? "var(--verified-c)" : "var(--blocked-c)" }}>
                 {res.decision}: {allow ? "generazione autorizzata" : "generazione non autorizzata"}
               </span>
             </div>

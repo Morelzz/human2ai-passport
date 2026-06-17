@@ -62,7 +62,7 @@ function SocialPill({ kind, value }: { kind: "instagram" | "facebook"; value: st
       href={socialHref(kind, value)}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold text-muted transition-colors hover:border-violet/40 hover:text-foreground"
+      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white/[0.03] px-3 py-1 text-xs font-semibold text-muted transition-colors hover:border-violet/40 hover:text-foreground"
     >
       {kind === "instagram" ? (
         /* Glifo Instagram inline (lucide non distribuisce più icone brand) */
@@ -218,7 +218,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         </div>
 
         {/* Stato ancoraggio on-chain */}
-        <div className="mt-4 flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.02] p-3">
+        <div className="mt-4 flex items-center gap-2 rounded-xl border border-border bg-white/[0.02] p-3">
           <Link2 className="h-4 w-4 shrink-0 text-muted" />
           {ownership.tx ? (
             <p className="text-xs text-muted">
@@ -245,7 +245,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             {Array.from({ length: galleryCount }).map((_, idx) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img key={idx} src={`/api/sample/${avatar.handle}/${idx}`} alt={`esempio ${idx + 1}`} loading="lazy"
-                className="aspect-[3/4] w-full rounded-xl border border-white/8 bg-obsidian-3 object-cover" />
+                className="aspect-[3/4] w-full rounded-xl border border-border bg-obsidian-3 object-cover" />
             ))}
           </div>
           <p className="mt-3 text-xs leading-relaxed text-faint">
@@ -319,7 +319,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         <div className="flex flex-wrap items-center gap-3">
           <code className="rounded-lg bg-violet/10 px-3 py-2 font-mono text-base tracking-wide text-violet-light">{tokenShort}</code>
           <button onClick={copyToken}
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors ${copied ? "border-teal/40 bg-teal/10 text-teal" : "border-white/10 bg-white/5 text-muted hover:text-foreground"}`}>
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors ${copied ? "border-teal/40 bg-teal/10 text-teal" : "border-border bg-white/5 text-muted hover:text-foreground"}`}>
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             {copied ? "Copiato" : "Copia token"}
           </button>
@@ -355,18 +355,18 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
               {items.map((ev) => {
                 const isRevokeEv = ev.event_type === "REVOKED";
                 const bad = isRevokeEv || ev.event_type === "CATEGORY_REMOVED";
-                const c = bad ? "#F2958C" : "#9CC6B2";
+                const c = bad ? "var(--blocked-c)" : "var(--verified-c)";
                 return (
                   <li key={ev.id} className="relative flex gap-4 pb-6">
                     {/* segmento di linea verso l'elemento successivo */}
                     <span
                       aria-hidden
                       className="absolute bottom-0 left-[5px] top-4 w-px"
-                      style={{ background: isRevokeEv ? "linear-gradient(180deg, rgba(242,149,140,0.6), rgba(242,149,140,0.25))" : "rgba(255,255,255,0.13)" }}
+                      style={{ background: isRevokeEv ? "linear-gradient(180deg, rgba(242,149,140,0.6), rgba(242,149,140,0.25))" : "var(--hairline)" }}
                     />
                     <span
                       className="relative z-10 mt-[3px] h-[11px] w-[11px] shrink-0 rounded-full"
-                      style={{ background: isRevokeEv ? c : "transparent", border: `2px solid ${c}`, boxShadow: `0 0 10px ${c}44` }}
+                      style={{ background: isRevokeEv ? c : "transparent", border: `2px solid ${c}`, boxShadow: `0 0 10px color-mix(in oklab, ${c} 27%, transparent)` }}
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
@@ -407,7 +407,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             </ol>
           );
         })()}
-        <div className="mt-4 flex flex-wrap gap-8 border-t border-white/6 pt-4">
+        <div className="mt-4 flex flex-wrap gap-8 border-t border-border pt-4">
           <div>
             <span className="text-xs text-muted">Autorizzato dal</span>
             <p className="mt-0.5 text-sm font-semibold">{formatDate(avatar.consent_start)}</p>
@@ -450,7 +450,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       </div>
 
       {/* Nota legale */}
-      <div className="mt-4 rounded-2xl border border-white/6 bg-white/[0.02] p-5">
+      <div className="mt-4 rounded-2xl border border-border bg-white/[0.02] p-5">
         <p className="text-xs leading-relaxed text-faint">
           Questo soggetto è una persona reale che ha dato consenso esplicito all&apos;utilizzo della propria immagine nelle categorie indicate.
           Ogni utilizzo genera una royalty a suo favore. La revoca del consenso è prospettica: blocca gli utilizzi futuri, non cancella quelli passati.

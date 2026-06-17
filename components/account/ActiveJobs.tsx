@@ -17,8 +17,8 @@ export interface ActiveJob {
 const STATUS: Record<string, { label: string; color: string }> = {
   pending: { label: "In coda", color: "#F2A93B" },
   running: { label: "In generazione…", color: "#F2A93B" },
-  done: { label: "Pronta", color: "#7FAE96" },
-  error: { label: "Non riuscita. I VOLT sono stati riaccreditati.", color: "#EE7A70" },
+  done: { label: "Pronta", color: "var(--verified-c)" },
+  error: { label: "Non riuscita. I VOLT sono stati riaccreditati.", color: "var(--blocked-c)" },
 };
 
 export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
@@ -62,16 +62,16 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
   if (jobs.length === 0) return null;
 
   return (
-    <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>GENERAZIONI IN CORSO</p>
+    <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+      <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>GENERAZIONI IN CORSO</p>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
         {jobs.map((j) => {
           const s = STATUS[j.status] ?? STATUS.pending;
           return (
-            <div key={j.id} style={{ display: "flex", alignItems: "center", gap: "0.7rem", background: "#0C0F17", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12, padding: "0.8rem 0.9rem" }}>
+            <div key={j.id} style={{ display: "flex", alignItems: "center", gap: "0.7rem", background: "var(--bg)", border: "1px solid var(--hairline-soft)", borderRadius: 12, padding: "0.8rem 0.9rem" }}>
               <span aria-hidden style={{ width: 8, height: 8, borderRadius: "50%", background: s.color, flexShrink: 0, boxShadow: `0 0 8px ${s.color}` }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 600 }}>
+                <div style={{ color: "var(--text)", fontSize: "0.85rem", fontWeight: 600 }}>
                   Generazione ECHO{j.category ? ` · ${j.category}` : ""}
                 </div>
                 <div style={{ color: s.color, fontSize: "0.78rem", marginTop: "0.1rem" }}>{s.label}</div>
@@ -79,7 +79,7 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
               {j.status === "done" && (
                 <button
                   onClick={() => router.refresh()}
-                  style={{ flexShrink: 0, padding: "0.5rem 1rem", borderRadius: 999, background: "rgba(127,174,150,0.15)", border: "1px solid rgba(127,174,150,0.4)", color: "#9CC6B2", fontWeight: 700, fontSize: "0.78rem", cursor: "pointer" }}
+                  style={{ flexShrink: 0, padding: "0.5rem 1rem", borderRadius: 999, background: "rgba(127,174,150,0.15)", border: "1px solid rgba(127,174,150,0.4)", color: "var(--verified-c)", fontWeight: 700, fontSize: "0.78rem", cursor: "pointer" }}
                 >
                   Vedi
                 </button>
@@ -88,7 +88,7 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
           );
         })}
       </div>
-      <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+      <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
         Puoi lasciare questa pagina: la generazione prosegue sul server e i VOLT sono già impegnati.
       </p>
     </div>

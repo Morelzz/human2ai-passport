@@ -57,7 +57,7 @@ export function InquiryForm({
     );
   }
 
-  const inp = "w-full rounded-xl border border-white/10 bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
+  const inp = "w-full rounded-xl border border-border bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">

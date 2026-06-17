@@ -55,7 +55,7 @@ export default function FaqPage() {
                     {it.q}
                     <ChevronDown className="h-4 w-4 shrink-0 text-muted transition-transform duration-300 group-open:rotate-180" />
                   </summary>
-                  <div className="border-t border-white/6 px-5 py-4 sm:px-6">
+                  <div className="border-t border-border px-5 py-4 sm:px-6">
                     <p className="text-sm leading-relaxed text-muted">{it.a}</p>
                   </div>
                 </details>

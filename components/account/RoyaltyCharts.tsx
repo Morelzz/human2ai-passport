@@ -32,7 +32,7 @@ function AreaChart({ daily }: { daily: RevenueStats["daily"] }) {
           <path d={line} fill="none" stroke="#F2A93B" strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       ) : (
-        <div className="flex h-[120px] items-center justify-center rounded-lg border border-white/6 text-xs text-faint">
+        <div className="flex h-[120px] items-center justify-center rounded-lg border border-border text-xs text-faint">
           Ancora nessuna royalty in questo periodo
         </div>
       )}
@@ -47,7 +47,7 @@ function CategoryBars({ byCategory }: { byCategory: RevenueStats["byCategory"] }
     <div>
       <p className="mb-2 text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">Per categoria · 30 giorni</p>
       {top.length === 0 ? (
-        <div className="flex h-[120px] items-center justify-center rounded-lg border border-white/6 text-xs text-faint">
+        <div className="flex h-[120px] items-center justify-center rounded-lg border border-border text-xs text-faint">
           Nessun utilizzo in questo periodo
         </div>
       ) : (

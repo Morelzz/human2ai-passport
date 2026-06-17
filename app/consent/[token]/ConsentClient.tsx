@@ -33,7 +33,7 @@ export default function ConsentClient({ token, alias, identity, categories, alre
   }
 
   return (
-    <div style={{ background: "#0C0F17", minHeight: "100vh", color: "#F2E9D8", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 1.5rem" }}>
+    <div style={{ background: "var(--bg)", minHeight: "100vh", color: "var(--text)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: 480, width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", justifyContent: "center", marginBottom: "2rem" }}>
           <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#F2A93B" }} />
@@ -41,22 +41,22 @@ export default function ConsentClient({ token, alias, identity, categories, alre
         </div>
 
         {done ? (
-          <div style={{ background: "#141A24", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 18, padding: "2rem", textAlign: "center" }}>
-            <p style={{ color: "#7FAE96", fontSize: "1.1rem", fontWeight: 800, margin: "0 0 0.5rem" }}>✓ Consenso confermato</p>
-            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem", lineHeight: 1.6, margin: 0 }}>
+          <div style={{ background: "var(--surface)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 18, padding: "2rem", textAlign: "center" }}>
+            <p style={{ color: "var(--verified-c)", fontSize: "1.1rem", fontWeight: 800, margin: "0 0 0.5rem" }}>✓ Consenso confermato</p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: 0 }}>
               Grazie. Il tuo volto entrerà nel registro dopo la verifica dei nostri operatori.
               Potrai revocare il consenso in qualsiasi momento.
             </p>
           </div>
         ) : (
-          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 18, padding: "2rem" }}>
+          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 18, padding: "2rem" }}>
             <h1 style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Confermi il tuo consenso?</h1>
-            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.5rem" }}>
-              Un&apos;organizzazione ti ha registrato nel registro Semblic come <strong style={{ color: "#F2E9D8" }}>{alias}</strong>.
+            <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.5rem" }}>
+              Un&apos;organizzazione ti ha registrato nel registro Semblic come <strong style={{ color: "var(--text)" }}>{alias}</strong>.
               Confermi solo tu, di persona, che è davvero il tuo volto e ne autorizzi l&apos;uso.
             </p>
 
-            <div style={{ background: "#0C0F17", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.1rem", marginBottom: "1.5rem" }}>
+            <div style={{ background: "var(--bg)", border: "1px solid var(--hairline-soft)", borderRadius: 12, padding: "1.1rem", marginBottom: "1.5rem" }}>
               <Row label="Nome pubblico" value={alias} />
               {identity && <Row label="Caratteristiche" value={identity} />}
               <Row label="Usi autorizzati" value={categories.length ? categories.join(" · ") : "—"} />
@@ -64,24 +64,24 @@ export default function ConsentClient({ token, alias, identity, categories, alre
 
             <label style={{ display: "flex", gap: "0.6rem", alignItems: "flex-start", marginBottom: "1.2rem", cursor: "pointer" }}>
               <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} style={{ marginTop: "0.2rem" }} />
-              <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem", lineHeight: 1.5 }}>
+              <span style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.5 }}>
                 Confermo di essere la persona raffigurata e autorizzo Semblic all&apos;uso del mio volto
                 secondo gli usi indicati. So che posso revocare il consenso in qualsiasi momento.
               </span>
             </label>
 
-            <label style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.78rem", display: "block", marginBottom: "0.4rem" }}>Firma (il tuo nome)</label>
+            <label style={{ color: "var(--text-muted)", fontSize: "0.78rem", display: "block", marginBottom: "0.4rem" }}>Firma (il tuo nome)</label>
             <input
               value={signature}
               onChange={(e) => setSignature(e.target.value)}
               placeholder="Nome e cognome"
-              style={{ width: "100%", padding: "0.8rem", borderRadius: 10, background: "#0C0F17", border: "1px solid rgba(255,255,255,0.1)", color: "#F2E9D8", fontSize: "0.95rem", outline: "none", marginBottom: "1.2rem", fontFamily: "inherit" }}
+              style={{ width: "100%", padding: "0.8rem", borderRadius: 10, background: "var(--bg)", border: "1px solid var(--hairline-soft)", color: "var(--text)", fontSize: "0.95rem", outline: "none", marginBottom: "1.2rem", fontFamily: "inherit" }}
             />
 
-            {error && <p style={{ color: "#EE7A70", fontSize: "0.82rem", margin: "0 0 1rem" }}>{error}</p>}
+            {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.82rem", margin: "0 0 1rem" }}>{error}</p>}
 
             <button onClick={confirm} disabled={loading}
-              style={{ width: "100%", padding: "0.9rem", borderRadius: 10, border: "none", background: loading ? "#1E2530" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
+              style={{ width: "100%", padding: "0.9rem", borderRadius: 10, border: "none", background: loading ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
               {loading ? "Conferma…" : "Confermo il mio consenso"}
             </button>
           </div>
@@ -94,8 +94,8 @@ export default function ConsentClient({ token, alias, identity, categories, alre
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", padding: "0.3rem 0" }}>
-      <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem" }}>{label}</span>
-      <span style={{ color: "#F2E9D8", fontSize: "0.82rem", fontWeight: 600, textAlign: "right" }}>{value}</span>
+      <span style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>{label}</span>
+      <span style={{ color: "var(--text)", fontSize: "0.82rem", fontWeight: 600, textAlign: "right" }}>{value}</span>
     </div>
   );
 }

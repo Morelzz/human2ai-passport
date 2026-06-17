@@ -22,7 +22,7 @@ const item = {
 
 export function Hero({ count, blockedMonth, protectedFaces }: { count: number; blockedMonth: number; protectedFaces: number }) {
   return (
-    <section className="relative flex min-h-[92vh] items-center overflow-hidden">
+    <section data-theme="dark" className="relative flex min-h-[92vh] items-center overflow-hidden">
       {/* Video di sfondo a tutto schermo (loop con dip-to-dark) */}
       <HeroVideo className="absolute inset-0 z-0" />
 

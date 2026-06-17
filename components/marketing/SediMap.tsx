@@ -74,7 +74,7 @@ export function SediMap({ sedi }: { sedi: MapSede[] }) {
       ref={ref}
       role="region"
       aria-label="Mappa delle sedi di scansione certificate"
-      className="smbl-map h-[360px] w-full overflow-hidden rounded-[2rem] border border-white/10 bg-obsidian-2 sm:h-[440px]"
+      className="smbl-map h-[360px] w-full overflow-hidden rounded-[2rem] border border-border bg-obsidian-2 sm:h-[440px]"
     />
   );
 }

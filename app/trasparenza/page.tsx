@@ -43,11 +43,11 @@ export default async function TrasparenzaPage() {
 
   const stats = [
     { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#F2A93B" },
-    { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "#7FAE96" },
-    { label: "Generazioni certificate", value: String(genCount), c: "#EE7A70" },
-    { label: "Maturato per le persone reali", value: formatEur(royaltyAccrued), c: "#7FAE96" },
+    { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "var(--verified-c)" },
+    { label: "Generazioni certificate", value: String(genCount), c: "var(--blocked-c)" },
+    { label: "Maturato per le persone reali", value: formatEur(royaltyAccrued), c: "var(--verified-c)" },
     { label: "Già erogato (payout)", value: formatEur(payoutPaid), c: "#F2A93B" },
-    { label: "Payout effettuati", value: String(payoutCount), c: "rgba(242,233,216,0.45)" },
+    { label: "Payout effettuati", value: String(payoutCount), c: "var(--text-faint)" },
   ];
 
   return (
@@ -74,7 +74,7 @@ export default async function TrasparenzaPage() {
             {/* 1. Il filtro al lavoro: richieste rifiutate questo mese (crimson) */}
             <div className="glass relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(238,122,112,0.16),transparent_70%)]" />
-              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#EE7A70,transparent)]" />
+              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,var(--blocked-c),transparent)]" />
               <div className="relative">
                 <span className="label-mono text-crimson-light">Il filtro al lavoro</span>
                 <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-crimson sm:text-6xl">
@@ -139,7 +139,7 @@ export default async function TrasparenzaPage() {
                   { t: "Ogni uso pagato", d: "Royalty alla persona reale, tracciabili e portabili, anche on-chain." },
                   { t: "Prova ovunque", d: "Filigrana invisibile + certificato: l'origine è verificabile su qualsiasi piattaforma." },
                 ].map((b) => (
-                  <div key={b.t} className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
+                  <div key={b.t} className="rounded-xl border border-border bg-white/[0.02] p-4">
                     <p className="text-sm font-bold">{b.t}</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted">{b.d}</p>
                   </div>

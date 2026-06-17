@@ -145,7 +145,7 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
           <div className="grid grid-cols-4 gap-2.5">
             {POSES.map((p, slot) => (
               <label key={p.key} title={p.tip}
-                className={`focus-ring relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}>
+                className={`focus-ring relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-border hover:border-violet/40"}`}>
                 {poseSlots[slot] ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={poseSlots[slot]!.url} alt={p.label} className="absolute inset-0 h-full w-full object-cover" />
@@ -187,7 +187,7 @@ function PickBox({ label, hint, slot, aspect, onPick }: {
 }) {
   return (
     <label
-      className={`focus-ring relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}
+      className={`focus-ring relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-border hover:border-violet/40"}`}
       style={{ aspectRatio: aspect === "3/2" ? "3 / 2" : "3 / 4" }}>
       {slot ? (
         // eslint-disable-next-line @next/next/no-img-element

@@ -47,7 +47,7 @@ export function CookieBanner() {
 
   return (
     <div role="dialog" aria-label="Preferenze cookie" className="fixed inset-x-3 bottom-3 z-[80] mx-auto max-w-xl">
-      <div className="rounded-2xl border border-white/12 bg-[#141A24]/95 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+      <div className="rounded-2xl border border-border bg-[color-mix(in_oklab,var(--surface)_95%,transparent)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
         <p className="text-sm font-bold">Cookie, senza giochetti.</p>
         <p className="mt-1.5 text-[0.8rem] leading-relaxed text-muted">
           Usiamo solo cookie <span className="text-foreground">essenziali</span> (accesso e preferenze).
@@ -56,7 +56,7 @@ export function CookieBanner() {
         </p>
 
         {detail && (
-          <div className="mt-3 flex flex-col gap-2 rounded-xl border border-white/8 bg-white/[0.02] p-3.5">
+          <div className="mt-3 flex flex-col gap-2 rounded-xl border border-border bg-white/[0.02] p-3.5">
             <label className="flex items-center justify-between gap-3 text-[0.8rem]">
               <span><span className="font-semibold text-foreground">Essenziali</span> <span className="text-faint">· accesso, sicurezza, preferenze</span></span>
               <span className="rounded-full border border-teal/35 bg-teal/10 px-2.5 py-0.5 text-[0.65rem] font-bold text-teal">sempre attivi</span>
@@ -70,10 +70,10 @@ export function CookieBanner() {
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {/* Pari dignità visiva: nessun dark pattern */}
-          <button onClick={() => save(false)} className="rounded-full border border-white/20 px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-white/45">
+          <button onClick={() => save(false)} className="rounded-full border border-border px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-edge">
             Solo essenziali
           </button>
-          <button onClick={() => save(detail ? analytics : true)} className="rounded-full border border-white/20 px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-white/45">
+          <button onClick={() => save(detail ? analytics : true)} className="rounded-full border border-border px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-edge">
             {detail ? "Salva preferenze" : "Accetta tutto"}
           </button>
           {!detail && (

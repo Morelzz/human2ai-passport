@@ -57,74 +57,74 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, a
   return (
       <section style={{ maxWidth: 540, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
         <h1 style={{ fontSize: "1.7rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Gestisci il consenso</h1>
-        <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
           Il consenso è una timeline: ogni modifica viene registrata e vale solo per il
           futuro. Revocare non cancella ciò che è già avvenuto.{" "}
           <Link href={`/passport/${handle}`} style={{ color: "#F2A93B" }}>Vedi il passport →</Link>
         </p>
 
         {/* Identity kit — immutabile, fissato alla creazione */}
-        <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", margin: "0 0 0.3rem" }}>
-            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: 0 }}>IDENTITY KIT</p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: 0 }}>IDENTITY KIT</p>
             <span style={{ fontSize: "0.62rem", fontWeight: 700, color: "#F2A93B", background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 999, padding: "0.1rem 0.5rem", letterSpacing: "0.04em" }}>IMMUTABILE</span>
           </div>
-          <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: "0 0 1.2rem", lineHeight: 1.5 }}>
+          <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1.2rem", lineHeight: 1.5 }}>
             Le caratteristiche strutturali dell&apos;avatar, fissate alla creazione. Rappresentano la persona reale e non sono modificabili.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.9rem" }}>
             {(Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).map((field) => (
               <div key={field}>
-                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.68rem", letterSpacing: "0.03em", margin: "0 0 0.2rem" }}>{IDENTITY_LABELS[field]}</p>
-                <p style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 600, margin: 0, textTransform: "capitalize" }}>{kit[field] ?? "—"}</p>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.68rem", letterSpacing: "0.03em", margin: "0 0 0.2rem" }}>{IDENTITY_LABELS[field]}</p>
+                <p style={{ color: "var(--text)", fontSize: "0.85rem", fontWeight: 600, margin: 0, textTransform: "capitalize" }}>{kit[field] ?? "—"}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {error && <p style={{ color: "#EE7A70", fontSize: "0.85rem" }}>{error}</p>}
+        {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.85rem" }}>{error}</p>}
 
         {revokedAt ? (
           <div style={{ background: "rgba(238,122,112,0.08)", border: "1px solid rgba(238,122,112,0.3)", borderRadius: 16, padding: "1.5rem" }}>
-            <p style={{ color: "#EE7A70", fontWeight: 700, margin: "0 0 0.4rem" }}>Consenso revocato</p>
-            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem", margin: "0 0 1.2rem", lineHeight: 1.6 }}>
+            <p style={{ color: "var(--blocked-c)", fontWeight: 700, margin: "0 0 0.4rem" }}>Consenso revocato</p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: "0 0 1.2rem", lineHeight: 1.6 }}>
               Dal {new Date(revokedAt).toLocaleDateString("it-IT")} il tuo avatar è escluso da ogni nuovo utilizzo.
               Puoi riattivare il consenso: il futuro torna disponibile, ma la cronologia
               della revoca resta registrata.
             </p>
             <button disabled={busy} onClick={() => { if (confirm("Riattivare il consenso? Il tuo avatar tornerà utilizzabile da oggi.")) act({ type: "reactivate" }); }}
-              style={{ padding: "0.7rem 1.2rem", borderRadius: 10, border: "none", background: busy ? "#1E2530" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+              style={{ padding: "0.7rem 1.2rem", borderRadius: 10, border: "none", background: busy ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
               Riattiva il consenso
             </button>
           </div>
         ) : (
           <>
             {/* Categorie consentite */}
-            <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-              <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>CATEGORIE CONSENTITE</p>
+            <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>CATEGORIE CONSENTITE</p>
               {approved.length === 0 ? (
-                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem", margin: 0 }}>Nessuna categoria attiva.</p>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>Nessuna categoria attiva.</p>
               ) : (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                   {approved.map((c) => (
                     <button key={c} disabled={busy} onClick={() => act({ type: "remove_category", category: c })}
-                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "rgba(127,174,150,0.12)", color: "#7FAE96", border: "1px solid rgba(127,174,150,0.3)", cursor: busy ? "default" : "pointer" }}>
-                      {c} <span style={{ color: "#EE7A70", fontWeight: 800 }}>×</span>
+                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "rgba(127,174,150,0.12)", color: "var(--verified-c)", border: "1px solid rgba(127,174,150,0.3)", cursor: busy ? "default" : "pointer" }}>
+                      {c} <span style={{ color: "var(--blocked-c)", fontWeight: 800 }}>×</span>
                     </button>
                   ))}
                 </div>
               )}
-              <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: "0.8rem 0 0" }}>Clicca una categoria per revocarla.</p>
+              <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0.8rem 0 0" }}>Clicca una categoria per revocarla.</p>
             </div>
 
             {/* Aggiungi categoria */}
             {available.length > 0 && (
-              <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>AGGIUNGI CATEGORIA</p>
+              <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>AGGIUNGI CATEGORIA</p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                   {available.map((c) => (
                     <button key={c} disabled={busy} onClick={() => act({ type: "add_category", category: c })}
-                      style={{ padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "#141A24", color: "rgba(242,233,216,0.70)", border: "1px solid rgba(255,255,255,0.08)", cursor: busy ? "default" : "pointer" }}>
+                      style={{ padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "var(--surface)", color: "var(--text-muted)", border: "1px solid var(--hairline-soft)", cursor: busy ? "default" : "pointer" }}>
                       + {c}
                     </button>
                   ))}
@@ -133,14 +133,14 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, a
             )}
 
             {/* Categorie escluse */}
-            <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-              <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>CATEGORIE ESCLUSE</p>
-              <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: "0 0 1rem" }}>Usi che vieti esplicitamente, qualunque cosa accada.</p>
+            <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>CATEGORIE ESCLUSE</p>
+              <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem" }}>Usi che vieti esplicitamente, qualunque cosa accada.</p>
               {excluded.length > 0 && (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
                   {excluded.map((c) => (
                     <button key={c} disabled={busy} onClick={() => act({ type: "remove_excluded", category: c })}
-                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "rgba(238,122,112,0.12)", color: "#EE7A70", border: "1px solid rgba(238,122,112,0.3)", cursor: busy ? "default" : "pointer" }}>
+                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "rgba(238,122,112,0.12)", color: "var(--blocked-c)", border: "1px solid rgba(238,122,112,0.3)", cursor: busy ? "default" : "pointer" }}>
                       {c} <span style={{ fontWeight: 800 }}>×</span>
                     </button>
                   ))}
@@ -148,30 +148,30 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, a
               )}
               {availableToExclude.length > 0 && (
                 <>
-                  <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: "0 0 0.6rem" }}>Aggiungi un&apos;esclusione:</p>
+                  <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 0.6rem" }}>Aggiungi un&apos;esclusione:</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                     {availableToExclude.map((c) => (
                       <button key={c} disabled={busy} onClick={() => act({ type: "add_excluded", category: c })}
-                        style={{ padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "#141A24", color: "rgba(242,233,216,0.70)", border: "1px solid rgba(255,255,255,0.08)", cursor: busy ? "default" : "pointer" }}>
+                        style={{ padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "var(--surface)", color: "var(--text-muted)", border: "1px solid var(--hairline-soft)", cursor: busy ? "default" : "pointer" }}>
                         ⊘ {c}
                       </button>
                     ))}
                   </div>
                 </>
               )}
-              <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: "0.8rem 0 0" }}>Clicca un&apos;esclusione per rimuoverla. Escludere una categoria la toglie dalle consentite.</p>
+              <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0.8rem 0 0" }}>Clicca un&apos;esclusione per rimuoverla. Escludere una categoria la toglie dalle consentite.</p>
             </div>
 
             {/* Ingaggi reali (B3): segnale opt-in. Il brand contatta via /contatti.
                 Nascosto per i volti in sola protezione (VETO). */}
             {!protectionOnly && (
-              <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>INGAGGI REALI</p>
-                <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+              <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>INGAGGI REALI</p>
+                <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
                   Permetti ai brand di contattarti, tramite Semblic, per uno shooting reale con la persona vera. Appare un badge sul tuo passport. Il consenso non cambia.
                 </p>
                 <button disabled={busy} onClick={toggleBooking}
-                  style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.9rem", borderRadius: 999, fontSize: "0.82rem", fontWeight: 700, cursor: busy ? "default" : "pointer", background: booking ? "rgba(127,174,150,0.12)" : "#141A24", color: booking ? "#7FAE96" : "rgba(242,233,216,0.70)", border: booking ? "1px solid rgba(127,174,150,0.3)" : "1px solid rgba(255,255,255,0.08)" }}>
+                  style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.9rem", borderRadius: 999, fontSize: "0.82rem", fontWeight: 700, cursor: busy ? "default" : "pointer", background: booking ? "rgba(127,174,150,0.12)" : "var(--surface)", color: booking ? "var(--verified-c)" : "var(--text-muted)", border: booking ? "1px solid rgba(127,174,150,0.3)" : "1px solid var(--hairline-soft)" }}>
                   {booking ? "✓ Disponibile per ingaggi reali" : "Attiva: disponibile per ingaggi reali"}
                 </button>
               </div>
@@ -179,12 +179,12 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, a
 
             {/* Kill-switch */}
             <div style={{ background: "rgba(238,122,112,0.05)", border: "1px solid rgba(238,122,112,0.25)", borderRadius: 16, padding: "1.5rem" }}>
-              <p style={{ color: "#F2E9D8", fontWeight: 700, fontSize: "0.9rem", margin: "0 0 0.4rem" }}>Revoca totale</p>
-              <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
+              <p style={{ color: "var(--text)", fontWeight: 700, fontSize: "0.9rem", margin: "0 0 0.4rem" }}>Revoca totale</p>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
                 Esclude il tuo avatar da ogni utilizzo futuro. Azione prospettica e definitiva.
               </p>
               <button disabled={busy} onClick={() => { if (confirm("Revocare tutto il consenso? Il tuo avatar non sarà più utilizzabile.")) act({ type: "revoke_all" }); }}
-                style={{ padding: "0.7rem 1.2rem", borderRadius: 10, background: "transparent", border: "1px solid #EE7A70", color: "#EE7A70", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+                style={{ padding: "0.7rem 1.2rem", borderRadius: 10, background: "transparent", border: "1px solid var(--blocked-c)", color: "var(--blocked-c)", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
                 Revoca tutto il consenso
               </button>
             </div>

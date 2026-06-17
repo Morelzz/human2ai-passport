@@ -136,7 +136,7 @@ export default function PrezziPage() {
                     <div className="mt-2 text-3xl font-extrabold">{formatEur(b.cents)}</div>
                     <p className="mt-1 text-xs text-faint">per immagine generata</p>
                     <p className="mt-3 text-sm leading-relaxed text-faint">{b.cats}</p>
-                    <div className="mt-4 flex items-center justify-between border-t border-white/6 pt-3">
+                    <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
                       <span className="text-sm font-bold text-teal">Alla persona</span>
                       <span className="text-sm font-extrabold text-teal">{formatEur(split.net_cents)}</span>
                     </div>
@@ -173,13 +173,13 @@ export default function PrezziPage() {
                 <Link
                   key={r.href}
                   href={r.href}
-                  className="group flex items-center gap-4 rounded-full border border-white/10 bg-white/[0.02] py-4 pl-6 pr-5 transition-all hover:border-violet/40 hover:bg-violet/10"
+                  className="group flex items-center gap-4 rounded-full border border-border bg-white/[0.02] py-4 pl-6 pr-5 transition-all hover:border-violet/40 hover:bg-violet/10"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-extrabold">{r.label} <span className="ml-1.5 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-muted">su misura</span></p>
                     <p className="mt-0.5 truncate text-xs text-faint sm:text-sm">{r.d}</p>
                   </div>
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 transition-colors group-hover:border-violet/50 group-hover:bg-violet/20">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border transition-colors group-hover:border-violet/50 group-hover:bg-violet/20">
                     <ArrowRight className="h-4 w-4 text-muted transition-colors group-hover:text-foreground" />
                   </span>
                 </Link>

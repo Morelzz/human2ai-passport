@@ -47,7 +47,7 @@ export function ContactForm({ prefill }: { prefill?: { subject?: string; message
     );
   }
 
-  const inp = "w-full rounded-xl border border-white/10 bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
+  const inp = "w-full rounded-xl border border-border bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
@@ -86,7 +86,7 @@ export function ContactForm({ prefill }: { prefill?: { subject?: string; message
       )}
 
       <button type="submit" disabled={sending}
-        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-[#0C0F17] transition-all hover:brightness-110 disabled:opacity-50">
+        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-on-amber transition-all hover:brightness-110 disabled:opacity-50">
         {sending ? "Invio…" : "Invia il messaggio"}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">

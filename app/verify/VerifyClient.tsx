@@ -95,7 +95,7 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
       onClick={onClick}
       aria-pressed={active}
       className={`focus-ring rounded-full border px-2.5 py-1 text-[0.68rem] font-semibold transition-colors ${
-        active ? "border-teal/60 bg-teal/15 text-teal" : "border-white/12 text-faint hover:border-white/30 hover:text-muted"
+        active ? "border-teal/60 bg-teal/15 text-teal" : "border-border text-faint hover:border-edge hover:text-muted"
       }`}
     >
       {children}
@@ -309,7 +309,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
     : result ? (result.valid ? "ok" : "warn")
     : "idle";
   const ringClass = {
-    idle: "border-white/15",
+    idle: "border-border",
     drag: "border-teal/70 bg-teal/5",
     busy: "border-violet/40",
     ok: "border-teal/60",
@@ -375,10 +375,10 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               {/* Sigillo + verdetto: emesso, non constatato */}
               <div className="mb-5 flex items-center gap-4">
                 <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden>
-                  <circle cx="22" cy="22" r="20" stroke="#7FAE96" strokeWidth="1.5" pathLength="100" strokeDasharray="100" strokeDashoffset="100" strokeLinecap="round">
+                  <circle cx="22" cy="22" r="20" stroke="var(--verified-c)" strokeWidth="1.5" pathLength="100" strokeDasharray="100" strokeDashoffset="100" strokeLinecap="round">
                     <animate attributeName="stroke-dashoffset" from="100" to="0" dur="0.7s" fill="freeze" />
                   </circle>
-                  <path d="M14 22.5l5.5 5.5L30 16.5" stroke="#7FAE96" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" pathLength="100" strokeDasharray="100" strokeDashoffset="100">
+                  <path d="M14 22.5l5.5 5.5L30 16.5" stroke="var(--verified-c)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" pathLength="100" strokeDasharray="100" strokeDashoffset="100">
                     <animate attributeName="stroke-dashoffset" from="100" to="0" dur="0.45s" begin="0.55s" fill="freeze" />
                   </path>
                 </svg>
@@ -396,7 +396,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
 
               {/* Correlazione visiva: contenuto ↔ persona del registro */}
               {result.type === "content" && result.handle && (
-                <div className="mb-5 flex items-center gap-4 rounded-2xl border border-white/8 bg-obsidian p-4">
+                <div className="mb-5 flex items-center gap-4 rounded-2xl border border-border bg-obsidian p-4">
                   {preview && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt="" className="h-16 w-16 rounded-xl object-cover" />
@@ -464,7 +464,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                     ✓ La categoria <strong>{result.category}</strong> è coerente col consenso attuale della persona.
                   </p>
                 ) : (
-                  <p className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-[0.78rem] leading-relaxed text-muted">
+                  <p className="mt-4 rounded-xl border border-border bg-white/[0.03] p-3 text-[0.78rem] leading-relaxed text-muted">
                     La categoria <strong>{result.category}</strong> oggi non è più tra quelle consentite: la concessione valeva al momento della generazione.
                   </p>
                 )
@@ -474,7 +474,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               {result.events && result.events.length > 0 && (
                 <div className="mt-5">
                   <p className="mb-2 text-[0.7rem] tracking-[0.08em] text-faint">CATENA DEL CONSENSO</p>
-                  <div className="flex flex-col gap-1.5 border-l border-white/10 pl-4">
+                  <div className="flex flex-col gap-1.5 border-l border-border pl-4">
                     {result.events.slice(-6).map((ev, i) => {
                       const meta = EVENT_LABELS[ev.event_type] ?? { label: ev.event_type, tone: "teal" as const };
                       const color = meta.tone === "crimson" ? "text-crimson" : meta.tone === "amber" ? "text-amber" : "text-teal";
@@ -521,7 +521,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   ? "Questa immagine non porta la filigrana Semblic (o è stata rimossa da screenshot/ricompressione)."
                   : "La filigrana invisibile vive solo nei PNG originali scaricati da Semblic: un JPEG, uno screenshot o un'immagine molto grande non la conservano. Posso comunque confrontare il volto con il registro."}
               </p>
-              <div className="mt-4 rounded-2xl border border-white/10 bg-obsidian p-4">
+              <div className="mt-4 rounded-2xl border border-border bg-obsidian p-4">
                 <p className="m-0 text-[0.85rem] font-semibold text-foreground">
                   Vuoi confrontare il volto con il registro?
                 </p>
@@ -560,7 +560,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 Il volto in questa immagine è troppo piccolo o sfocato: una percentuale calcolata su pixel
                 che non contengono l&apos;informazione sarebbe un&apos;invenzione.
               </p>
-              <p className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-[0.78rem] leading-relaxed text-muted">
+              <p className="mt-3 rounded-xl border border-border bg-white/[0.03] p-3 text-[0.78rem] leading-relaxed text-muted">
                 Non &laquo;miglioriamo&raquo; la foto con l&apos;AI inventando un volto: l&apos;identità è il prodotto,
                 o c&apos;è, o non ci pronunciamo. Se puoi, carica il <span className="text-foreground">file originale</span> (non uno screenshot).
               </p>
@@ -601,7 +601,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               {/* Candidati: barre hairline, ~% sempre, primo evidenziato */}
               <div className="flex flex-col gap-2">
                 {(face.candidates ?? []).map((c, i) => (
-                  <div key={c.handle} className={`select-none rounded-xl border p-3 ${i === 0 ? "border-crimson/30 bg-crimson/[0.04]" : "border-white/8"}`}>
+                  <div key={c.handle} className={`select-none rounded-xl border p-3 ${i === 0 ? "border-crimson/30 bg-crimson/[0.04]" : "border-border"}`}>
                     <div className="flex cursor-default items-baseline justify-between gap-3">
                       <p className="m-0 text-[0.85rem] font-semibold text-foreground">
                         {c.alias} <span className="font-normal text-faint">@{c.handle}</span>
@@ -670,7 +670,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
 
           {/* ── RESTRINGI IL CERCHIO (solo dopo un'analisi volto riuscita) ── */}
           {showFilters && (
-            <div className="mt-5 rounded-2xl border border-white/10 bg-obsidian p-4">
+            <div className="mt-5 rounded-2xl border border-border bg-obsidian p-4">
               <div className="mb-3 flex items-baseline justify-between gap-3">
                 <p className="m-0 text-[0.7rem] font-bold tracking-[0.1em] text-faint">RESTRINGI IL CERCHIO</p>
                 <p className="m-0 text-[0.7rem] text-faint" aria-live="polite">

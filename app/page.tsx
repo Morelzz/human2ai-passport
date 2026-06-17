@@ -106,7 +106,7 @@ export default async function Home() {
                   href={INSTAGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] py-2 pl-2.5 pr-4 transition-all hover:border-violet/40 hover:bg-violet/10"
+                  className="group mt-5 inline-flex items-center gap-2.5 rounded-full border border-border bg-white/[0.03] py-2 pl-2.5 pr-4 transition-all hover:border-violet/40 hover:bg-violet/10"
                 >
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F2A93B]">
                     {/* Glifo Instagram inline (lucide non distribuisce più icone brand) */}

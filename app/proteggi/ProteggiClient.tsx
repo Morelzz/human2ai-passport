@@ -159,7 +159,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
           <div className="grid grid-cols-4 gap-2.5">
             {POSES.map((p, slot) => (
               <label key={p.key} title={p.tip}
-                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}>
+                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-border hover:border-violet/40"}`}>
                 {poseSlots[slot] ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={poseSlots[slot]!.url} alt={p.label} className="absolute inset-0 h-full w-full object-cover" />
@@ -181,7 +181,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
           <p className="mt-2 text-xs text-faint">{photoCount > 0 ? `${photoCount} su ${POSES.length} pose caricate` : "Carica almeno una posa frontale (piu' ne carichi, piu' robusta e' la protezione)."}</p>
         </div>
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3.5">
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-white/[0.02] p-3.5">
           <input type="checkbox" checked={art9} onChange={(e) => setArt9(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-violet-500" />
           <span className="text-[0.78rem] leading-relaxed text-muted">
             Acconsento al trattamento del mio dato biometrico (impronta del volto) a <span className="text-foreground">soli fini di protezione</span>,
@@ -205,7 +205,7 @@ function PickBox({ label, hint, slot, aspect, onPick }: {
 }) {
   return (
     <label
-      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-white/15 hover:border-violet/40"}`}
+      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-border hover:border-violet/40"}`}
       style={{ aspectRatio: aspect === "3/2" ? "3 / 2" : "3 / 4" }}>
       {slot ? (
         // eslint-disable-next-line @next/next/no-img-element
