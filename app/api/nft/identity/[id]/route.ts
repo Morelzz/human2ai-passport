@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
+import { isPublicAvatar } from "@/lib/registry";
 
 // Metadati dell'NFT identità (standard tipo OpenSea). Il baseURI del contratto
 // HumanIdentity punta qui: GET /api/nft/identity/<tokenId> → JSON.
@@ -9,11 +10,15 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
   const { data: av } = await admin
     .from("avatars")
-    .select("handle, alias, tier, consent_start, revoked_at")
+    .select("handle, alias, tier, consent_start, revoked_at, verification_status, protection_only")
     .eq("onchain_token_id", id)
     .maybeSingle();
 
-  if (!av) {
+  // Gate del registro pubblico (isPublicAvatar): un'identità sospesa, rifiutata o
+  // in sola protezione non espone i suoi metadati NFT, neanche se ancorata
+  // on-chain. Stesso 404 del "non trovato" per non rivelarne l'esistenza.
+  // (Oggi dormiente: 0 avatar ancorati; va in piedi prima di accendere la chain.)
+  if (!av || !isPublicAvatar(av)) {
     return Response.json(
       { name: `Human2AI Identity #${id}`, description: "Identità non trovata nel registro." },
       { status: 404 }
