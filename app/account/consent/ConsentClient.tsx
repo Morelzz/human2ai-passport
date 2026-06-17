@@ -10,13 +10,31 @@ interface Props {
   approved: string[];
   excluded: string[];
   revokedAt: string | null;
+  availableForBooking: boolean;
+  protectionOnly?: boolean;
   kit: Record<keyof typeof IDENTITY_KIT, string | null>;
 }
 
-export default function ConsentClient({ handle, approved, excluded, revokedAt, kit }: Props) {
+export default function ConsentClient({ handle, approved, excluded, revokedAt, availableForBooking, protectionOnly = false, kit }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [booking, setBooking] = useState(availableForBooking);
+
+  async function toggleBooking() {
+    const next = !booking;
+    setBusy(true);
+    setError(null);
+    const res = await fetch("/api/avatar/booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ available: next }),
+    });
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) { setError(json.error ?? "Errore"); return; }
+    setBooking(next);
+  }
   // Disponibili per essere consentite: né già consentite né escluse
   const available = (CATEGORIES as readonly string[]).filter((c) => !approved.includes(c) && !excluded.includes(c));
   // Disponibili per essere escluse: non già escluse
@@ -143,6 +161,21 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, k
               )}
               <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.8rem 0 0" }}>Clicca un&apos;esclusione per rimuoverla. Escludere una categoria la toglie dalle consentite.</p>
             </div>
+
+            {/* Ingaggi reali (B3): segnale opt-in. Il brand contatta via /contatti.
+                Nascosto per i volti in sola protezione (VETO). */}
+            {!protectionOnly && (
+              <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+                <p style={{ color: "#6b7280", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>INGAGGI REALI</p>
+                <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+                  Permetti ai brand di contattarti, tramite Human2AI, per uno shooting reale con la persona vera. Appare un badge sul tuo passport. Il consenso non cambia.
+                </p>
+                <button disabled={busy} onClick={toggleBooking}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.9rem", borderRadius: 999, fontSize: "0.82rem", fontWeight: 700, cursor: busy ? "default" : "pointer", background: booking ? "rgba(0,168,150,0.12)" : "#12121a", color: booking ? "#00A896" : "#6b7280", border: booking ? "1px solid rgba(0,168,150,0.3)" : "1px solid rgba(255,255,255,0.08)" }}>
+                  {booking ? "✓ Disponibile per ingaggi reali" : "Attiva: disponibile per ingaggi reali"}
+                </button>
+              </div>
+            )}
 
             {/* Kill-switch */}
             <div style={{ background: "rgba(184,0,92,0.05)", border: "1px solid rgba(184,0,92,0.25)", borderRadius: 16, padding: "1.5rem" }}>

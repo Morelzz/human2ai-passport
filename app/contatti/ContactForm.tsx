@@ -5,13 +5,13 @@ import Link from "next/link";
 
 // F2 — form contatti pubblico: nome, email, oggetto (select), messaggio.
 // Honeypot anti-bot invisibile, microcopy privacy sotto il bottone.
-const SUBJECTS = ["Sono un brand", "Voglio mettere il mio volto", "Stampa", "Partner", "Legale", "Altro"];
+const SUBJECTS = ["Sono un brand", "Voglio mettere il mio volto", "Ingaggio reale", "Stampa", "Partner", "Legale", "Altro"];
 
-export function ContactForm() {
+export function ContactForm({ prefill }: { prefill?: { subject?: string; message?: string } } = {}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
+  const [subject, setSubject] = useState(prefill?.subject ?? "");
+  const [message, setMessage] = useState(prefill?.message ?? "");
   const [website, setWebsite] = useState(""); // honeypot
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);

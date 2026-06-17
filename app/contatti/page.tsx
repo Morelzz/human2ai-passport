@@ -10,7 +10,12 @@ export const metadata = {
 };
 
 // F2 — pagina /contatti: form pubblico → contact_messages + recapiti.
-export default function ContattiPage() {
+// B3: ?ingaggio=<handle> pre-compila il form per una richiesta di ingaggio reale.
+export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string }> }) {
+  const { ingaggio } = await searchParams;
+  const prefill = ingaggio
+    ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Human2AI.` }
+    : undefined;
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -32,7 +37,7 @@ export default function ContattiPage() {
           <Reveal>
             <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_280px]">
               <div className="glass rounded-[2rem] p-6 sm:p-8">
-                <ContactForm />
+                <ContactForm prefill={prefill} />
               </div>
 
               {/* Recapiti */}

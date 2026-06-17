@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Fingerprint, Link2 } from "lucide-react";
+import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Fingerprint, Link2, Handshake } from "lucide-react";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -15,6 +15,7 @@ interface Props {
   tokenShort: string;
   isPublicFigure?: boolean;
   isRealPerson?: boolean;
+  availableForBooking?: boolean;
   galleryCount?: number;
   ownership: {
     owner: string;
@@ -81,7 +82,7 @@ function SocialPill({ kind, value }: { kind: "instagram" | "facebook"; value: st
   );
 }
 
-export default function PassportClient({ avatar, events, status, tier, tokenShort, isPublicFigure, isRealPerson = true, galleryCount = 0, ownership }: Props) {
+export default function PassportClient({ avatar, events, status, tier, tokenShort, isPublicFigure, isRealPerson = true, availableForBooking = false, galleryCount = 0, ownership }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyToken() {
@@ -141,6 +142,12 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
               {isPublicFigure && (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/30 bg-violet/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-violet-light">
                   <Sparkles className="h-3.5 w-3.5" /> NOTORIETÀ VERIFICATA
+                </span>
+              )}
+              {/* B3: disponibile per ingaggi reali (solo se il consenso e' attivo). */}
+              {availableForBooking && status === "ATTIVO" && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal">
+                  <Handshake className="h-3.5 w-3.5" /> DISPONIBILE PER INGAGGI
                 </span>
               )}
             </div>
@@ -266,6 +273,32 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           <p className="mt-2 text-center text-xs text-faint">
             Vai dritto alla generazione: {avatar.alias} è già selezionat{avatar.gender === "Donna" ? "a" : "o"}, il consenso resta il filtro.
           </p>
+        </motion.div>
+      )}
+
+      {/* B3 fase "ora": CTA ingaggio reale verso il contatto esistente. Solo per
+          avatar ATTIVI e disponibili. Nessun nuovo flusso di booking. */}
+      {availableForBooking && status === "ATTIVO" && (
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45 }}
+          className="glass mt-4 rounded-2xl p-5"
+        >
+          <div className="mb-2 flex items-center gap-2">
+            <Handshake className="h-4 w-4 text-teal" />
+            <p className="text-xs tracking-[0.1em] text-muted">INGAGGI REALI</p>
+          </div>
+          <p className="mb-3 text-sm leading-relaxed text-muted">
+            {avatar.alias} e&apos; disponibile per uno shooting reale con la persona vera. Human2AI fa da garante: l&apos;AI non sostituisce i modelli, gli procura lavoro.
+          </p>
+          <Link
+            href={`/contatti?ingaggio=${avatar.handle}`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-teal/40 bg-teal/15 px-5 py-2 text-sm font-bold text-teal transition-colors hover:bg-teal/25"
+          >
+            Richiedi un ingaggio →
+          </Link>
         </motion.div>
       )}
 

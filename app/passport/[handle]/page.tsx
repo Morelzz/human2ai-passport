@@ -117,6 +117,7 @@ export default async function PassportPage({ params }: Props) {
           tokenShort={tokenShort}
           isPublicFigure={isPublicFigure}
           isRealPerson={isRealPerson}
+          availableForBooking={(a.available_for_booking as boolean) ?? false}
           galleryCount={galleryFromRow(handle, (avatar as Record<string, unknown>).gallery_urls).length}
           ownership={ownership}
         />
