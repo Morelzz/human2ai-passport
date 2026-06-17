@@ -10,8 +10,8 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 export const metadata = {
   // Review B4: solo il nome pagina — il suffisso "— Human2AI" lo aggiunge il
   // template di app/layout.tsx (prima usciva doppio).
-  title: "Catalogo avatar",
-  description: "Il registro pubblico dei volti consenzienti: persone reali, verificate e pagate. Sfoglia il catalogo.",
+  title: "Avatar",
+  description: "Il registro pubblico dei volti consenzienti: persone reali, verificate e pagate. Sfoglia gli avatar.",
 };
 
 type CatalogAvatar = {
@@ -54,7 +54,7 @@ export default async function CatalogoPage() {
         <main className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <span className="text-xs font-bold tracking-[0.14em] text-teal">CATALOGO AVATAR</span>
+              <span className="text-xs font-bold tracking-[0.14em] text-teal">AVATAR DEL REGISTRO</span>
               <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
                 {avatars.length} {avatars.length === 1 ? "volto" : "volti"} nel registro
               </h1>

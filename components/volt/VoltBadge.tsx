@@ -144,7 +144,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
       {/* Desktop: pillola completa con Ricarica */}
       <div ref={wrapRef} className="relative hidden md:block">
         <div
-          className={`flex items-center gap-1 rounded-full border py-1 pl-2.5 pr-1 ${
+          className={`flex items-center gap-1 rounded-full border py-0.5 pl-2 pr-0.5 ${
             zero ? "border-crimson/40 bg-crimson/10" : low ? "border-amber-400/30 bg-amber-400/5" : "border-white/12 bg-white/[0.04]"
           }`}
         >
@@ -154,14 +154,14 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
             title={tooltip}
             aria-label={`Saldo VOLT: ${balance}. ${VOLT_STRINGS["volt.badge.cta"]}`}
             aria-expanded={open}
-            className="flex items-center gap-1 text-sm"
+            className="flex items-center gap-1 text-[0.8rem]"
           >
             <span aria-hidden>⚡</span>
             <span className={`font-bold tabular-nums ${counterColor}`}>{FMT.format(shown)}</span>
           </button>
           <Link
             href="/account/volt"
-            className={`ml-1 rounded-full bg-[#8b47f0] px-3 py-1 text-xs font-bold text-white transition-all hover:brightness-110 ${zero ? "animate-[pulse_1s_ease-in-out_1]" : ""}`}
+            className={`ml-1 rounded-full bg-[#8b47f0] px-2.5 py-0.5 text-[0.68rem] font-bold text-white transition-all hover:brightness-110 ${zero ? "animate-[pulse_1s_ease-in-out_1]" : ""}`}
           >
             {VOLT_STRINGS["volt.badge.cta"]}
           </Link>

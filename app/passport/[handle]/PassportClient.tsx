@@ -107,7 +107,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       {/* Back: il passport è una scheda del catalogo, serve una via d'uscita
           chiara su mobile (prima si restava incastrati dentro l'avatar). */}
       <Link href="/catalogo" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Catalogo
+        <ArrowLeft className="h-4 w-4" /> Avatar
       </Link>
       {/* Header card */}
       <motion.div custom={0} variants={fade} initial="hidden" animate="show" className="glass relative overflow-hidden rounded-3xl p-6 sm:p-8">

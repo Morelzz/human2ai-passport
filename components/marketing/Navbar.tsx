@@ -3,28 +3,43 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { VoltBadge } from "@/components/volt/VoltBadge";
 
-const LINKS = [
-  { href: "/catalogo", label: "Catalogo" },
-  { href: "/match", label: "Casting" },
-  { href: "/scansione", label: "Scansione" },
-  { href: "/proteggi", label: "Proteggi" },
-  { href: "/academy", label: "Academy" },
-  { href: "/prezzi", label: "Prezzi" },
-  { href: "/trasparenza", label: "Trasparenza" },
-  { href: "/blog", label: "Blog" },
+// Menu (QA device): Avatar e Genera sono il CORE del sistema -> voci DIRETTE
+// sempre visibili; il resto raggruppato in 3 tendine. UNA struttura per desktop
+// (dropdown hover) e hamburger (sezioni accordion).
+type NavEntry =
+  | { label: string; href: string }
+  | { label: string; items: { href: string; label: string }[] };
+
+const NAV: NavEntry[] = [
+  { label: "Avatar", href: "/catalogo" },
+  { label: "Genera", href: "/match" },
+  { label: "Il tuo volto", items: [
+    { href: "/scansione", label: "Scansione" },
+    { href: "/proteggi", label: "Proteggi" },
+  ] },
+  { label: "Aziende", items: [
+    { href: "/studio", label: "Studio" },
+    { href: "/enterprise", label: "Enterprise" },
+  ] },
+  { label: "Risorse", items: [
+    { href: "/academy", label: "Academy" },
+    { href: "/blog", label: "Blog" },
+    { href: "/prezzi", label: "Prezzi" },
+    { href: "/trasparenza", label: "Trasparenza" },
+  ] },
 ];
 
 export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 }: { firstName: string | null; unseen?: number; volt?: number | null; voltThreshold?: number }) {
   const [open, setOpen] = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null); // accordion del drawer
   const badge = unseen > 0 ? (unseen > 9 ? "9+" : String(unseen)) : null;
 
-  // Nav "viva": oltre la soglia di scroll il vetro si addensa e la barra si
-  // restringe (transizione fluida via classi + transition-all).
+  // Nav "viva": oltre la soglia di scroll il vetro si addensa e la barra si restringe.
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
@@ -38,6 +53,12 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
     window.addEventListener("keydown", onKey);
     return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", onKey); };
   }, [open]);
+
+  // Chiudendo il drawer si richiude anche la sezione eventualmente aperta.
+  useEffect(() => { if (!open) setOpenSection(null); }, [open]);
+
+  // Stile condiviso delle voci di primo livello (desktop).
+  const topLinkCls = "text-sm tracking-[0.021em] text-[#9a9a9a] transition-colors hover:text-foreground";
 
   return (
     <>
@@ -56,19 +77,38 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
           <span className="text-sm font-bold tracking-[0.15em]">HUMAN2AI</span>
         </Link>
 
-        {/* Desktop */}
-        <div className="hidden items-center gap-7 md:flex">
-          {LINKS.map((l) => (
-            // Dala: nessun underline, nessuno sfondo — solo lo scarto di colore sul void.
-            <Link key={l.href} href={l.href} className="text-sm tracking-[0.021em] text-[#9a9a9a] transition-colors hover:text-foreground">
-              {l.label}
-            </Link>
-          ))}
-          {/* VOLT sempre visibile per chi è loggato (VOLT_SYSTEM §2), prima del menu profilo */}
+        {/* Desktop (lg+): Avatar/Genera diretti + 3 tendine HOVER. La tendina apre
+            al passaggio del cursore (incluso il pannello, grazie al ponte pt-3) e
+            si chiude appena esci. Il click col mouse fa blur del bottone (e.detail
+            > 0) cosi' NON resta "incollata"; il focus da tastiera (e.detail = 0)
+            resta accessibile via group-focus-within. */}
+        <div className="hidden items-center gap-6 lg:flex">
+          {NAV.map((entry) =>
+            "items" in entry ? (
+              <div key={entry.label} className="group relative">
+                <button
+                  type="button"
+                  aria-haspopup="true"
+                  onClick={(e) => { if (e.detail) e.currentTarget.blur(); }}
+                  className={`flex items-center gap-1 ${topLinkCls} group-focus-within:text-foreground`}
+                >
+                  {entry.label}
+                  <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
+                </button>
+                <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[#101018]/95 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                    {entry.items.map((it) => (
+                      <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-[#cfcfd6] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link key={entry.href} href={entry.href} className={topLinkCls}>{entry.label}</Link>
+            )
+          )}
           {firstName && volt !== null && <VoltBadge initial={volt} threshold={voltThreshold} />}
           {firstName ? (
-            // Review B3: pillola riconoscibile come UTENTE (non voce di menu):
-            // avatar con iniziale + etichetta ACCOUNT sopra il nome.
             <Link
               href="/account"
               title="Il tuo account"
@@ -96,8 +136,8 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
           </Button>
         </div>
 
-        {/* Mobile: VOLT compatto + hamburger */}
-        <div className="flex items-center gap-2 md:hidden">
+        {/* Sotto lg (mobile, tablet touch): VOLT compatto + hamburger */}
+        <div className="flex items-center gap-2 lg:hidden">
           {firstName && volt !== null && <VoltBadge initial={volt} threshold={voltThreshold} />}
           <button
             onClick={() => setOpen(true)}
@@ -110,7 +150,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
       </nav>
     </header>
 
-      {/* Drawer mobile */}
+      {/* Drawer (mobile + tablet): Avatar/Genera diretti + 3 sezioni accordion */}
       <AnimatePresence>
         {open && (
           <>
@@ -118,29 +158,47 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
             />
             <motion.aside
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[#101018] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] md:hidden"
+              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[#101018] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] lg:hidden"
             >
-              <div className="mb-8 flex items-center justify-between">
+              <div className="mb-6 flex items-center justify-between">
                 <span className="text-sm font-bold tracking-[0.15em]">MENU</span>
                 <button onClick={() => setOpen(false)} aria-label="Chiudi menu" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-white/5 hover:text-foreground">
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-1">
-                {LINKS.map((l) => (
-                  <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">
-                    {l.label}
-                  </Link>
-                ))}
+              <div className="flex flex-1 flex-col gap-1 overflow-y-auto">
+                {NAV.map((entry) =>
+                  "items" in entry ? (
+                    <div key={entry.label}>
+                      <button
+                        type="button"
+                        onClick={() => setOpenSection(openSection === entry.label ? null : entry.label)}
+                        aria-expanded={openSection === entry.label}
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5"
+                      >
+                        {entry.label}
+                        <ChevronDown className={`h-5 w-5 text-muted transition-transform duration-200 ${openSection === entry.label ? "rotate-180" : ""}`} />
+                      </button>
+                      {openSection === entry.label && (
+                        <div className="flex flex-col gap-0.5 pb-1.5 pl-3">
+                          {entry.items.map((it) => (
+                            <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-[#b9b9c2] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link key={entry.href} href={entry.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">{entry.label}</Link>
+                  )
+                )}
                 <Link href={firstName ? "/account" : "/login"} onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">
+                  className="mt-1 flex items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">
                   <span>{firstName ? `Account · ${firstName}` : "Accedi"}</span>
                   {badge && (
                     <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-crimson px-1.5 text-xs font-bold text-white">{badge}</span>
@@ -148,7 +206,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 </Link>
               </div>
 
-              <div className="mt-auto">
+              <div className="mt-4">
                 <Button asChild variant="primary" size="lg" className="w-full">
                   <Link href="/verify" onClick={() => setOpen(false)}>Verifica un contenuto</Link>
                 </Button>
