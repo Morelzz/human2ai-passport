@@ -26,7 +26,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
 
   const revoked = Boolean(avatar.revoked_at);
   const tier = TIER_CONFIG[avatar.tier as Tier] ?? { label: avatar.tier, color: "#F2A93B" };
-  const statusColor = revoked ? "#e0006f" : "#00d4be";
+  const statusColor = revoked ? "#F2958C" : "#9CC6B2";
   const fonts = await geistOgFonts();
 
   return new ImageResponse(
@@ -48,14 +48,14 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#F2E9D8" }}>SEMBLIC</div>
-            <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "#9a9a9a" }}>· REGISTRO DEI VOLTI</div>
+            <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "rgba(242,233,216,0.70)" }}>· REGISTRO DEI VOLTI</div>
           </div>
-          <div style={{ display: "flex", fontSize: 20, color: "#9a9a9a" }}>{truncateToken(avatar.token_hash)}</div>
+          <div style={{ display: "flex", fontSize: 20, color: "rgba(242,233,216,0.70)" }}>{truncateToken(avatar.token_hash)}</div>
         </div>
 
         {/* Nome + stato */}
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          <div style={{ display: "flex", fontWeight: 200, fontSize: 108, letterSpacing: "-0.04em", lineHeight: 1, color: "#ffffff" }}>
+          <div style={{ display: "flex", fontWeight: 200, fontSize: 108, letterSpacing: "-0.04em", lineHeight: 1, color: "#F2E9D8" }}>
             {avatar.alias}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -93,12 +93,12 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
 
         {/* Chiusura */}
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ display: "flex", fontSize: 24, color: "#9a9a9a", lineHeight: 1.4 }}>
+          <div style={{ display: "flex", fontSize: 24, color: "rgba(242,233,216,0.70)", lineHeight: 1.4 }}>
             {revoked
               ? "Questa persona ha cambiato idea: il suo volto non è più generabile."
               : "Persona reale, consenziente e pagata. Ogni utilizzo è verificabile dal token."}
           </div>
-          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #e0006f, #00d4be)" }} />
+          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #F2958C, #9CC6B2)" }} />
         </div>
       </div>
     ),

@@ -49,8 +49,8 @@ export default function PartnerPage() {
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
                 { Icon: Camera, t: "Acquisizione", d: "Lo shooting secondo il protocollo SEMBLIC: i set di pose e la qualità che servono all'identity-lock dei motori.", c: "#F2A93B" },
-                { Icon: FileSignature, t: "Consenso on-site", d: "La firma del consenso avviene davanti a te, sul posto, con la persona. Tu sei il garante fisico del nostro filtro.", c: "#B8005C" },
-                { Icon: MapPin, t: "La tua città", d: "Sei il riferimento SEMBLIC della tua zona: eventi di acquisizione, brand locali, persone che vogliono entrare nel registro.", c: "#00A896" },
+                { Icon: FileSignature, t: "Consenso on-site", d: "La firma del consenso avviene davanti a te, sul posto, con la persona. Tu sei il garante fisico del nostro filtro.", c: "#EE7A70" },
+                { Icon: MapPin, t: "La tua città", d: "Sei il riferimento SEMBLIC della tua zona: eventi di acquisizione, brand locali, persone che vogliono entrare nel registro.", c: "#7FAE96" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="glass glass-hover rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
@@ -73,9 +73,9 @@ export default function PartnerPage() {
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
-                { Icon: Coins, t: "Fee di acquisizione", d: "Un compenso per ogni persona che porti nel registro e superi la verifica.", c: "#00A896" },
+                { Icon: Coins, t: "Fee di acquisizione", d: "Un compenso per ogni persona che porti nel registro e superi la verifica.", c: "#7FAE96" },
                 { Icon: Repeat, t: "Quota ricorrente", d: "Una percentuale sulle royalty generate dai volti che hai acquisito. Per tutta la loro vita sulla piattaforma.", c: "#F2A93B" },
-                { Icon: Handshake, t: "Ingaggi reali", d: "Quando un brand vuole lo shooting vero con la persona vera, il partner della sua città è il primo a essere chiamato.", c: "#B8005C" },
+                { Icon: Handshake, t: "Ingaggi reali", d: "Quando un brand vuole lo shooting vero con la persona vera, il partner della sua città è il primo a essere chiamato.", c: "#EE7A70" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="glass glass-hover rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
@@ -97,7 +97,7 @@ export default function PartnerPage() {
         <Reveal>
           <section className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
             <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
-              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(0,168,150,0.10),transparent_70%)]" />
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(127,174,150,0.10),transparent_70%)]" />
               <div className="relative">
                 <span className="label-mono text-teal">Candidature aperte</span>
                 <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">

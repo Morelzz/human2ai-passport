@@ -82,9 +82,12 @@ export const CATEGORIES = [
 
 export type Category = (typeof CATEGORIES)[number];
 
+// Tier differenziati per INTENSITA, non per tinta (spec colori SEMBLIC): una
+// sola famiglia Lumen che si schiarisce salendo di tier. Niente teal/crimson/
+// amber qui (amber = azione, teal/coral = stati): evita la collisione semantica.
 export const TIER_CONFIG: Record<Tier, { label: string; color: string; bg: string; description: string }> = {
-  SPARK:  { label: "SPARK",  color: "#9ca3af", bg: "rgba(156,163,175,0.15)", description: "Ispirato a" },
-  SHAPE:  { label: "SHAPE",  color: "#00A896", bg: "rgba(0,168,150,0.15)",   description: "Somiglianza stilizzata" },
-  SOUL:   { label: "SOUL",   color: "#F2A93B", bg: "rgba(242,169,59,0.15)",  description: "Alta fedeltà" },
-  HUMAN:  { label: "HUMAN",  color: "#B8005C", bg: "rgba(184,0,92,0.15)",    description: "Identity-locked" },
+  SPARK:  { label: "SPARK",  color: "#8A857B", bg: "rgba(242,233,216,0.05)", description: "Ispirato a" },
+  SHAPE:  { label: "SHAPE",  color: "#ADA89E", bg: "rgba(242,233,216,0.08)", description: "Somiglianza stilizzata" },
+  SOUL:   { label: "SOUL",   color: "#D8D2C6", bg: "rgba(242,233,216,0.11)", description: "Alta fedeltà" },
+  HUMAN:  { label: "HUMAN",  color: "#F2E9D8", bg: "rgba(242,233,216,0.15)", description: "Identity-locked" },
 };

@@ -21,7 +21,7 @@ export default function PayoutButton({ eligible, amount }: { eligible: boolean; 
 
   if (!eligible) {
     return (
-      <p style={{ color: "#374151", fontSize: "0.8rem", margin: 0 }}>
+      <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.8rem", margin: 0 }}>
         Il payout si sblocca al raggiungimento della soglia.
       </p>
     );
@@ -30,10 +30,10 @@ export default function PayoutButton({ eligible, amount }: { eligible: boolean; 
   return (
     <div>
       <button onClick={payout} disabled={busy}
-        style={{ width: "100%", padding: "0.8rem", borderRadius: 10, border: "none", background: busy ? "#374151" : "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+        style={{ width: "100%", padding: "0.8rem", borderRadius: 10, border: "none", background: busy ? "#1E2530" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
         {busy ? "Elaborazione…" : `Richiedi payout di ${amount}`}
       </button>
-      {error && <p style={{ color: "#B8005C", fontSize: "0.8rem", marginTop: "0.5rem" }}>{error}</p>}
+      {error && <p style={{ color: "#EE7A70", fontSize: "0.8rem", marginTop: "0.5rem" }}>{error}</p>}
     </div>
   );
 }

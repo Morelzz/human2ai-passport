@@ -34,18 +34,18 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         {/* Testata */}
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#F2E9D8" }}>SEMBLIC</div>
-          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "#9a9a9a" }}>· {category}</div>
+          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "rgba(242,233,216,0.70)" }}>· {category}</div>
         </div>
 
         {/* Titolo dell'articolo (display sottile del brand) */}
-        <div style={{ display: "flex", fontWeight: 200, fontSize: 60, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#ffffff", maxWidth: 1056 }}>
+        <div style={{ display: "flex", fontWeight: 200, fontSize: 60, letterSpacing: "-0.03em", lineHeight: 1.1, color: "#F2E9D8", maxWidth: 1056 }}>
           {title}
         </div>
 
         {/* Chiusura */}
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ display: "flex", fontSize: 26, color: "#9a9a9a" }}>Il registro dei volti consenzienti</div>
-          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #e0006f, #00d4be)" }} />
+          <div style={{ display: "flex", fontSize: 26, color: "rgba(242,233,216,0.70)" }}>Il registro dei volti consenzienti</div>
+          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #EE7A70, #7FAE96)" }} />
         </div>
       </div>
     ),

@@ -38,8 +38,8 @@ export default function VoltGrantPanel() {
     "w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-foreground placeholder:text-faint focus:border-violet/50 focus:outline-none";
 
   return (
-    <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-      <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.4rem" }}>ACCREDITO VOLT (OPERATORE)</p>
+    <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.4rem" }}>ACCREDITO VOLT (OPERATORE)</p>
       <p className="mb-3 text-xs leading-relaxed text-muted">
         Accredita crediti a un utente (es. vendita via bonifico). Ogni movimento finisce nel ledger come accredito operatore.
       </p>

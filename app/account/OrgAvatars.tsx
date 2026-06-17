@@ -66,7 +66,7 @@ function KybBanner({ kyb }: { kyb: OrgKyb }) {
         <p style={{ color: colors.muted, fontSize: "0.8rem", lineHeight: 1.6, margin: "0 0 0.7rem" }}>
           Per onboardare il tuo roster dobbiamo prima verificare l&apos;azienda (KYB).
         </p>
-        <Link href="/enterprise/register" style={{ display: "inline-block", background: gradient, color: "#fff", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none", borderRadius: radius.sm, padding: "0.5rem 0.9rem" }}>
+        <Link href="/enterprise/register" style={{ display: "inline-block", background: gradient, color: "#412402", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none", borderRadius: radius.sm, padding: "0.5rem 0.9rem" }}>
           Registra l&apos;azienda →
         </Link>
       </div>
@@ -112,7 +112,7 @@ export default function OrgAvatars({ avatars, kyb = null }: { avatars: OrgAvatar
           I TUOI AVATAR · {avatars.length} totali, {live} live
         </p>
         {approved ? (
-          <Link href="/account/avatar" style={{ background: gradient, color: "#fff", fontWeight: 700, fontSize: "0.8rem", textDecoration: "none", borderRadius: radius.md, padding: "0.5rem 1rem" }}>
+          <Link href="/account/avatar" style={{ background: gradient, color: "#412402", fontWeight: 700, fontSize: "0.8rem", textDecoration: "none", borderRadius: radius.md, padding: "0.5rem 1rem" }}>
             + Onboarda avatar
           </Link>
         ) : (

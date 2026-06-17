@@ -24,7 +24,7 @@ const FONT = "'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif
 function badgeSvg(opts: { alias: string; revoked: boolean }): string {
   const { alias, revoked } = opts;
   // Colore d'accento e stato secondo la timeline del consenso.
-  const accent = revoked ? "#e0006f" : "#00d4be";
+  const accent = revoked ? "#F2958C" : "#9CC6B2";
   const statusLabel = revoked ? "CONSENSO REVOCATO" : "VOLTO VERIFICATO";
   // Segno: spunta se attivo, croce se revocato.
   const mark = revoked
@@ -35,8 +35,8 @@ function badgeSvg(opts: { alias: string; revoked: boolean }): string {
   <defs>
     <linearGradient id="smbl-g" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#F2A93B"/>
-      <stop offset="0.6" stop-color="#B8005C"/>
-      <stop offset="1" stop-color="#00A896"/>
+      <stop offset="0.6" stop-color="#EE7A70"/>
+      <stop offset="1" stop-color="#7FAE96"/>
     </linearGradient>
   </defs>
   <rect x="1" y="1" width="338" height="82" rx="16" fill="#0C0F17" stroke="rgba(255,255,255,0.12)"/>
@@ -47,7 +47,7 @@ function badgeSvg(opts: { alias: string; revoked: boolean }): string {
   </g>
   <text x="86" y="35" font-family="${FONT}" font-size="13" font-weight="700" letter-spacing="1.6" fill="${accent}">${statusLabel}</text>
   <text x="86" y="56" font-family="${FONT}" font-size="14" font-weight="600" fill="#F2E9D8">${xmlEscape(alias)}</text>
-  <text x="319" y="71" text-anchor="end" font-family="${FONT}" font-size="10" font-weight="700" letter-spacing="1.4" fill="#6b7280">SEMBLIC</text>
+  <text x="319" y="71" text-anchor="end" font-family="${FONT}" font-size="10" font-weight="700" letter-spacing="1.4" fill="rgba(242,233,216,0.70)">SEMBLIC</text>
 </svg>`;
 }
 

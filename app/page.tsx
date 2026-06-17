@@ -108,9 +108,9 @@ export default async function Home() {
                   rel="noopener noreferrer"
                   className="group mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] py-2 pl-2.5 pr-4 transition-all hover:border-violet/40 hover:bg-violet/10"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[linear-gradient(135deg,#F2A93B,#B8005C)]">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F2A93B]">
                     {/* Glifo Instagram inline (lucide non distribuisce più icone brand) */}
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="#412402" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />

@@ -54,7 +54,7 @@ export default function PrezziPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               {/* Sellers — gratis sempre */}
               <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-9">
-                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#00A896,transparent)]" />
+                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#7FAE96,transparent)]" />
                 <span className="label-mono text-teal">Metti il tuo volto</span>
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className="text-5xl font-extrabold">€0</span>

@@ -3,12 +3,12 @@
 // Stesso handle → sempre stesso avatar. Nessuna chiamata di rete.
 
 const PALETTES: [string, string][] = [
-  ["#F2A93B", "#B8005C"],
-  ["#00A896", "#F2A93B"],
-  ["#B8005C", "#00A896"],
-  ["#F2A93B", "#00A896"],
-  ["#F2A93B", "#B8005C"],
-  ["#00A896", "#F2A93B"],
+  ["#F2A93B", "#EE7A70"],
+  ["#7FAE96", "#F2A93B"],
+  ["#EE7A70", "#7FAE96"],
+  ["#F2A93B", "#7FAE96"],
+  ["#F2A93B", "#EE7A70"],
+  ["#7FAE96", "#F2A93B"],
 ];
 
 function hashString(s: string): number {
@@ -28,7 +28,7 @@ export function avatarArt(handle: string, alias?: string): string {
     `</linearGradient></defs>` +
     `<rect width='100' height='100' fill='url(#g)'/>` +
     `<text x='50' y='50' font-family='system-ui,sans-serif' font-size='44' font-weight='700' ` +
-    `fill='rgba(255,255,255,0.92)' text-anchor='middle' dominant-baseline='central'>${initial}</text>` +
+    `fill='#F2E9D8' text-anchor='middle' dominant-baseline='central'>${initial}</text>` +
     `</svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }

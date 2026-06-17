@@ -33,15 +33,15 @@ export default async function Image() {
         {/* Testata */}
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#F2E9D8" }}>SEMBLIC</div>
-          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "#9a9a9a" }}>· TRANSPARENCY REPORT</div>
+          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "rgba(242,233,216,0.70)" }}>· TRANSPARENCY REPORT</div>
         </div>
 
         {/* Messaggio */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <div style={{ display: "flex", fontWeight: 200, fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#ffffff", maxWidth: 1000 }}>
+          <div style={{ display: "flex", fontWeight: 200, fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#F2E9D8", maxWidth: 1000 }}>
             Numeri, non promesse.
           </div>
-          <div style={{ display: "flex", fontSize: 30, color: "#9a9a9a", lineHeight: 1.4, maxWidth: 900 }}>
+          <div style={{ display: "flex", fontSize: 30, color: "rgba(242,233,216,0.70)", lineHeight: 1.4, maxWidth: 900 }}>
             Richieste rifiutate, volti protetti, royalty pagate: i numeri reali del registro, letti in tempo reale.
           </div>
         </div>
@@ -49,14 +49,14 @@ export default async function Image() {
         {/* Chiusura: le due pill = i due numeri manifesto della pagina */}
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ display: "flex", border: "2px solid #e0006f", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#e0006f", letterSpacing: "0.06em" }}>
+            <div style={{ display: "flex", border: "2px solid #F2958C", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#F2958C", letterSpacing: "0.06em" }}>
               RICHIESTE RIFIUTATE
             </div>
             <div style={{ display: "flex", border: "2px solid #F2A93B", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#F2A93B", letterSpacing: "0.06em" }}>
               VOLTI PROTETTI
             </div>
           </div>
-          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #e0006f, #00d4be)" }} />
+          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #F2958C, #9CC6B2)" }} />
         </div>
       </div>
     ),

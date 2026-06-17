@@ -266,7 +266,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         >
           <Link
             href={`/match?avatar=${avatar.handle}`}
-            className="block w-full rounded-2xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-8 py-6 text-center text-xl font-extrabold tracking-tight text-white shadow-[0_12px_50px_rgba(242,169,59,0.4)] transition-all hover:brightness-110 sm:text-2xl"
+            className="block w-full rounded-2xl bg-[#F2A93B] px-8 py-6 text-center text-xl font-extrabold tracking-tight text-[#412402] shadow-[0_12px_50px_rgba(242,169,59,0.4)] transition-all hover:brightness-110 sm:text-2xl"
           >
             ⚡ Genera con questo avatar →
           </Link>
@@ -355,14 +355,14 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
               {items.map((ev) => {
                 const isRevokeEv = ev.event_type === "REVOKED";
                 const bad = isRevokeEv || ev.event_type === "CATEGORY_REMOVED";
-                const c = bad ? "#e0006f" : "#00d4be";
+                const c = bad ? "#F2958C" : "#9CC6B2";
                 return (
                   <li key={ev.id} className="relative flex gap-4 pb-6">
                     {/* segmento di linea verso l'elemento successivo */}
                     <span
                       aria-hidden
                       className="absolute bottom-0 left-[5px] top-4 w-px"
-                      style={{ background: isRevokeEv ? "linear-gradient(180deg, rgba(224,0,111,0.6), rgba(224,0,111,0.25))" : "rgba(255,255,255,0.13)" }}
+                      style={{ background: isRevokeEv ? "linear-gradient(180deg, rgba(242,149,140,0.6), rgba(242,149,140,0.25))" : "rgba(255,255,255,0.13)" }}
                     />
                     <span
                       className="relative z-10 mt-[3px] h-[11px] w-[11px] shrink-0 rounded-full"
@@ -384,7 +384,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
                 {isRevokedAvatar ? (
                   <>
                     <span className="relative z-10 mt-[6px] flex h-[11px] w-[11px] shrink-0 items-center justify-center" aria-hidden>
-                      <span className="block h-[3px] w-[11px] rounded-full bg-crimson shadow-[0_0_10px_rgba(224,0,111,0.5)]" />
+                      <span className="block h-[3px] w-[11px] rounded-full bg-crimson shadow-[0_0_10px_rgba(242,149,140,0.5)]" />
                     </span>
                     <p className="text-sm leading-relaxed">
                       <span className="font-bold text-crimson">La timeline si interrompe qui.</span>{" "}

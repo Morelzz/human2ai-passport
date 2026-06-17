@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 export function ScannerFrame({
   children,
   className,
-  color = "#00A896",
+  color = "#7FAE96",
   active = true,
 }: {
   children: ReactNode;

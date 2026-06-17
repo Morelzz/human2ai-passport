@@ -1,33 +1,70 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Palette SEMBLIC (rebrand 2026-06-17): Obsidian (base/superfici), Lumen
-     (luce/testo), Amber (azione: CTA, link, stati attivi). Crimson e Teal
-     restano come colori SEMANTICI degli stati di consenso (bloccato / verificato).
-     NB: i token storici --color-violet* ora CONTENGONO AMBER. Rinominarli
-     ovunque vorrebbe dire riscrivere tutte le classi text-violet/bg-violet:
-     teniamo il NOME del token e cambiamo il VALORE. Gli alias --color-amber*
-     e --color-lumen sono per il codice nuovo. */
-  --color-obsidian:    #0C0F17;  /* base: sfondo, profondità */
-  --color-obsidian-2:  #161A24;  /* superfici/card */
-  --color-obsidian-3:  #1F2532;  /* elementi sollevati */
-  --color-violet:      #F2A93B;  /* = AMBER (azione) — nome token storico */
-  --color-violet-light:#F7C06A;  /* = AMBER chiaro (hover/accento) */
+  /* Sistema colori SEMBLIC (8 token + 3 gradienti, vedi SEMBLIC_COLORI_MIGRAZIONE.md).
+     Tutto deriva da Obsidian/Lumen/Amber. Stati: coral (bloccato), salvia
+     (verificato). I nomi storici (violet/crimson/teal/obsidian-2/3/foreground/
+     muted) restano come ALIAS coi NUOVI valori: cosi tutte le classi Tailwind
+     gia in uso (text-crimson, bg-obsidian-2, text-violet, ...) si aggiornano
+     da sole senza riscrivere i componenti. */
+
+  /* Identita */
+  --color-obsidian:    #0C0F17;
+  --color-lumen:       #F2E9D8;
   --color-amber:       #F2A93B;
-  --color-amber-light: #F7C06A;
-  --color-crimson:     #B8005C;  /* stato: bloccato/revocato */
-  --color-crimson-light:#e0006f;
-  --color-teal:        #00A896;  /* stato: verificato/consenso */
-  --color-teal-light:  #00d4be;
-  --color-lumen:       #F2E9D8;  /* luce/testo/logo */
+  --color-amber-hover: #E29A2E;
+
+  /* Superfici, scala da Obsidian (sostituisce TUTTI i grigi struttura) */
+  --color-surface:     #141A24;
+  --color-elevated:    #1E2530;
+  --color-edge:        #2C3440;
+
+  /* Stati funzionali */
+  --color-verified:    #7FAE96;
+  --color-blocked:     #EE7A70;
+
+  /* Testo su fondi pieni colorati */
+  --color-on-amber:    #412402;
+  --color-on-verified: #16352A;
+  --color-on-blocked:  #5A201B;
+
+  /* Alias storici -> nuovi valori (non rompere le classi esistenti) */
+  --color-violet:       var(--color-amber);
+  --color-violet-light: var(--color-amber-hover);
+  --color-amber-light:  var(--color-amber-hover);
+  --color-crimson:      var(--color-blocked);
+  --color-crimson-light:#F2958C;
+  --color-teal:         var(--color-verified);
+  --color-teal-light:   #9CC6B2;
+  --color-obsidian-2:   var(--color-surface);
+  --color-obsidian-3:   var(--color-elevated);
 
   --color-background:  var(--color-obsidian);
-  --color-foreground:  #F2E9D8;  /* Lumen */
-  --color-muted:       #8d8a82;  /* grigio caldo secondario */
-  --color-border:      rgba(242,233,216,0.10);
+  --color-foreground:  var(--color-lumen);
+  --color-muted:       #ADA89E;   /* Lumen ~70% appiattito su Obsidian (no grigio freddo) */
+  --color-faint:       #74716E;   /* Lumen ~45% */
+  --color-border:      rgba(242,233,216,0.12);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  /* Testo: Lumen a tre intensita via opacita (niente grigi per il testo) */
+  --text:       rgba(242, 233, 216, 1);
+  --text-muted: rgba(242, 233, 216, 0.70);
+  --text-faint: rgba(242, 233, 216, 0.45);
+  --hairline:   rgba(242, 233, 216, 0.12);
+
+  /* Gradienti: SOLO sfondi e sezioni, mai sui bottoni */
+  --grad-tramonto: linear-gradient(135deg, #F2A93B 0%, #EE7A70 100%);
+  --grad-aurora:   linear-gradient(135deg, #F2A93B 0%, #C25C3A 42%, #0C0F17 100%);
+  --grad-fiducia:  linear-gradient(135deg, #7FAE96 0%, #2E8B7E 100%);
+
+  /* Alias semantici */
+  --bg: var(--color-obsidian);
+  --action: var(--color-amber);
+  --action-hover: var(--color-amber-hover);
 }
 
 *, *::before, *::after {
@@ -37,8 +74,8 @@
 html {
   background: #0C0F17;
   color: #F2E9D8;
-  /* NB: niente scroll-behavior:smooth qui — lo smoothing è di Lenis, e i due
-     in conflitto producono la rotella "glitchata" (doppio smoothing). */
+  /* NB: niente scroll-behavior:smooth qui, lo smoothing e di Lenis e i due in
+     conflitto producono la rotella "glitchata" (doppio smoothing). */
 }
 
 /* CSS richiesto da Lenis (smooth scroll): senza, l'altezza della pagina viene
@@ -66,8 +103,8 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Strato cinematografico "Obsidian" — elegante, sobrio.
-   Profondità e respiro, non fuochi d'artificio. Mobile-first.
+   Strato cinematografico "Obsidian": elegante, sobrio.
+   Profondita e respiro, non fuochi d'artificio. Mobile-first.
    ────────────────────────────────────────────────────────────────────────── */
 
 /* Sfondo a bagliori profondi, fisso, con drift lentissimo (quasi impercettibile). */
@@ -78,8 +115,8 @@ body {
   pointer-events: none;
   background:
     radial-gradient(55% 45% at 18% -5%, rgba(242,169,59,0.16), transparent 70%),
-    radial-gradient(45% 40% at 95% 8%, rgba(184,0,92,0.12), transparent 70%),
-    radial-gradient(75% 55% at 50% 112%, rgba(0,168,150,0.10), transparent 72%);
+    radial-gradient(45% 40% at 95% 8%, rgba(238,122,112,0.10), transparent 70%),
+    radial-gradient(75% 55% at 50% 112%, rgba(127,174,150,0.09), transparent 72%);
   /* Entrata che si assesta una volta sola: cinematico senza repaint perpetuo. */
   animation: cine-in 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -88,9 +125,9 @@ body {
   to   { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
 }
 
-/* Campo di profondità a punti: griglia rada mascherata che sfuma ai bordi,
-   con drift verticale lentissimo (come particelle che salgono). Dà spazialità
-   senza appesantire — è un solo elemento con un pattern CSS. */
+/* Campo di profondita a punti: griglia rada mascherata che sfuma ai bordi,
+   con drift verticale lentissimo (come particelle che salgono). Da spazialita
+   senza appesantire, e un solo elemento con un pattern CSS. */
 .cine-stars {
   position: fixed;
   inset: 0;
@@ -107,8 +144,8 @@ body {
   to { background-position: 38px -760px; }
 }
 
-/* Vignettatura cinematografica: bordi leggermente più scuri per inquadrare la
-   scena e dare profondità (lo schermo non è più una lastra piatta uniforme). */
+/* Vignettatura cinematografica: bordi leggermente piu scuri per inquadrare la
+   scena e dare profondita (lo schermo non e piu una lastra piatta uniforme). */
 .cine-vignette {
   position: fixed;
   inset: 0;
@@ -127,7 +164,7 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Vetro v2 — stratificato (trend 2026: traslucenze a più livelli, non lastre).
+/* Vetro v2, stratificato (trend 2026: traslucenze a piu livelli, non lastre).
    Superficie con gradiente verticale, filo di luce in alto, ombra ambiente:
    la card "galleggia" sul fondo invece di esserci appoggiata. */
 .glass {
@@ -142,7 +179,7 @@ body {
     0 14px 40px -18px rgba(0, 0, 0, 0.55);
   transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
-/* All'hover: sollevamento + alone brand ambra → profondità reale, non più piatto. */
+/* All'hover: sollevamento + alone ambra, profondita reale, non piu piatto. */
 .glass-hover:hover {
   border-color: rgba(242, 169, 59, 0.35);
   transform: translateY(-4px);
@@ -152,7 +189,7 @@ body {
     0 24px 55px -18px rgba(242, 169, 59, 0.42);
 }
 
-/* Etichetta HUD (kicker): il motivo ricorrente del sito — mono, spaziata,
+/* Etichetta HUD (kicker): il motivo ricorrente del sito, mono, spaziata,
    con tassello luminoso davanti. Stesso linguaggio di /match. */
 .label-mono {
   display: inline-flex;
@@ -178,41 +215,41 @@ body {
 .divider-glow {
   height: 1px;
   border: 0;
-  background: linear-gradient(90deg, transparent, rgba(242, 169, 59, 0.45) 35%, rgba(0, 168, 150, 0.35) 65%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(242, 169, 59, 0.45) 35%, rgba(127, 174, 150, 0.32) 65%, transparent);
   box-shadow: 0 0 18px rgba(242, 169, 59, 0.25);
 }
 
 /* Selezione testo nel brand. */
 ::selection {
   background: rgba(242, 169, 59, 0.55);
-  color: #0C0F17;
+  color: #412402;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   A11y — anello di focus visibile e coerente col brand.
+   A11y: anello di focus visibile e coerente col brand.
    Solo da TASTIERA (:focus-visible), mai al click del mouse. `:has(:focus-visible)`
    copre i riquadri di upload (una <label> che avvolge un <input> sr-only): il
    focus sull'input invisibile illumina il box. Si usa `outline` (non box-shadow)
-   così l'anello NON viene tagliato dai contenitori con overflow:hidden.
+   cosi l'anello NON viene tagliato dai contenitori con overflow:hidden.
    ────────────────────────────────────────────────────────────────────────── */
 .focus-ring:focus-visible,
 .focus-ring:has(:focus-visible) {
-  outline: 2px solid var(--color-violet-light);
+  outline: 2px solid var(--color-amber);
   outline-offset: 2px;
 }
 
-/* Scrollbar custom: sottile, scura, pollice ambra con glow all'hover. */
+/* Scrollbar custom: sottile, scura, pollice ambra con hover piu intenso. */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: #0C0F17; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #1F2532, #161A24);
+  background: linear-gradient(180deg, #1E2530, #141A24);
   border: 2px solid #0C0F17;
   border-radius: 999px;
 }
-::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #F2A93B, #8a5e1e); }
-html { scrollbar-width: thin; scrollbar-color: #1F2532 #0C0F17; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #F2A93B, #E29A2E); }
+html { scrollbar-width: thin; scrollbar-color: #1E2530 #0C0F17; }
 
-/* Entrata fade-up — solo CSS, stagger via `animation-delay` inline. */
+/* Entrata fade-up, solo CSS, stagger via `animation-delay` inline. */
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -222,9 +259,9 @@ html { scrollbar-width: thin; scrollbar-color: #1F2532 #0C0F17; }
   to { opacity: 1; transform: none; }
 }
 
-/* Testo a gradiente brand (per le parole-chiave del manifesto). */
+/* Testo a gradiente brand (parole-chiave del manifesto): gradiente tramonto. */
 .text-gradient {
-  background: linear-gradient(120deg, #F2A93B 0%, #B8005C 60%, #00A896 130%);
+  background: var(--grad-tramonto);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -278,14 +315,14 @@ html { scrollbar-width: thin; scrollbar-color: #1F2532 #0C0F17; }
   background: rgba(242, 233, 216, 0.07);
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.85em;
-  color: #00d4be;
+  color: #7FAE96;
 }
 .prose-semblic pre {
   margin: 1.4em 0;
   padding: 1em 1.2em;
   border-radius: 0.9rem;
   border: 1px solid rgba(242, 233, 216, 0.08);
-  background: #11141D;
+  background: #141A24;
   overflow-x: auto;
 }
 .prose-semblic pre code { background: none; padding: 0; }
@@ -314,34 +351,34 @@ html { scrollbar-width: thin; scrollbar-color: #1F2532 #0C0F17; }
 
 .smbl-pin { display: block; width: 18px; height: 18px; border-radius: 9999px; }
 .smbl-pin--attiva {
-  background: rgba(0, 168, 150, 0.3);
-  border: 2px solid #00d4be;
-  box-shadow: 0 0 14px rgba(0, 212, 190, 0.65);
+  background: rgba(127, 174, 150, 0.3);
+  border: 2px solid #9CC6B2;
+  box-shadow: 0 0 14px rgba(127, 174, 150, 0.6);
 }
 .smbl-pin--arrivo {
   background: rgba(242, 169, 59, 0.16);
-  border: 2px dashed #F7C06A;
+  border: 2px dashed #F2A93B;
   opacity: 0.85;
 }
 
-/* Popup in tema (di default Leaflet è bianco) */
+/* Popup in tema (di default Leaflet e bianco) */
 .smbl-map .leaflet-popup-content-wrapper,
 .smbl-map .leaflet-popup-tip {
-  background: #141823;
+  background: #1E2530;
   color: #F2E9D8;
   border: 1px solid rgba(242, 233, 216, 0.12);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
 }
 .smbl-map .leaflet-popup-content { margin: 0.85rem 1rem; }
 .smbl-pop-title { margin: 0; font-size: 0.85rem; font-weight: 700; }
-.smbl-pop-sub { margin: 0.25rem 0 0; font-size: 0.72rem; color: #9ca3af; }
+.smbl-pop-sub { margin: 0.25rem 0 0; font-size: 0.72rem; color: rgba(242, 233, 216, 0.70); }
 .smbl-pop-cta {
   display: inline-block;
   margin-top: 0.6rem;
   padding: 0.45rem 1rem;
   border-radius: 9999px;
   background: #F2A93B;
-  color: #0C0F17 !important;
+  color: #412402 !important;
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -350,7 +387,7 @@ html { scrollbar-width: thin; scrollbar-color: #1F2532 #0C0F17; }
 }
 .smbl-map .leaflet-control-attribution {
   background: rgba(12, 15, 23, 0.75);
-  color: #6b7280;
+  color: rgba(242, 233, 216, 0.45);
   font-size: 0.6rem;
 }
-.smbl-map .leaflet-control-attribution a { color: #9a9a9a; }
+.smbl-map .leaflet-control-attribution a { color: rgba(242, 233, 216, 0.70); }

@@ -627,7 +627,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         </details>
 
         <button type="submit" disabled={loading}
-          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+          className="mt-1 rounded-xl bg-[#F2A93B] px-6 py-3.5 text-sm font-bold text-[#412402] shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
           {loading ? "Ricerca in corso…" : "Cerca avatar affine"}
         </button>
       </form>
@@ -818,7 +818,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                               </div>
                             )}
                             {styleRisk.length > 0 && (
-                              <div className="mt-2 flex items-start gap-2 rounded-lg border border-[#f0b429]/40 bg-[#f0b429]/10 p-3 text-[0.72rem] leading-relaxed text-[#f0b429]">
+                              <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber/40 bg-amber/10 p-3 text-[0.72rem] leading-relaxed text-amber">
                                 <span aria-hidden>⚠️</span>
                                 <span>
                                   ECHO è <span className="font-semibold">fotorealistico</span>: «{styleRisk.join("», «")}» può far perdere l&apos;identità reale di {avatar.alias} (e spendere una generazione per un risultato fuori target). Per la massima fedeltà descrivi una <span className="font-semibold">scena reale</span>: luogo, luce, abbigliamento, posa.
@@ -999,7 +999,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             </p>
                           )}
                           <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                            className="mt-2 w-full rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+                            className="mt-2 w-full rounded-xl bg-[#F2A93B] px-6 py-3 text-sm font-bold text-[#412402] shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
                             {generating ? loadingLine : genCta}
                           </button>
                           {voltGatePanel}
@@ -1059,7 +1059,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                           {/* Genera ancora: stessa scena/immagini (variante) oppure ricomincia da capo */}
                           <div className="mt-4 grid gap-2 border-t border-white/8 pt-4">
                             <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                              className="w-full rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-5 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50">
+                              className="w-full rounded-xl bg-[#F2A93B] px-5 py-3 text-sm font-bold text-[#412402] transition-all hover:brightness-110 disabled:opacity-50">
                               {generating ? loadingLine : `↻ ${genCta}`}
                             </button>
                             {voltGatePanel}

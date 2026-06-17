@@ -170,7 +170,7 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
         {err && <p className="text-sm text-crimson">{err}</p>}
 
         <button type="submit" disabled={busy}
-          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+          className="mt-1 rounded-xl bg-[#F2A93B] px-6 py-3.5 text-sm font-bold text-[#412402] shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
           {busy ? phase ?? "Invio in corso…" : "Invia per la verifica"}
         </button>
         <p className="text-xs leading-relaxed text-faint">

@@ -36,15 +36,15 @@ export default async function Image() {
         {/* Testata */}
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#F2E9D8" }}>SEMBLIC</div>
-          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "#9a9a9a" }}>· REGISTRO DEI VOLTI</div>
+          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "rgba(242,233,216,0.70)" }}>· REGISTRO DEI VOLTI</div>
         </div>
 
         {/* Messaggio */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <div style={{ display: "flex", fontWeight: 200, fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#ffffff", maxWidth: 1000 }}>
+          <div style={{ display: "flex", fontWeight: 200, fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#F2E9D8", maxWidth: 1000 }}>
             Il registro dei volti consenzienti.
           </div>
-          <div style={{ display: "flex", fontSize: 30, color: "#9a9a9a", lineHeight: 1.4, maxWidth: 900 }}>
+          <div style={{ display: "flex", fontSize: 30, color: "rgba(242,233,216,0.70)", lineHeight: 1.4, maxWidth: 900 }}>
             Ogni volto ha un consenso verificabile. Ogni generazione paga la persona reale.
           </div>
         </div>
@@ -52,15 +52,15 @@ export default async function Image() {
         {/* Chiusura */}
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, border: "2px solid #00d4be", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#00d4be", letterSpacing: "0.06em" }}>
-              <img width={20} height={20} src={checkIcon("#00d4be")} />
+            <div style={{ display: "flex", alignItems: "center", gap: 8, border: "2px solid #9CC6B2", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#9CC6B2", letterSpacing: "0.06em" }}>
+              <img width={20} height={20} src={checkIcon("#9CC6B2")} />
               CONSENSO VERIFICABILE
             </div>
-            <div style={{ display: "flex", border: "1px solid rgba(255,255,255,0.22)", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#c9c9d4", letterSpacing: "0.06em" }}>
+            <div style={{ display: "flex", border: "1px solid rgba(255,255,255,0.22)", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "rgba(242,233,216,0.70)", letterSpacing: "0.06em" }}>
               FILIGRANA INVISIBILE
             </div>
           </div>
-          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #e0006f, #00d4be)" }} />
+          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #F2958C, #9CC6B2)" }} />
         </div>
       </div>
     ),

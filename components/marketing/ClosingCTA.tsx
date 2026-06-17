@@ -49,7 +49,7 @@ export function ClosingCTA() {
         <motion.div
           aria-hidden
           className="absolute -left-1/4 -top-1/2 h-[120%] w-[80%] rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, rgba(184,0,92,0.28), transparent 65%)" }}
+          style={{ background: "radial-gradient(circle, rgba(238,122,112,0.28), transparent 65%)" }}
           animate={reduce ? undefined : { x: ["0%", "30%", "0%"], opacity: [0.5, 0.9, 0.5] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
         />

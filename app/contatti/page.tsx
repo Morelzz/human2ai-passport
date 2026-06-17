@@ -64,7 +64,7 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
                   rel="noopener noreferrer"
                   className="glass glass-hover block rounded-2xl p-5 transition-colors"
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#F2A93B,#B8005C)]">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#F2A93B,#EE7A70)]">
                     {/* Glifo Instagram inline (lucide non distribuisce più icone brand) */}
                     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />

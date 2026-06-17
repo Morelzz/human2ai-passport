@@ -43,11 +43,11 @@ export default async function TrasparenzaPage() {
 
   const stats = [
     { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#F2A93B" },
-    { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "#00A896" },
-    { label: "Generazioni certificate", value: String(genCount), c: "#B8005C" },
-    { label: "Maturato per le persone reali", value: formatEur(royaltyAccrued), c: "#00A896" },
+    { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "#7FAE96" },
+    { label: "Generazioni certificate", value: String(genCount), c: "#EE7A70" },
+    { label: "Maturato per le persone reali", value: formatEur(royaltyAccrued), c: "#7FAE96" },
     { label: "Già erogato (payout)", value: formatEur(payoutPaid), c: "#F2A93B" },
-    { label: "Payout effettuati", value: String(payoutCount), c: "#9ca3af" },
+    { label: "Payout effettuati", value: String(payoutCount), c: "rgba(242,233,216,0.45)" },
   ];
 
   return (
@@ -73,8 +73,8 @@ export default async function TrasparenzaPage() {
           <div className="reveal mb-10 grid gap-4 sm:grid-cols-2">
             {/* 1. Il filtro al lavoro: richieste rifiutate questo mese (crimson) */}
             <div className="glass relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
-              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(184,0,92,0.16),transparent_70%)]" />
-              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#B8005C,transparent)]" />
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(238,122,112,0.16),transparent_70%)]" />
+              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#EE7A70,transparent)]" />
               <div className="relative">
                 <span className="label-mono text-crimson-light">Il filtro al lavoro</span>
                 <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-crimson sm:text-6xl">

@@ -57,8 +57,8 @@ export default function EnterprisePage() {
             <div className="grid gap-4 sm:grid-cols-3">
               {[
                 { Icon: UserCheck, t: "1 · Scegli il volto", d: "Dal catalogo verificato: persona reale, consenziente per la tua categoria, con storico di utilizzi visibile.", c: "#F2A93B" },
-                { Icon: Lock, t: "2 · Riservi la categoria", d: "Per la durata del contratto la categoria è tua: la riserva vive nel registro dei consensi, non in una promessa.", c: "#B8005C" },
-                { Icon: CalendarRange, t: "3 · 6 o 12 mesi", d: "Canone ricorrente + royalty alla persona a ogni utilizzo. Alla scadenza: rinnovo prioritario o rilascio.", c: "#00A896" },
+                { Icon: Lock, t: "2 · Riservi la categoria", d: "Per la durata del contratto la categoria è tua: la riserva vive nel registro dei consensi, non in una promessa.", c: "#EE7A70" },
+                { Icon: CalendarRange, t: "3 · 6 o 12 mesi", d: "Canone ricorrente + royalty alla persona a ogni utilizzo. Alla scadenza: rinnovo prioritario o rilascio.", c: "#7FAE96" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="glass glass-hover rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
@@ -105,7 +105,7 @@ export default function EnterprisePage() {
         <Reveal>
           <section id="richiesta" className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
             <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
-              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(184,0,92,0.10),transparent_70%)]" />
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(238,122,112,0.10),transparent_70%)]" />
               <div className="relative">
                 <span className="label-mono text-crimson-light">Richiesta riservata</span>
                 <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">

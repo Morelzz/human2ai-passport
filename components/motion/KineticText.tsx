@@ -3,7 +3,7 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-const GRAD = "linear-gradient(90deg,#F2A93B,#B8005C,#00A896,#F2A93B)";
+const GRAD = "linear-gradient(90deg,#F2A93B,#EE7A70,#F2A93B)";
 
 const charV: Variants = {
   hidden: { opacity: 0, y: "0.55em", filter: "blur(8px)" },

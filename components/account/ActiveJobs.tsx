@@ -15,10 +15,10 @@ export interface ActiveJob {
 }
 
 const STATUS: Record<string, { label: string; color: string }> = {
-  pending: { label: "In coda", color: "#f59e0b" },
+  pending: { label: "In coda", color: "#F2A93B" },
   running: { label: "In generazione…", color: "#F2A93B" },
-  done: { label: "Pronta", color: "#00A896" },
-  error: { label: "Non riuscita. I VOLT sono stati riaccreditati.", color: "#B8005C" },
+  done: { label: "Pronta", color: "#7FAE96" },
+  error: { label: "Non riuscita. I VOLT sono stati riaccreditati.", color: "#EE7A70" },
 };
 
 export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
@@ -62,8 +62,8 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
   if (jobs.length === 0) return null;
 
   return (
-    <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-      <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>GENERAZIONI IN CORSO</p>
+    <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+      <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>GENERAZIONI IN CORSO</p>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
         {jobs.map((j) => {
           const s = STATUS[j.status] ?? STATUS.pending;
@@ -79,7 +79,7 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
               {j.status === "done" && (
                 <button
                   onClick={() => router.refresh()}
-                  style={{ flexShrink: 0, padding: "0.5rem 1rem", borderRadius: 999, background: "rgba(0,168,150,0.15)", border: "1px solid rgba(0,168,150,0.4)", color: "#00d4be", fontWeight: 700, fontSize: "0.78rem", cursor: "pointer" }}
+                  style={{ flexShrink: 0, padding: "0.5rem 1rem", borderRadius: 999, background: "rgba(127,174,150,0.15)", border: "1px solid rgba(127,174,150,0.4)", color: "#9CC6B2", fontWeight: 700, fontSize: "0.78rem", cursor: "pointer" }}
                 >
                   Vedi
                 </button>
@@ -88,7 +88,7 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
           );
         })}
       </div>
-      <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+      <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
         Puoi lasciare questa pagina: la generazione prosegue sul server e i VOLT sono già impegnati.
       </p>
     </div>

@@ -1,55 +1,73 @@
 import type { CSSProperties } from "react";
 
 // ──────────────────────────────────────────────────────────────────────────
-// Design tokens SEMBLIC. Fonte unica di verità per colori, raggi e frammenti
-// di stile ricorrenti (finora scritti a mano inline in ~15 file).
-// Palette: Obsidian (base/superfici), Lumen (luce/testo), Amber (azione).
-// Crimson e Teal restano colori SEMANTICI di stato (bloccato / verificato).
-// NB: le chiavi `violet`/`violetLight` ora contengono AMBER (nome storico
-// mantenuto per non riscrivere tutti i riferimenti). Vedi CLAUDE.md.
+// Design tokens SEMBLIC (sistema a 8 token + 3 gradienti, vedi
+// SEMBLIC_COLORI_MIGRAZIONE.md). Tutto deriva da Obsidian/Lumen/Amber.
+// Stati: salvia (verificato) e coral (bloccato). Il testo usa Lumen a opacita,
+// MAI grigi. I nomi storici (violet/crimson/teal/green) restano come alias coi
+// nuovi valori per non riscrivere ogni riferimento. Vedi CLAUDE.md.
 // ──────────────────────────────────────────────────────────────────────────
 
 export const colors = {
-  // Scala scura (sfondo → superfici) derivata da Obsidian #0C0F17
+  // Identita + superfici (scala da Obsidian)
   bg: "#0C0F17",        // sfondo pagina (Obsidian)
-  panel: "#11141D",     // pannelli/riquadri interni
-  card: "#161A24",      // card
-  raised: "#1F2532",    // elementi sollevati (placeholder portrait, input dark)
+  panel: "#141A24",     // pannelli/card (surface)
+  card: "#141A24",      // card (surface)
+  surface: "#141A24",
+  raised: "#1E2530",    // input, modali (elevated)
+  elevated: "#1E2530",
+  edge: "#2C3440",      // linee, divisori
 
-  // Testo (Lumen)
-  text: "#F2E9D8",      // primario (Lumen)
-  muted: "#8d8a82",     // secondario (grigio caldo)
-  faint: "#5C5A54",     // terziario/etichette deboli
+  // Testo: Lumen a tre intensita (niente grigi)
+  text: "#F2E9D8",                      // primario (Lumen)
+  muted: "rgba(242,233,216,0.70)",      // secondario
+  faint: "rgba(242,233,216,0.45)",      // terziario
 
-  // Brand / azione (Amber) + stati
-  violet: "#F2A93B",       // = Amber (azione) — nome storico
-  violetLight: "#F7C06A",  // = Amber chiaro
+  // Azione
   amber: "#F2A93B",
-  amberLight: "#F7C06A",
-  crimson: "#B8005C",   // stato: bloccato/revocato
-  teal: "#00A896",      // stato: verificato/consenso
-  green: "#00c864",     // stato "ATTIVO"
+  amberHover: "#E29A2E",
 
-  // Bordi (opacità crescente, tinta calda Lumen)
+  // Stati funzionali
+  verified: "#7FAE96",  // salvia: consenso OK, match trovato
+  blocked: "#EE7A70",   // coral: nessun match, stop
+
+  // Testo su fondi pieni colorati
+  onAmber: "#412402",
+  onVerified: "#16352A",
+  onBlocked: "#5A201B",
+
+  // Alias storici -> nuovi valori
+  violet: "#F2A93B",        // = amber (azione)
+  violetLight: "#E29A2E",   // = amber-hover
+  amberLight: "#E29A2E",
+  crimson: "#EE7A70",       // = blocked
+  teal: "#7FAE96",          // = verified
+  green: "#7FAE96",         // stato "ATTIVO" -> verified
+
+  // Bordi (Lumen a opacita crescente, niente grigi)
   border: "rgba(242,233,216,0.06)",
-  border2: "rgba(242,233,216,0.08)",
+  border2: "rgba(242,233,216,0.10)",
   border3: "rgba(242,233,216,0.12)",
 } as const;
 
-// Gradiente azione (Amber). Usato da elementi decorativi del brand.
-export const gradient = "linear-gradient(135deg,#F2A93B,#e0922a)";
+// Gradienti: SOLO sfondi e sezioni, MAI sui bottoni.
+export const gradTramonto = "linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%)";
+export const gradAurora = "linear-gradient(135deg,#F2A93B 0%,#C25C3A 42%,#0C0F17 100%)";
+export const gradFiducia = "linear-gradient(135deg,#7FAE96 0%,#2E8B7E 100%)";
+// Alias storico: ora punta al gradiente sezione tramonto (mai usarlo sui bottoni).
+export const gradient = gradTramonto;
 
 // Raggi ricorrenti
 export const radius = { sm: 8, md: 10, lg: 16, xl: 20, pill: 999 } as const;
 
-// Tinte semitrasparenti del brand (per sfondi pill/badge) — usate spessissimo.
+// Tinte semitrasparenti (per sfondi pill/badge). Derivate dai token.
 export const tint = {
   violet: "rgba(242,169,59,0.12)",
   violetBorder: "rgba(242,169,59,0.3)",
-  crimson: "rgba(184,0,92,0.12)",
-  crimsonBorder: "rgba(184,0,92,0.3)",
-  teal: "rgba(0,168,150,0.12)",
-  tealBorder: "rgba(0,168,150,0.3)",
+  crimson: "rgba(238,122,112,0.12)",
+  crimsonBorder: "rgba(238,122,112,0.3)",
+  teal: "rgba(127,174,150,0.12)",
+  tealBorder: "rgba(127,174,150,0.3)",
 } as const;
 
 // ── Frammenti di stile riusabili ──────────────────────────────────────────
@@ -69,7 +87,7 @@ export const card: CSSProperties = {
   padding: "1.5rem",
 };
 
-// Pannello interno (più scuro della card).
+// Pannello interno (stessa superficie della card, bordo piu tenue).
 export const panel: CSSProperties = {
   background: colors.panel,
   border: `1px solid ${colors.border}`,
@@ -77,11 +95,11 @@ export const panel: CSSProperties = {
   padding: "1.5rem",
 };
 
-// Pulsante primario (Amber pieno, testo Obsidian — come da palette SEMBLIC).
+// Pulsante primario: Amber PIENO, testo on-amber. Mai gradienti sui bottoni.
 export const buttonPrimary: CSSProperties = {
   border: "none",
   background: colors.amber,
-  color: "#0C0F17",
+  color: colors.onAmber,
   fontWeight: 800,
   fontSize: "0.9rem",
   borderRadius: radius.md,
@@ -92,9 +110,9 @@ export const buttonPrimary: CSSProperties = {
   textAlign: "center",
 };
 
-// Pulsante secondario (outline tenue).
+// Pulsante secondario (ghost: trasparente, bordo hairline).
 export const buttonSecondary: CSSProperties = {
-  background: "rgba(242,233,216,0.05)",
+  background: "transparent",
   border: `1px solid ${colors.border3}`,
   color: colors.text,
   fontWeight: 700,
@@ -107,7 +125,7 @@ export const buttonSecondary: CSSProperties = {
   textAlign: "center",
 };
 
-// Etichetta sezione (maiuscoletto spaziato grigio).
+// Etichetta sezione (maiuscoletto spaziato, testo muted).
 export const sectionLabel: CSSProperties = {
   color: colors.muted,
   fontSize: "0.75rem",

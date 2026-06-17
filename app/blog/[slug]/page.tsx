@@ -134,7 +134,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
             <div className="glass mt-8 rounded-2xl p-6 text-center sm:p-8">
               <p className="text-balance text-lg font-bold">Ogni volto generato deve avere una persona vera dietro.</p>
-              <Link href="/match" className="mt-4 inline-block rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3 text-sm font-bold text-[#0C0F17] transition-all hover:brightness-110">
+              <Link href="/match" className="mt-4 inline-block rounded-xl bg-[#F2A93B] px-6 py-3 text-sm font-bold text-[#412402] transition-all hover:brightness-110">
                 Esplora il Registro Volti
               </Link>
             </div>

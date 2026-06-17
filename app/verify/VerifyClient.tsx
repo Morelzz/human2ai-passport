@@ -369,16 +369,16 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       {/* Live region SEMPRE montata: l'esito viene annunciato agli screen reader. */}
       <div role="status">
       {result && (
-        <div className={`mt-6 rounded-3xl border p-6 ${result.valid ? "border-teal/30 bg-teal/[0.04]" : result.marked ? "border-[#f0b429]/30 bg-[#f0b429]/[0.04]" : "border-crimson/25 bg-crimson/[0.03]"}`}>
+        <div className={`mt-6 rounded-3xl border p-6 ${result.valid ? "border-teal/30 bg-teal/[0.04]" : result.marked ? "border-amber/30 bg-amber/[0.04]" : "border-crimson/25 bg-crimson/[0.03]"}`}>
           {result.valid ? (
             <>
               {/* Sigillo + verdetto: emesso, non constatato */}
               <div className="mb-5 flex items-center gap-4">
                 <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden>
-                  <circle cx="22" cy="22" r="20" stroke="#00A896" strokeWidth="1.5" pathLength="100" strokeDasharray="100" strokeDashoffset="100" strokeLinecap="round">
+                  <circle cx="22" cy="22" r="20" stroke="#7FAE96" strokeWidth="1.5" pathLength="100" strokeDasharray="100" strokeDashoffset="100" strokeLinecap="round">
                     <animate attributeName="stroke-dashoffset" from="100" to="0" dur="0.7s" fill="freeze" />
                   </circle>
-                  <path d="M14 22.5l5.5 5.5L30 16.5" stroke="#00A896" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" pathLength="100" strokeDasharray="100" strokeDashoffset="100">
+                  <path d="M14 22.5l5.5 5.5L30 16.5" stroke="#7FAE96" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" pathLength="100" strokeDasharray="100" strokeDashoffset="100">
                     <animate attributeName="stroke-dashoffset" from="100" to="0" dur="0.45s" begin="0.55s" fill="freeze" />
                   </path>
                 </svg>
@@ -477,7 +477,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   <div className="flex flex-col gap-1.5 border-l border-white/10 pl-4">
                     {result.events.slice(-6).map((ev, i) => {
                       const meta = EVENT_LABELS[ev.event_type] ?? { label: ev.event_type, tone: "teal" as const };
-                      const color = meta.tone === "crimson" ? "text-crimson" : meta.tone === "amber" ? "text-[#f0b429]" : "text-teal";
+                      const color = meta.tone === "crimson" ? "text-crimson" : meta.tone === "amber" ? "text-amber" : "text-teal";
                       return (
                         <p key={i} className="m-0 text-[0.75rem] leading-relaxed text-muted">
                           <span className={`font-semibold ${color}`}>{meta.label}</span>
@@ -534,7 +534,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   type="button"
                   onClick={onFaceConsent}
                   disabled={busy}
-                  className="focus-ring mt-1 rounded-full bg-[#F2A93B] px-5 py-2 text-[0.82rem] font-bold text-[#0C0F17] transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="focus-ring mt-1 rounded-full bg-[#F2A93B] px-5 py-2 text-[0.82rem] font-bold text-[#412402] transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   Acconsento all&apos;analisi del volto
                 </button>
@@ -543,7 +543,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           ) : face?.quality === "error" ? (
             /* ── ERRORE TECNICO: distinto da "nessun volto" (mai confonderli) ── */
             <>
-              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-[#f0b429]">ANALISI NON RIUSCITA SUL TUO DISPOSITIVO</h2>
+              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-amber">ANALISI NON RIUSCITA SUL TUO DISPOSITIVO</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 Non è un verdetto sull&apos;immagine: l&apos;analisi del volto si è interrotta per un problema
                 tecnico del browser (memoria/GPU). Ricarica la pagina e riprova; se persiste, prova da un altro browser.
@@ -555,7 +555,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           ) : face?.quality === "low" ? (
             /* ── QUALITY GATE: meglio nessuna risposta che una inventata ── */
             <>
-              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-[#f0b429]">QUALITÀ INSUFFICIENTE PER UN CONFRONTO AFFIDABILE</h2>
+              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-amber">QUALITÀ INSUFFICIENTE PER UN CONFRONTO AFFIDABILE</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 Il volto in questa immagine è troppo piccolo o sfocato: una percentuale calcolata su pixel
                 che non contengono l&apos;informazione sarebbe un&apos;invenzione.
@@ -655,7 +655,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             </>
           ) : (
             <>
-              <h2 className={`m-0 font-mono text-[0.95rem] font-bold tracking-wide ${result.marked ? "text-[#f0b429]" : "text-crimson"}`}>
+              <h2 className={`m-0 font-mono text-[0.95rem] font-bold tracking-wide ${result.marked ? "text-amber" : "text-crimson"}`}>
                 {result.source === "token" ? "NON VALIDO" : result.marked ? "FILIGRANA TROVATA: CERTIFICATO SCONOSCIUTO" : "NESSUNA FILIGRANA"}
               </h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">

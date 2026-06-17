@@ -24,13 +24,13 @@ const H = 1920;
 // (accento); teal resta colore di stato (verificato).
 const C = {
   bg: "#0C0F17",
-  panel: "#161A24",
-  bar: "#11141D",
-  border: "#1F2532",
+  panel: "#141A24",
+  bar: "#141A24",
+  border: "#1E2530",
   text: "#F2E9D8",
-  soft: "#D8D2C6",
-  muted: "#8d8a82",
-  teal: "#00A896",
+  soft: "rgba(242,233,216,0.70)",
+  muted: "rgba(242,233,216,0.70)",
+  teal: "#7FAE96",
   violet: "#F2A93B",
 };
 
@@ -219,7 +219,7 @@ export async function GET(request: Request) {
                   right: 48,
                   fontSize: 30,
                   letterSpacing: "0.15em",
-                  color: "#8d8a82",
+                  color: "rgba(242,233,216,0.70)",
                 }}
               >
                 IL TUO PASSAPORTO

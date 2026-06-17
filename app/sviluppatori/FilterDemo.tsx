@@ -89,11 +89,11 @@ export default function FilterDemo() {
           <div
             className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold"
             style={{
-              background: allow ? "rgba(0,168,150,0.14)" : "rgba(184,0,92,0.14)",
-              color: allow ? "#00d4be" : "#e0006f",
+              background: allow ? "rgba(127,174,150,0.14)" : "rgba(238,122,112,0.14)",
+              color: allow ? "#9CC6B2" : "#F2958C",
             }}
           >
-            <span className="h-2 w-2 rounded-full" style={{ background: allow ? "#00d4be" : "#e0006f" }} />
+            <span className="h-2 w-2 rounded-full" style={{ background: allow ? "#9CC6B2" : "#F2958C" }} />
             {res.decision}
             {block && ": generazione non autorizzata"}
             {allow && ": generazione autorizzata"}

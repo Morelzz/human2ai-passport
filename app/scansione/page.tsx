@@ -75,14 +75,14 @@ export default async function ScansionePage() {
                   n: "02",
                   t: "Da un partner certificato.",
                   d: "La rete dei Capture Partner cresce città per città: fotografi e videomaker certificati sul nostro protocollo, vicino a casa tua. Guarda la mappa qui sotto.",
-                  c: "#00A896",
+                  c: "#7FAE96",
                 },
                 {
                   Icon: Compass,
                   n: "03",
                   t: "In autonomia, secondo lo standard.",
                   d: "Hai accesso a un set fotografico? Lo standard SEMBLIC-SCAN è pubblico: seguilo, invia il materiale, e la piattaforma verifica la qualità prima dell'ingresso nel registro. I requisiti sono gratis. Il rigore no: quello lo controlliamo noi.",
-                  c: "#B8005C",
+                  c: "#EE7A70",
                 },
               ].map(({ Icon, n, t, d, c }) => (
                 <div key={n} className="glass glass-hover rounded-2xl p-6">
@@ -124,7 +124,7 @@ export default async function ScansionePage() {
                 <strong className="text-foreground">Camera su cavalletto, frontale al soggetto.</strong> Inquadratura
                 stabile e costante per l&apos;intera sessione.
                 {isDev && (
-                  <span className="mt-2 block rounded-lg border border-[#f0b429]/35 bg-[#f0b429]/10 px-3 py-2 font-mono text-[0.72rem] text-[#d9a72e]">
+                  <span className="mt-2 block rounded-lg border border-amber/35 bg-amber/10 px-3 py-2 font-mono text-[0.72rem] text-amber">
                     [Parametri minimi: risoluzione, ottica, DA MORELZ] · segnaposto visibile solo in dev
                   </span>
                 )}

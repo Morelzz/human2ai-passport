@@ -171,7 +171,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
             <motion.div
               initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-white/10 bg-[#141823] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+              className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-white/10 bg-[#1E2530] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
             >
               <div className="mb-3 flex items-baseline justify-between">
                 <span className="text-2xl font-extrabold tabular-nums">{FMT.format(balance)} <span aria-hidden>⚡</span></span>
@@ -206,7 +206,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
             <motion.div
               initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-white/10 bg-[#141823] p-5 pb-8 md:hidden"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-white/10 bg-[#1E2530] p-5 pb-8 md:hidden"
             >
               <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/15" />
               <div className="mb-4 flex items-baseline gap-2">

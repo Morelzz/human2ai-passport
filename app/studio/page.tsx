@@ -44,8 +44,8 @@ export default function StudioPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               {[
                 { Icon: ClipboardList, t: "1 · Il brief", d: "Ci racconti obiettivo, tono, formati e dove vivranno i contenuti. Mezz'ora del tuo tempo, non di più.", c: "#F2A93B" },
-                { Icon: Users, t: "2 · Il volto giusto", d: "Selezioniamo dal registro la persona consenziente più adatta, categoria d'uso verificata, royalty alla persona inclusa.", c: "#B8005C" },
-                { Icon: PackageCheck, t: "3 · La consegna", d: "Ricevi i contenuti finiti, in alta risoluzione, ognuno con la sua prova di provenienza verificabile.", c: "#00A896" },
+                { Icon: Users, t: "2 · Il volto giusto", d: "Selezioniamo dal registro la persona consenziente più adatta, categoria d'uso verificata, royalty alla persona inclusa.", c: "#EE7A70" },
+                { Icon: PackageCheck, t: "3 · La consegna", d: "Ricevi i contenuti finiti, in alta risoluzione, ognuno con la sua prova di provenienza verificabile.", c: "#7FAE96" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="glass glass-hover rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>

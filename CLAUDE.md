@@ -41,17 +41,19 @@ che deve girare, non una cattedrale.
 > **Dal 2026-06-17 il brand è SEMBLIC** (rebrand da Human2AI). Estetica minimale,
 > premium, dark-first: titoli display ultra-sottili (peso 200, tracking -0.04em),
 > geometria a PILLOLA (raggio pieno sui bottoni), bordi hairline, vuoto che respira.
-> UN solo colore d'azione: Amber. Crimson e Teal restano colori FUNZIONALI di stato
-> (bloccato / verificato), non decorativi.
-> NB tecnica: i token CSS storici (`--color-violet`, `bg-violet`, `text-violet-light`)
-> ora CONTENGONO Amber (nome del token mantenuto, valore cambiato): vedi `app/globals.css`
-> e `lib/ui.ts`. Esistono anche gli alias `--color-amber*` e `--color-lumen`.
+> UN solo colore d'azione: Amber. Gli stati sono coral (bloccato) e salvia
+> (verificato), significato di prodotto, non decorazione. Sorgente di verita:
+> `SEMBLIC_COLORI_MIGRAZIONE.md` (8 token + 3 gradienti).
+> NB tecnica: i token CSS storici (`--color-violet`, `text-crimson`, `text-teal`,
+> `bg-obsidian-2/3`) ora sono ALIAS coi nuovi valori, vedi `app/globals.css` e
+> `lib/ui.ts`. Il testo usa Lumen a opacita, mai grigi. I bottoni sono Amber
+> PIENO (testo `--on-amber` `#412402`), mai gradienti. I tier si distinguono per
+> intensita, mai per tinta.
 
-- Sfondo/superfici: **Obsidian `#0C0F17`** (base, dark-first) + scala (`#161A24`, `#1F2532`)
-- Testo/logo: **Lumen `#F2E9D8`**
-- Azione (CTA, link, stati attivi): **Amber `#F2A93B`** (testo Obsidian sui pieni); hover `#F7C06A`
-- Crimson `#B8005C` (stato: bloccato/revocato): invariato
-- Teal `#00A896` (stato: verificato/consenso): invariato
+- Identita: **Obsidian `#0C0F17`** (sfondo) · **Lumen `#F2E9D8`** (testo/logo) · **Amber `#F2A93B`** (azione, hover `#E29A2E`)
+- Superfici: `#141A24` (card) · `#1E2530` (input/modali) · `#2C3440` (linee)
+- Stati: **coral `#EE7A70`** (bloccato/no-match) · **salvia `#7FAE96`** (verificato/consenso)
+- Gradienti (SOLO sfondi/sezioni, mai bottoni): tramonto (amber→coral), aurora (amber→obsidian), fiducia (salvia→teal)
 - Payoff brand: "Real Humans. Real Rights. Real Earnings."
 - Estetica: premium, elegante, avanguardia, futuristica. ZERO aspetto "giocattolo" o marketing generico.
 

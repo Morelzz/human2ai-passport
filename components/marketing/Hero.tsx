@@ -50,7 +50,7 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
             Real <ShimmerWord>Earnings</ShimmerWord>.
           </motion.h1>
 
-          <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[#bdbdbd] sm:mx-0">
+          <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[rgba(242,233,216,0.70)] sm:mx-0">
             Il filtro che impedisce all&apos;AI di generare un essere umano senza il permesso
             di una persona reale: <span className="text-foreground">riconosciuta, protetta e pagata</span>, ogni volta.
           </motion.p>
@@ -60,12 +60,12 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
             <Magnetic><Button asChild size="lg" variant="secondary"><Link href="#come-funziona">Come funziona</Link></Button></Magnetic>
           </motion.div>
 
-          <motion.p variants={item} className="mt-8 text-xs tracking-[0.05em] text-[#9a9a9a]">
+          <motion.p variants={item} className="mt-8 text-xs tracking-[0.05em] text-[rgba(242,233,216,0.70)]">
             {count} volti già nel registro · ogni token è verificabile pubblicamente
           </motion.p>
 
           {/* Review C3 — il contatore manifesto: stessa fonte di /trasparenza */}
-          <motion.p variants={item} className="mt-2 text-xs tracking-[0.05em] text-[#9a9a9a]">
+          <motion.p variants={item} className="mt-2 text-xs tracking-[0.05em] text-[rgba(242,233,216,0.70)]">
             <span className="font-mono font-bold text-crimson-light">{blockedMonth}</span>{" "}
             {blockedMonth === 1 ? "generazione rifiutata" : "generazioni rifiutate"} questo mese,{" "}
             <span className="text-foreground">e questo è il punto.</span>
@@ -74,7 +74,7 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
           {/* Fase 4.1 sul fronte home — il SECONDO numero manifesto: i volti
               registrati per non essere mai generati (VETO). Stessa fonte di
               /trasparenza. Regge a 0 (pre-campagna): la punchline è il diritto. */}
-          <motion.p variants={item} className="mt-1 text-xs tracking-[0.05em] text-[#9a9a9a]">
+          <motion.p variants={item} className="mt-1 text-xs tracking-[0.05em] text-[rgba(242,233,216,0.70)]">
             <span className="font-mono font-bold text-violet-light">{protectedFaces}</span>{" "}
             {protectedFaces === 1 ? "volto protetto" : "volti protetti"} dall&apos;IA, perché{" "}
             <span className="text-foreground">dire no è un diritto.</span>
@@ -85,7 +85,7 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
       {/* Indicatore di scroll */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute bottom-5 left-1/2 z-[2] -translate-x-1/2 text-[#9a9a9a]"
+        className="pointer-events-none absolute bottom-5 left-1/2 z-[2] -translate-x-1/2 text-[rgba(242,233,216,0.70)]"
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 1, 1, 0.4], y: [0, 6, 0] }}
         transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
@@ -103,7 +103,7 @@ function ShimmerWord({ children }: { children: React.ReactNode }) {
   return (
     <motion.span
       className="bg-[length:200%_auto] bg-clip-text font-light text-transparent"
-      style={{ backgroundImage: "linear-gradient(90deg,#F2A93B,#F7C06A,#e0922a,#F2A93B)" }}
+      style={{ backgroundImage: "linear-gradient(90deg,#F2A93B,#E29A2E,#F2A93B)" }}
       animate={reduce ? undefined : { backgroundPosition: ["0% center", "200% center"] }}
       transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
     >

@@ -31,10 +31,10 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 const KYC_LABEL: Record<string, { text: string; color: string }> = {
-  none: { text: "Non avviata", color: "#6b7280" },
-  pending: { text: "In verifica", color: "#00A896" },
-  approved: { text: "Verificato", color: "#00A896" },
-  rejected: { text: "Rifiutata", color: "#B8005C" },
+  none: { text: "Non avviata", color: "rgba(242,233,216,0.70)" },
+  pending: { text: "In verifica", color: "#7FAE96" },
+  approved: { text: "Verificato", color: "#7FAE96" },
+  rejected: { text: "Rifiutata", color: "#EE7A70" },
 };
 
 export default async function AccountPage() {
@@ -204,9 +204,9 @@ export default async function AccountPage() {
           </h1>
           {profile?.kyc_status === "approved" && <VerifiedBadge />}
         </div>
-        <p style={{ color: "#6b7280", fontSize: "0.9rem", margin: "0 0 2rem" }}>{user.email}</p>
+        <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.9rem", margin: "0 0 2rem" }}>{user.email}</p>
 
-        <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+        <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
           <Row label="Tipo di account" value={ROLE_LABEL[role] ?? role} />
 
           {/* KYC SOLO per i creatori/venditori. Il compratore accede e basta. */}
@@ -221,8 +221,8 @@ export default async function AccountPage() {
                     textAlign: "center",
                     padding: "0.75rem",
                     borderRadius: 10,
-                    background: "linear-gradient(135deg,#F2A93B,#B8005C)",
-                    color: "#fff",
+                    background: "#F2A93B",
+                    color: "#412402",
                     fontWeight: 700,
                     fontSize: "0.85rem",
                     textDecoration: "none",
@@ -240,7 +240,7 @@ export default async function AccountPage() {
             buyer: qui glielo ricordiamo con un CTA diretto al form (dopo il KYB
             diventa enterprise e questo blocco sparisce). */}
         {role === "buyer" && (user.user_metadata as { account_intent?: string } | null)?.account_intent === "enterprise" && (
-          <Link href="/enterprise/register" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+          <Link href="/enterprise/register" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
             Completa la registrazione della tua azienda →
           </Link>
         )}
@@ -248,22 +248,22 @@ export default async function AccountPage() {
         {/* Saldo VOLT: i crediti che alimentano le generazioni. Visibile a tutti
             (nascosto solo se il sistema VOLT non è configurato). */}
         {volt !== null && (
-          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
             <div>
-              <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
+              <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
                 <span aria-hidden style={{ fontSize: "1.4rem" }}>⚡</span>
-                <span style={{ color: volt <= 0 ? "#B8005C" : volt < LOW_BALANCE_THRESHOLD ? "#f59e0b" : "#F2E9D8", fontSize: "2.2rem", fontWeight: 800, lineHeight: 1 }}>
+                <span style={{ color: volt <= 0 ? "#EE7A70" : volt < LOW_BALANCE_THRESHOLD ? "#F2A93B" : "#F2E9D8", fontSize: "2.2rem", fontWeight: 800, lineHeight: 1 }}>
                   {volt.toLocaleString("it-IT")}
                 </span>
               </div>
               {volt < LOW_BALANCE_THRESHOLD && (
-                <p style={{ color: "#6b7280", fontSize: "0.75rem", margin: "0.4rem 0 0" }}>
+                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.75rem", margin: "0.4rem 0 0" }}>
                   {volt <= 0 ? "Energia esaurita: ricarica per generare." : "Batteria quasi scarica."}
                 </p>
               )}
             </div>
-            <Link href="/account/volt" style={{ flexShrink: 0, padding: "0.7rem 1.4rem", borderRadius: 999, background: "#F2A93B", color: "#0C0F17", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+            <Link href="/account/volt" style={{ flexShrink: 0, padding: "0.7rem 1.4rem", borderRadius: 999, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
               Ricarica
             </Link>
           </div>
@@ -276,12 +276,12 @@ export default async function AccountPage() {
             eventuali tentativi di uso del suo volto rilevati su Semblic. "Veto"
             è il nome interno: in pubblico si parla solo di "volto protetto". */}
         {protection && (
-          <div style={{ background: "#11141D", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È PROTETTO</p>
+          <div style={{ background: "#141A24", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È PROTETTO</p>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00A896", display: "inline-block", flexShrink: 0 }} />
-              <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 700 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#7FAE96", display: "inline-block", flexShrink: 0 }} />
+              <span style={{ color: "#7FAE96", fontSize: "0.82rem", fontWeight: 700 }}>
                 Protezione attiva: dentro Semblic il tuo volto non può essere generato né concesso.
               </span>
             </div>
@@ -290,19 +290,19 @@ export default async function AccountPage() {
               <>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", margin: "1.1rem 0 0.3rem" }}>
                   <span style={{ color: "#F2E9D8", fontSize: "1.8rem", fontWeight: 800 }}>{protection.total}</span>
-                  <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>
+                  <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem" }}>
                     {protection.total === 1 ? "volta il tuo volto è stato riconosciuto" : "volte il tuo volto è stato riconosciuto"} in immagini caricate su Semblic
                     {protection.last30 > 0 && ` (${protection.last30} negli ultimi 30 giorni)`}
                   </span>
                 </div>
-                <p style={{ color: "#9a9a9a", fontSize: "0.82rem", lineHeight: 1.6, margin: "0.5rem 0 0" }}>
+                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem", lineHeight: 1.6, margin: "0.5rem 0 0" }}>
                   Qualcuno ha caricato qui un&apos;immagine in cui compare il tuo volto: può essere un contenuto creato fuori da Semblic. Conserviamo la traccia per te.
                 </p>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginTop: "1rem" }}>
                   {protection.recent.map((a) => (
                     <div key={a.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "0.45rem" }}>
-                      <span style={{ color: "#6b7280", fontSize: "0.8rem" }}>
+                      <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem" }}>
                         {new Date(a.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
                       </span>
                       {a.similarity !== null && (
@@ -312,7 +312,7 @@ export default async function AccountPage() {
                   ))}
                 </div>
                 {protection.total > protection.recent.length && (
-                  <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.6rem 0 0" }}>
+                  <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.72rem", margin: "0.6rem 0 0" }}>
                     e altri {protection.total - protection.recent.length} eventi più vecchi.
                   </p>
                 )}
@@ -322,12 +322,12 @@ export default async function AccountPage() {
                 </Link>
               </>
             ) : (
-              <p style={{ color: "#9a9a9a", fontSize: "0.82rem", lineHeight: 1.6, margin: "1rem 0 0" }}>
+              <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem", lineHeight: 1.6, margin: "1rem 0 0" }}>
                 Nessun tentativo rilevato finora. Se qualcuno carica su Semblic un&apos;immagine col tuo volto, lo vedrai qui.
               </p>
             )}
 
-            <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+            <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
               Dentro Semblic la protezione è garantita lato server. Fuori da qui possiamo avvisarti e aiutarti a chiedere la rimozione, non impedirlo in assoluto. La tutela legale è in revisione.
             </p>
           </div>
@@ -335,16 +335,16 @@ export default async function AccountPage() {
 
         {role === "admin" && (
           <>
-            <Link href="/account/kyc" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+            <Link href="/account/kyc" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
               Verifiche identità (KYC) →
             </Link>
-            <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
+            <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Coda di revisione operatori →
             </Link>
-            <Link href="/account/kyb-review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
+            <Link href="/account/kyb-review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Verifiche aziende (KYB) →
             </Link>
-            <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(184,0,92,0.1)", border: "1px solid rgba(184,0,92,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
+            <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Segnalazioni di abuso →
             </Link>
             <Link href="/account/face-index" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2E9D8", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
@@ -358,22 +358,22 @@ export default async function AccountPage() {
         {role === "enterprise" && (
           <>
             <OrgAvatars avatars={orgAvatars} kyb={orgKyb} />
-            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#00d4be", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "#9CC6B2", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
               Attività dei tuoi volti →
             </Link>
           </>
         )}
 
         {role === "seller" && (
-          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO AVATAR</p>
+          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO AVATAR</p>
             {myAvatar ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
                 {/* Stato del Soul */}
                 {soulActive ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00A896", display: "inline-block" }} />
-                    <span style={{ color: "#00A896", fontSize: "0.82rem", fontWeight: 700 }}>Soul attivo, il tuo avatar è generabile</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#7FAE96", display: "inline-block" }} />
+                    <span style={{ color: "#7FAE96", fontSize: "0.82rem", fontWeight: 700 }}>Soul attivo, il tuo avatar è generabile</span>
                   </div>
                 ) : (
                   <div style={{ background: "#0C0F17", border: "1px solid rgba(242,169,59,0.25)", borderRadius: 12, padding: "1.1rem" }}>
@@ -384,17 +384,17 @@ export default async function AccountPage() {
                 <Link href={`/passport/${myAvatar}`} style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2E9D8", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                   Vai al tuo passport pubblico →
                 </Link>
-                <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "#6b7280", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
+                <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(242,233,216,0.70)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                   Gestisci il consenso
                 </Link>
                 <LinkWallet initialWallet={myWallet} />
               </div>
             ) : isVerifiedSeller ? (
-              <Link href="/account/avatar" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+              <Link href="/account/avatar" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
                 Crea il tuo avatar nel registro
               </Link>
             ) : (
-              <p style={{ color: "#6b7280", fontSize: "0.82rem", margin: 0, lineHeight: 1.6 }}>
+              <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.82rem", margin: 0, lineHeight: 1.6 }}>
                 Verifica prima la tua identità per poter creare il tuo avatar.
               </p>
             )}
@@ -402,27 +402,27 @@ export default async function AccountPage() {
         )}
 
         {role === "seller" && myAvatar && (
-          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO WALLET</p>
+          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO WALLET</p>
 
             {/* Revenue-hero: il guadagno in grande (dolore #1 risolto), col passo
                 degli ultimi 30 giorni e gli utilizzi totali. */}
             <div style={{ marginBottom: "1.1rem" }}>
-              <span style={{ color: "#6b7280", fontSize: "0.8rem" }}>Royalty accumulate</span>
+              <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem" }}>Royalty accumulate</span>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.7rem", flexWrap: "wrap", marginTop: "0.15rem" }}>
-                <span style={{ color: "#00A896", fontSize: "2.6rem", fontWeight: 800, lineHeight: 1 }}>{formatEur(royaltyCents)}</span>
+                <span style={{ color: "#7FAE96", fontSize: "2.6rem", fontWeight: 800, lineHeight: 1 }}>{formatEur(royaltyCents)}</span>
                 {revenue && revenue.last30Cents > 0 && (
                   <span style={{ color: "#F2A93B", fontSize: "0.85rem", fontWeight: 700 }}>
-                    +{formatEur(revenue.last30Cents)} <span style={{ color: "#6b7280", fontWeight: 500 }}>ultimi 30 giorni</span>
+                    +{formatEur(revenue.last30Cents)} <span style={{ color: "rgba(242,233,216,0.70)", fontWeight: 500 }}>ultimi 30 giorni</span>
                     {revenue.deltaPct !== null && (
-                      <span style={{ color: revenue.deltaPct >= 0 ? "#00A896" : "#B8005C", marginLeft: "0.4rem" }}>
+                      <span style={{ color: revenue.deltaPct >= 0 ? "#7FAE96" : "#EE7A70", marginLeft: "0.4rem" }}>
                         {revenue.deltaPct >= 0 ? "▲" : "▼"} {Math.abs(revenue.deltaPct)}%
                       </span>
                     )}
                   </span>
                 )}
               </div>
-              <p style={{ color: "#374151", fontSize: "0.78rem", margin: "0.5rem 0 0" }}>{usageCount} utilizzi totali</p>
+              <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.78rem", margin: "0.5rem 0 0" }}>{usageCount} utilizzi totali</p>
             </div>
 
             {/* Grafici royalty (30 giorni + per categoria) */}
@@ -432,15 +432,15 @@ export default async function AccountPage() {
               </div>
             )}
 
-            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(0,168,150,0.1)", border: "1px solid rgba(0,168,150,0.3)", color: "#00d4be", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginBottom: "1.2rem" }}>
+            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "#9CC6B2", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginBottom: "1.2rem" }}>
               Attività del mio volto →
             </Link>
 
             {/* Barra verso la soglia di payout */}
-            <div style={{ height: 8, background: "#161A24", borderRadius: 999, overflow: "hidden", marginBottom: "0.5rem" }}>
-              <div style={{ height: "100%", width: `${Math.min(100, (royaltyCents / PAYOUT_THRESHOLD_CENTS) * 100)}%`, background: "linear-gradient(90deg,#F2A93B,#00A896)" }} />
+            <div style={{ height: 8, background: "#141A24", borderRadius: 999, overflow: "hidden", marginBottom: "0.5rem" }}>
+              <div style={{ height: "100%", width: `${Math.min(100, (royaltyCents / PAYOUT_THRESHOLD_CENTS) * 100)}%`, background: "linear-gradient(90deg,#F2A93B,#7FAE96)" }} />
             </div>
-            <p style={{ color: "#6b7280", fontSize: "0.76rem", margin: "0 0 1.2rem" }}>
+            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.76rem", margin: "0 0 1.2rem" }}>
               Soglia payout: {formatEur(PAYOUT_THRESHOLD_CENTS)}
             </p>
 
@@ -449,15 +449,15 @@ export default async function AccountPage() {
             {/* Storico payout (ledger tracciabile) */}
             {payouts.length > 0 && (
               <div style={{ marginTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "1.2rem" }}>
-                <p style={{ color: "#6b7280", fontSize: "0.76rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>STORICO PAYOUT</p>
+                <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.76rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>STORICO PAYOUT</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {payouts.map((p) => (
                     <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ color: "#6b7280", fontSize: "0.8rem" }}>
+                      <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem" }}>
                         {new Date(p.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
                       </span>
                       <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                        <span style={{ color: "#00A896", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" }}>{p.status}</span>
+                        <span style={{ color: "#7FAE96", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" }}>{p.status}</span>
                         <span style={{ color: "#F2E9D8", fontSize: "0.88rem", fontWeight: 700 }}>{formatEur(p.amount_cents)}</span>
                       </span>
                     </div>
@@ -472,12 +472,12 @@ export default async function AccountPage() {
             7 giorni vista da questo volto. Compare solo se c'è almeno una
             ricerca compatibile (e se la tabella match_searches esiste). */}
         {role === "seller" && myAvatar && demand && demand.compatible > 0 && (
-          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È STATO CERCATO</p>
+          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È STATO CERCATO</p>
 
             <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", marginBottom: "0.3rem" }}>
               <span style={{ color: "#F2E9D8", fontSize: "1.8rem", fontWeight: 800 }}>{demand.compatible}</span>
-              <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>
+              <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem" }}>
                 {demand.compatible === 1 ? "ricerca compatibile" : "ricerche compatibili"} col tuo volto negli ultimi {demand.days} giorni
               </span>
             </div>
@@ -495,17 +495,17 @@ export default async function AccountPage() {
               </>
             )}
 
-            <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+            <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
               Registriamo solo la forma della domanda: chi cerca resta anonimo.
             </p>
           </div>
         )}
 
         {myGenerations.length > 0 && (
-          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>I MIEI CONTENUTI</p>
+          <div style={{ background: "#141A24", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>I MIEI CONTENUTI</p>
             <ContentsGrid items={gridItems} shareVariant="buyer" />
-            <p style={{ color: "#374151", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
+            <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
               Ogni contenuto è certificato e la persona reale è stata remunerata.
             </p>
           </div>
@@ -516,13 +516,13 @@ export default async function AccountPage() {
             Non si mostra a chi ha PROTETTO il volto: proteggere e concedere lo
             stesso volto si escludono (guardia 1:1 server-side, modulo VETO). */}
         {role === "buyer" && !protection && (user.user_metadata as { account_intent?: string } | null)?.account_intent !== "enterprise" && (
-          <div style={{ background: "linear-gradient(135deg, rgba(242,169,59,0.12), rgba(184,0,92,0.08))", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+          <div style={{ background: "linear-gradient(135deg, rgba(242,169,59,0.12), rgba(238,122,112,0.08))", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "#F2E9D8", fontSize: "1.05rem", fontWeight: 700, margin: "0 0 0.4rem" }}>Metti il tuo volto nel registro</p>
-            <p style={{ color: "#9a9a9a", fontSize: "0.85rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
+            <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
               Sei una persona reale: il tuo volto può entrare nel registro, restare sotto il tuo
               consenso e farti guadagnare ogni volta che viene usato. Tu decidi tutto, sempre.
             </p>
-            <Link href="/scansione" style={{ display: "inline-block", padding: "0.7rem 1.4rem", borderRadius: 999, background: "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+            <Link href="/scansione" style={{ display: "inline-block", padding: "0.7rem 1.4rem", borderRadius: 999, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
               Scopri come entrare →
             </Link>
           </div>
@@ -532,7 +532,7 @@ export default async function AccountPage() {
           <LogoutButton />
         </div>
 
-        <p style={{ color: "#374151", fontSize: "0.78rem", lineHeight: 1.6, marginTop: "1.5rem", textAlign: "center" }}>
+        <p style={{ color: "rgba(242,233,216,0.45)", fontSize: "0.78rem", lineHeight: 1.6, marginTop: "1.5rem", textAlign: "center" }}>
           Il tuo profilo è protetto: solo tu puoi vederlo e modificarlo.
         </p>
       </section>
@@ -543,11 +543,11 @@ export default async function AccountPage() {
 
 function VerifiedBadge() {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", background: "rgba(0,168,150,0.12)", border: "1px solid rgba(0,168,150,0.35)", borderRadius: 999, padding: "0.25rem 0.7rem" }}>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00A896" strokeWidth="3">
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", background: "rgba(127,174,150,0.12)", border: "1px solid rgba(127,174,150,0.35)", borderRadius: 999, padding: "0.25rem 0.7rem" }}>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7FAE96" strokeWidth="3">
         <path d="M20 6 9 17l-5-5" />
       </svg>
-      <span style={{ color: "#00A896", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.04em" }}>
+      <span style={{ color: "#7FAE96", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.04em" }}>
         Creatore verificato
       </span>
     </span>
@@ -557,7 +557,7 @@ function VerifiedBadge() {
 function Row({ label, value, valueColor = "#F2E9D8" }: { label: string; value: string; valueColor?: string }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <span style={{ color: "#6b7280", fontSize: "0.85rem" }}>{label}</span>
+      <span style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.85rem" }}>{label}</span>
       <span style={{ color: valueColor, fontSize: "0.9rem", fontWeight: 600 }}>{value}</span>
     </div>
   );

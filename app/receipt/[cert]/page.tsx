@@ -123,7 +123,7 @@ export default async function ReceiptPage({ params }: Props) {
 function ConsentLine({ ok, label }: { ok: boolean; label: string }) {
   return (
     <div style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", padding: "0.3rem 0" }}>
-      <span aria-hidden style={{ marginTop: 3, width: 14, height: 14, flexShrink: 0, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", background: ok ? "#0a8a78" : "#b8005c", color: "#fff", fontSize: "0.62rem", fontWeight: 900 }}>
+      <span aria-hidden style={{ marginTop: 3, width: 14, height: 14, flexShrink: 0, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", background: ok ? "#7FAE96" : "#EE7A70", color: ok ? "#16352A" : "#5A201B", fontSize: "0.62rem", fontWeight: 900 }}>
         {ok ? "✓" : "!"}
       </span>
       <span style={{ fontSize: "0.85rem", color: "#1a1a1a", lineHeight: 1.5 }}>{label}</span>

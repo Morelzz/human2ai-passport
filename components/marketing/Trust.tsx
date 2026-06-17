@@ -27,7 +27,7 @@ export function Trust() {
         transition={{ duration: 0.7, ease: EASE }}
         className="glass relative overflow-hidden rounded-[2rem] p-8 sm:p-12"
       >
-        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(0,168,150,0.12),transparent_70%)]" />
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(127,174,150,0.12),transparent_70%)]" />
         <div className="relative">
           <span className="label-mono text-teal">Fiducia &amp; Provenienza</span>
           <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">

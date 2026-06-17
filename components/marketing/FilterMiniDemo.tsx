@@ -102,12 +102,12 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
         </div>
 
         {res && !res.error && res.decision && (
-          <div className="mt-6 rounded-2xl border p-5" style={{ borderColor: allow ? "rgba(0,168,150,0.35)" : "rgba(184,0,92,0.35)", background: allow ? "rgba(0,168,150,0.07)" : "rgba(184,0,92,0.07)" }}>
+          <div className="mt-6 rounded-2xl border p-5" style={{ borderColor: allow ? "rgba(127,174,150,0.35)" : "rgba(238,122,112,0.35)", background: allow ? "rgba(127,174,150,0.07)" : "rgba(238,122,112,0.07)" }}>
             <div className="flex items-center gap-2.5">
               {allow
-                ? <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: "#00d4be" }} />
-                : <ShieldX className="h-5 w-5 shrink-0" style={{ color: "#e0006f" }} />}
-              <span className="text-base font-extrabold" style={{ color: allow ? "#00d4be" : "#e0006f" }}>
+                ? <ShieldCheck className="h-5 w-5 shrink-0" style={{ color: "#9CC6B2" }} />
+                : <ShieldX className="h-5 w-5 shrink-0" style={{ color: "#F2958C" }} />}
+              <span className="text-base font-extrabold" style={{ color: allow ? "#9CC6B2" : "#F2958C" }}>
                 {res.decision}: {allow ? "generazione autorizzata" : "generazione non autorizzata"}
               </span>
             </div>

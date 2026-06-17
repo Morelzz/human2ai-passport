@@ -18,9 +18,9 @@ export const metadata = {
 // gradi: qui nessuna iscrizione finta, solo la mappa onesta di cosa sarà.
 
 const LIVELLO_UI: Record<CorsoLivello, { label: string; accesso: string; c: string; Icon: typeof GraduationCap }> = {
-  base: { label: "Base", accesso: "Gratuito per gli iscritti", c: "#00A896", Icon: GraduationCap },
+  base: { label: "Base", accesso: "Gratuito per gli iscritti", c: "#7FAE96", Icon: GraduationCap },
   medio: { label: "Medio", accesso: "Con abbonamento", c: "#F2A93B", Icon: Sparkles },
-  avanzato: { label: "Avanzato", accesso: "A pagamento · certificante", c: "#B8005C", Icon: Award },
+  avanzato: { label: "Avanzato", accesso: "A pagamento · certificante", c: "#EE7A70", Icon: Award },
 };
 
 export default async function AcademyPage() {

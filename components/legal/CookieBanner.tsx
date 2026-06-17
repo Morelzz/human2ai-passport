@@ -47,7 +47,7 @@ export function CookieBanner() {
 
   return (
     <div role="dialog" aria-label="Preferenze cookie" className="fixed inset-x-3 bottom-3 z-[80] mx-auto max-w-xl">
-      <div className="rounded-2xl border border-white/12 bg-[#11141D]/95 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+      <div className="rounded-2xl border border-white/12 bg-[#141A24]/95 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
         <p className="text-sm font-bold">Cookie, senza giochetti.</p>
         <p className="mt-1.5 text-[0.8rem] leading-relaxed text-muted">
           Usiamo solo cookie <span className="text-foreground">essenziali</span> (accesso e preferenze).

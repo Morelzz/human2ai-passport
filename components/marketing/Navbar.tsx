@@ -58,7 +58,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
   useEffect(() => { if (!open) setOpenSection(null); }, [open]);
 
   // Stile condiviso delle voci di primo livello (desktop).
-  const topLinkCls = "text-sm tracking-[0.021em] text-[#9a9a9a] transition-colors hover:text-foreground";
+  const topLinkCls = "text-sm tracking-[0.021em] text-[rgba(242,233,216,0.70)] transition-colors hover:text-foreground";
 
   return (
     <>
@@ -96,9 +96,9 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                   <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
                 </button>
                 <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                  <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[#141823]/95 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                  <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[#1E2530]/95 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
                     {entry.items.map((it) => (
-                      <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-[#cfcfd6] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
+                      <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-[rgba(242,233,216,0.70)] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
                     ))}
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
             <motion.aside
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[#141823] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] lg:hidden"
+              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[#1E2530] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] lg:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
                 <span className="text-sm font-bold tracking-[0.15em]">MENU</span>
@@ -188,7 +188,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                       {openSection === entry.label && (
                         <div className="flex flex-col gap-0.5 pb-1.5 pl-3">
                           {entry.items.map((it) => (
-                            <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-[#b9b9c2] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
+                            <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-[rgba(242,233,216,0.70)] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
                           ))}
                         </div>
                       )}

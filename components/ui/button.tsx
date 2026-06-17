@@ -12,9 +12,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "text-obsidian bg-amber hover:brightness-110 active:brightness-95",
+          "text-[#412402] bg-amber hover:bg-amber-hover active:brightness-95",
         secondary:
-          "text-foreground border border-white/20 hover:border-white/45",
+          "text-foreground border border-edge hover:border-white/30",
         ghost: "text-muted hover:text-foreground",
         outline:
           "text-amber border border-amber/40 hover:border-amber/70",

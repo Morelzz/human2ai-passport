@@ -84,7 +84,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {shown.map((g) => (
-              <div key={g.id} className="overflow-hidden rounded-xl border border-white/8 bg-[#161A24]">
+              <div key={g.id} className="overflow-hidden rounded-xl border border-white/8 bg-[#141A24]">
                 {g.image_url && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={g.image_url} alt="contenuto" className="block aspect-[3/4] w-full bg-obsidian-3 object-cover" />

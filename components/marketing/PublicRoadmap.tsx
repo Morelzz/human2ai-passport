@@ -73,8 +73,8 @@ const PHASES: Phase[] = [
 ];
 
 const COLOR: Record<Status, string> = {
-  done: "#00A896",
-  current: "#B8005C",
+  done: "#7FAE96",
+  current: "#EE7A70",
   future: "#F2A93B",
 };
 
@@ -101,7 +101,7 @@ export function PublicRoadmap() {
         <div className="absolute left-[10%] right-[10%] top-8 h-px -translate-y-1/2" aria-hidden>
           <motion.div
             className="h-full origin-left rounded-full"
-            style={{ background: "linear-gradient(90deg,#B8005C 0%,#F2A93B 55%,rgba(242,169,59,0.25) 100%)" }}
+            style={{ background: "linear-gradient(90deg,#EE7A70 0%,#F2A93B 55%,rgba(242,169,59,0.25) 100%)" }}
             initial={reduce ? undefined : { scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -132,7 +132,7 @@ export function PublicRoadmap() {
         <div className="absolute bottom-2 left-8 top-2 w-px -translate-x-1/2" aria-hidden>
           <motion.div
             className="h-full w-full origin-top rounded-full"
-            style={{ background: "linear-gradient(180deg,#B8005C 0%,#F2A93B 60%,rgba(242,169,59,0.2) 100%)" }}
+            style={{ background: "linear-gradient(180deg,#EE7A70 0%,#F2A93B 60%,rgba(242,169,59,0.2) 100%)" }}
             initial={reduce ? undefined : { scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -249,7 +249,7 @@ function IconNode({ phase, reduce, delay }: { phase: Phase; reduce: boolean; del
         transition={{ duration: isCurrent ? 8 : 22, repeat: Infinity, ease: "linear" }}
       />
       {/* Disco interno scuro = crea l'anello */}
-      <span aria-hidden className="absolute inset-[2.5px] rounded-full" style={{ background: `radial-gradient(circle at 50% 30%, ${c}2e, #0b0b12 78%)` }} />
+      <span aria-hidden className="absolute inset-[2.5px] rounded-full" style={{ background: `radial-gradient(circle at 50% 30%, ${c}2e, #0C0F17 78%)` }} />
 
       {/* Icona */}
       <Icon className="relative z-10 h-6 w-6" style={{ color: c }} strokeWidth={1.8} />
@@ -257,7 +257,7 @@ function IconNode({ phase, reduce, delay }: { phase: Phase; reduce: boolean; del
       {/* Chip numero */}
       <span
         className="absolute -bottom-1 -right-1 z-10 flex h-5 min-w-5 items-center justify-center rounded-full px-1 font-mono text-[0.6rem] font-extrabold"
-        style={{ background: c, color: "#0b0b12" }}
+        style={{ background: c, color: "#0C0F17" }}
       >
         {phase.num}
       </span>
@@ -274,7 +274,7 @@ function PhaseCard({ phase }: { phase: Phase }) {
       {/* Accento superiore nel colore di stato */}
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${c}, transparent)` }} />
       <div className="flex items-center gap-2">
-        <span className="text-[0.64rem] font-bold uppercase tracking-[0.12em]" style={{ color: isCurrent ? c : "#9ca3af" }}>
+        <span className="text-[0.64rem] font-bold uppercase tracking-[0.12em]" style={{ color: isCurrent ? c : "rgba(242,233,216,0.70)" }}>
           {phase.horizon.split(" · ")[0]}
         </span>
         {isCurrent && (
@@ -287,7 +287,7 @@ function PhaseCard({ phase }: { phase: Phase }) {
       <p className="mt-0.5 text-[0.68rem] text-faint">{phase.horizon.replace(/^[^·]+· /, "")}</p>
 
       <h3 className="mt-2 text-lg font-extrabold leading-tight">{phase.title}</h3>
-      <p className="mt-2 text-sm font-semibold leading-snug" style={{ color: isCurrent ? "#F2E9D8" : "#c4b5fd" }}>
+      <p className="mt-2 text-sm font-semibold leading-snug" style={{ color: isCurrent ? "#F2E9D8" : "rgba(242,233,216,0.70)" }}>
         {phase.promise}
       </p>
       <p className="mt-2.5 text-sm leading-relaxed text-muted">{phase.body}</p>

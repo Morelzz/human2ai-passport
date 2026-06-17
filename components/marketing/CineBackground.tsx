@@ -32,13 +32,13 @@ export function CineBackground() {
           />
           <motion.div
             className="absolute -right-[14%] top-[30%] h-[min(46vw,560px)] w-[min(46vw,560px)] rounded-full blur-[64px]"
-            style={{ background: "radial-gradient(circle, rgba(184,0,92,0.16), transparent 65%)" }}
+            style={{ background: "radial-gradient(circle, rgba(238,122,112,0.16), transparent 65%)" }}
             animate={{ x: [0, -26, 12, 0], y: [0, 26, -14, 0], scale: [1, 1.05, 1] }}
             transition={{ duration: 48, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
             className="absolute -bottom-[18%] left-[30%] h-[min(50vw,600px)] w-[min(50vw,600px)] rounded-full blur-[72px]"
-            style={{ background: "radial-gradient(circle, rgba(0,168,150,0.14), transparent 65%)" }}
+            style={{ background: "radial-gradient(circle, rgba(127,174,150,0.14), transparent 65%)" }}
             animate={{ x: [0, 22, -22, 0], y: [0, -18, 12, 0], scale: [1, 1.05, 0.98, 1] }}
             transition={{ duration: 54, repeat: Infinity, ease: "easeInOut" }}
           />

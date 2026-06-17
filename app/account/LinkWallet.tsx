@@ -53,26 +53,26 @@ export default function LinkWallet({ initialWallet, handle }: { initialWallet: s
       {short ? (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.6rem", flexWrap: "wrap" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 600 }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00A896" }} />
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#7FAE96" }} />
             {short}
           </span>
           <button onClick={connect} disabled={busy}
-            style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: "#6b7280", borderRadius: 8, padding: "0.35rem 0.7rem", fontSize: "0.78rem", cursor: busy ? "default" : "pointer" }}>
+            style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(242,233,216,0.70)", borderRadius: 8, padding: "0.35rem 0.7rem", fontSize: "0.78rem", cursor: busy ? "default" : "pointer" }}>
             {busy ? "…" : "Cambia"}
           </button>
         </div>
       ) : (
         <>
-          <p style={{ color: "#6b7280", fontSize: "0.8rem", lineHeight: 1.5, margin: "0 0 0.8rem" }}>
+          <p style={{ color: "rgba(242,233,216,0.70)", fontSize: "0.8rem", lineHeight: 1.5, margin: "0 0 0.8rem" }}>
             Collega il tuo wallet: quando ancoreremo l&apos;identità su Base, il token soulbound del tuo volto sarà mintato qui.
           </p>
           <button onClick={connect} disabled={busy}
-            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "#374151" : "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "#1E2530" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
             {busy ? "Connessione…" : "Collega wallet (Phantom)"}
           </button>
         </>
       )}
-      {err && <p style={{ color: "#B8005C", fontSize: "0.76rem", margin: "0.6rem 0 0" }}>{err}</p>}
+      {err && <p style={{ color: "#EE7A70", fontSize: "0.76rem", margin: "0.6rem 0 0" }}>{err}</p>}
     </div>
   );
 }

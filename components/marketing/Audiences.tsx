@@ -22,7 +22,7 @@ export function Audiences() {
           transition={{ duration: 0.6, ease: EASE }}
           className="glass glass-hover relative overflow-hidden rounded-[1.75rem] p-7 sm:p-9"
         >
-          <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_0%_0%,rgba(0,168,150,0.12),transparent_70%)]" />
+          <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_0%_0%,rgba(127,174,150,0.12),transparent_70%)]" />
           <div className="relative">
             <span className="label-mono text-teal">Per chi mette il volto</span>
             <h3 className="mt-2 text-balance text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">

@@ -19,13 +19,13 @@ const PRINCIPLES: Principle[] = [
     n: "02",
     title: "Il permesso viene prima della generazione.",
     body: "Prima di creare un essere umano, chiediamo il permesso a un essere umano. Se nessuna persona reale ha acconsentito, l'AI non produce nulla. È un confine, non un'opzione.",
-    color: "#B8005C",
+    color: "#EE7A70",
   },
   {
     n: "03",
     title: "L'ordine si ribalta.",
     body: "Per anni le intelligenze artificiali si sono nutrite di noi senza chiedere. Qui è l'AI a lavorare per le persone, non le persone a essere materia prima dell'AI.",
-    color: "#00A896",
+    color: "#7FAE96",
   },
   {
     n: "04",
@@ -37,13 +37,13 @@ const PRINCIPLES: Principle[] = [
     n: "05",
     title: "Non devi essere un modello. Devi essere reale.",
     body: "Il guadagno passivo dal proprio volto non è più un privilegio di chi sta in copertina. Ogni persona può mettere a reddito la propria immagine, con dignità e con regole chiare.",
-    color: "#B8005C",
+    color: "#EE7A70",
   },
   {
     n: "06",
     title: "Ogni immagine porta la sua prova.",
     body: "Ogni contenuto generato esce con la prova certificata di chi c'è dietro. In un mondo che non distingue più il vero dal sintetico, noi rendiamo il vero verificabile.",
-    color: "#00A896",
+    color: "#7FAE96",
   },
 ];
 
