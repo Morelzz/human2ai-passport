@@ -2,7 +2,7 @@
 // Usato sia dal motore (lib/higgsfield.ts) sia dalla UI (/match).
 //
 // Tutti i modelli qui elencati sono IDENTITY-LOCKED: usano il Soul addestrato
-// (il volto reale della persona), quindi rispettano la tesi di Human2AI.
+// (il volto reale della persona), quindi rispettano la tesi di Semblic.
 
 export type SoulModel = "soul-v2" | "soul-id";
 
@@ -15,7 +15,7 @@ export interface SoulModelInfo {
 }
 
 // Default = Soul 2.0: realismo editoriale a 2k.
-// Nomi brand Human2AI: HUMAN = massima fedeltà (Soul 2.0), SHAPE = classico con stili (Soul ID).
+// Nomi brand Semblic: HUMAN = massima fedeltà (Soul 2.0), SHAPE = classico con stili (Soul ID).
 export const SOUL_MODELS: SoulModelInfo[] = [
   { id: "soul-v2", label: "HUMAN", quality: "2k", description: "Massima fedeltà, realismo editoriale", supportsStyles: false },
   { id: "soul-id", label: "SHAPE", quality: "1080p", description: "Classico, con stili artistici", supportsStyles: true },

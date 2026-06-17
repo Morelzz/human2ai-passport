@@ -118,16 +118,16 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
   return (
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
         {consentUrl ? (
-          <div style={{ background: "#12121a", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 18, padding: "2rem" }}>
+          <div style={{ background: "#161A24", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 18, padding: "2rem" }}>
             <p style={{ color: "#00A896", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>✓ Avatar creato, in attesa del consenso</p>
             <p style={{ color: "#6b7280", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.2rem" }}>
               Condividi questo link con la persona. Solo lei, aprendolo, conferma il consenso.
               Dopo la conferma, l&apos;avatar passa alla revisione dei nostri operatori.
             </p>
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
-              <code style={{ flex: 1, minWidth: 200, background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "0.6rem 0.8rem", color: "#8b47f0", fontSize: "0.78rem", wordBreak: "break-all" }}>{consentUrl}</code>
+              <code style={{ flex: 1, minWidth: 200, background: "#0C0F17", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "0.6rem 0.8rem", color: "#F2A93B", fontSize: "0.78rem", wordBreak: "break-all" }}>{consentUrl}</code>
               <button type="button" onClick={() => { navigator.clipboard.writeText(consentUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-                style={{ padding: "0.6rem 1rem", borderRadius: 8, border: "1px solid rgba(107,33,232,0.3)", background: "rgba(107,33,232,0.12)", color: copied ? "#00A896" : "#8b47f0", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
+                style={{ padding: "0.6rem 1rem", borderRadius: 8, border: "1px solid rgba(242,169,59,0.3)", background: "rgba(242,169,59,0.12)", color: copied ? "#00A896" : "#F2A93B", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
                 {copied ? "✓ Copiato" : "Copia"}
               </button>
             </div>
@@ -154,13 +154,13 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             <label htmlFor="av-handle" style={lbl}>Handle (l&apos;indirizzo del tuo passport)</label>
             <input id="av-handle" value={handle} onChange={(e) => setHandle(e.target.value.toLowerCase())} placeholder="es. riccardo-t" required style={inp} />
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0.35rem 0 0" }}>
-              human2ai…/passport/<strong>{handle || "tuo-handle"}</strong>
+              semblic…/passport/<strong>{handle || "tuo-handle"}</strong>
             </p>
           </div>
 
           {/* Profilo pubblico opzionale: nome reale e social sul passport */}
-          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
-            <p style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Profilo pubblico · facoltativo</p>
+          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
+            <p style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Profilo pubblico · facoltativo</p>
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
               Se vuoi, sul passport possono comparire il tuo <strong>nome e cognome</strong> e i tuoi <strong>canali social</strong>. Tutto facoltativo: decidi tu quanto essere riconoscibile.
             </p>
@@ -181,15 +181,15 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
           </div>
 
           {/* Le tue foto — reference-set per l'identity-lock (ECHO) */}
-          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
-            <p style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Le tue foto · 8 pose</p>
+          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
+            <p style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Le tue foto · 8 pose</p>
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
               Bloccano l&apos;identità reale per le generazioni fotorealistiche (motore ECHO). Foto <strong>nitide, ben illuminate, sfondo neutro, senza filtri</strong>, almeno 1024px. Restano <strong>private e cifrate</strong>.
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.6rem" }}>
               {POSES.map((p, slot) => (
                 <label key={p.key} title={p.tip} className="focus-ring"
-                  style={{ cursor: "pointer", border: `1px dashed ${refs[slot] ? "#6B21E8" : "rgba(255,255,255,0.14)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: refs[slot] ? "rgba(107,33,232,0.08)" : "transparent", aspectRatio: "3 / 4", overflow: "hidden", position: "relative" }}>
+                  style={{ cursor: "pointer", border: `1px dashed ${refs[slot] ? "#F2A93B" : "rgba(255,255,255,0.14)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: refs[slot] ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "3 / 4", overflow: "hidden", position: "relative" }}>
                   {refs[slot] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={refs[slot]!} alt={p.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -204,15 +204,15 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
               ))}
             </div>
             <button type="button" onClick={analyze} disabled={analyzing || refs.every((d) => !d)}
-              style={{ marginTop: "1rem", width: "100%", padding: "0.6rem", borderRadius: 8, border: "1px solid rgba(107,33,232,0.3)", background: "rgba(107,33,232,0.12)", color: "#8b47f0", fontWeight: 700, fontSize: "0.8rem", cursor: analyzing || refs.every((d) => !d) ? "default" : "pointer", opacity: refs.every((d) => !d) ? 0.5 : 1 }}>
+              style={{ marginTop: "1rem", width: "100%", padding: "0.6rem", borderRadius: 8, border: "1px solid rgba(242,169,59,0.3)", background: "rgba(242,169,59,0.12)", color: "#F2A93B", fontWeight: 700, fontSize: "0.8rem", cursor: analyzing || refs.every((d) => !d) ? "default" : "pointer", opacity: refs.every((d) => !d) ? 0.5 : 1 }}>
               {analyzing ? "Analisi in corso…" : "✨ Analizza le foto e compila l'identikit"}
             </button>
             {analyzeNote && <p style={{ color: "#9aa0aa", fontSize: "0.72rem", margin: "0.6rem 0 0", lineHeight: 1.5 }}>{analyzeNote}</p>}
           </div>
 
           {/* Identity kit — immutabile dopo la creazione */}
-          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
-            <p style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Identity kit</p>
+          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "1.2rem" }}>
+            <p style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Identity kit</p>
             <p style={{ color: "#374151", fontSize: "0.72rem", margin: "0 0 1.2rem", lineHeight: 1.5 }}>
               Le caratteristiche strutturali dell&apos;avatar. Si fissano ora e <strong>non saranno più modificabili</strong>: rappresentano la persona reale.
             </p>
@@ -225,7 +225,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
                       const on = kit[field] === opt;
                       return (
                         <button key={opt} type="button" aria-pressed={on} className="focus-ring" onClick={() => setKit({ ...kit, [field]: opt })}
-                          style={{ padding: "0.3rem 0.7rem", borderRadius: 999, fontSize: "0.76rem", fontWeight: 600, cursor: "pointer", background: on ? "rgba(107,33,232,0.15)" : "#12121a", color: on ? "#fff" : "#6b7280", border: `1px solid ${on ? "#6B21E8" : "rgba(255,255,255,0.08)"}` }}>
+                          style={{ padding: "0.3rem 0.7rem", borderRadius: 999, fontSize: "0.76rem", fontWeight: 600, cursor: "pointer", background: on ? "rgba(242,169,59,0.15)" : "#161A24", color: on ? "#fff" : "#6b7280", border: `1px solid ${on ? "#F2A93B" : "rgba(255,255,255,0.08)"}` }}>
                           {opt}
                         </button>
                       );
@@ -243,7 +243,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
                 const cfg = TIER_CONFIG[t];
                 const on = tier === t;
                 return (
-                  <button key={t} type="button" aria-pressed={on} className="focus-ring" onClick={() => setTier(t)} style={{ padding: "0.6rem", borderRadius: 10, cursor: "pointer", textAlign: "left", background: on ? cfg.bg : "#12121a", border: `1px solid ${on ? cfg.color : "rgba(255,255,255,0.08)"}` }}>
+                  <button key={t} type="button" aria-pressed={on} className="focus-ring" onClick={() => setTier(t)} style={{ padding: "0.6rem", borderRadius: 10, cursor: "pointer", textAlign: "left", background: on ? cfg.bg : "#161A24", border: `1px solid ${on ? cfg.color : "rgba(255,255,255,0.08)"}` }}>
                     <div style={{ color: cfg.color, fontWeight: 700, fontSize: "0.8rem" }}>{cfg.label}</div>
                     <div style={{ color: "#6b7280", fontSize: "0.7rem" }}>{cfg.description}</div>
                   </button>
@@ -264,7 +264,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
 
           {error && <p style={{ color: "#B8005C", fontSize: "0.85rem", margin: 0 }}>{error}</p>}
 
-          <button type="submit" disabled={loading} style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
+          <button type="submit" disabled={loading} style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading ? "#374151" : "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
             {loading ? "Creazione…" : isEnterprise ? "Crea avatar e genera link di consenso" : "Crea avatar e firma il consenso"}
           </button>
         </form>
@@ -304,7 +304,7 @@ function Chips({ list, selected, accent, onToggle }: { list: readonly string[]; 
       {list.map((c) => {
         const on = selected.includes(c);
         return (
-          <button key={c} type="button" aria-pressed={on} className="focus-ring" onClick={() => onToggle(c)} style={{ padding: "0.3rem 0.75rem", borderRadius: 999, fontSize: "0.78rem", cursor: "pointer", fontWeight: 600, background: on ? accent + "22" : "#12121a", color: on ? accent : "#6b7280", border: `1px solid ${on ? accent : "rgba(255,255,255,0.08)"}` }}>
+          <button key={c} type="button" aria-pressed={on} className="focus-ring" onClick={() => onToggle(c)} style={{ padding: "0.3rem 0.75rem", borderRadius: 999, fontSize: "0.78rem", cursor: "pointer", fontWeight: 600, background: on ? accent + "22" : "#161A24", color: on ? accent : "#6b7280", border: `1px solid ${on ? accent : "rgba(255,255,255,0.08)"}` }}>
             {c}
           </button>
         );
@@ -316,4 +316,4 @@ function Chips({ list, selected, accent, onToggle }: { list: readonly string[]; 
 const lbl: React.CSSProperties = { display: "block", color: "#6b7280", fontSize: "0.78rem", marginBottom: "0.5rem", letterSpacing: "0.04em" };
 // NB: niente outline:"none" — l'anello di focus del browser deve restare
 // visibile (a11y). Lo stile dei box resta il border; il focus aggiunge l'outline.
-const inp: React.CSSProperties = { width: "100%", padding: "0.7rem 0.9rem", borderRadius: 10, background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", color: "#f0f0f5", fontSize: "0.9rem" };
+const inp: React.CSSProperties = { width: "100%", padding: "0.7rem 0.9rem", borderRadius: 10, background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", color: "#F2E9D8", fontSize: "0.9rem" };

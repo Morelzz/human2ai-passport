@@ -3,16 +3,16 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import FilterDemo from "./FilterDemo";
 
 export const metadata = {
-  title: "Il Filtro Human2AI (API) · Sviluppatori",
+  title: "Il Filtro Semblic (API) · Sviluppatori",
   description:
-    "Prima di generare un essere umano, qualsiasi sistema può chiedere a Human2AI se quella persona ha acconsentito. Il filtro del consenso, via API.",
+    "Prima di generare un essere umano, qualsiasi sistema può chiedere a Semblic se quella persona ha acconsentito. Il filtro del consenso, via API.",
 };
 
 // Pagina ADDITIVA: documenta l'API filtro (consent-check) + demo live.
 // Realizza la Fase 2 della roadmap pubblica: "Il Filtro per tutti".
 export default function SviluppatoriPage() {
   const exampleResponse = `{
-  "human2ai": "consent-filter",
+  "semblic": "consent-filter",
   "subject": "random",
   "requested_use": "Fashion",
   "allowed": true,
@@ -40,7 +40,7 @@ export default function SviluppatoriPage() {
               Il filtro del consenso, via API.
             </h1>
             <p className="mt-4 leading-relaxed text-muted">
-              Prima di generare un essere umano, qualsiasi sistema può chiedere a Human2AI se quella
+              Prima di generare un essere umano, qualsiasi sistema può chiedere a Semblic se quella
               persona ha <span className="text-foreground">acconsentito</span>, per quella categoria d&apos;uso.
               È il passaggio che trasforma il consenso in <span className="text-foreground">infrastruttura</span>:
               senza <code className="rounded bg-teal/10 px-1.5 py-0.5 font-mono text-sm text-teal">ALLOW</code>, non si genera.

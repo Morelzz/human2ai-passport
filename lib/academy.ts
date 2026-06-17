@@ -23,8 +23,8 @@ export interface Corso {
 export const CORSI_FALLBACK: Corso[] = [
   {
     id: "",
-    slug: "benvenuti-in-human2ai",
-    titolo: "Benvenuti in HUMAN2AI",
+    slug: "benvenuti-in-semblic",
+    titolo: "Benvenuti in SEMBLIC",
     descrizione: "Cos'è il registro, come funziona il consenso, i tier, i tuoi diritti d'immagine spiegati semplici.",
     livello: "base",
     pubblico: "tutti",
@@ -45,8 +45,8 @@ export const CORSI_FALLBACK: Corso[] = [
   },
   {
     id: "",
-    slug: "protocollo-h2ai-scan",
-    titolo: "Il protocollo H2AI-SCAN",
+    slug: "protocollo-semblic-scan",
+    titolo: "Il protocollo SEMBLIC-SCAN",
     descrizione: "Il percorso Capture Partner: esecuzione, consenso on-site, postproduzione, esame finale. Chi lo supera entra nella rete.",
     livello: "avanzato",
     pubblico: "professionisti",

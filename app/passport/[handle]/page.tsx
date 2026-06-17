@@ -30,13 +30,13 @@ export async function generateMetadata({ params }: Props) {
   const title = `${a.alias} · Passaporto del volto`;
   const description = a.revoked_at
     ? `${a.alias} ha revocato il consenso: questo volto non è più generabile. La revoca è la prova che il sistema obbedisce.`
-    : `${a.alias} è una persona reale, verificata e consenziente del registro Human2AI. Ogni utilizzo del suo volto è autorizzato, tracciato e pagato.`;
+    : `${a.alias} è una persona reale, verificata e consenziente del registro Semblic. Ogni utilizzo del suo volto è autorizzato, tracciato e pagato.`;
   // openGraph/twitter espliciti: senza, resterebbero quelli globali del layout
   // (l'og:image invece arriva dalla convenzione e vince comunque).
   return {
     title,
     description,
-    openGraph: { title, description, type: "profile", siteName: "Human2AI", locale: "it_IT" },
+    openGraph: { title, description, type: "profile", siteName: "Semblic", locale: "it_IT" },
     twitter: { card: "summary_large_image", title, description },
   };
 }

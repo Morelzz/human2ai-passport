@@ -4,7 +4,7 @@ import { LegalNotice } from "@/components/legal/LegalNotice";
 
 export const metadata = {
   title: "Termini",
-  description: "Termini di servizio di Human2AI: registro dei volti consenzienti, licenze d'uso, royalty, revoca.",
+  description: "Termini di servizio di Semblic: registro dei volti consenzienti, licenze d'uso, royalty, revoca.",
 };
 
 // NB: bozza informativa allineata alle pratiche del prodotto. Da far validare a un legale prima del lancio.
@@ -20,7 +20,7 @@ export default function TerminiPage() {
           <LegalNotice />
 
           <div className="mt-8 flex flex-col gap-6 text-[0.95rem] leading-relaxed text-muted">
-            <Section title="Cos'è Human2AI">
+            <Section title="Cos'è Semblic">
               Un registro di identità reali e consenzienti. Una persona rivendica il proprio volto, dichiara come può
               essere usato, e ogni utilizzo è verificabile tramite token. I motori di generazione sono terze parti.
             </Section>
@@ -66,7 +66,7 @@ export default function TerminiPage() {
               responsabilità, manleva, legge applicabile e foro competente, volutamente non redatte in bozza]</span>
             </Section>
             <Section title="Contatti">
-              Per questioni contrattuali: <span className="text-foreground">legal@human2ai.example</span>{" "}
+              Per questioni contrattuali: <span className="text-foreground">legal@semblic.example</span>{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>,
               o dalla pagina <a href="/contatti" className="text-violet-light underline">/contatti</a>.
             </Section>

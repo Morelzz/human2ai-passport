@@ -8,7 +8,7 @@ import RegisterOrgClient from "./RegisterOrgClient";
 export const metadata = {
   title: "Registra la tua agenzia",
   description:
-    "Verifica la tua azienda (KYB) e onboarda il tuo roster di volti verificati nel registro Human2AI.",
+    "Verifica la tua azienda (KYB) e onboarda il tuo roster di volti verificati nel registro Semblic.",
 };
 
 // KYB self-serve (Fase 3.2): porta d'ingresso per le agenzie. Un account loggato

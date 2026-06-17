@@ -1,11 +1,11 @@
-# CLAUDE.md — Contesto di progetto HUMAN2AI
+# CLAUDE.md — Contesto di progetto SEMBLIC
 
 > Questo file viene letto automaticamente da Claude Code a ogni sessione.
 > È la fonte di verità su cosa stiamo costruendo e come.
 
 ## Cosa stiamo costruendo ADESSO
 
-Il **Registro Volti / Avatar Passport** — il primo modulo atterrabile di Human2AI.
+Il **Registro Volti / Avatar Passport** — il primo modulo atterrabile di Semblic.
 NON stiamo costruendo tutta la piattaforma. Stiamo costruendo UNA cosa, fatta bene:
 
 > Un registro pubblico dove una persona reale rivendica il proprio volto, dichiara
@@ -16,14 +16,14 @@ poi (in trimestri futuri) ci aggiungiamo generazione, royalty ed enforcement.
 
 Spec completa del modulo: vedi `docs/AVATAR_PASSPORT_SPEC.md`.
 
-## Cos'è Human2AI (contesto, NON da costruire ora)
+## Cos'è Semblic (contesto, NON da costruire ora)
 
-Human2AI è il **filtro obbligatorio di tutela umana** che sta prima di ogni generazione
+Semblic è il **filtro obbligatorio di tutela umana** che sta prima di ogni generazione
 di un essere umano. Tesi: in futuro generare un umano senza diritto d'immagine sarà
 impossibile; chi genera deve passare da un catalogo di persone reali consenzienti, che
 vengono pagate. Posizionamento: "il registro fidato delle identità AI consenzienti".
 NON è un generatore di immagini — i motori (Higgsfield, HeyGen, ElevenLabs) sono terze
-parti invisibili. Human2AI è la tutela dell'umano + i binari di diritti e pagamenti.
+parti invisibili. Semblic è la tutela dell'umano + i binari di diritti e pagamenti.
 
 ## Stack tecnico (deciso — non cambiare senza chiedere)
 
@@ -36,20 +36,23 @@ parti invisibili. Human2AI è la tutela dell'umano + i binari di diritti e pagam
 Mantieni il progetto **monorepo singolo, semplice**. Niente over-engineering. Questo è un MVP
 che deve girare, non una cattedrale.
 
-## Palette e identità visiva (estetica "Obsidian Intelligence" × sistema "Dala ibrido")
+## Palette e identità visiva (SEMBLIC: Obsidian / Lumen / Amber)
 
-> **Dal 2026-06-10 il design segue `docs/DESIGN.md`** (reference "Dala", scelta da Morelz)
-> in modalità **IBRIDO FEDELE**: nero assoluto (void `#000000`), titoli display ultra-sottili
-> (peso 200, tracking -0.04em), geometria a PILLOLA (raggio 24px+), bordi hairline, vuoto che
-> respira, costellazione di particelle come marchio visivo, UN solo colore d'azione riempito
-> (il viola). MA: crimson/teal restano come colori FUNZIONALI di stato (bloccato/verificato —
-> raccontano il consenso) e il gradiente tricolore sopravvive solo nei payoff chiave. Niente
-> ombre/glow/gradienti decorativi nelle nuove superfici.
+> **Dal 2026-06-17 il brand è SEMBLIC** (rebrand da Human2AI). Estetica minimale,
+> premium, dark-first: titoli display ultra-sottili (peso 200, tracking -0.04em),
+> geometria a PILLOLA (raggio pieno sui bottoni), bordi hairline, vuoto che respira.
+> UN solo colore d'azione: Amber. Crimson e Teal restano colori FUNZIONALI di stato
+> (bloccato / verificato), non decorativi.
+> NB tecnica: i token CSS storici (`--color-violet`, `bg-violet`, `text-violet-light`)
+> ora CONTENGONO Amber (nome del token mantenuto, valore cambiato): vedi `app/globals.css`
+> e `lib/ui.ts`. Esistono anche gli alias `--color-amber*` e `--color-lumen`.
 
-- Sfondo: void `#000000` (dark-first assoluto)
-- Deep Violet `#6B21E8` / azione `#8b47f0` (unico riempimento cromatico)
-- Crimson Empathy `#B8005C` (stato: bloccato/revocato)
-- Precision Teal `#00A896` (stato: verificato/consenso)
+- Sfondo/superfici: **Obsidian `#0C0F17`** (base, dark-first) + scala (`#161A24`, `#1F2532`)
+- Testo/logo: **Lumen `#F2E9D8`**
+- Azione (CTA, link, stati attivi): **Amber `#F2A93B`** (testo Obsidian sui pieni); hover `#F7C06A`
+- Crimson `#B8005C` (stato: bloccato/revocato): invariato
+- Teal `#00A896` (stato: verificato/consenso): invariato
+- Payoff brand: "Real Humans. Real Rights. Real Earnings."
 - Estetica: premium, elegante, avanguardia, futuristica. ZERO aspetto "giocattolo" o marketing generico.
 
 ## Regole NON NEGOZIABILI (guardrail)

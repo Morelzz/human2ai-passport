@@ -15,7 +15,7 @@ export function ScrollProgress() {
       aria-hidden
       className="fixed inset-x-0 top-0 z-[60] h-[2px] origin-left"
       // Dala: niente glow né gradiente — un filo viola pieno, e basta.
-      style={{ scaleX, background: "#8b47f0" }}
+      style={{ scaleX, background: "#F2A93B" }}
     />
   );
 }

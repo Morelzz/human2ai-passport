@@ -3,12 +3,12 @@
 // Stesso handle → sempre stesso avatar. Nessuna chiamata di rete.
 
 const PALETTES: [string, string][] = [
-  ["#6B21E8", "#B8005C"],
-  ["#00A896", "#6B21E8"],
+  ["#F2A93B", "#B8005C"],
+  ["#00A896", "#F2A93B"],
   ["#B8005C", "#00A896"],
-  ["#6B21E8", "#00A896"],
-  ["#8b47f0", "#B8005C"],
-  ["#00A896", "#8b47f0"],
+  ["#F2A93B", "#00A896"],
+  ["#F2A93B", "#B8005C"],
+  ["#00A896", "#F2A93B"],
 ];
 
 function hashString(s: string): number {

@@ -46,7 +46,7 @@ export default function SoulActivate() {
         il modello che garantisce la tua identità in ogni generazione.
       </p>
 
-      <label style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 10, background: "rgba(107,33,232,0.1)", border: "1px dashed rgba(107,33,232,0.4)", color: "#8b47f0", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer" }}>
+      <label style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 10, background: "rgba(242,169,59,0.1)", border: "1px dashed rgba(242,169,59,0.4)", color: "#F2A93B", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer" }}>
         {count > 0 ? `${count} foto selezionate` : "Scegli le foto"}
         <input
           type="file"
@@ -60,7 +60,7 @@ export default function SoulActivate() {
       <button
         onClick={activate}
         disabled={loading || count < MIN}
-        style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading || count < MIN ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: loading || count < MIN ? "default" : "pointer" }}
+        style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading || count < MIN ? "#374151" : "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.88rem", cursor: loading || count < MIN ? "default" : "pointer" }}
       >
         {loading ? "Creazione del Soul… (può richiedere qualche minuto)" : "Attiva il mio Soul"}
       </button>

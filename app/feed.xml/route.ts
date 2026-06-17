@@ -38,14 +38,14 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>HUMAN2AI, il blog</title>
+    <title>SEMBLIC, il blog</title>
     <link>${BASE}/blog</link>
     <atom:link href="${BASE}/feed.xml" rel="self" type="application/rss+xml" />
-    <description>AI, diritto d'immagine, consenso e provenienza: la voce di HUMAN2AI sull'era dei volti generati.</description>
+    <description>AI, diritto d'immagine, consenso e provenienza: la voce di SEMBLIC sull'era dei volti generati.</description>
     <language>it-IT</language>
     <image>
       <url>${BASE}/logo-shield.png</url>
-      <title>HUMAN2AI, il blog</title>
+      <title>SEMBLIC, il blog</title>
       <link>${BASE}/blog</link>
     </image>
 ${items}

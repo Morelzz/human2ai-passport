@@ -65,7 +65,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
     <header
       className={`sticky top-0 z-40 border-b backdrop-blur-xl transition-all duration-500 ${
         scrolled
-          ? "border-violet/20 bg-obsidian/90 shadow-[0_8px_40px_rgba(0,0,0,0.45),0_1px_0_rgba(107,33,232,0.25)]"
+          ? "border-violet/20 bg-obsidian/90 shadow-[0_8px_40px_rgba(0,0,0,0.45),0_1px_0_rgba(242,169,59,0.25)]"
           : "border-white/[0.06] bg-obsidian/70"
       }`}
     >
@@ -74,7 +74,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-shield.png" alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
-          <span className="text-sm font-bold tracking-[0.15em]">HUMAN2AI</span>
+          <span className="text-sm font-bold tracking-[0.2em]">SEMBLIC</span>
         </Link>
 
         {/* Desktop (lg+): Avatar/Genera diretti + 3 tendine HOVER. La tendina apre
@@ -96,7 +96,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                   <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
                 </button>
                 <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                  <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[#101018]/95 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                  <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[#141823]/95 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
                     {entry.items.map((it) => (
                       <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-[#cfcfd6] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
                     ))}
@@ -115,7 +115,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               aria-label={`Il tuo account: ${firstName}`}
               className="relative inline-flex items-center gap-2.5 rounded-full border border-violet/30 bg-violet/10 py-1 pl-1 pr-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-violet/20"
             >
-              <span className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)] text-[0.7rem] font-extrabold uppercase leading-none text-white">
+              <span className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-amber text-[0.7rem] font-extrabold uppercase leading-none text-obsidian">
                 {firstName.charAt(0)}
               </span>
               <span className="flex flex-col items-start leading-none">
@@ -123,7 +123,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 <span className="mt-[3px] max-w-[9rem] truncate">{firstName}</span>
               </span>
               {badge && (
-                <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-crimson px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_rgba(10,10,15,1)]">
+                <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-crimson px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_rgba(12,15,23,1)]">
                   {badge}
                 </span>
               )}
@@ -163,7 +163,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
             <motion.aside
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[#101018] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] lg:hidden"
+              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[#141823] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] lg:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
                 <span className="text-sm font-bold tracking-[0.15em]">MENU</span>

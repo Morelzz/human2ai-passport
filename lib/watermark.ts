@@ -12,7 +12,7 @@ export async function watermarkBytes(buf: Buffer): Promise<Buffer> {
   const svg = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <pattern id="wm" width="360" height="220" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
-        <text x="0" y="110" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="rgba(255,255,255,0.30)">HUMAN2AI · ANTEPRIMA</text>
+        <text x="0" y="110" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="rgba(255,255,255,0.30)">SEMBLIC · ANTEPRIMA</text>
       </pattern>
     </defs>
     <rect width="${w}" height="${h}" fill="url(#wm)"/>
@@ -55,14 +55,14 @@ export async function embedProvenance(
   if (!resp.ok) throw new Error("download immagine fallito");
   const buf = Buffer.from(await resp.arrayBuffer());
 
-  const desc = `Generato via Human2AI con consenso. Avatar: ${info.alias}. Certificato: ${info.certificate}. Verifica: ${info.verifyUrl}`;
+  const desc = `Generato via Semblic con consenso. Avatar: ${info.alias}. Certificato: ${info.certificate}. Verifica: ${info.verifyUrl}`;
   return sharp(buf)
     .withExif({
       IFD0: {
         ImageDescription: desc,
-        Copyright: "Human2AI — contenuto certificato, persona reale consenziente",
+        Copyright: "Semblic: contenuto certificato, persona reale consenziente",
         Artist: info.alias,
-        Software: "Human2AI",
+        Software: "Semblic",
       },
     })
     .jpeg({ quality: 95 })
@@ -85,15 +85,15 @@ export async function embedProvenancePng(
 
   // 2. Aggiunge i metadati di provenienza leggibili (best-effort: se la EXIF su
   //    PNG non è supportata in runtime, restituiamo comunque il PNG marcato).
-  const desc = `Generato via Human2AI con consenso. Avatar: ${info.alias}. Certificato: ${info.certificate}. Verifica: ${info.verifyUrl}`;
+  const desc = `Generato via Semblic con consenso. Avatar: ${info.alias}. Certificato: ${info.certificate}. Verifica: ${info.verifyUrl}`;
   try {
     return await sharp(stego)
       .withExif({
         IFD0: {
           ImageDescription: desc,
-          Copyright: "Human2AI — contenuto certificato, persona reale consenziente",
+          Copyright: "Semblic: contenuto certificato, persona reale consenziente",
           Artist: info.alias,
-          Software: "Human2AI",
+          Software: "Semblic",
         },
       })
       .png()

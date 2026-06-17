@@ -20,17 +20,18 @@ export const dynamic = "force-dynamic";
 const W = 1080;
 const H = 1920;
 
-// Palette del mockup (Obsidian — più caldo del void delle pagine, è la cornice social)
+// Palette SEMBLIC della cornice social: Obsidian (base), Lumen (testo), Amber
+// (accento); teal resta colore di stato (verificato).
 const C = {
-  bg: "#0B0A12",
-  panel: "#161325",
-  bar: "#131022",
-  border: "#2A2540",
-  text: "#EDEAF7",
-  soft: "#C9C4DC",
-  muted: "#8B86A3",
+  bg: "#0C0F17",
+  panel: "#161A24",
+  bar: "#11141D",
+  border: "#1F2532",
+  text: "#F2E9D8",
+  soft: "#D8D2C6",
+  muted: "#8d8a82",
   teal: "#00A896",
-  violet: "#9B6CF0",
+  violet: "#F2A93B",
 };
 
 // Logo scudo: asset ufficiale in public/, recuperato una volta via URL statico
@@ -153,7 +154,7 @@ export async function GET(request: Request) {
               <img src={logo} width={88} height={88} alt="" />
             ) : null}
             <div style={{ display: "flex", fontSize: 48, fontWeight: 700, letterSpacing: "0.21em" }}>
-              HUMAN2AI
+              SEMBLIC
             </div>
           </div>
           <div style={{ display: "flex", fontSize: 28, letterSpacing: "0.1em", color: C.muted, whiteSpace: "nowrap" }}>
@@ -218,7 +219,7 @@ export async function GET(request: Request) {
                   right: 48,
                   fontSize: 30,
                   letterSpacing: "0.15em",
-                  color: "#6F6A88",
+                  color: "#8d8a82",
                 }}
               >
                 IL TUO PASSAPORTO

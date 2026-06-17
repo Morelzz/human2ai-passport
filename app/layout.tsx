@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 const SITE_URL = siteUrl();
-const TITLE = "Human2AI | Il registro dei volti consenzienti";
+const TITLE = "Semblic | Il registro dei volti consenzienti";
 const DESCRIPTION =
   "Il filtro di tutela umana per l'IA: ogni volto ha un consenso verificabile, ogni generazione paga la persona reale.";
 
@@ -29,7 +29,7 @@ const orgJsonLd = {
     {
       "@type": "Organization",
       "@id": `${SITE_URL}/#org`,
-      name: "HUMAN2AI",
+      name: "SEMBLIC",
       url: SITE_URL,
       logo: `${SITE_URL}/logo-shield.png`,
       description: DESCRIPTION,
@@ -37,7 +37,7 @@ const orgJsonLd = {
     {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
-      name: "Human2AI",
+      name: "Semblic",
       url: SITE_URL,
       inLanguage: "it-IT",
       publisher: { "@id": `${SITE_URL}/#org` },
@@ -47,14 +47,14 @@ const orgJsonLd = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: TITLE, template: "%s | Human2AI" },
+  title: { default: TITLE, template: "%s | Semblic" },
   description: DESCRIPTION,
-  applicationName: "Human2AI",
-  keywords: ["Human2AI", "registro volti", "consenso AI", "identità AI", "diritto d'immagine", "deepfake", "royalty"],
+  applicationName: "Semblic",
+  keywords: ["Semblic", "registro volti", "consenso AI", "identità AI", "diritto d'immagine", "deepfake", "royalty"],
   openGraph: {
     type: "website",
     locale: "it_IT",
-    siteName: "Human2AI",
+    siteName: "Semblic",
     title: TITLE,
     description: DESCRIPTION,
   },

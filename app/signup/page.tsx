@@ -57,7 +57,7 @@ export default function SignupPage() {
       {done ? (
         <p style={{ color: "#00A896", fontSize: "0.9rem", lineHeight: 1.6 }}>
           Account creato. Controlla la tua email per confermare, poi{" "}
-          <Link href="/login" style={{ color: "#6B21E8" }}>accedi</Link>
+          <Link href="/login" style={{ color: "#F2A93B" }}>accedi</Link>
           {accountType === "enterprise" ? " e completa la registrazione della tua azienda." : "."}
         </p>
       ) : (
@@ -81,9 +81,9 @@ export default function SignupPage() {
                     cursor: "pointer",
                     fontSize: "0.78rem",
                     fontWeight: 600,
-                    background: accountType === r ? "rgba(107,33,232,0.15)" : "#12121a",
+                    background: accountType === r ? "rgba(242,169,59,0.15)" : "#161A24",
                     color: accountType === r ? "#fff" : "#6b7280",
-                    border: `1px solid ${accountType === r ? "#6B21E8" : "rgba(255,255,255,0.08)"}`,
+                    border: `1px solid ${accountType === r ? "#F2A93B" : "rgba(255,255,255,0.08)"}`,
                   }}
                 >
                   {r === "buyer" ? "Compratore" : r === "seller" ? "Creatore" : "Azienda"}
@@ -108,7 +108,7 @@ export default function SignupPage() {
 
           <p style={{ color: "#6b7280", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
             Hai già un account?{" "}
-            <Link href="/login" style={{ color: "#6B21E8" }}>Accedi</Link>
+            <Link href="/login" style={{ color: "#F2A93B" }}>Accedi</Link>
           </p>
         </form>
       )}

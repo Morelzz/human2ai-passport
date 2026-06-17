@@ -67,8 +67,8 @@ export default async function ScansionePage() {
                   Icon: Building2,
                   n: "01",
                   t: "In studio, da noi.",
-                  d: "La via maestra: una sessione nello studio Void di Rimini, con il protocollo completo H2AI-SCAN. Il risultato è il massimo livello di fedeltà: l'avatar SOUL o HUMAN, identico a te.",
-                  c: "#8b47f0",
+                  d: "La via maestra: una sessione nello studio Void di Rimini, con il protocollo completo SEMBLIC-SCAN. Il risultato è il massimo livello di fedeltà: l'avatar SOUL o HUMAN, identico a te.",
+                  c: "#F2A93B",
                 },
                 {
                   Icon: Users,
@@ -81,7 +81,7 @@ export default async function ScansionePage() {
                   Icon: Compass,
                   n: "03",
                   t: "In autonomia, secondo lo standard.",
-                  d: "Hai accesso a un set fotografico? Lo standard H2AI-SCAN è pubblico: seguilo, invia il materiale, e la piattaforma verifica la qualità prima dell'ingresso nel registro. I requisiti sono gratis. Il rigore no: quello lo controlliamo noi.",
+                  d: "Hai accesso a un set fotografico? Lo standard SEMBLIC-SCAN è pubblico: seguilo, invia il materiale, e la piattaforma verifica la qualità prima dell'ingresso nel registro. I requisiti sono gratis. Il rigore no: quello lo controlliamo noi.",
                   c: "#B8005C",
                 },
               ].map(({ Icon, n, t, d, c }) => (
@@ -100,12 +100,12 @@ export default async function ScansionePage() {
           </section>
         </Reveal>
 
-        {/* ── LO STANDARD H2AI-SCAN ────────────────────────────────────── */}
+        {/* ── LO STANDARD SEMBLIC-SCAN ────────────────────────────────────── */}
         <Reveal>
           <section id="standard" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-12 sm:px-8">
             <span className="label-mono text-teal">Specifica pubblica</span>
             <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
-              Lo standard H2AI-SCAN
+              Lo standard SEMBLIC-SCAN
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
               Lo standard è pubblico, perché gli standard vivono alla luce. Questi sono i
@@ -173,7 +173,7 @@ export default async function ScansionePage() {
             <p className="mt-8 text-balance text-center text-sm leading-relaxed text-muted">
               I requisiti sono gratuiti. La maestria si impara: il protocollo completo,
               esecuzione, postproduzione, certificazione, è il corso avanzato della{" "}
-              <span className="text-foreground">HUMAN2AI Academy</span>, la porta del{" "}
+              <span className="text-foreground">SEMBLIC Academy</span>, la porta del{" "}
               <Link href="/partner" className="text-violet-light underline-offset-2 hover:underline">programma Capture Partner</Link>.
             </p>
           </section>
@@ -218,7 +218,7 @@ export default async function ScansionePage() {
               Ogni punto è una sede certificata
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
-              Ogni punto sulla mappa è una sede certificata sul protocollo H2AI-SCAN.
+              Ogni punto sulla mappa è una sede certificata sul protocollo SEMBLIC-SCAN.
               La rete cresce città per città.
             </p>
 

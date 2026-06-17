@@ -143,7 +143,7 @@ export default async function AttivitaPage() {
                               // cornice variante seller, QR verso il suo passport.
                               <ShareStoryButton
                                 query={`cert=${encodeURIComponent(g.certificate)}&v=seller`}
-                                filename={`human2ai-story-${g.certificate.slice(0, 8)}.png`}
+                                filename={`semblic-story-${g.certificate.slice(0, 8)}.png`}
                                 label="Condividi ↗"
                                 className="rounded-full border border-violet/30 bg-violet/10 px-3 py-1.5 text-xs font-semibold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-50"
                               />

@@ -6,12 +6,12 @@ import { KineticText } from "@/components/motion/KineticText";
 import { InquiryForm } from "@/components/business/InquiryForm";
 
 export const metadata = {
-  title: "HUMAN2AI Studio",
+  title: "SEMBLIC Studio",
   description:
     "Descrivi la campagna, consegniamo i contenuti finiti: volti reali e consenzienti, fedeltà certificata, prova di provenienza inclusa.",
 };
 
-// B4 — HUMAN2AI Studio (EXPANSION_V3): il livello "done for you". Il brand
+// B4 — SEMBLIC Studio (EXPANSION_V3): il livello "done for you". Il brand
 // descrive la campagna, noi consegniamo i contenuti finiti con avatar
 // consenzienti. Pagina narrativa + form: vende il servizio e genera richieste.
 export default function StudioPage() {
@@ -23,7 +23,7 @@ export default function StudioPage() {
 
         {/* Hero */}
         <section className="mx-auto max-w-3xl px-5 pb-14 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="label-mono text-violet-light">Human2AI Studio</span>
+          <span className="label-mono text-violet-light">Semblic Studio</span>
           <h1 className="mt-4 text-balance text-4xl font-extralight leading-[1.02] tracking-[-0.03em] sm:text-5xl">
             <KineticText text="Tu descrivi la campagna." />
             <span className="mt-2 block">
@@ -43,7 +43,7 @@ export default function StudioPage() {
           <section className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                { Icon: ClipboardList, t: "1 · Il brief", d: "Ci racconti obiettivo, tono, formati e dove vivranno i contenuti. Mezz'ora del tuo tempo, non di più.", c: "#8b47f0" },
+                { Icon: ClipboardList, t: "1 · Il brief", d: "Ci racconti obiettivo, tono, formati e dove vivranno i contenuti. Mezz'ora del tuo tempo, non di più.", c: "#F2A93B" },
                 { Icon: Users, t: "2 · Il volto giusto", d: "Selezioniamo dal registro la persona consenziente più adatta, categoria d'uso verificata, royalty alla persona inclusa.", c: "#B8005C" },
                 { Icon: PackageCheck, t: "3 · La consegna", d: "Ricevi i contenuti finiti, in alta risoluzione, ognuno con la sua prova di provenienza verificabile.", c: "#00A896" },
               ].map(({ Icon, t, d, c }) => (
@@ -88,7 +88,7 @@ export default function StudioPage() {
         <Reveal>
           <section className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
             <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
-              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(107,33,232,0.10),transparent_70%)]" />
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(242,169,59,0.10),transparent_70%)]" />
               <div className="relative">
                 <span className="label-mono text-violet-light">Parlaci della campagna</span>
                 <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">

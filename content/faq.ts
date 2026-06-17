@@ -14,7 +14,7 @@ export interface FaqItem {
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
-    q: "Cos'è Human2AI, in una frase?",
+    q: "Cos'è Semblic, in una frase?",
     a: "È il registro dei diritti d'immagine: il filtro che impedisce all'AI di generare un essere umano senza il consenso — verificato e pagato — della persona reale.",
   },
   {
@@ -43,7 +43,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Cosa succede se qualcuno usa il mio volto senza permesso?",
-    a: "Lo segnali — tu o chiunque altro — dal passaporto o da /report. Ogni segnalazione apre un flusso di verifica tracciato che può portare alla rimozione e alla sospensione. Un contenuto senza certificato non è un contenuto Human2AI.",
+    a: "Lo segnali — tu o chiunque altro — dal passaporto o da /report. Ogni segnalazione apre un flusso di verifica tracciato che può portare alla rimozione e alla sospensione. Un contenuto senza certificato non è un contenuto Semblic.",
   },
   {
     q: "Le immagini generate sono riconoscibili come AI?",

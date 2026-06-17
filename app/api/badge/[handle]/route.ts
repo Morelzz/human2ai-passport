@@ -31,23 +31,23 @@ function badgeSvg(opts: { alias: string; revoked: boolean }): string {
     ? `<path d="M15 17 l16 16 M31 17 l-16 16" fill="none" stroke="${accent}" stroke-width="3.2" stroke-linecap="round"/>`
     : `<path d="M14 25 l6 6 l13 -15" fill="none" stroke="${accent}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
 
-  return `<svg width="340" height="84" viewBox="0 0 340 84" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${statusLabel} su HUMAN2AI">
+  return `<svg width="340" height="84" viewBox="0 0 340 84" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${statusLabel} su SEMBLIC">
   <defs>
-    <linearGradient id="h2ai-g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#8b47f0"/>
+    <linearGradient id="smbl-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F2A93B"/>
       <stop offset="0.6" stop-color="#B8005C"/>
       <stop offset="1" stop-color="#00A896"/>
     </linearGradient>
   </defs>
-  <rect x="1" y="1" width="338" height="82" rx="16" fill="#0a0a0f" stroke="rgba(255,255,255,0.12)"/>
+  <rect x="1" y="1" width="338" height="82" rx="16" fill="#0C0F17" stroke="rgba(255,255,255,0.12)"/>
   <g transform="translate(20,18)">
-    <polygon points="24,0 48,12 48,36 24,48 0,36 0,12" fill="url(#h2ai-g)" opacity="0.16"/>
-    <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" fill="none" stroke="url(#h2ai-g)" stroke-width="2"/>
+    <polygon points="24,0 48,12 48,36 24,48 0,36 0,12" fill="url(#smbl-g)" opacity="0.16"/>
+    <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" fill="none" stroke="url(#smbl-g)" stroke-width="2"/>
     ${mark}
   </g>
   <text x="86" y="35" font-family="${FONT}" font-size="13" font-weight="700" letter-spacing="1.6" fill="${accent}">${statusLabel}</text>
-  <text x="86" y="56" font-family="${FONT}" font-size="14" font-weight="600" fill="#f0f0f5">${xmlEscape(alias)}</text>
-  <text x="319" y="71" text-anchor="end" font-family="${FONT}" font-size="10" font-weight="700" letter-spacing="1.4" fill="#6b7280">HUMAN2AI</text>
+  <text x="86" y="56" font-family="${FONT}" font-size="14" font-weight="600" fill="#F2E9D8">${xmlEscape(alias)}</text>
+  <text x="319" y="71" text-anchor="end" font-family="${FONT}" font-size="10" font-weight="700" letter-spacing="1.4" fill="#6b7280">SEMBLIC</text>
 </svg>`;
 }
 

@@ -6,7 +6,7 @@ import { ContactForm } from "./ContactForm";
 
 export const metadata = {
   title: "Contatti",
-  description: "Scrivi a Human2AI: brand, persone che vogliono entrare nel registro, stampa, partner.",
+  description: "Scrivi a Semblic: brand, persone che vogliono entrare nel registro, stampa, partner.",
 };
 
 // F2 — pagina /contatti: form pubblico → contact_messages + recapiti.
@@ -14,7 +14,7 @@ export const metadata = {
 export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string }> }) {
   const { ingaggio } = await searchParams;
   const prefill = ingaggio
-    ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Human2AI.` }
+    ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Semblic.` }
     : undefined;
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
@@ -47,7 +47,7 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
                     <Mail className="h-4 w-4 text-violet-light" />
                   </span>
                   <p className="mt-3 text-sm font-bold">Email</p>
-                  <p className="mt-1 text-sm text-muted">hello@human2ai.example</p>
+                  <p className="mt-1 text-sm text-muted">hello@semblic.example</p>
                   <p className="mt-1 font-mono text-[0.68rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</p>
                 </div>
                 <div className="glass rounded-2xl p-5">
@@ -59,12 +59,12 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
                   <p className="mt-1 font-mono text-[0.68rem] text-faint">[DA CONFERMARE: indirizzo completo]</p>
                 </div>
                 <a
-                  href="https://www.instagram.com/h2ai.studio"
+                  href="https://www.instagram.com/semblic"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="glass glass-hover block rounded-2xl p-5 transition-colors"
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)]">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#F2A93B,#B8005C)]">
                     {/* Glifo Instagram inline (lucide non distribuisce più icone brand) */}
                     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -73,7 +73,7 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
                     </svg>
                   </span>
                   <p className="mt-3 text-sm font-bold">Instagram</p>
-                  <p className="mt-1 text-sm text-muted">@h2ai.studio</p>
+                  <p className="mt-1 text-sm text-muted">@semblic</p>
                 </a>
               </aside>
             </div>

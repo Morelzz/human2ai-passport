@@ -4,7 +4,7 @@ import { buildComplianceReceipt } from "@/lib/receipt";
 export const runtime = "nodejs";
 
 // Fase 3.3 (readiness enterprise): RICEVUTA DI CONFORMITA' scaricabile. Attesta
-// che una generazione e' passata dal percorso di consenso verificato di Human2AI.
+// che una generazione e' passata dal percorso di consenso verificato di Semblic.
 // Pensata per l'archivio audit dell'azienda (seme del futuro Consent Receipt API).
 // Accesso col CERTIFICATO (segreto-nell'URL, come /api/content/[cert] e /verify):
 // ce l'ha chi ha generato. Nessun dato personale: solo l'identita' PUBBLICA

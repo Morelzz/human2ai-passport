@@ -39,7 +39,7 @@ export default function EnterprisePage() {
             categoria merceologica, per 6 o 12 mesi. Nessun concorrente potrà usarlo lì, finché è tuo.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <a href="#richiesta" className="rounded-full bg-violet-light px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-white transition hover:brightness-110 focus-ring">
+            <a href="#richiesta" className="rounded-full bg-violet-light px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-[#0C0F17] transition hover:brightness-110 focus-ring">
               Riserva un volto
             </a>
             <Link href="/enterprise/register" className="rounded-full border border-white/15 px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition hover:border-violet/50 focus-ring">
@@ -56,7 +56,7 @@ export default function EnterprisePage() {
           <section className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                { Icon: UserCheck, t: "1 · Scegli il volto", d: "Dal catalogo verificato: persona reale, consenziente per la tua categoria, con storico di utilizzi visibile.", c: "#8b47f0" },
+                { Icon: UserCheck, t: "1 · Scegli il volto", d: "Dal catalogo verificato: persona reale, consenziente per la tua categoria, con storico di utilizzi visibile.", c: "#F2A93B" },
                 { Icon: Lock, t: "2 · Riservi la categoria", d: "Per la durata del contratto la categoria è tua: la riserva vive nel registro dei consensi, non in una promessa.", c: "#B8005C" },
                 { Icon: CalendarRange, t: "3 · 6 o 12 mesi", d: "Canone ricorrente + royalty alla persona a ogni utilizzo. Alla scadenza: rinnovo prioritario o rilascio.", c: "#00A896" },
               ].map(({ Icon, t, d, c }) => (

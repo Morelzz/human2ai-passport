@@ -23,7 +23,7 @@ export const POSES: Pose[] = [
 
 // Icona-posa stilizzata (SVG minimale): testa per crop, tratti viso per orientamento.
 export function PoseGlyph({ pose }: { pose: Pose }) {
-  const c = "#8b47f0";
+  const c = "#F2A93B";
   const cx = 24;
   const r = pose.crop === "head" ? 11 : pose.crop === "bust" ? 8 : 6;
   const cy = pose.crop === "head" ? 20 : pose.crop === "bust" ? 15 : 11;

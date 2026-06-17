@@ -20,7 +20,7 @@ import { galleryFromRow } from "@/lib/sample-galleries";
 
 // A4 — social. Handle Instagram UFFICIALE (confermato da Morelz, 2026-06-10).
 // URL pulito senza parametri di condivisione/tracking. Un solo punto di verità.
-const INSTAGRAM_HANDLE = "h2ai.studio";
+const INSTAGRAM_HANDLE = "semblic";
 const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;
 
 export default async function Home() {
@@ -92,7 +92,7 @@ export default async function Home() {
                 <div className="flex items-center gap-2.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/logo-shield.png" alt="" aria-hidden className="h-9 w-9 object-contain opacity-90 [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
-                  <span className="text-sm font-bold tracking-[0.18em]">HUMAN2AI</span>
+                  <span className="text-sm font-bold tracking-[0.18em]">SEMBLIC</span>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-faint">
                   Il registro dei diritti d&apos;immagine. Il filtro di tutela umana sopra ogni IA generativa.
@@ -108,7 +108,7 @@ export default async function Home() {
                   rel="noopener noreferrer"
                   className="group mt-5 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] py-2 pl-2.5 pr-4 transition-all hover:border-violet/40 hover:bg-violet/10"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[linear-gradient(135deg,#6B21E8,#B8005C)]">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[linear-gradient(135deg,#F2A93B,#B8005C)]">
                     {/* Glifo Instagram inline (lucide non distribuisce più icone brand) */}
                     <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -160,7 +160,7 @@ export default async function Home() {
             {/* Wordmark gigante in chiusura (tipografia oversize, trend 2026) */}
             <div aria-hidden className="pointer-events-none mt-12 select-none overflow-hidden">
               <p className="bg-gradient-to-b from-white/[0.07] to-transparent bg-clip-text text-center text-[18vw] font-extrabold leading-[0.85] tracking-tighter text-transparent sm:text-[11rem]">
-                HUMAN2AI
+                SEMBLIC
               </p>
             </div>
           </div>

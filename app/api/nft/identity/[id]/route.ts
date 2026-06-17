@@ -20,13 +20,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   // (Oggi dormiente: 0 avatar ancorati; va in piedi prima di accendere la chain.)
   if (!av || !isPublicAvatar(av)) {
     return Response.json(
-      { name: `Human2AI Identity #${id}`, description: "Identità non trovata nel registro." },
+      { name: `Semblic Identity #${id}`, description: "Identità non trovata nel registro." },
       { status: 404 }
     );
   }
 
   return Response.json({
-    name: `Human2AI Identity — @${av.handle}`,
+    name: `Semblic Identity, @${av.handle}`,
     description:
       "Identità SOULBOUND del volto di una persona reale e consenziente. Non trasferibile: non si vende la propria identità. Le licenze d'uso sono token separati con royalty alla persona.",
     external_url: `${origin}/passport/${av.handle}`,

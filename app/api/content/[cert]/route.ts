@@ -46,7 +46,7 @@ export async function GET(
   return new Response(new Uint8Array(out), {
     headers: {
       "Content-Type": "image/png",
-      "Content-Disposition": `attachment; filename="human2ai-${cert.slice(0, 12)}.png"`,
+      "Content-Disposition": `attachment; filename="semblic-${cert.slice(0, 12)}.png"`,
       "Cache-Control": "private, max-age=3600",
     },
   });

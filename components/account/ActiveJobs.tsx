@@ -16,7 +16,7 @@ export interface ActiveJob {
 
 const STATUS: Record<string, { label: string; color: string }> = {
   pending: { label: "In coda", color: "#f59e0b" },
-  running: { label: "In generazione…", color: "#8b47f0" },
+  running: { label: "In generazione…", color: "#F2A93B" },
   done: { label: "Pronta", color: "#00A896" },
   error: { label: "Non riuscita. I VOLT sono stati riaccreditati.", color: "#B8005C" },
 };
@@ -62,16 +62,16 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
   if (jobs.length === 0) return null;
 
   return (
-    <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+    <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
       <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>GENERAZIONI IN CORSO</p>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
         {jobs.map((j) => {
           const s = STATUS[j.status] ?? STATUS.pending;
           return (
-            <div key={j.id} style={{ display: "flex", alignItems: "center", gap: "0.7rem", background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12, padding: "0.8rem 0.9rem" }}>
+            <div key={j.id} style={{ display: "flex", alignItems: "center", gap: "0.7rem", background: "#0C0F17", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 12, padding: "0.8rem 0.9rem" }}>
               <span aria-hidden style={{ width: 8, height: 8, borderRadius: "50%", background: s.color, flexShrink: 0, boxShadow: `0 0 8px ${s.color}` }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 600 }}>
+                <div style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 600 }}>
                   Generazione ECHO{j.category ? ` · ${j.category}` : ""}
                 </div>
                 <div style={{ color: s.color, fontSize: "0.78rem", marginTop: "0.1rem" }}>{s.label}</div>

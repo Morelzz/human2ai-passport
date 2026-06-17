@@ -7,7 +7,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 export const metadata = {
   title: "Blog",
   description:
-    "AI, diritto d'immagine, consenso e provenienza: la voce di HUMAN2AI sull'era dei volti generati.",
+    "AI, diritto d'immagine, consenso e provenienza: la voce di SEMBLIC sull'era dei volti generati.",
 };
 
 // A3 — indice del blog. Gli articoli sono file in content/blog/ (niente CMS):

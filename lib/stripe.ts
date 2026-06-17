@@ -26,7 +26,7 @@ export async function createScanCheckoutSession(opts: {
   const params = new URLSearchParams({
     mode: "payment",
     "line_items[0][price_data][currency]": "eur",
-    "line_items[0][price_data][product_data][name]": `Scansione H2AI-SCAN · ${opts.sedeName}`,
+    "line_items[0][price_data][product_data][name]": `Scansione SEMBLIC-SCAN · ${opts.sedeName}`,
     "line_items[0][price_data][unit_amount]": String(opts.priceCents),
     "line_items[0][quantity]": "1",
     customer_email: opts.email,

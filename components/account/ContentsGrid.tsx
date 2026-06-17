@@ -84,7 +84,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {shown.map((g) => (
-              <div key={g.id} className="overflow-hidden rounded-xl border border-white/8 bg-[#12121a]">
+              <div key={g.id} className="overflow-hidden rounded-xl border border-white/8 bg-[#161A24]">
                 {g.image_url && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={g.image_url} alt="contenuto" className="block aspect-[3/4] w-full bg-obsidian-3 object-cover" />
@@ -97,7 +97,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                     )}
                   </div>
                   <p className="mb-2 text-[0.7rem] text-faint">
-                    {g.category ?? "—"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
+                    {g.category ?? "-"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
                   </p>
                   {g.certificate && (
                     <>
@@ -107,7 +107,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                         </a>
                         <ShareStoryButton
                           query={`cert=${encodeURIComponent(g.certificate)}&v=${shareVariant}`}
-                          filename={`human2ai-story-${g.certificate.slice(0, 8)}.png`}
+                          filename={`semblic-story-${g.certificate.slice(0, 8)}.png`}
                           label="Condividi"
                           className="flex-1 rounded-lg border border-teal/30 bg-teal/10 px-2 py-1.5 text-center text-[0.72rem] font-semibold text-teal transition-colors hover:bg-teal/20 disabled:opacity-50"
                         />

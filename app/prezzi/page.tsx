@@ -84,7 +84,7 @@ export default function PrezziPage() {
 
               {/* Buyers — a consumo */}
               <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-9">
-                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#8b47f0,transparent)]" />
+                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#F2A93B,transparent)]" />
                 <span className="label-mono text-violet-light">Generi contenuti</span>
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className="text-5xl font-extrabold">a consumo</span>
@@ -161,7 +161,7 @@ export default function PrezziPage() {
               {[
                 {
                   href: "/studio",
-                  label: "HUMAN2AI Studio",
+                  label: "SEMBLIC Studio",
                   d: "La campagna la facciamo noi, con volti consenzienti: brief, produzione, consegna.",
                 },
                 {

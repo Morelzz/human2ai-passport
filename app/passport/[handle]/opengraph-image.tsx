@@ -16,7 +16,7 @@ import { checkIcon, crossIcon } from "@/lib/og-icons";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Passaporto del volto · Human2AI";
+export const alt = "Passaporto del volto · Semblic";
 
 export default async function Image({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
@@ -25,7 +25,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
   if (!avatar || !isPublicAvatar(avatar)) notFound();
 
   const revoked = Boolean(avatar.revoked_at);
-  const tier = TIER_CONFIG[avatar.tier as Tier] ?? { label: avatar.tier, color: "#8b47f0" };
+  const tier = TIER_CONFIG[avatar.tier as Tier] ?? { label: avatar.tier, color: "#F2A93B" };
   const statusColor = revoked ? "#e0006f" : "#00d4be";
   const fonts = await geistOgFonts();
 
@@ -38,8 +38,8 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#000000",
-          color: "#f0f0f5",
+          background: "#0C0F17",
+          color: "#F2E9D8",
           padding: "64px 72px",
           fontFamily: "Geist",
         }}
@@ -47,7 +47,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
         {/* Testata */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#f0f0f5" }}>HUMAN2AI</div>
+            <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#F2E9D8" }}>SEMBLIC</div>
             <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "#9a9a9a" }}>· REGISTRO DEI VOLTI</div>
           </div>
           <div style={{ display: "flex", fontSize: 20, color: "#9a9a9a" }}>{truncateToken(avatar.token_hash)}</div>
@@ -98,7 +98,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
               ? "Questa persona ha cambiato idea: il suo volto non è più generabile."
               : "Persona reale, consenziente e pagata. Ogni utilizzo è verificabile dal token."}
           </div>
-          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #8b47f0, #e0006f, #00d4be)" }} />
+          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #e0006f, #00d4be)" }} />
         </div>
       </div>
     ),

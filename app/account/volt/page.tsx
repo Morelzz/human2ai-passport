@@ -71,7 +71,7 @@ export default async function VoltPage() {
                 {VOLT_PACKS.map((p) => (
                   <div key={p.id} className={`glass glass-hover relative rounded-2xl p-5 ${p.popular ? "border border-violet/40" : ""}`}>
                     {p.popular && (
-                      <span className="absolute -top-2.5 right-4 rounded-full bg-[#8b47f0] px-2.5 py-0.5 text-[0.62rem] font-bold text-white">
+                      <span className="absolute -top-2.5 right-4 rounded-full bg-[#F2A93B] px-2.5 py-0.5 text-[0.62rem] font-bold text-[#0C0F17]">
                         {VOLT_STRINGS["recharge.packs.popular"]}
                       </span>
                     )}

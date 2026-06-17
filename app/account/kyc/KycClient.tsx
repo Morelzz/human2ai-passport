@@ -117,25 +117,25 @@ export default function KycClient() {
 
       {!loading && !error && (
         <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", margin: "0 0 1.5rem" }}>
-          <span style={{ color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 700 }}>{items.length} in attesa</span>
-          <button onClick={() => load()} style={{ padding: "0.4rem 0.9rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.12)", background: "#12121a", color: "#9aa0aa", fontWeight: 600, fontSize: "0.78rem", cursor: "pointer" }}>↻ Ricarica coda</button>
+          <span style={{ color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 700 }}>{items.length} in attesa</span>
+          <button onClick={() => load()} style={{ padding: "0.4rem 0.9rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.12)", background: "#161A24", color: "#9aa0aa", fontWeight: 600, fontSize: "0.78rem", cursor: "pointer" }}>↻ Ricarica coda</button>
         </div>
       )}
 
       {error && <p style={{ color: "#B8005C", fontSize: "0.85rem" }}>{error}</p>}
       {loading && <p style={{ color: "#6b7280", fontSize: "0.9rem" }}>Carico la coda…</p>}
       {!loading && items.length === 0 && !error && (
-        <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+        <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
           <p style={{ color: "#00A896", fontWeight: 700, margin: 0 }}>✓ Nessuna verifica in attesa</p>
         </div>
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
         {items.map((p) => (
-          <div key={p.id} style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem" }}>
+          <div key={p.id} style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
               <div>
-                <p style={{ color: "#f0f0f5", fontWeight: 700, fontSize: "1rem", margin: 0 }}>{p.full_name || "(senza nome)"}</p>
+                <p style={{ color: "#F2E9D8", fontWeight: 700, fontSize: "1rem", margin: 0 }}>{p.full_name || "(senza nome)"}</p>
                 <p style={{ color: "#6b7280", fontSize: "0.8rem", margin: "0.15rem 0 0" }}>{p.email}</p>
               </div>
               <span style={{ color: "#374151", fontSize: "0.75rem" }}>
@@ -163,9 +163,9 @@ export default function KycClient() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "0.8rem", marginBottom: "1.2rem" }}>
                 {p.files.map((f) => (
                   <a key={f.name} href={f.url} target="_blank" rel="noreferrer"
-                    style={{ display: "block", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden", background: "#12121a", textDecoration: "none" }}>
+                    style={{ display: "block", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden", background: "#161A24", textDecoration: "none" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={f.url} alt={labelFor(f.name)} style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", display: "block", background: "#1c1c28" }} />
+                    <img src={f.url} alt={labelFor(f.name)} style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", display: "block", background: "#1F2532" }} />
                     <span style={{ display: "block", padding: "0.4rem 0.6rem", color: "#6b7280", fontSize: "0.72rem", fontWeight: 600 }}>{labelFor(f.name)}</span>
                   </a>
                 ))}

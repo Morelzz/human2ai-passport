@@ -132,7 +132,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
           Storico completo →
         </Link>
         <Link href="/account/volt" onClick={() => { setOpen(false); setSheet(false); }}
-          className="rounded-full bg-[#8b47f0] px-3.5 py-1.5 text-xs font-bold text-white transition-all hover:brightness-110">
+          className="rounded-full bg-[#F2A93B] px-3.5 py-1.5 text-xs font-bold text-[#0C0F17] transition-all hover:brightness-110">
           {VOLT_STRINGS["volt.badge.cta"]}
         </Link>
       </div>
@@ -161,7 +161,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
           </button>
           <Link
             href="/account/volt"
-            className={`ml-1 rounded-full bg-[#8b47f0] px-2.5 py-0.5 text-[0.68rem] font-bold text-white transition-all hover:brightness-110 ${zero ? "animate-[pulse_1s_ease-in-out_1]" : ""}`}
+            className={`ml-1 rounded-full bg-[#F2A93B] px-2.5 py-0.5 text-[0.68rem] font-bold text-[#0C0F17] transition-all hover:brightness-110 ${zero ? "animate-[pulse_1s_ease-in-out_1]" : ""}`}
           >
             {VOLT_STRINGS["volt.badge.cta"]}
           </Link>
@@ -171,7 +171,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
             <motion.div
               initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-white/10 bg-[#101018] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+              className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-white/10 bg-[#141823] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
             >
               <div className="mb-3 flex items-baseline justify-between">
                 <span className="text-2xl font-extrabold tabular-nums">{FMT.format(balance)} <span aria-hidden>⚡</span></span>
@@ -206,7 +206,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
             <motion.div
               initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-white/10 bg-[#101018] p-5 pb-8 md:hidden"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-white/10 bg-[#141823] p-5 pb-8 md:hidden"
             >
               <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/15" />
               <div className="mb-4 flex items-baseline gap-2">

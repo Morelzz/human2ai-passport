@@ -43,9 +43,11 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
             variants={item}
             className="mt-6 text-balance text-[3.2rem] font-extralight leading-[0.97] tracking-[-0.04em] sm:text-[4.4rem] lg:text-[5rem]"
           >
-            Dietro ogni volto,
+            Real Humans.
             <br />
-            una <ShimmerWord>persona vera</ShimmerWord>.
+            Real Rights.
+            <br />
+            Real <ShimmerWord>Earnings</ShimmerWord>.
           </motion.h1>
 
           <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[#bdbdbd] sm:mx-0">
@@ -94,14 +96,14 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
   );
 }
 
-// Il payoff tricolore: l'unico momento a gradiente dell'hero. Statico sotto
+// Il payoff ambra: l'unico momento a gradiente dell'hero. Statico sotto
 // reduced-motion.
 function ShimmerWord({ children }: { children: React.ReactNode }) {
   const reduce = useReducedMotion();
   return (
     <motion.span
       className="bg-[length:200%_auto] bg-clip-text font-light text-transparent"
-      style={{ backgroundImage: "linear-gradient(90deg,#8b47f0,#e0006f,#00d4be,#8b47f0)" }}
+      style={{ backgroundImage: "linear-gradient(90deg,#F2A93B,#F7C06A,#e0922a,#F2A93B)" }}
       animate={reduce ? undefined : { backgroundPosition: ["0% center", "200% center"] }}
       transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
     >

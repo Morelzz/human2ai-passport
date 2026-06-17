@@ -1,7 +1,7 @@
-// Parametri economici di Human2AI.
+// Parametri economici di Semblic.
 //
 // Modello (deciso): il compratore paga un prezzo LORDO per generazione, che dipende
-// dalla CATEGORIA d'uso. Human2AI trattiene una FEE di piattaforma; il resto è la
+// dalla CATEGORIA d'uso. Semblic trattiene una FEE di piattaforma; il resto è la
 // royalty NETTA accreditata alla persona reale (ad accumulo, payout a soglia).
 //
 //   lordo (buyer) = fee piattaforma + netto avatar

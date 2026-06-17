@@ -29,7 +29,7 @@ const PHASES: Phase[] = [
     num: "01",
     title: "Il Lancio",
     horizon: "Anno 1 · 2026 · in corso",
-    promise: "HUMAN2AI esiste, e le prime persone reali guadagnano dal proprio volto.",
+    promise: "SEMBLIC esiste, e le prime persone reali guadagnano dal proprio volto.",
     body: "Il Registro Volti è online e il primo giro completo funziona davvero: una persona acconsente, un'immagine nasce, una royalty viene pagata. La tesi non è un'idea, è una piattaforma viva.",
     status: "current",
     icon: Rocket,
@@ -38,7 +38,7 @@ const PHASES: Phase[] = [
     num: "02",
     title: "Il Filtro per tutti",
     horizon: "Anni 1-2 · 2026-2027",
-    promise: "HUMAN2AI smette di essere un sito. Diventa un'infrastruttura che chiunque può integrare.",
+    promise: "SEMBLIC smette di essere un sito. Diventa un'infrastruttura che chiunque può integrare.",
     body: "Una chiave API apre il filtro a qualsiasi piattaforma: prima di generare un essere umano, anche il software di terzi passerà dal nostro consenso. Da catalogo a standard.",
     status: "future",
     icon: Webhook,
@@ -57,7 +57,7 @@ const PHASES: Phase[] = [
     title: "Lo Standard",
     horizon: "Anni 3-4 · 2028-2029",
     promise: "Il marchio “Volto Verificato” diventa il segno di fiducia dell'era dell'AI.",
-    body: "Il badge HUMAN2AI accanto a un contenuto significa: persona reale, consenziente, pagata. Espandiamo in Europa e facciamo valere quei diritti anche fuori dalla piattaforma.",
+    body: "Il badge SEMBLIC accanto a un contenuto significa: persona reale, consenziente, pagata. Espandiamo in Europa e facciamo valere quei diritti anche fuori dalla piattaforma.",
     status: "future",
     icon: BadgeCheck,
   },
@@ -75,7 +75,7 @@ const PHASES: Phase[] = [
 const COLOR: Record<Status, string> = {
   done: "#00A896",
   current: "#B8005C",
-  future: "#6B21E8",
+  future: "#F2A93B",
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -101,7 +101,7 @@ export function PublicRoadmap() {
         <div className="absolute left-[10%] right-[10%] top-8 h-px -translate-y-1/2" aria-hidden>
           <motion.div
             className="h-full origin-left rounded-full"
-            style={{ background: "linear-gradient(90deg,#B8005C 0%,#6B21E8 55%,rgba(107,33,232,0.25) 100%)" }}
+            style={{ background: "linear-gradient(90deg,#B8005C 0%,#F2A93B 55%,rgba(242,169,59,0.25) 100%)" }}
             initial={reduce ? undefined : { scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -132,7 +132,7 @@ export function PublicRoadmap() {
         <div className="absolute bottom-2 left-8 top-2 w-px -translate-x-1/2" aria-hidden>
           <motion.div
             className="h-full w-full origin-top rounded-full"
-            style={{ background: "linear-gradient(180deg,#B8005C 0%,#6B21E8 60%,rgba(107,33,232,0.2) 100%)" }}
+            style={{ background: "linear-gradient(180deg,#B8005C 0%,#F2A93B 60%,rgba(242,169,59,0.2) 100%)" }}
             initial={reduce ? undefined : { scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -287,7 +287,7 @@ function PhaseCard({ phase }: { phase: Phase }) {
       <p className="mt-0.5 text-[0.68rem] text-faint">{phase.horizon.replace(/^[^·]+· /, "")}</p>
 
       <h3 className="mt-2 text-lg font-extrabold leading-tight">{phase.title}</h3>
-      <p className="mt-2 text-sm font-semibold leading-snug" style={{ color: isCurrent ? "#f0f0f5" : "#c4b5fd" }}>
+      <p className="mt-2 text-sm font-semibold leading-snug" style={{ color: isCurrent ? "#F2E9D8" : "#c4b5fd" }}>
         {phase.promise}
       </p>
       <p className="mt-2.5 text-sm leading-relaxed text-muted">{phase.body}</p>

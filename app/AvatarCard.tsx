@@ -20,7 +20,7 @@ export default function AvatarCard({ handle, alias, portrait_url, tier: tierKey,
     <Link href={`/passport/${handle}`} style={{ textDecoration: "none" }}>
       <div
         style={{
-          background: "#12121a",
+          background: "#161A24",
           border: `1px solid ${isRevoked ? "rgba(184,0,92,0.2)" : "rgba(255,255,255,0.07)"}`,
           borderRadius: 16,
           padding: "1.25rem",
@@ -40,7 +40,7 @@ export default function AvatarCard({ handle, alias, portrait_url, tier: tierKey,
         }}
       >
         {/* Portrait */}
-        <div style={{ width: 64, height: 64, borderRadius: 12, overflow: "hidden", background: "#1c1c28", border: `1px solid ${tier.color}33`, flexShrink: 0 }}>
+        <div style={{ width: 64, height: 64, borderRadius: 12, overflow: "hidden", background: "#1F2532", border: `1px solid ${tier.color}33`, flexShrink: 0 }}>
           {portrait_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={portrait_url} alt={alias} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -52,7 +52,7 @@ export default function AvatarCard({ handle, alias, portrait_url, tier: tierKey,
         {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-            <span style={{ color: "#f0f0f5", fontWeight: 700, fontSize: "1rem" }}>{alias}</span>
+            <span style={{ color: "#F2E9D8", fontWeight: 700, fontSize: "1rem" }}>{alias}</span>
             {isRevoked && (
               <span style={{ color: "#B8005C", fontSize: "0.65rem", fontWeight: 700, background: "rgba(184,0,92,0.12)", border: "1px solid rgba(184,0,92,0.3)", borderRadius: 999, padding: "0.1rem 0.4rem" }}>
                 REVOCATO

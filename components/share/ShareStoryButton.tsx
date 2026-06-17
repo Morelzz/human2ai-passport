@@ -11,7 +11,7 @@ import { useState } from "react";
 // col certificato. Mai l'immagine nuda.
 export function ShareStoryButton({
   query,
-  filename = "human2ai-story.png",
+  filename = "semblic-story.png",
   label = "Condividi come Storia",
   className = "",
 }: {

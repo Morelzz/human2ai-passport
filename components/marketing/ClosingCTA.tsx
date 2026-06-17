@@ -56,7 +56,7 @@ export function ClosingCTA() {
         <motion.div
           aria-hidden
           className="absolute -right-1/4 -bottom-1/2 h-[120%] w-[80%] rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, rgba(107,33,232,0.30), transparent 65%)" }}
+          style={{ background: "radial-gradient(circle, rgba(242,169,59,0.30), transparent 65%)" }}
           animate={reduce ? undefined : { x: ["0%", "-30%", "0%"], opacity: [0.6, 1, 0.6] }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         />
@@ -83,7 +83,7 @@ export function ClosingCTA() {
           <div className="mt-10 flex justify-center">
             <Magnetic>
               <Button asChild size="lg">
-                <Link href="/signup">Entra in HUMAN2AI</Link>
+                <Link href="/signup">Entra in SEMBLIC</Link>
               </Button>
             </Magnetic>
           </div>

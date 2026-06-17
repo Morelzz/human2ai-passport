@@ -18,7 +18,7 @@ export const runtime = "nodejs";
 // calcola sul dispositivo il descrittore FaceNet del volto nell'immagine e
 // lo manda qui; noi lo confrontiamo con l'indice dei volti del registro.
 // Se il volto corrisponde a un avatar, l'immagine è con ogni probabilità una
-// generazione NON autorizzata (fatta fuori da Human2AI) → base per /report.
+// generazione NON autorizzata (fatta fuori da Semblic) → base per /report.
 //
 // "RESTRINGI IL CERCHIO": filtri opzionali sui metadati AUTO-DICHIARATI degli
 // avatar (genere/etnia/capelli/occhi/statura/corporatura). I filtri limitano

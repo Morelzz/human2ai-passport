@@ -8,7 +8,7 @@ export const VOLT_STRINGS = {
   // 4.1 Header e tooltip
   "volt.badge.cta": "Ricarica",
   "volt.tooltip.what":
-    "I VOLT sono i crediti di HUMAN2AI: alimentano ogni generazione e garantiscono che dietro ogni volto ci sia una persona consenziente e pagata.",
+    "I VOLT sono i crediti di SEMBLIC: alimentano ogni generazione e garantiscono che dietro ogni volto ci sia una persona consenziente e pagata.",
   "volt.low.tooltip": "Batteria quasi scarica: ti restano {n} ⚡.",
   "volt.zero.tooltip": "Energia esaurita. Ricarica per continuare a generare.",
 
@@ -18,7 +18,7 @@ export const VOLT_STRINGS = {
     "Ogni VOLT alimenta una generazione con una persona vera dietro: consenziente, identificata, pagata.",
   "recharge.packs.popular": "Il più scelto",
   "recharge.legal.microline":
-    "I VOLT sono crediti prepagati per i servizi HUMAN2AI. Si applicano i Termini.",
+    "I VOLT sono crediti prepagati per i servizi SEMBLIC. Si applicano i Termini.",
   "recharge.cta": "Ricarica {n} ⚡ · € {prezzo}",
   "recharge.soon": "Il pagamento online arriva a breve. Intanto scrivici: ti accreditiamo noi.",
 
@@ -65,7 +65,7 @@ export const VOLT_STRINGS = {
   "history.row.recharge": "Ricarica {pacchetto} · +{n} ⚡",
   "history.row.bonus": "Bonus di benvenuto · +{n} ⚡",
   "history.row.refund": "Storno generazione · +{n} ⚡",
-  "history.row.admin_grant": "Accredito HUMAN2AI · +{n} ⚡",
+  "history.row.admin_grant": "Accredito SEMBLIC · +{n} ⚡",
 
   // 4.10 Errori di pagamento
   "payment.error.body":
@@ -74,7 +74,7 @@ export const VOLT_STRINGS = {
 
   // 4.11 Bonus di benvenuto (ATTIVO, decisione 2026-06-12)
   "volt.welcome":
-    "Benvenuto su HUMAN2AI. I primi 50 ⚡ li offriamo noi: la prima scintilla è gratis.",
+    "Benvenuto su SEMBLIC. I primi 50 ⚡ li offriamo noi: la prima scintilla è gratis.",
 
   // 4.12 Area seller
   "seller.volt.title": "I tuoi VOLT",

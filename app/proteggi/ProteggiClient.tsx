@@ -96,11 +96,11 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
         <div className="glass rounded-2xl p-8 text-center">
           <p className="text-lg font-extrabold text-violet-light">● Volto protetto</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Il tuo volto e&apos; registrato in sola protezione. Dentro Human2AI non puo&apos; essere generato:
+            Il tuo volto e&apos; registrato in sola protezione. Dentro Semblic non puo&apos; essere generato:
             e&apos; una garanzia, applicata dai nostri sistemi. Se qualcuno prova a usarlo, te lo segnaliamo.
           </p>
           <p className="mt-3 text-[0.72rem] leading-relaxed text-faint">
-            Fuori da Human2AI offriamo allerta precoce e rimozione assistita: un impegno serio, non una garanzia che
+            Fuori da Semblic offriamo allerta precoce e rimozione assistita: un impegno serio, non una garanzia che
             il tuo volto non compaia mai da nessuna parte. Testi in revisione legale.
           </p>
           <Link href="/account" className="mt-6 inline-block text-sm text-violet-light hover:underline">← Torna all&apos;account</Link>
@@ -130,11 +130,11 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Registra il tuo volto perche&apos; non venga generato</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
         Confermiamo che il volto e&apos; il tuo (come per un documento), poi lo mettiamo in <span className="text-foreground">sola protezione</span>:
-        dentro Human2AI nessuno potra&apos; generarlo, in nessuna categoria. Non creiamo nessun avatar, nessun repertorio:
+        dentro Semblic nessuno potra&apos; generarlo, in nessuna categoria. Non creiamo nessun avatar, nessun repertorio:
         solo un&apos;impronta difensiva del tuo volto.
       </p>
       <p className="mt-2 rounded-xl border border-violet/20 bg-violet/[0.06] p-3 text-[0.74rem] leading-relaxed text-faint">
-        Dentro Human2AI la non generazione e&apos; una garanzia (controllo sui nostri sistemi). Fuori, offriamo allerta
+        Dentro Semblic la non generazione e&apos; una garanzia (controllo sui nostri sistemi). Fuori, offriamo allerta
         precoce e rimozione assistita: best effort, non la promessa che il volto non compaia mai altrove. Testi in revisione legale.
       </p>
 
@@ -192,7 +192,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
         {err && <p className="text-sm text-crimson">{err}</p>}
 
         <button type="submit" disabled={busy}
-          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
           {busy ? phase ?? "Registro…" : "Proteggi il mio volto"}
         </button>
       </form>

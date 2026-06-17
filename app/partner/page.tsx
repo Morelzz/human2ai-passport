@@ -8,7 +8,7 @@ import { ApplyForm } from "./ApplyForm";
 export const metadata = {
   title: "Diventa Capture Partner",
   description:
-    "La rete di fotografi e videomaker certificati HUMAN2AI: porta le persone reali dentro il registro, guadagna su ogni volto che porti.",
+    "La rete di fotografi e videomaker certificati SEMBLIC: porta le persone reali dentro il registro, guadagna su ogni volto che porti.",
 };
 
 // B1 — pagina narrativa Capture Partner (EXPANSION_V3): racconta il programma
@@ -34,7 +34,7 @@ export default function PartnerPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
             Ogni volto del registro nasce da uno shooting vero, fatto da un professionista vero.
-            Stiamo costruendo la rete di fotografi e videomaker certificati HUMAN2AI: i punti
+            Stiamo costruendo la rete di fotografi e videomaker certificati SEMBLIC: i punti
             d&apos;ingresso fisici della piattaforma, città per città.
           </p>
         </section>
@@ -48,9 +48,9 @@ export default function PartnerPage() {
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
-                { Icon: Camera, t: "Acquisizione", d: "Lo shooting secondo il protocollo HUMAN2AI: i set di pose e la qualità che servono all'identity-lock dei motori.", c: "#8b47f0" },
+                { Icon: Camera, t: "Acquisizione", d: "Lo shooting secondo il protocollo SEMBLIC: i set di pose e la qualità che servono all'identity-lock dei motori.", c: "#F2A93B" },
                 { Icon: FileSignature, t: "Consenso on-site", d: "La firma del consenso avviene davanti a te, sul posto, con la persona. Tu sei il garante fisico del nostro filtro.", c: "#B8005C" },
-                { Icon: MapPin, t: "La tua città", d: "Sei il riferimento HUMAN2AI della tua zona: eventi di acquisizione, brand locali, persone che vogliono entrare nel registro.", c: "#00A896" },
+                { Icon: MapPin, t: "La tua città", d: "Sei il riferimento SEMBLIC della tua zona: eventi di acquisizione, brand locali, persone che vogliono entrare nel registro.", c: "#00A896" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="glass glass-hover rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
@@ -74,7 +74,7 @@ export default function PartnerPage() {
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
                 { Icon: Coins, t: "Fee di acquisizione", d: "Un compenso per ogni persona che porti nel registro e superi la verifica.", c: "#00A896" },
-                { Icon: Repeat, t: "Quota ricorrente", d: "Una percentuale sulle royalty generate dai volti che hai acquisito. Per tutta la loro vita sulla piattaforma.", c: "#8b47f0" },
+                { Icon: Repeat, t: "Quota ricorrente", d: "Una percentuale sulle royalty generate dai volti che hai acquisito. Per tutta la loro vita sulla piattaforma.", c: "#F2A93B" },
                 { Icon: Handshake, t: "Ingaggi reali", d: "Quando un brand vuole lo shooting vero con la persona vera, il partner della sua città è il primo a essere chiamato.", c: "#B8005C" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="glass glass-hover rounded-2xl p-6">

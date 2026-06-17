@@ -38,7 +38,7 @@ export default function VoltGrantPanel() {
     "w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-foreground placeholder:text-faint focus:border-violet/50 focus:outline-none";
 
   return (
-    <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+    <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
       <p style={{ color: "#6b7280", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.4rem" }}>ACCREDITO VOLT (OPERATORE)</p>
       <p className="mb-3 text-xs leading-relaxed text-muted">
         Accredita crediti a un utente (es. vendita via bonifico). Ogni movimento finisce nel ledger come accredito operatore.
@@ -51,7 +51,7 @@ export default function VoltGrantPanel() {
       <button
         onClick={grant}
         disabled={busy || !email || !amount}
-        className="mt-3 rounded-xl bg-[#8b47f0] px-4 py-2 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50"
+        className="mt-3 rounded-xl bg-[#F2A93B] px-4 py-2 text-sm font-bold text-[#0C0F17] transition-all hover:brightness-110 disabled:opacity-50"
       >
         {busy ? "Accredito…" : "Accredita ⚡"}
       </button>

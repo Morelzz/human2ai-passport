@@ -47,13 +47,13 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
   const htmlSnippet = useMemo(
     () =>
       `<a href="${passportUrl}" target="_blank" rel="noopener">\n` +
-      `  <img src="${badgeUrl}" alt="Volto Verificato su HUMAN2AI" width="${w}" height="${h}">\n` +
+      `  <img src="${badgeUrl}" alt="Volto Verificato su SEMBLIC" width="${w}" height="${h}">\n` +
       `</a>`,
     [passportUrl, badgeUrl, w, h]
   );
 
   const mdSnippet = useMemo(
-    () => `[![Volto Verificato su HUMAN2AI](${badgeUrl})](${passportUrl})`,
+    () => `[![Volto Verificato su SEMBLIC](${badgeUrl})](${passportUrl})`,
     [badgeUrl, passportUrl]
   );
 
@@ -115,7 +115,7 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
           </div>
         </div>
 
-        <div className="flex min-h-[120px] items-center justify-center rounded-xl border border-white/[0.06] bg-[radial-gradient(60%_80%_at_50%_0%,rgba(107,33,232,0.10),transparent_70%)] p-6">
+        <div className="flex min-h-[120px] items-center justify-center rounded-xl border border-white/[0.06] bg-[radial-gradient(60%_80%_at_50%_0%,rgba(242,169,59,0.10),transparent_70%)] p-6">
           {handle ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

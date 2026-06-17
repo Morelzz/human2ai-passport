@@ -12,7 +12,7 @@ import { checkIcon } from "@/lib/og-icons";
 // Tutte le altre (home, verify, proteggi, catalogo, prezzi, trasparenza...)
 // usano questa, ereditandola dalla root.
 
-export const alt = "Human2AI · Il registro dei volti consenzienti";
+export const alt = "Semblic · Il registro dei volti consenzienti";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -27,15 +27,15 @@ export default async function Image() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#000000",
-          color: "#f0f0f5",
+          background: "#0C0F17",
+          color: "#F2E9D8",
           padding: "64px 72px",
           fontFamily: "Geist",
         }}
       >
         {/* Testata */}
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#f0f0f5" }}>HUMAN2AI</div>
+          <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#F2E9D8" }}>SEMBLIC</div>
           <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "#9a9a9a" }}>· REGISTRO DEI VOLTI</div>
         </div>
 
@@ -60,7 +60,7 @@ export default async function Image() {
               FILIGRANA INVISIBILE
             </div>
           </div>
-          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #8b47f0, #e0006f, #00d4be)" }} />
+          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #e0006f, #00d4be)" }} />
         </div>
       </div>
     ),

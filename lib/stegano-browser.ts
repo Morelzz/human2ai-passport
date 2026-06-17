@@ -7,7 +7,7 @@
 //
 // L'estrazione usa lib/stegano-core (la STESSA del server): l'ImageData del
 // canvas ha lo stesso layout RGBA del raw di sharp, e per i PNG opachi senza
-// profilo ICC (i contenuti Human2AI) i byte coincidono → lettura 1:1.
+// profilo ICC (i contenuti Semblic) i byte coincidono → lettura 1:1.
 import { extractCertFromRGBA } from "./stegano-core";
 
 /** Legge il certificato dalla filigrana invisibile di un PNG, sul dispositivo.

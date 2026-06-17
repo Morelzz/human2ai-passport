@@ -4,7 +4,7 @@ import { LegalNotice } from "@/components/legal/LegalNotice";
 
 export const metadata = {
   title: "Privacy",
-  description: "Come Human2AI tratta i dati: privacy by default, nessun dato biometrico esposto, nessuna vendita di dati.",
+  description: "Come Semblic tratta i dati: privacy by default, nessun dato biometrico esposto, nessuna vendita di dati.",
 };
 
 // NB: bozza informativa allineata alle pratiche del prodotto. Da far validare a un legale prima del lancio.
@@ -94,7 +94,7 @@ export default function PrivacyPage() {
               GDPR. Non cediamo i tuoi dati a nessun altro e non li usiamo per addestrare modelli senza il tuo consenso.
             </Section>
             <Section title="Contatti e DPO">
-              Per qualsiasi richiesta sulla privacy: <span className="text-foreground">privacy@human2ai.example</span>{" "}
+              Per qualsiasi richiesta sulla privacy: <span className="text-foreground">privacy@semblic.example</span>{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>.
               Responsabile della protezione dei dati (DPO):{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: nomina del DPO se dovuta ex Art. 37, probabile, dato il trattamento biometrico su larga scala]</span>.

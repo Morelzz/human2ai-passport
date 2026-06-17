@@ -12,8 +12,8 @@ const PRINCIPLES: Principle[] = [
   {
     n: "01",
     title: "Nessun volto finto.",
-    body: "Ogni persona generata su HUMAN2AI è reale. Ha un nome, un contratto, un compenso. Non creiamo esseri umani: diamo voce a quelli che esistono e hanno scelto di esserci.",
-    color: "#8b47f0",
+    body: "Ogni persona generata su SEMBLIC è reale. Ha un nome, un contratto, un compenso. Non creiamo esseri umani: diamo voce a quelli che esistono e hanno scelto di esserci.",
+    color: "#F2A93B",
   },
   {
     n: "02",
@@ -31,7 +31,7 @@ const PRINCIPLES: Principle[] = [
     n: "04",
     title: "Il tuo volto resta tuo.",
     body: "Concedi, non cedi. Decidi tu dove può apparire e dove no, e puoi revocare quando vuoi. Il consenso non è una firma sola: è una linea del tempo che controlli tu.",
-    color: "#8b47f0",
+    color: "#F2A93B",
   },
   {
     n: "05",

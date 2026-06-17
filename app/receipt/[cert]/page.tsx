@@ -43,7 +43,7 @@ export default async function ReceiptPage({ params }: Props) {
       .page-bg { background: #ffffff !important; padding: 0 !important; }
       .paper { box-shadow: none !important; border: none !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
     }
-    .receipt-link { color: #6B21E8; text-decoration: none; overflow-wrap: anywhere; }
+    .receipt-link { color: #F2A93B; text-decoration: none; overflow-wrap: anywhere; }
     .receipt-link:hover { text-decoration: underline; }
   `;
 
@@ -65,11 +65,11 @@ export default async function ReceiptPage({ params }: Props) {
         <div className="paper" style={{ background: "#ffffff", color: "#1a1a1a", border: "1px solid #e3e6ea", borderRadius: 14, padding: "2.6rem 2.4rem", boxShadow: "0 10px 40px rgba(0,0,0,0.08)" }}>
           {/* Intestazione */}
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
-            <div style={{ fontWeight: 800, letterSpacing: "0.16em", fontSize: "1.05rem" }}>HUMAN2AI</div>
+            <div style={{ fontWeight: 800, letterSpacing: "0.16em", fontSize: "1.05rem" }}>SEMBLIC</div>
             <div style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase" }}>Registro dei diritti d&apos;immagine</div>
           </div>
           {/* Barra tricolore del brand */}
-          <div style={{ height: 3, borderRadius: 2, marginTop: "0.9rem", background: "linear-gradient(90deg,#6B21E8,#B8005C,#00A896)" }} />
+          <div style={{ height: 3, borderRadius: 2, marginTop: "0.9rem", background: "linear-gradient(90deg,#F2A93B,#B8005C,#00A896)" }} />
 
           <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "1.6rem 0 0.3rem" }}>Ricevuta di conformità del consenso</h1>
           <p style={{ color: "#6b7280", fontSize: "0.82rem", margin: 0 }}>Emessa il {fmtDate(r.issued_at)} da {r.issuer}</p>

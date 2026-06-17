@@ -124,7 +124,7 @@ export async function descriptorForFile(file: File): Promise<number[] | null> {
 // Nominare l'avatar sbagliato su un volto sgranato è il peccato capitale del
 // registro: prima del confronto biometrico misuriamo qualità e dimensione del
 // volto. Se il volto è PICCOLO ma nitido facciamo un upscale CONSERVATIVO
-// (interpolazione canvas: nessun dettaglio inventato — lo standard H2AI-SCAN
+// (interpolazione canvas: nessun dettaglio inventato, lo standard SEMBLIC-SCAN
 // vieta gli upscaler generativi proprio perché inventano il volto) e
 // riproviamo. Se la qualità resta insufficiente: nessun confronto, onestà.
 

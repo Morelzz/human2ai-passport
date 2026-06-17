@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 // Verifica "filtro": data un'immagine, estrae la filigrana invisibile (certificato
-// nascosto nei pixel) e conferma se è un contenuto Human2AI, di chi, e lo stato consenso.
+// nascosto nei pixel) e conferma se è un contenuto Semblic, di chi, e lo stato consenso.
 export async function POST(req: Request) {
   // Risolve il CERTIFICATO da una di tre sorgenti, in ordine:
   //  - multipart/form-data { image }: il SERVER legge i pixel (sharp). Path dei

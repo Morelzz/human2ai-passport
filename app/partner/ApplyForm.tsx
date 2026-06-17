@@ -86,7 +86,7 @@ export function ApplyForm() {
       )}
 
       <button type="submit" disabled={sending}
-        className="mt-1 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.3)] transition-all hover:brightness-110 disabled:opacity-50">
+        className="mt-1 rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3.5 text-sm font-bold text-[#0C0F17] shadow-[0_8px_40px_rgba(242,169,59,0.3)] transition-all hover:brightness-110 disabled:opacity-50">
         {sending ? "Invio…" : "Candidati come Capture Partner"}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">

@@ -4,9 +4,9 @@ import { isPublicAvatar } from "@/lib/registry";
 import { siteUrl } from "@/lib/site";
 
 // ──────────────────────────────────────────────────────────────────────────
-// IL FILTRO HUMAN2AI — consent-check API (demo pubblica, Fase 2 "Il Filtro per
+// IL FILTRO SEMBLIC — consent-check API (demo pubblica, Fase 2 "Il Filtro per
 // tutti"). Prima di generare un essere umano, qualsiasi sistema può chiedere a
-// Human2AI se quella persona ha acconsentito, per quella categoria d'uso.
+// Semblic se quella persona ha acconsentito, per quella categoria d'uso.
 // Risponde ALLOW / BLOCK + la prova (token/verify/passport). È la versione
 // programmatica del gate di consenso già usato in /api/match — stessa logica.
 // ADDITIVO: sola lettura, nessun flusso esistente toccato.
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
   const use = (url.searchParams.get("use") ?? url.searchParams.get("category") ?? "").trim();
 
   const note =
-    "Human2AI è il filtro del consenso che precede la generazione. Senza ALLOW, nessun sistema dovrebbe generare questa persona; ogni output autorizzato esce con filigrana invisibile e certificato verificabile.";
+    "Semblic è il filtro del consenso che precede la generazione. Senza ALLOW, nessun sistema dovrebbe generare questa persona; ogni output autorizzato esce con filigrana invisibile e certificato verificabile.";
 
   if (!subject) {
     return json(
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     .eq("handle", subject)
     .single();
 
-  const base = { human2ai: "consent-filter", version: "demo", subject, requested_use: use || null, note };
+  const base = { semblic: "consent-filter", version: "demo", subject, requested_use: use || null, note };
 
   // Non nel registro (non approvato o dato di test) → nessuna autorizzazione possibile.
   if (!av || !isPublicAvatar(av)) {
@@ -60,7 +60,7 @@ export async function GET(request: Request) {
       ...base,
       allowed: false,
       decision: "BLOCK",
-      reason: "Soggetto non presente nel registro Human2AI.",
+      reason: "Soggetto non presente nel registro Semblic.",
       consent: { status: "not_in_registry" },
       categories_allowed: null,
       proof: null,

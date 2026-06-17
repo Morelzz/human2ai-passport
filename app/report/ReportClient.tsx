@@ -56,7 +56,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
 
   if (done) {
     return (
-      <div style={{ background: "#12121a", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+      <div style={{ background: "#161A24", border: "1px solid rgba(0,168,150,0.3)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
         <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(0,168,150,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem" }}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00A896" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
         </div>
@@ -64,7 +64,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
         <p style={{ color: "#6b7280", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.5rem" }}>
           Grazie. Gli operatori la revisioneranno. Se hai lasciato un&apos;email, ti aggiorneremo sull&apos;esito.
         </p>
-        <Link href="/" style={{ color: "#6B21E8", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(107,33,232,0.3)", borderRadius: 8, padding: "0.5rem 1rem" }}>
+        <Link href="/" style={{ color: "#F2A93B", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 8, padding: "0.5rem 1rem" }}>
           Torna alla home
         </Link>
       </div>
@@ -73,10 +73,10 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    background: "#0a0a0f",
+    background: "#0C0F17",
     border: "1px solid rgba(255,255,255,0.1)",
     borderRadius: 10,
-    color: "#f0f0f5",
+    color: "#F2E9D8",
     fontSize: "0.9rem",
     padding: "0.7rem",
     outline: "none",
@@ -91,7 +91,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
   };
 
   return (
-    <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+    <div style={{ background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       <div>
         <label htmlFor="rp-handle" style={labelStyle}>AVATAR (HANDLE)</label>
         <input id="rp-handle" value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@random" style={inputStyle} />
@@ -107,8 +107,8 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
         <label style={labelStyle}>MOTIVO</label>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           {REASONS.map((r) => (
-            <label key={r.value} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", color: reason === r.value ? "#f0f0f5" : "#9ca3af", fontSize: "0.88rem" }}>
-              <input type="radio" name="reason" value={r.value} checked={reason === r.value} onChange={() => setReason(r.value)} style={{ accentColor: "#6B21E8" }} />
+            <label key={r.value} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", color: reason === r.value ? "#F2E9D8" : "#9ca3af", fontSize: "0.88rem" }}>
+              <input type="radio" name="reason" value={r.value} checked={reason === r.value} onChange={() => setReason(r.value)} style={{ accentColor: "#F2A93B" }} />
               {r.label}
             </label>
           ))}
@@ -135,7 +135,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
           padding: "0.8rem",
           borderRadius: 10,
           border: "none",
-          background: canSubmit && !busy ? "linear-gradient(135deg,#6B21E8,#B8005C)" : "#1c1c28",
+          background: canSubmit && !busy ? "linear-gradient(135deg,#F2A93B,#B8005C)" : "#1F2532",
           color: canSubmit && !busy ? "#fff" : "#4b5563",
           fontWeight: 700,
           fontSize: "0.9rem",

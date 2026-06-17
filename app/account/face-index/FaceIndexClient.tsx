@@ -99,7 +99,7 @@ export default function FaceIndexClient() {
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Indice volti del registro</h1>
       <p style={{ color: "#6b7280", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
         L&apos;indice permette a <strong>/verify</strong> di riconoscere il volto di un avatar anche quando
-        un&apos;immagine <strong>non ha la filigrana</strong> (contenuti generati fuori da Human2AI): la persona
+        un&apos;immagine <strong>non ha la filigrana</strong> (contenuti generati fuori da Semblic): la persona
         può così scoprire l&apos;abuso e fare ricorso. I descrittori si calcolano <strong>in questo browser</strong>;
         al server arrivano solo vettori numerici, mai foto.
       </p>
@@ -115,11 +115,11 @@ export default function FaceIndexClient() {
       {!loading && (
         <>
           {/* Stato attuale */}
-          <div style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.2rem 1.5rem", marginBottom: "1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.8rem" }}>
+          <div style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "1.2rem 1.5rem", marginBottom: "1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.8rem" }}>
             <div>
               {index ? (
                 <>
-                  <p style={{ color: "#f0f0f5", fontWeight: 700, margin: 0 }}>
+                  <p style={{ color: "#F2E9D8", fontWeight: 700, margin: 0 }}>
                     {index.total} volt{index.total === 1 ? "o" : "i"} indicizzat{index.total === 1 ? "o" : "i"} · {Object.keys(index.per_handle).length} avatar
                   </p>
                   <p style={{ color: "#6b7280", fontSize: "0.78rem", margin: "0.15rem 0 0" }}>
@@ -131,7 +131,7 @@ export default function FaceIndexClient() {
               )}
             </div>
             <button onClick={rebuild} disabled={building || totalSources === 0}
-              style={{ padding: "0.7rem 1.4rem", borderRadius: 999, border: "none", background: building || totalSources === 0 ? "#1c1c28" : "#8b47f0", color: building || totalSources === 0 ? "#4b5563" : "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: building || totalSources === 0 ? "default" : "pointer" }}>
+              style={{ padding: "0.7rem 1.4rem", borderRadius: 999, border: "none", background: building || totalSources === 0 ? "#1F2532" : "#F2A93B", color: building || totalSources === 0 ? "#4b5563" : "#0C0F17", fontWeight: 700, fontSize: "0.85rem", cursor: building || totalSources === 0 ? "default" : "pointer" }}>
               {building ? "Costruzione in corso…" : index ? "Ricostruisci indice" : "Costruisci indice"}
             </button>
           </div>
@@ -141,9 +141,9 @@ export default function FaceIndexClient() {
           {/* Avatar e sorgenti */}
           <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
             {avatars.map((a) => (
-              <div key={a.handle} style={{ background: "#0d0d14", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "0.8rem 1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.8rem", flexWrap: "wrap" }}>
+              <div key={a.handle} style={{ background: "#11141D", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "0.8rem 1.2rem", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.8rem", flexWrap: "wrap" }}>
                 <div>
-                  <span style={{ color: "#f0f0f5", fontWeight: 700, fontSize: "0.9rem" }}>{a.alias}</span>
+                  <span style={{ color: "#F2E9D8", fontWeight: 700, fontSize: "0.9rem" }}>{a.alias}</span>
                   <span style={{ color: "#6b7280", fontSize: "0.8rem", marginLeft: "0.5rem" }}>@{a.handle}</span>
                   {a.revoked && <span style={{ color: "#ff6aa5", fontSize: "0.72rem", fontWeight: 700, marginLeft: "0.5rem" }}>REVOCATO</span>}
                 </div>

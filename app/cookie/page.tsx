@@ -6,7 +6,7 @@ import { ManageCookiesButton } from "@/components/legal/CookieBanner";
 
 export const metadata = {
   title: "Cookie policy",
-  description: "Quali cookie usa Human2AI e perché: solo essenziali, niente profilazione, niente pubblicità.",
+  description: "Quali cookie usa Semblic e perché: solo essenziali, niente profilazione, niente pubblicità.",
 };
 
 // F1 — cookie policy. Bozza in revisione legale (vedi LegalNotice).
@@ -45,7 +45,7 @@ export default function CookiePage() {
             </Section>
             <Section title="Titolare e contatti">
               Il titolare del trattamento è indicato nell&apos;<Link href="/privacy" className="text-violet-light underline">informativa privacy</Link>.
-              Per qualsiasi domanda sui cookie: <span className="text-foreground">privacy@human2ai.example</span>{" "}
+              Per qualsiasi domanda sui cookie: <span className="text-foreground">privacy@semblic.example</span>{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>.
             </Section>
           </div>

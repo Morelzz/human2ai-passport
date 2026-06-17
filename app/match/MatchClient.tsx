@@ -497,7 +497,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         {voltStr("volt.insufficient.body", { n: FMT_VOLT.format(voltGate.needed), delta: FMT_VOLT.format(voltGate.missing) })}
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <Link href="/account/volt" className="rounded-full bg-[#8b47f0] px-4 py-2 text-xs font-bold text-white transition-all hover:brightness-110">
+        <Link href="/account/volt" className="rounded-full bg-[#F2A93B] px-4 py-2 text-xs font-bold text-[#0C0F17] transition-all hover:brightness-110">
           {VOLT_STRINGS["volt.insufficient.cta"]}
         </Link>
         <button type="button" onClick={() => setVoltGate(null)} className="rounded-full border border-white/12 px-4 py-2 text-xs font-semibold text-muted transition-colors hover:text-foreground">
@@ -576,14 +576,14 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                   <span className="w-7 text-[0.7rem] text-faint">Da</span>
                   <input type="range" min={18} max={100} value={ageMin}
                     onChange={(e) => setAgeMin(Math.min(Number(e.target.value), ageMax))}
-                    className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
+                    className="h-1.5 flex-1 cursor-pointer accent-[#F2A93B]" />
                   <span className="w-9 text-right text-sm font-bold">{ageMin}</span>
                 </label>
                 <label className="flex items-center gap-3">
                   <span className="w-7 text-[0.7rem] text-faint">A</span>
                   <input type="range" min={18} max={100} value={ageMax}
                     onChange={(e) => setAgeMax(Math.max(Number(e.target.value), ageMin))}
-                    className="h-1.5 flex-1 cursor-pointer accent-[#6B21E8]" />
+                    className="h-1.5 flex-1 cursor-pointer accent-[#F2A93B]" />
                   <span className="w-9 text-right text-sm font-bold">{ageMax >= 100 ? "100+" : ageMax}</span>
                 </label>
               </div>
@@ -627,7 +627,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         </details>
 
         <button type="submit" disabled={loading}
-          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+          className="mt-1 rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3.5 text-sm font-bold text-white shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
           {loading ? "Ricerca in corso…" : "Cerca avatar affine"}
         </button>
       </form>
@@ -793,7 +793,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
 
                             {/* Proposta migliorata, evidenziata: usa / ignora (modificabile dopo l'uso) */}
                             {enhancedByHandle[avatar.handle] && (
-                              <div className="mt-2 rounded-xl border border-violet/40 bg-violet/[0.08] p-3 shadow-[0_0_24px_rgba(107,33,232,0.15)]">
+                              <div className="mt-2 rounded-xl border border-violet/40 bg-violet/[0.08] p-3 shadow-[0_0_24px_rgba(242,169,59,0.15)]">
                                 <span className="label-mono text-violet-light">Proposta</span>
                                 <p className="mt-1.5 text-sm leading-relaxed text-foreground">{enhancedByHandle[avatar.handle]}</p>
                                 <div className="mt-2.5 flex gap-2">
@@ -999,7 +999,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             </p>
                           )}
                           <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                            className="mt-2 w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_40px_rgba(107,33,232,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
+                            className="mt-2 w-full rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3 text-sm font-bold text-white shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
                             {generating ? loadingLine : genCta}
                           </button>
                           {voltGatePanel}
@@ -1050,7 +1050,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             // non un overlay — da qui esce SOLO l'immagine certificata.
                             <ShareStoryButton
                               query={`cert=${encodeURIComponent(gen.certificate)}&v=buyer`}
-                              filename={`human2ai-story-${gen.certificate.slice(0, 8)}.png`}
+                              filename={`semblic-story-${gen.certificate.slice(0, 8)}.png`}
                               label="Condividi come Storia →"
                               className="mt-2 block w-full rounded-xl border border-violet/30 bg-violet/10 px-4 py-3 text-center text-sm font-bold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-50"
                             />
@@ -1059,7 +1059,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                           {/* Genera ancora: stessa scena/immagini (variante) oppure ricomincia da capo */}
                           <div className="mt-4 grid gap-2 border-t border-white/8 pt-4">
                             <button onClick={() => generate(avatar.handle, "commercial")} disabled={generating}
-                              className="w-full rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-5 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50">
+                              className="w-full rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-5 py-3 text-sm font-bold text-white transition-all hover:brightness-110 disabled:opacity-50">
                               {generating ? loadingLine : `↻ ${genCta}`}
                             </button>
                             {voltGatePanel}

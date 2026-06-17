@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase";
 
-// Sistema VOLT: crediti prepagati di HUMAN2AI (da VOLT_SYSTEM.md).
+// Sistema VOLT: crediti prepagati di SEMBLIC (da VOLT_SYSTEM.md).
 // 1 VOLT = 1 centesimo di euro. I VOLT si spendono, gli euro si guadagnano:
 // le royalty dei seller restano in euro e non passano MAI da qui.
 

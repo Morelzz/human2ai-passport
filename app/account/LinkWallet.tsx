@@ -46,13 +46,13 @@ export default function LinkWallet({ initialWallet, handle }: { initialWallet: s
   const short = wallet ? `${wallet.slice(0, 6)}…${wallet.slice(-4)}` : null;
 
   return (
-    <div style={{ background: "#0a0a0f", border: "1px solid rgba(107,33,232,0.25)", borderRadius: 12, padding: "1rem" }}>
-      <p style={{ color: "#8b47f0", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.5rem" }}>
+    <div style={{ background: "#0C0F17", border: "1px solid rgba(242,169,59,0.25)", borderRadius: 12, padding: "1rem" }}>
+      <p style={{ color: "#F2A93B", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.5rem" }}>
         WALLET DI PROPRIETÀ
       </p>
       {short ? (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.6rem", flexWrap: "wrap" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "#f0f0f5", fontSize: "0.85rem", fontWeight: 600 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "#F2E9D8", fontSize: "0.85rem", fontWeight: 600 }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#00A896" }} />
             {short}
           </span>
@@ -67,7 +67,7 @@ export default function LinkWallet({ initialWallet, handle }: { initialWallet: s
             Collega il tuo wallet: quando ancoreremo l&apos;identità su Base, il token soulbound del tuo volto sarà mintato qui.
           </p>
           <button onClick={connect} disabled={busy}
-            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "#374151" : "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
             {busy ? "Connessione…" : "Collega wallet (Phantom)"}
           </button>
         </>

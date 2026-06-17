@@ -11,7 +11,7 @@ import type { Sede } from "@/lib/scan";
 // pin attenuati = città "in arrivo" (partner in certificazione: solo la
 // città, MAI dati personali del partner prima della certificazione).
 // Leaflet tocca window → import dinamico dentro useEffect, niente SSR.
-// Tiles OSM scuriti via CSS (.h2ai-tiles in globals.css) per stare sul void.
+// Tiles OSM scuriti via CSS (.smbl-tiles in globals.css) per stare sul void.
 
 export type MapSede = Pick<Sede, "slug" | "name" | "city" | "lat" | "lng" | "status">;
 
@@ -30,7 +30,7 @@ export function SediMap({ sedi }: { sedi: MapSede[] }) {
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
         maxZoom: 19,
-        className: "h2ai-tiles",
+        className: "smbl-tiles",
       }).addTo(map);
 
       const pts = sedi.filter((s) => s.lat != null && s.lng != null);
@@ -38,7 +38,7 @@ export function SediMap({ sedi }: { sedi: MapSede[] }) {
         const attiva = s.status === "attiva";
         const icon = L.divIcon({
           className: "",
-          html: `<span class="h2ai-pin ${attiva ? "h2ai-pin--attiva" : "h2ai-pin--arrivo"}"></span>`,
+          html: `<span class="smbl-pin ${attiva ? "smbl-pin--attiva" : "smbl-pin--arrivo"}"></span>`,
           iconSize: [18, 18],
           iconAnchor: [9, 9],
           popupAnchor: [0, -12],
@@ -46,11 +46,11 @@ export function SediMap({ sedi }: { sedi: MapSede[] }) {
         const marker = L.marker([s.lat!, s.lng!], { icon }).addTo(map);
         // Popup: template verbatim da docs/SITE_COPY_SCANSIONE.md
         const html = attiva
-          ? `<p class="h2ai-pop-title">${s.name} · ${s.city}</p>
-             <p class="h2ai-pop-sub">✔ Certificata H2AI-SCAN</p>
-             <a class="h2ai-pop-cta" href="/scansione/prenota?sede=${encodeURIComponent(s.slug)}">Prenota qui</a>`
-          : `<p class="h2ai-pop-title">${s.city} · In certificazione</p>
-             <p class="h2ai-pop-sub">Un Capture Partner sta completando il percorso. Presto qui.</p>`;
+          ? `<p class="smbl-pop-title">${s.name} · ${s.city}</p>
+             <p class="smbl-pop-sub">✔ Certificata SEMBLIC-SCAN</p>
+             <a class="smbl-pop-cta" href="/scansione/prenota?sede=${encodeURIComponent(s.slug)}">Prenota qui</a>`
+          : `<p class="smbl-pop-title">${s.city} · In certificazione</p>
+             <p class="smbl-pop-sub">Un Capture Partner sta completando il percorso. Presto qui.</p>`;
         marker.bindPopup(html, { closeButton: false });
       }
 
@@ -74,7 +74,7 @@ export function SediMap({ sedi }: { sedi: MapSede[] }) {
       ref={ref}
       role="region"
       aria-label="Mappa delle sedi di scansione certificate"
-      className="h2ai-map h-[360px] w-full overflow-hidden rounded-[2rem] border border-white/10 bg-obsidian-2 sm:h-[440px]"
+      className="smbl-map h-[360px] w-full overflow-hidden rounded-[2rem] border border-white/10 bg-obsidian-2 sm:h-[440px]"
     />
   );
 }

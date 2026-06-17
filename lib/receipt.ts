@@ -49,7 +49,7 @@ export async function buildComplianceReceipt(
   const inScope = !category || (Array.isArray(av?.approved_categories) && av!.approved_categories.includes(category));
 
   return {
-    issuer: "Human2AI",
+    issuer: "Semblic",
     document: "Ricevuta di conformita' del consenso",
     certificate: gen.certificate,
     issued_at: issuedAtIso,
@@ -68,7 +68,7 @@ export async function buildComplianceReceipt(
     },
     verification_url: `${base}/verify`,
     statement:
-      "Questa generazione e' stata prodotta tramite Human2AI dal percorso di consenso verificato: il volto " +
+      "Questa generazione e' stata prodotta tramite Semblic dal percorso di consenso verificato: il volto " +
       "appartiene a una persona reale presente nel registro, che ha prestato consenso per l'uso, e la categoria " +
       "rientrava nell'ambito autorizzato al momento della generazione. Il certificato e' verificabile su " +
       `${base}/verify.`,

@@ -45,7 +45,7 @@ export default function LoginPage() {
 
         <p style={{ color: "#6b7280", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
           Non hai un account?{" "}
-          <Link href="/signup" style={{ color: "#6B21E8" }}>Registrati</Link>
+          <Link href="/signup" style={{ color: "#F2A93B" }}>Registrati</Link>
         </p>
       </form>
     </Shell>

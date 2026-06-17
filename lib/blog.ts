@@ -38,7 +38,7 @@ function toMeta(slug: string, data: Record<string, unknown>): PostMeta {
     title: String(data.title ?? slug),
     description: String(data.description ?? ""),
     date: String(data.date ?? "").slice(0, 10),
-    author: String(data.author ?? "Redazione HUMAN2AI"),
+    author: String(data.author ?? "Redazione SEMBLIC"),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     category: String(data.category ?? "AI & Società"),
     cover: String(data.cover ?? ""),

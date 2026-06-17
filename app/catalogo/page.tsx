@@ -8,7 +8,7 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const metadata = {
-  // Review B4: solo il nome pagina — il suffisso "— Human2AI" lo aggiunge il
+  // Review B4: solo il nome pagina, il suffisso " | Semblic" lo aggiunge il
   // template di app/layout.tsx (prima usciva doppio).
   title: "Avatar",
   description: "Il registro pubblico dei volti consenzienti: persone reali, verificate e pagate. Sfoglia gli avatar.",

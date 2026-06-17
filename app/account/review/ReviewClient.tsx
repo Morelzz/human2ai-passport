@@ -62,14 +62,14 @@ export default function ReviewClient() {
         {loading ? (
           <p style={{ color: "#6b7280", fontSize: "0.9rem" }}>Caricamento…</p>
         ) : items.length === 0 ? (
-          <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+          <div style={{ background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
             <p style={{ color: "#00A896", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessun avatar in attesa</p>
             <p style={{ color: "#6b7280", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {items.map((a) => (
-              <div key={a.id} style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+              <div key={a.id} style={{ background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div style={{ fontWeight: 700, fontSize: "1.02rem" }}>{a.alias}</div>
                   <div style={{ color: "#6b7280", fontSize: "0.8rem", marginBottom: "0.4rem" }}>@{a.handle}</div>

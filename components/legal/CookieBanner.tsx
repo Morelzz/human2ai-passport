@@ -7,9 +7,9 @@ import Link from "next/link";
 // nessun dark pattern (i due bottoni hanno pari dignità visiva). Oggi la
 // piattaforma usa solo cookie tecnici; la preferenza "statistiche" viene
 // salvata e verrà rispettata se/quando introdurremo analytics.
-// La pagina /cookie può riaprire il banner via evento "h2ai:cookie-prefs".
+// La pagina /cookie può riaprire il banner via evento "semblic:cookie-prefs".
 
-const STORAGE_KEY = "h2ai-cookie-prefs";
+const STORAGE_KEY = "semblic-cookie-prefs";
 
 export type CookiePrefs = { essential: true; analytics: boolean; ts: number };
 
@@ -32,8 +32,8 @@ export function CookieBanner() {
     if (!prefs) setOpen(true);
     else setAnalytics(prefs.analytics);
     const reopen = () => { setDetail(true); setOpen(true); };
-    window.addEventListener("h2ai:cookie-prefs", reopen);
-    return () => window.removeEventListener("h2ai:cookie-prefs", reopen);
+    window.addEventListener("semblic:cookie-prefs", reopen);
+    return () => window.removeEventListener("semblic:cookie-prefs", reopen);
   }, []);
 
   function save(an: boolean) {
@@ -47,7 +47,7 @@ export function CookieBanner() {
 
   return (
     <div role="dialog" aria-label="Preferenze cookie" className="fixed inset-x-3 bottom-3 z-[80] mx-auto max-w-xl">
-      <div className="rounded-2xl border border-white/12 bg-[#0d0d14]/95 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+      <div className="rounded-2xl border border-white/12 bg-[#11141D]/95 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
         <p className="text-sm font-bold">Cookie, senza giochetti.</p>
         <p className="mt-1.5 text-[0.8rem] leading-relaxed text-muted">
           Usiamo solo cookie <span className="text-foreground">essenziali</span> (accesso e preferenze).
@@ -63,7 +63,7 @@ export function CookieBanner() {
             </label>
             <label className="flex cursor-pointer items-center justify-between gap-3 text-[0.8rem]">
               <span><span className="font-semibold text-foreground">Statistiche</span> <span className="text-faint">· oggi non in uso; la scelta varrà se le introdurremo</span></span>
-              <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} className="h-4 w-4 accent-[#8b47f0]" />
+              <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} className="h-4 w-4 accent-[#F2A93B]" />
             </label>
           </div>
         )}
@@ -91,7 +91,7 @@ export function CookieBanner() {
 export function ManageCookiesButton() {
   return (
     <button
-      onClick={() => window.dispatchEvent(new Event("h2ai:cookie-prefs"))}
+      onClick={() => window.dispatchEvent(new Event("semblic:cookie-prefs"))}
       className="rounded-full border border-violet/35 bg-violet/10 px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-violet-light transition-colors hover:bg-violet/20"
     >
       Gestisci le preferenze cookie

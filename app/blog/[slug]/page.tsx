@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: post.title,
     description: post.description,
     // Keywords per-articolo (i tag) + categoria: segnali espliciti per i motori.
-    keywords: [...post.tags, post.category, "Human2AI", "intelligenza artificiale"],
+    keywords: [...post.tags, post.category, "Semblic", "intelligenza artificiale"],
     // URL canonico: evita contenuti duplicati (con/senza query string, ecc.).
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
@@ -61,10 +61,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     keywords: post.tags.join(", "),
     image: post.cover ? [post.cover] : undefined,
     mainEntityOfPage: `${siteUrl()}/blog/${post.slug}`,
-    author: { "@type": "Organization", name: "HUMAN2AI", url: siteUrl() },
+    author: { "@type": "Organization", name: "SEMBLIC", url: siteUrl() },
     publisher: {
       "@type": "Organization",
-      name: "HUMAN2AI",
+      name: "SEMBLIC",
       url: siteUrl(),
       logo: { "@type": "ImageObject", url: `${siteUrl()}/logo-shield.png` },
     },
@@ -124,7 +124,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </header>
 
           {/* Corpo (markdown renderizzato; contenuto fidato dal repo) */}
-          <div className="prose-h2ai reveal" dangerouslySetInnerHTML={{ __html: post.html }} />
+          <div className="prose-semblic reveal" dangerouslySetInnerHTML={{ __html: post.html }} />
 
           {/* Chiusura: CTA registro + altri articoli */}
           <footer className="mt-14">
@@ -134,7 +134,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
             <div className="glass mt-8 rounded-2xl p-6 text-center sm:p-8">
               <p className="text-balance text-lg font-bold">Ogni volto generato deve avere una persona vera dietro.</p>
-              <Link href="/match" className="mt-4 inline-block rounded-xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-6 py-3 text-sm font-bold text-white transition-all hover:brightness-110">
+              <Link href="/match" className="mt-4 inline-block rounded-xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-6 py-3 text-sm font-bold text-[#0C0F17] transition-all hover:brightness-110">
                 Esplora il Registro Volti
               </Link>
             </div>

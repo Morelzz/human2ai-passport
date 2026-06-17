@@ -42,11 +42,11 @@ export default async function TrasparenzaPage() {
   const protectedFaces = await countProtectedFaces(sb);
 
   const stats = [
-    { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#8b47f0" },
+    { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#F2A93B" },
     { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "#00A896" },
     { label: "Generazioni certificate", value: String(genCount), c: "#B8005C" },
     { label: "Maturato per le persone reali", value: formatEur(royaltyAccrued), c: "#00A896" },
-    { label: "Già erogato (payout)", value: formatEur(payoutPaid), c: "#8b47f0" },
+    { label: "Già erogato (payout)", value: formatEur(payoutPaid), c: "#F2A93B" },
     { label: "Payout effettuati", value: String(payoutCount), c: "#9ca3af" },
   ];
 
@@ -91,8 +91,8 @@ export default async function TrasparenzaPage() {
 
             {/* 2. Il diritto di dire no: volti protetti (violet) — VETO */}
             <div className="glass relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
-              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(107,33,232,0.18),transparent_70%)]" />
-              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#6B21E8,transparent)]" />
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(242,169,59,0.18),transparent_70%)]" />
+              <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#F2A93B,transparent)]" />
               <div className="relative">
                 <span className="label-mono text-violet-light">Il diritto di dire no</span>
                 <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-violet-light sm:text-6xl">
@@ -102,7 +102,7 @@ export default async function TrasparenzaPage() {
                   volti registrati <span className="text-violet-light">per non essere mai generati</span> dall&apos;IA.
                 </p>
                 <p className="mt-2 text-sm text-faint">
-                  Dentro Human2AI non sono generabili; fuori, allerta precoce e rimozione assistita.
+                  Dentro Semblic non sono generabili; fuori, allerta precoce e rimozione assistita.
                 </p>
               </div>
             </div>
@@ -121,14 +121,14 @@ export default async function TrasparenzaPage() {
 
           {/* ── LA VISIONE ───────────────────────────────────────────── */}
           <div className="reveal glass relative mt-16 overflow-hidden rounded-[2rem] p-8 sm:p-12">
-            <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(107,33,232,0.18),transparent_70%)]" />
+            <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(242,169,59,0.18),transparent_70%)]" />
             <div className="relative">
               <span className="label-mono text-violet-light">La visione</span>
               <h2 className="mt-2 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
                 Presto, generare un volto <span className="text-crimson">senza consenso</span> sarà <span className="text-gradient">impossibile</span>.
               </h2>
               <p className="mt-5 max-w-2xl leading-relaxed text-muted">
-                Human2AI non è un generatore: è il <span className="text-foreground">registro dei diritti d&apos;immagine</span>,
+                Semblic non è un generatore: è il <span className="text-foreground">registro dei diritti d&apos;immagine</span>,
                 la &quot;SIAE dei volti umani&quot;. La nostra missione è rendere la <span className="text-foreground">certificazione del consenso obbligatoria</span>:
                 un filtro che si aggancia sopra i sistemi di IA generativa più potenti, così che <span className="text-foreground">nessun
                 essere umano venga più generato nell&apos;anonimato</span> e <span className="text-foreground">ogni persona venga retribuita</span> ogni volta che il suo volto viene usato.

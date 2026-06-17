@@ -86,7 +86,7 @@ export function ContactForm({ prefill }: { prefill?: { subject?: string; message
       )}
 
       <button type="submit" disabled={sending}
-        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-white transition-all hover:brightness-110 disabled:opacity-50">
+        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-[#0C0F17] transition-all hover:brightness-110 disabled:opacity-50">
         {sending ? "Invio…" : "Invia il messaggio"}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">

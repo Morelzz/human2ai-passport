@@ -26,7 +26,7 @@ export function CineBackground() {
               sposta tanto era la causa principale del lag in locale). */}
           <motion.div
             className="absolute -left-[12%] -top-[18%] h-[min(52vw,620px)] w-[min(52vw,620px)] rounded-full blur-[64px]"
-            style={{ background: "radial-gradient(circle, rgba(107,33,232,0.22), transparent 65%)" }}
+            style={{ background: "radial-gradient(circle, rgba(242,169,59,0.22), transparent 65%)" }}
             animate={{ x: [0, 32, -12, 0], y: [0, 22, 40, 0], scale: [1, 1.07, 0.98, 1] }}
             transition={{ duration: 42, repeat: Infinity, ease: "easeInOut" }}
           />

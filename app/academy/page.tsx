@@ -9,7 +9,7 @@ import { getCorsi, CorsoLivello } from "@/lib/academy";
 export const metadata = {
   title: "Academy",
   description:
-    "La HUMAN2AI Academy: dal corso base gratuito sui diritti d'immagine al percorso avanzato che certifica i Capture Partner.",
+    "La SEMBLIC Academy: dal corso base gratuito sui diritti d'immagine al percorso avanzato che certifica i Capture Partner.",
 };
 
 // G — pagina narrativa dell'Academy: racconta i TRE prodotti (base/medio/
@@ -19,7 +19,7 @@ export const metadata = {
 
 const LIVELLO_UI: Record<CorsoLivello, { label: string; accesso: string; c: string; Icon: typeof GraduationCap }> = {
   base: { label: "Base", accesso: "Gratuito per gli iscritti", c: "#00A896", Icon: GraduationCap },
-  medio: { label: "Medio", accesso: "Con abbonamento", c: "#8b47f0", Icon: Sparkles },
+  medio: { label: "Medio", accesso: "Con abbonamento", c: "#F2A93B", Icon: Sparkles },
   avanzato: { label: "Avanzato", accesso: "A pagamento · certificante", c: "#B8005C", Icon: Award },
 };
 
@@ -34,7 +34,7 @@ export default async function AcademyPage() {
 
         <main className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="label-mono text-teal">HUMAN2AI Academy</span>
+            <span className="label-mono text-teal">SEMBLIC Academy</span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
               <KineticText text="Capire i propri diritti" />
               <span className="mt-1 block">
@@ -91,7 +91,7 @@ export default async function AcademyPage() {
                 Il corso avanzato non insegna soltanto: <span className="text-gradient">apre la rete</span>.
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                Lo standard H2AI-SCAN è <Link href="/scansione#standard" className="text-teal underline-offset-2 hover:underline">pubblico e gratuito</Link>.
+                Lo standard SEMBLIC-SCAN è <Link href="/scansione#standard" className="text-teal underline-offset-2 hover:underline">pubblico e gratuito</Link>.
                 La maestria, esecuzione, postproduzione, certificazione, si impara qui, e chi supera
                 l&apos;esame diventa un punto di scansione sulla mappa.
               </p>

@@ -30,7 +30,7 @@ export default function PayoutButton({ eligible, amount }: { eligible: boolean; 
   return (
     <div>
       <button onClick={payout} disabled={busy}
-        style={{ width: "100%", padding: "0.8rem", borderRadius: 10, border: "none", background: busy ? "#374151" : "linear-gradient(135deg,#6B21E8,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+        style={{ width: "100%", padding: "0.8rem", borderRadius: 10, border: "none", background: busy ? "#374151" : "linear-gradient(135deg,#F2A93B,#B8005C)", color: "#fff", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
         {busy ? "Elaborazione…" : `Richiedi payout di ${amount}`}
       </button>
       {error && <p style={{ color: "#B8005C", fontSize: "0.8rem", marginTop: "0.5rem" }}>{error}</p>}

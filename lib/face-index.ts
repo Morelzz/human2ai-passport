@@ -5,7 +5,7 @@ import { uploadPrivate } from "./storage";
 // INDICE VOLTI DEL REGISTRO — SERVER-ONLY.
 //
 // Per il fallback di /verify: se un'immagine NON ha la filigrana invisibile
-// (es. generata su piattaforme terze, senza certificazione Human2AI),
+// (es. generata su piattaforme terze, senza certificazione Semblic),
 // confrontiamo il volto con i volti del registro per risalire comunque al
 // titolare e permettergli il ricorso (/report).
 //

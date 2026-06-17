@@ -8,7 +8,7 @@ import { Reveal } from "@/components/motion/Reveal";
 export const metadata = {
   title: "Domande frequenti",
   description:
-    "Le risposte alle domande più comuni su Human2AI: sicurezza dei dati, revoca del consenso, royalty, verifica dei contenuti e segnalazioni.",
+    "Le risposte alle domande più comuni su Semblic: sicurezza dei dati, revoca del consenso, royalty, verifica dei contenuti e segnalazioni.",
 };
 
 // Review C6 — /faq: struttura + schema FAQPage. Le domande/risposte vivono in

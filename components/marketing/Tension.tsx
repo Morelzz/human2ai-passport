@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { KineticText } from "@/components/motion/KineticText";
 
-// [TENSIONE] — Subito sotto l'hero: la ragione per cui HUMAN2AI esiste.
+// [TENSIONE] — Subito sotto l'hero: la ragione per cui SEMBLIC esiste.
 // Tipografia OVERSIZE protagonista (trend 2026): il problema in grande,
 // una pausa luminosa, poi la svolta ancora più grande con gradiente vivo.
 // Copy verbatim da docs/SITE_COPY.md.
@@ -14,7 +14,7 @@ export function Tension() {
   return (
     <section className="relative mx-auto max-w-4xl px-5 py-24 text-center sm:px-8 sm:py-36">
       {/* Alone di fondo che dà aria alla sezione */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_50%_at_50%_40%,rgba(107,33,232,0.10),transparent_70%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_50%_at_50%_40%,rgba(242,169,59,0.10),transparent_70%)]" />
 
       <span className="label-mono relative text-crimson-light">Il problema</span>
 
@@ -33,7 +33,7 @@ export function Tension() {
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.9, delay: 0.2, ease: EASE }}
-        className="relative mx-auto my-12 h-px w-40 origin-center rounded-full bg-gradient-to-r from-transparent via-violet to-transparent shadow-[0_0_18px_rgba(107,33,232,0.6)]"
+        className="relative mx-auto my-12 h-px w-40 origin-center rounded-full bg-gradient-to-r from-transparent via-violet to-transparent shadow-[0_0_18px_rgba(242,169,59,0.6)]"
       />
 
       {/* La svolta — ancora più grande, viva. NB: spazi tra segmenti con {" "},

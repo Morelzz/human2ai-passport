@@ -24,12 +24,12 @@ function AreaChart({ daily }: { daily: RevenueStats["daily"] }) {
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="none" style={{ height: 120 }}>
           <defs>
             <linearGradient id="royFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#8b47f0" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#8b47f0" stopOpacity="0" />
+              <stop offset="0%" stopColor="#F2A93B" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#F2A93B" stopOpacity="0" />
             </linearGradient>
           </defs>
           <path d={area} fill="url(#royFill)" />
-          <path d={line} fill="none" stroke="#8b47f0" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <path d={line} fill="none" stroke="#F2A93B" strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       ) : (
         <div className="flex h-[120px] items-center justify-center rounded-lg border border-white/6 text-xs text-faint">
@@ -61,7 +61,7 @@ function CategoryBars({ byCategory }: { byCategory: RevenueStats["byCategory"] }
                 <span className="font-bold text-teal">{formatEur(c.cents)}</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/6">
-                <div className="h-full rounded-full bg-[#8b47f0]" style={{ width: `${Math.max(4, (c.cents / max) * 100)}%` }} />
+                <div className="h-full rounded-full bg-[#F2A93B]" style={{ width: `${Math.max(4, (c.cents / max) * 100)}%` }} />
               </div>
             </li>
           ))}

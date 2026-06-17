@@ -65,14 +65,14 @@ export default function KybReviewClient() {
       {loading ? (
         <p style={{ color: "#6b7280", fontSize: "0.9rem" }}>Caricamento…</p>
       ) : items.length === 0 ? (
-        <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+        <div style={{ background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
           <p style={{ color: "#00A896", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessuna azienda in attesa</p>
           <p style={{ color: "#6b7280", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {items.map((o) => (
-            <div key={o.id} style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+            <div key={o.id} style={{ background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
               <div style={{ flex: 1, minWidth: 220 }}>
                 <div style={{ fontWeight: 700, fontSize: "1.02rem" }}>{o.name}</div>
                 <div style={{ color: "#6b7280", fontSize: "0.8rem", marginBottom: "0.4rem" }}>
@@ -81,7 +81,7 @@ export default function KybReviewClient() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
                   {o.website && (
                     <a href={o.website.startsWith("http") ? o.website : `https://${o.website}`} target="_blank" rel="noreferrer noopener"
-                      style={{ color: "#8b47f0", fontSize: "0.78rem", textDecoration: "none", wordBreak: "break-all" }}>
+                      style={{ color: "#F2A93B", fontSize: "0.78rem", textDecoration: "none", wordBreak: "break-all" }}>
                       {o.website} ↗
                     </a>
                   )}

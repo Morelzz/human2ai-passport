@@ -8,7 +8,7 @@ import { BookingClient } from "./BookingClient";
 export const metadata = {
   title: "Prenota la tua scansione",
   description:
-    "Prenota la sessione di scansione H2AI-SCAN: una sessione fotografica professionale, il tuo passaporto pubblico, il tuo volto che lavora alle tue condizioni.",
+    "Prenota la sessione di scansione SEMBLIC-SCAN: una sessione fotografica professionale, il tuo passaporto pubblico, il tuo volto che lavora alle tue condizioni.",
 };
 
 // H2 — booking della scansione. Sede preselezionabile via ?sede=<slug>
@@ -31,7 +31,7 @@ export default async function PrenotaPage({ searchParams }: { searchParams: Prom
           </h1>
           <p className="mt-4 text-base leading-relaxed text-muted">
             Una sessione professionale secondo lo standard{" "}
-            <Link href="/scansione#standard" className="text-violet-light underline-offset-2 hover:underline">H2AI-SCAN</Link>:
+            <Link href="/scansione#standard" className="text-violet-light underline-offset-2 hover:underline">SEMBLIC-SCAN</Link>:
             circa cento scatti in pochi minuti, la selezione e la lavorazione le facciamo noi.
             Tu devi solo <span className="text-foreground">essere te</span>.
           </p>

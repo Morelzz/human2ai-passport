@@ -6,7 +6,7 @@ import Link from "next/link";
 // ──────────────────────────────────────────────────────────────────────────
 // VERIFICATORE — il portale.
 // Un solo gesto: carichi un'immagine. (a) Filigrana invisibile presente →
-// "Generato da Human2AI" con correlazione all'avatar e catena del consenso.
+// "Generato da Semblic" con correlazione all'avatar e catena del consenso.
 // (b) Nessuna filigrana → gate di consenso, poi face-search col registro
 // (analisi sul dispositivo, al server solo un vettore) + filtri "restringi
 // il cerchio" sui metadati auto-dichiarati. ONESTÀ: indizio, mai prova.
@@ -222,7 +222,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       setResult({ valid: false, source: "image", wm_checked: false });
     }
 
-    // (2) Se non e' un contenuto certificato H2AI, offri SEMPRE l'analisi del
+    // (2) Se non e' un contenuto certificato SEMBLIC, offri SEMPRE l'analisi del
     //     volto: e' sul dispositivo, indipendente dall'upload, ed e' la tutela
     //     della persona. Non deve morire se la filigrana non si e' potuta leggere.
     //     Il descrittore e' dato biometrico → parte solo dopo il consenso esplicito.
@@ -361,7 +361,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           (elaborata al volo, mai salvata); i file grandi vengono letti direttamente
           <span className="text-muted"> sul tuo dispositivo</span>. L&apos;analisi del volto avviene comunque tutta
           sul tuo dispositivo: al server arriva solo un vettore numerico, mai conservato.
-          La filigrana sopravvive ai PNG scaricati da Human2AI; screenshot e ricompressioni possono cancellarla.
+          La filigrana sopravvive ai PNG scaricati da Semblic; screenshot e ricompressioni possono cancellarla.
         </p>
       </div>
 
@@ -384,12 +384,12 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 </svg>
                 <div>
                   <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-teal">
-                    {result.type === "content" ? "GENERATO DA HUMAN2AI" : "TOKEN VALIDO"}
+                    {result.type === "content" ? "GENERATO DA SEMBLIC" : "TOKEN VALIDO"}
                   </h2>
                   <p className="m-0 text-[0.8rem] text-muted">
                     {result.type === "content"
                       ? "Contenuto certificato: dietro c'è una persona reale, consenziente e pagata."
-                      : "Consenso verificato nel registro Human2AI."}
+                      : "Consenso verificato nel registro Semblic."}
                   </p>
                 </div>
               </div>
@@ -518,8 +518,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">{result.wm_checked ? "NESSUNA FILIGRANA TROVATA" : "FILIGRANA NON VERIFICATA"}</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 {result.wm_checked
-                  ? "Questa immagine non porta la filigrana Human2AI (o è stata rimossa da screenshot/ricompressione)."
-                  : "La filigrana invisibile vive solo nei PNG originali scaricati da Human2AI: un JPEG, uno screenshot o un'immagine molto grande non la conservano. Posso comunque confrontare il volto con il registro."}
+                  ? "Questa immagine non porta la filigrana Semblic (o è stata rimossa da screenshot/ricompressione)."
+                  : "La filigrana invisibile vive solo nei PNG originali scaricati da Semblic: un JPEG, uno screenshot o un'immagine molto grande non la conservano. Posso comunque confrontare il volto con il registro."}
               </p>
               <div className="mt-4 rounded-2xl border border-white/10 bg-obsidian p-4">
                 <p className="m-0 text-[0.85rem] font-semibold text-foreground">
@@ -534,7 +534,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   type="button"
                   onClick={onFaceConsent}
                   disabled={busy}
-                  className="focus-ring mt-1 rounded-full bg-[#8b47f0] px-5 py-2 text-[0.82rem] font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="focus-ring mt-1 rounded-full bg-[#F2A93B] px-5 py-2 text-[0.82rem] font-bold text-[#0C0F17] transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   Acconsento all&apos;analisi del volto
                 </button>
@@ -577,7 +577,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               </div>
               <p className="rounded-xl border border-violet/20 bg-violet/[0.06] p-3 text-[0.8rem] leading-relaxed text-muted">
                 Per tutela non riveliamo di chi si tratta. Il titolare del volto &egrave; stato avvisato: sar&agrave; lui,
-                se vorr&agrave;, a procedere. Dentro Human2AI questo volto non &egrave; generabile; fuori restano allerta precoce e rimozione assistita.
+                se vorr&agrave;, a procedere. Dentro Semblic questo volto non &egrave; generabile; fuori restano allerta precoce e rimozione assistita.
               </p>
               <p className="mt-2 text-[0.66rem] text-faint">In revisione legale.</p>
             </>
@@ -588,7 +588,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 <span aria-hidden className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-crimson/15 text-crimson">⚠</span>
                 <div>
                   <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">CONTENUTO NON CERTIFICATO: VOLTO RICONOSCIUTO</h2>
-                  <p className="m-0 text-[0.8rem] text-muted">Nessuna filigrana Human2AI, ma il volto corrisponde a una persona del registro.</p>
+                  <p className="m-0 text-[0.8rem] text-muted">Nessuna filigrana Semblic, ma il volto corrisponde a una persona del registro.</p>
                 </div>
               </div>
 
@@ -627,8 +627,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               </div>
 
               <p className="mt-3 rounded-xl border border-crimson/20 bg-crimson/5 p-3 text-[0.76rem] leading-relaxed text-crimson/90">
-                Ogni contenuto autorizzato da Human2AI porta la filigrana col certificato. Questa immagine non la porta:
-                con ogni probabilità è stata generata <strong>fuori</strong> da Human2AI, senza il consenso della persona.
+                Ogni contenuto autorizzato da Semblic porta la filigrana col certificato. Questa immagine non la porta:
+                con ogni probabilità è stata generata <strong>fuori</strong> da Semblic, senza il consenso della persona.
               </p>
             </>
           ) : face && face.scanned && !face.face_found ? (
@@ -662,8 +662,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 {result.source === "token"
                   ? "Questo codice non corrisponde a nessun avatar né contenuto nel registro."
                   : result.marked
-                    ? "L'immagine porta una filigrana Human2AI, ma il certificato non risulta nel registro: segnalacelo."
-                    : "Nessuna filigrana Human2AI in questa immagine."}
+                    ? "L'immagine porta una filigrana Semblic, ma il certificato non risulta nel registro: segnalacelo."
+                    : "Nessuna filigrana Semblic in questa immagine."}
               </p>
             </>
           )}

@@ -1,46 +1,51 @@
 import type { CSSProperties } from "react";
 
 // ──────────────────────────────────────────────────────────────────────────
-// Design tokens Human2AI ("Obsidian Intelligence").
-// Fonte unica di verità per colori, raggi e frammenti di stile ricorrenti.
-// Finora questi valori erano scritti a mano inline in ~15 file: centralizzarli
-// elimina la duplicazione e tiene il brand coerente. Vedi CLAUDE.md per la palette.
+// Design tokens SEMBLIC. Fonte unica di verità per colori, raggi e frammenti
+// di stile ricorrenti (finora scritti a mano inline in ~15 file).
+// Palette: Obsidian (base/superfici), Lumen (luce/testo), Amber (azione).
+// Crimson e Teal restano colori SEMANTICI di stato (bloccato / verificato).
+// NB: le chiavi `violet`/`violetLight` ora contengono AMBER (nome storico
+// mantenuto per non riscrivere tutti i riferimenti). Vedi CLAUDE.md.
 // ──────────────────────────────────────────────────────────────────────────
 
 export const colors = {
-  // Scala scura (sfondo → superfici)
-  bg: "#0a0a0f",        // sfondo pagina
-  panel: "#0d0d14",     // pannelli/riquadri interni
-  card: "#12121a",      // card
-  raised: "#1c1c28",    // elementi sollevati (placeholder portrait, input dark)
+  // Scala scura (sfondo → superfici) derivata da Obsidian #0C0F17
+  bg: "#0C0F17",        // sfondo pagina (Obsidian)
+  panel: "#11141D",     // pannelli/riquadri interni
+  card: "#161A24",      // card
+  raised: "#1F2532",    // elementi sollevati (placeholder portrait, input dark)
 
-  // Testo
-  text: "#f0f0f5",      // primario
-  muted: "#6b7280",     // secondario
-  faint: "#374151",     // terziario/etichette deboli
+  // Testo (Lumen)
+  text: "#F2E9D8",      // primario (Lumen)
+  muted: "#8d8a82",     // secondario (grigio caldo)
+  faint: "#5C5A54",     // terziario/etichette deboli
 
-  // Brand
-  violet: "#6B21E8",
-  violetLight: "#8b47f0",
-  crimson: "#B8005C",
-  teal: "#00A896",
+  // Brand / azione (Amber) + stati
+  violet: "#F2A93B",       // = Amber (azione) — nome storico
+  violetLight: "#F7C06A",  // = Amber chiaro
+  amber: "#F2A93B",
+  amberLight: "#F7C06A",
+  crimson: "#B8005C",   // stato: bloccato/revocato
+  teal: "#00A896",      // stato: verificato/consenso
   green: "#00c864",     // stato "ATTIVO"
 
-  // Bordi (opacità crescente)
-  border: "rgba(255,255,255,0.06)",
-  border2: "rgba(255,255,255,0.08)",
-  border3: "rgba(255,255,255,0.12)",
+  // Bordi (opacità crescente, tinta calda Lumen)
+  border: "rgba(242,233,216,0.06)",
+  border2: "rgba(242,233,216,0.08)",
+  border3: "rgba(242,233,216,0.12)",
 } as const;
 
-export const gradient = "linear-gradient(135deg,#6B21E8,#B8005C)";
+// Gradiente azione (Amber). Usato da elementi decorativi del brand.
+export const gradient = "linear-gradient(135deg,#F2A93B,#e0922a)";
 
 // Raggi ricorrenti
 export const radius = { sm: 8, md: 10, lg: 16, xl: 20, pill: 999 } as const;
 
 // Tinte semitrasparenti del brand (per sfondi pill/badge) — usate spessissimo.
 export const tint = {
-  violet: "rgba(107,33,232,0.12)",
-  violetBorder: "rgba(107,33,232,0.3)",
+  violet: "rgba(242,169,59,0.12)",
+  violetBorder: "rgba(242,169,59,0.3)",
   crimson: "rgba(184,0,92,0.12)",
   crimsonBorder: "rgba(184,0,92,0.3)",
   teal: "rgba(0,168,150,0.12)",
@@ -72,12 +77,12 @@ export const panel: CSSProperties = {
   padding: "1.5rem",
 };
 
-// Pulsante primario (gradiente brand).
+// Pulsante primario (Amber pieno, testo Obsidian — come da palette SEMBLIC).
 export const buttonPrimary: CSSProperties = {
   border: "none",
-  background: gradient,
-  color: "#fff",
-  fontWeight: 700,
+  background: colors.amber,
+  color: "#0C0F17",
+  fontWeight: 800,
   fontSize: "0.9rem",
   borderRadius: radius.md,
   padding: "0.8rem 1.5rem",
@@ -89,7 +94,7 @@ export const buttonPrimary: CSSProperties = {
 
 // Pulsante secondario (outline tenue).
 export const buttonSecondary: CSSProperties = {
-  background: "rgba(255,255,255,0.05)",
+  background: "rgba(242,233,216,0.05)",
   border: `1px solid ${colors.border3}`,
   color: colors.text,
   fontWeight: 700,

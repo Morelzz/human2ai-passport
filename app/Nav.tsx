@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { colors } from "@/lib/ui";
 
-// Logo Human2AI (scudo + wordmark). Link alla home.
+// Logo Semblic (scudo + wordmark). Link alla home.
 // Lo scudo PNG ha fondo navy: lo fondiamo nel dark con una maschera radiale.
 export function Logo({ size = 28 }: { size?: number }) {
   const mask = "radial-gradient(circle,#000 56%,transparent 80%)";
@@ -10,7 +10,7 @@ export function Logo({ size = 28 }: { size?: number }) {
     <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/logo-shield.png" alt="" aria-hidden style={{ width: size, height: size, objectFit: "contain", maskImage: mask, WebkitMaskImage: mask, flexShrink: 0 }} />
-      <span style={{ color: colors.text, fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 700 }}>HUMAN2AI</span>
+      <span style={{ color: colors.text, fontSize: "0.85rem", letterSpacing: "0.2em", fontWeight: 700 }}>SEMBLIC</span>
     </Link>
   );
 }

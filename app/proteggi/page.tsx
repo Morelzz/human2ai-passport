@@ -7,7 +7,7 @@ import ProteggiClient from "./ProteggiClient";
 
 export const metadata = {
   title: "Proteggi il tuo volto",
-  description: "Registra il tuo volto perche' NON venga generato dall'AI dentro Human2AI. Diritto all'oblio generativo.",
+  description: "Registra il tuo volto perche' NON venga generato dall'AI dentro Semblic. Diritto all'oblio generativo.",
 };
 
 // Fase 2.4 (modulo VETO): pagina di registrazione INVERSA. Richiede l'accesso

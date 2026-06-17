@@ -17,7 +17,7 @@ export const maxDuration = 30;
 // system prompt vieta di introdurre contenuti di altre categorie.
 // ──────────────────────────────────────────────────────────────────────────
 
-const SYSTEM = `Sei il rifinitore di prompt di HUMAN2AI, un registro di volti reali e consenzienti.
+const SYSTEM = `Sei il rifinitore di prompt di SEMBLIC, un registro di volti reali e consenzienti.
 L'utente descrive una SCENA per generare un'immagine commerciale FOTOREALISTICA di una persona reale (l'identità del volto è bloccata dall'avatar, NON dal testo).
 
 Riscrivi la scena arricchendola da direttore della fotografia: ambientazione concreta, qualità della luce, mood, composizione/inquadratura, eventuale obiettivo (es. 35mm, 85mm). Frasi asciutte, niente elenchi.

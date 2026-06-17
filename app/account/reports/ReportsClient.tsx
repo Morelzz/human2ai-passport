@@ -78,26 +78,26 @@ export default function ReportsClient() {
         {loading ? (
           <p style={{ color: "#6b7280", fontSize: "0.9rem" }}>Caricamento…</p>
         ) : items.length === 0 ? (
-          <div style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
+          <div style={{ background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
             <p style={{ color: "#00A896", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessuna segnalazione aperta</p>
             <p style={{ color: "#6b7280", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {items.map((r) => (
-              <div key={r.id} style={{ background: "#12121a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem" }}>
+              <div key={r.id} style={{ background: "#161A24", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "1.3rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap", marginBottom: "0.6rem" }}>
                   <span style={{ background: "rgba(184,0,92,0.12)", border: "1px solid rgba(184,0,92,0.3)", color: "#B8005C", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.72rem", fontWeight: 700 }}>
                     {REASON_LABEL[r.reason] ?? r.reason}
                   </span>
-                  <span style={{ background: "rgba(107,33,232,0.1)", border: "1px solid rgba(107,33,232,0.3)", color: "#8b47f0", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.72rem", fontWeight: 700 }}>
+                  <span style={{ background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.72rem", fontWeight: 700 }}>
                     {r.target_type === "content" ? "Contenuto" : "Avatar"}
                   </span>
                   <span style={{ color: "#374151", fontSize: "0.78rem", marginLeft: "auto" }}>{formatDate(r.created_at)}</span>
                 </div>
 
                 {r.handle ? (
-                  <Link href={`/passport/${r.handle}`} style={{ color: "#f0f0f5", fontWeight: 700, fontSize: "1rem", textDecoration: "none" }}>
+                  <Link href={`/passport/${r.handle}`} style={{ color: "#F2E9D8", fontWeight: 700, fontSize: "1rem", textDecoration: "none" }}>
                     @{r.handle}
                   </Link>
                 ) : (
@@ -110,7 +110,7 @@ export default function ReportsClient() {
                 )}
 
                 {r.details && (
-                  <p style={{ color: "#9ca3af", fontSize: "0.86rem", lineHeight: 1.5, margin: "0.7rem 0 0", background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "0.6rem 0.8rem" }}>
+                  <p style={{ color: "#9ca3af", fontSize: "0.86rem", lineHeight: 1.5, margin: "0.7rem 0 0", background: "#0C0F17", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "0.6rem 0.8rem" }}>
                     {r.details}
                   </p>
                 )}
@@ -122,7 +122,7 @@ export default function ReportsClient() {
                   value={notes[r.id] ?? ""}
                   onChange={(e) => setNotes((n) => ({ ...n, [r.id]: e.target.value }))}
                   placeholder="Nota di risoluzione (opzionale)…"
-                  style={{ width: "100%", marginTop: "0.9rem", background: "#0a0a0f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#f0f0f5", fontSize: "0.82rem", padding: "0.55rem 0.7rem", outline: "none", boxSizing: "border-box" }}
+                  style={{ width: "100%", marginTop: "0.9rem", background: "#0C0F17", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#F2E9D8", fontSize: "0.82rem", padding: "0.55rem 0.7rem", outline: "none", boxSizing: "border-box" }}
                 />
 
                 <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.9rem", flexWrap: "wrap" }}>

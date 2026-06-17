@@ -9,7 +9,7 @@ import VerifyClient from "./VerifyClient";
 export const metadata = {
   title: "Verifica un contenuto",
   description:
-    "Carica un'immagine: se è un contenuto Human2AI leggiamo la filigrana invisibile e mostriamo chi l'ha autorizzato e con quale consenso, a tutela della persona.",
+    "Carica un'immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e mostriamo chi l'ha autorizzato e con quale consenso, a tutela della persona.",
 };
 
 export default async function VerifyPage({
@@ -31,7 +31,7 @@ export default async function VerifyPage({
             <span className="text-xs font-bold tracking-[0.14em] text-teal">VERIFICA</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Verifica un contenuto</h1>
             <p className="mt-3 leading-relaxed text-muted">
-              Carica un&apos;immagine: se è un contenuto <span className="text-foreground">Human2AI</span> leggiamo
+              Carica un&apos;immagine: se è un contenuto <span className="text-foreground">Semblic</span> leggiamo
               la filigrana invisibile e ti mostriamo chi l&apos;ha autorizzato e con quale consenso. Se non lo è,
               possiamo confrontare il volto col registro, <span className="text-foreground">a tutela della persona</span>.
             </p>

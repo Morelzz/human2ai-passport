@@ -3,21 +3,21 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// Button — sistema "Dala ibrido" (docs/DESIGN.md): PILLOLE (raggio pieno),
-// UN solo colore d'azione riempito (il viola), niente ombre/gradienti.
-// Etichette uppercase con tracking aperto: leggibilità sul void.
+// Button — sistema SEMBLIC: PILLOLE (raggio pieno), UN solo colore d'azione
+// riempito (Amber), testo Obsidian sul pieno, niente ombre/gradienti.
+// Etichette uppercase con tracking aperto: leggibilità sull'Obsidian.
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold uppercase tracking-[0.05em] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet/50 disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold uppercase tracking-[0.05em] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber/50 disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none",
   {
     variants: {
       variant: {
         primary:
-          "text-white bg-violet-light hover:brightness-110 active:brightness-95",
+          "text-obsidian bg-amber hover:brightness-110 active:brightness-95",
         secondary:
           "text-foreground border border-white/20 hover:border-white/45",
         ghost: "text-muted hover:text-foreground",
         outline:
-          "text-teal border border-teal/35 hover:border-teal/70",
+          "text-amber border border-amber/40 hover:border-amber/70",
       },
       size: {
         sm: "h-9 px-5 text-[0.7rem]",

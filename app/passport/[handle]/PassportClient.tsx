@@ -131,7 +131,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             <div className="mb-3 flex flex-wrap gap-2">
               {/* Ogni volto del registro è una persona reale verificata (gli
                   ambassador conosciuti di persona, i creatori via KYC). Badge
-                  unico: niente più "HUMAN2AI VERIFIED" doppione. Mai sui demo. */}
+                  unico: niente più "SEMBLIC VERIFIED" doppione. Mai sui demo. */}
               {isRealPerson && (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal">
                   <BadgeCheck className="h-3.5 w-3.5" /> PERSONA REALE VERIFICATA
@@ -266,7 +266,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         >
           <Link
             href={`/match?avatar=${avatar.handle}`}
-            className="block w-full rounded-2xl bg-[linear-gradient(135deg,#6B21E8,#B8005C)] px-8 py-6 text-center text-xl font-extrabold tracking-tight text-white shadow-[0_12px_50px_rgba(107,33,232,0.4)] transition-all hover:brightness-110 sm:text-2xl"
+            className="block w-full rounded-2xl bg-[linear-gradient(135deg,#F2A93B,#B8005C)] px-8 py-6 text-center text-xl font-extrabold tracking-tight text-white shadow-[0_12px_50px_rgba(242,169,59,0.4)] transition-all hover:brightness-110 sm:text-2xl"
           >
             ⚡ Genera con questo avatar →
           </Link>
@@ -291,7 +291,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             <p className="text-xs tracking-[0.1em] text-muted">INGAGGI REALI</p>
           </div>
           <p className="mb-3 text-sm leading-relaxed text-muted">
-            {avatar.alias} e&apos; disponibile per uno shooting reale con la persona vera. Human2AI fa da garante: l&apos;AI non sostituisce i modelli, gli procura lavoro.
+            {avatar.alias} e&apos; disponibile per uno shooting reale con la persona vera. Semblic fa da garante: l&apos;AI non sostituisce i modelli, gli procura lavoro.
           </p>
           <Link
             href={`/contatti?ingaggio=${avatar.handle}`}
