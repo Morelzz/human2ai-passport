@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { avatarVetoReason } from "@/lib/avatar-gate";
 import { grossForCategory, splitRoyalty, splitEcho } from "@/lib/wallet";
 import { echoCostCentsFromUsage } from "@/lib/engines/echo-cost";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
@@ -106,17 +107,23 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (!avatar) return NextResponse.json({ error: "Avatar inesistente" }, { status: 404 });
-  // Fase 2.2 (VETO): un volto in sola protezione NON e' mai generabile, in nessuna
-  // categoria e nemmeno in preview. Blocco assoluto in input + log protected_face.
-  if ((avatar as { protection_only?: boolean }).protection_only) {
-    logBlockedRequest(admin, { source: "generate", reason: "protected_face", category });
-    return NextResponse.json({ error: "Questo volto e' registrato in sola protezione: la generazione e' vietata." }, { status: 403 });
-  }
-  if (avatar.revoked_at) {
-    // Ogni blocco del filtro viene loggato (forma della domanda, mai chi chiede):
-    // alimenta il Transparency Report e la heatmap della domanda scoperta.
-    logBlockedRequest(admin, { source: "generate", reason: "revoked", category });
-    return NextResponse.json({ error: "Consenso revocato: generazione bloccata" }, { status: 403 });
+  // Fase 2.2 (VETO): stato dell'avatar che vieta in modo assoluto la generazione
+  // (sola protezione o consenso revocato), in ogni categoria e anche in preview.
+  // Decisione condivisa con /api/avatar/soul via lib/avatar-gate, così i due
+  // percorsi non possono divergere. Ogni blocco viene loggato (forma della
+  // domanda, mai chi chiede): alimenta il Transparency Report e la heatmap.
+  const veto = avatarVetoReason(avatar);
+  if (veto) {
+    logBlockedRequest(admin, { source: "generate", reason: veto, category });
+    return NextResponse.json(
+      {
+        error:
+          veto === "protected_face"
+            ? "Questo volto e' registrato in sola protezione: la generazione e' vietata."
+            : "Consenso revocato: generazione bloccata",
+      },
+      { status: 403 }
+    );
   }
   // Guardrail consenso: solo per uso COMMERCIALE la categoria dev'essere autorizzata.
   // L'anteprima watermarkata è discovery non commerciale: non vincola la categoria.

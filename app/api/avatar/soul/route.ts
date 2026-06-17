@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { createSoulFromImages, SoulPhoto } from "@/lib/higgsfield";
+import { avatarVetoReason } from "@/lib/avatar-gate";
 
 // Attiva il Soul di un avatar: il creatore verificato carica le sue foto reali,
 // noi addestriamo il Soul sul motore e salviamo soul_ref. Costo (~20 crediti) a
@@ -32,11 +33,29 @@ export async function POST(request: Request) {
   const admin = createServerClient();
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, alias, soul_ref")
+    .select("id, alias, soul_ref, protection_only, revoked_at")
     .eq("owner_id", user.id)
     .maybeSingle();
 
   if (!avatar) return NextResponse.json({ error: "Non hai ancora un avatar nel registro" }, { status: 404 });
+
+  // VETO (gli stessi di /api/generate, via lib/avatar-gate): un volto in sola
+  // protezione o con consenso revocato non può attivare un Soul, a prescindere
+  // dal resto. Coerenza con il filtro di generazione, niente Soul addestrato
+  // (e ~20 crediti spesi) su un volto che non sarà mai generabile.
+  const veto = avatarVetoReason(avatar);
+  if (veto) {
+    return NextResponse.json(
+      {
+        error:
+          veto === "protected_face"
+            ? "Questo volto è registrato in sola protezione: non puoi attivare un Soul."
+            : "Consenso revocato: non puoi attivare un Soul.",
+      },
+      { status: 403 }
+    );
+  }
+
   if (avatar.soul_ref) return NextResponse.json({ error: "Il Soul è già attivo per questo avatar" }, { status: 409 });
 
   // Foto caricate (multipart/form-data, campo "photos").
