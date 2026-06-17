@@ -112,8 +112,10 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                           className="flex-1 rounded-lg border border-teal/30 bg-teal/10 px-2 py-1.5 text-center text-[0.72rem] font-semibold text-teal transition-colors hover:bg-teal/20 disabled:opacity-50"
                         />
                       </div>
-                      {/* Fase 3.3: ricevuta di conformita' scaricabile (audit azienda). */}
-                      <a href={`/api/receipt/${g.certificate}?download=1`} className="mt-1.5 block text-center text-[0.66rem] text-faint underline-offset-2 transition-colors hover:text-muted hover:underline">
+                      {/* Fase 3.3: ricevuta di conformita' come pagina stampabile
+                          (Stampa -> Salva come PDF); dentro c'e' anche il download
+                          JSON per l'archivio/API. */}
+                      <a href={`/receipt/${g.certificate}`} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-center text-[0.66rem] text-faint underline-offset-2 transition-colors hover:text-muted hover:underline">
                         Ricevuta di conformità
                       </a>
                     </>

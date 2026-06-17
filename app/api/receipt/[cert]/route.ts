@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase";
-import { siteUrl } from "@/lib/site";
+import { buildComplianceReceipt } from "@/lib/receipt";
 
 export const runtime = "nodejs";
 
@@ -14,44 +13,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ cert
   const { cert } = await params;
   if (!cert || cert.length < 16) return NextResponse.json({ error: "Certificato non valido" }, { status: 400 });
 
-  const admin = createServerClient();
-  const { data: gen } = await admin
-    .from("generations")
-    .select("certificate, category, mode, created_at, avatars(handle, alias, consent_start, approved_categories, revoked_at)")
-    .eq("certificate", cert)
-    .maybeSingle();
-  if (!gen) return NextResponse.json({ error: "Ricevuta non trovata per questo certificato" }, { status: 404 });
-
-  const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
-  const base = siteUrl();
-  const category = gen.category ?? null;
-  const inScope = !category || (Array.isArray(av?.approved_categories) && av!.approved_categories.includes(category));
-
-  const receipt = {
-    issuer: "Human2AI",
-    document: "Ricevuta di conformita' del consenso",
-    certificate: gen.certificate,
-    issued_at: new Date().toISOString(),
-    subject: {
-      handle: av?.handle ?? null,
-      alias: av?.alias ?? null,
-      registry_url: av?.handle ? `${base}/passport/${av.handle}` : null,
-    },
-    generation: { date: String(gen.created_at).slice(0, 10), category, mode: gen.mode ?? "commercial" },
-    consent: {
-      verified_person: true, // l'avatar e' nel registro consensuale verificato
-      consent_since: av?.consent_start ?? null,
-      category_in_scope: inScope, // ambito CORRENTE; al momento della gen il gate l'ha gia' imposto
-      revoked: Boolean(av?.revoked_at),
-      revoked_at: av?.revoked_at ?? null,
-    },
-    verification_url: `${base}/verify`,
-    statement:
-      "Questa generazione e' stata prodotta tramite Human2AI dal percorso di consenso verificato: il volto " +
-      "appartiene a una persona reale presente nel registro, che ha prestato consenso per l'uso, e la categoria " +
-      "rientrava nell'ambito autorizzato al momento della generazione. Il certificato e' verificabile su " +
-      `${base}/verify.`,
-  };
+  const receipt = await buildComplianceReceipt(cert, new Date().toISOString());
+  if (!receipt) return NextResponse.json({ error: "Ricevuta non trovata per questo certificato" }, { status: 404 });
 
   const headers: Record<string, string> = { "Content-Type": "application/json; charset=utf-8" };
   if (new URL(request.url).searchParams.get("download") === "1") {
