@@ -59,7 +59,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
   useEffect(() => { if (!open) setOpenSection(null); }, [open]);
 
   // Stile condiviso delle voci di primo livello (desktop).
-  const topLinkCls = "text-sm tracking-[0.021em] text-[rgba(242,233,216,0.70)] transition-colors hover:text-foreground";
+  const topLinkCls = "text-sm tracking-[0.021em] text-muted transition-colors hover:text-foreground";
 
   return (
     <>
@@ -99,7 +99,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                   <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[var(--elevated)] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
                     {entry.items.map((it) => (
-                      <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-[rgba(242,233,216,0.70)] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
+                      <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
                     ))}
                   </div>
                 </div>
@@ -145,7 +145,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
           <button
             onClick={() => setOpen(true)}
             aria-label="Apri menu"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-white/5"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-[var(--hairline)]"
           >
             <Menu className="h-6 w-6" />
           </button>
@@ -170,7 +170,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
             >
               <div className="mb-6 flex items-center justify-between">
                 <span className="text-sm font-bold tracking-[0.15em]">MENU</span>
-                <button onClick={() => setOpen(false)} aria-label="Chiudi menu" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-white/5 hover:text-foreground">
+                <button onClick={() => setOpen(false)} aria-label="Chiudi menu" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-[var(--hairline)] hover:text-foreground">
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -183,7 +183,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                         type="button"
                         onClick={() => setOpenSection(openSection === entry.label ? null : entry.label)}
                         aria-expanded={openSection === entry.label}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5"
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-[var(--hairline)]"
                       >
                         {entry.label}
                         <ChevronDown className={`h-5 w-5 text-muted transition-transform duration-200 ${openSection === entry.label ? "rotate-180" : ""}`} />
@@ -191,17 +191,17 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                       {openSection === entry.label && (
                         <div className="flex flex-col gap-0.5 pb-1.5 pl-3">
                           {entry.items.map((it) => (
-                            <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-[rgba(242,233,216,0.70)] transition-colors hover:bg-white/5 hover:text-foreground">{it.label}</Link>
+                            <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
                           ))}
                         </div>
                       )}
                     </div>
                   ) : (
-                    <Link key={entry.href} href={entry.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">{entry.label}</Link>
+                    <Link key={entry.href} href={entry.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-[var(--hairline)]">{entry.label}</Link>
                   )
                 )}
                 <Link href={firstName ? "/account" : "/login"} onClick={() => setOpen(false)}
-                  className="mt-1 flex items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-white/5">
+                  className="mt-1 flex items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-[var(--hairline)]">
                   <span>{firstName ? `Account · ${firstName}` : "Accedi"}</span>
                   {badge && (
                     <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-crimson px-1.5 text-xs font-bold text-white">{badge}</span>
