@@ -10,7 +10,7 @@
 // Sorgente di verita dei DATI: lib/studio-options.ts (GOALS).
 // ──────────────────────────────────────────────────────────────────────────
 
-import { GOALS, type GoalPreset } from "@/lib/studio-options";
+import { GOALS } from "@/lib/studio-options";
 
 // Riga descrittiva per ogni obiettivo (la stessa del prototipo: ".gd").
 // Tenuta qui perche' e' copy di presentazione, non un parametro di generazione.
@@ -24,7 +24,7 @@ const GOAL_DESC: Record<string, string> = {
 // Glifo per ogni obiettivo (icona "gi" del prototipo, resa testuale).
 const GOAL_ICON: Record<string, string> = {
   ig: "◉",
-  ecom: "₿",
+  ecom: "▣",
   linkedin: "■",
   adv: "☺",
 };
@@ -44,7 +44,7 @@ export function GoalStart({ alias, onPick }: { alias: string; onPick: (goal: str
       </p>
 
       <div className="grid grid-cols-2 gap-2.5">
-        {presetGoals.map((g: GoalPreset) => (
+        {presetGoals.map((g) => (
           <button
             key={g.v}
             type="button"
