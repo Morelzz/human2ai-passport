@@ -86,6 +86,7 @@ export const POSES = [
 
 // Tipi letterali derivati dai cataloghi (cambio valore in GOALS = errore di compilazione)
 export type FramingVal = (typeof FRAMINGS)[number]["v"];
+export type ExpressionVal = (typeof EXPRESSIONS)[number]["v"];
 export type LightVal = (typeof LIGHTS)[number]["v"];
 export type ColorStyleVal = (typeof COLOR_STYLES)[number]["v"];
 export type LensVal = (typeof LENSES)[number]["v"];

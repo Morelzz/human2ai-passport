@@ -21,7 +21,7 @@ import { voltStr } from "@/lib/strings/volt";
 // Tipi delle nuove selezioni dello Studio: il segmento fotografico (Task
 // successivi) usera' i tipi letterali derivati dai cataloghi di studio-options.
 import { GOALS, FRAMINGS, EXPRESSIONS } from "@/lib/studio-options";
-import type { FramingVal, LightVal, ColorStyleVal, LensVal, CameraVal, GoalPreset } from "@/lib/studio-options";
+import type { FramingVal, ExpressionVal, LightVal, ColorStyleVal, LensVal, CameraVal, GoalPreset } from "@/lib/studio-options";
 import { GoalStart } from "./GoalStart";
 import { AvatarHero } from "./AvatarHero";
 import { PosePicker } from "./PosePicker";
@@ -128,8 +128,8 @@ export interface StudioPanelProps {
   setPose: (v: string) => void;
   framing: FramingVal;
   setFraming: (v: FramingVal) => void;
-  expression: string;
-  setExpression: (v: string) => void;
+  expression: ExpressionVal;
+  setExpression: (v: ExpressionVal) => void;
   colorStyle: ColorStyleVal;
   setColorStyle: (v: ColorStyleVal) => void;
   camera: CameraVal;
@@ -336,7 +336,7 @@ export function StudioPanel(props: StudioPanelProps) {
               L'invio al prompt /api/generate arriva in un task successivo. */}
           <PosePicker value={pose} onChange={setPose} />
           <IconPicker label="Inquadratura" sheetTitle="Scegli l'inquadratura" options={FRAMINGS} value={framing} onChange={(v) => setFraming(v as FramingVal)} />
-          <IconPicker label="Espressione" sheetTitle="Scegli l'espressione" options={EXPRESSIONS} value={expression} onChange={setExpression} />
+          <IconPicker label="Espressione" sheetTitle="Scegli l'espressione" options={EXPRESSIONS} value={expression} onChange={(v) => setExpression(v as ExpressionVal)} />
 
           {/* Stile colore + Look fotografico (Task 9): dopo l'Espressione, nello
               stesso ordine del prototipo. Stile colore = chip con campione di

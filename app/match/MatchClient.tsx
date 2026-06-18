@@ -9,7 +9,7 @@ import { KineticText } from "@/components/motion/KineticText";
 // Motore Higgsfield/Soul rimosso dalla UI: ECHO (gpt-image-2) e' l'unico motore.
 import { voltStr, VOLT_STRINGS, voltLoadingLine, voltSuccessMission } from "@/lib/strings/volt";
 import { StudioPanel } from "@/app/match/studio/StudioPanel";
-import type { FramingVal, LightVal, ColorStyleVal, LensVal, CameraVal } from "@/lib/studio-options";
+import type { FramingVal, ExpressionVal, LightVal, ColorStyleVal, LensVal, CameraVal } from "@/lib/studio-options";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -241,7 +241,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   const [goal, setGoal] = useState<string | null>(null);
   const [pose, setPose] = useState("nessuna");
   const [framing, setFraming] = useState<FramingVal>("mezzo_busto");
-  const [expression, setExpression] = useState("naturale");
+  const [expression, setExpression] = useState<ExpressionVal>("naturale");
   const [colorStyle, setColorStyle] = useState<ColorStyleVal>("naturale");
   const [camera, setCamera] = useState<CameraVal>("full_frame");
   const [lens, setLens] = useState<LensVal>("85mm");

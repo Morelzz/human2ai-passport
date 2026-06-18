@@ -2,17 +2,21 @@
 
 // ──────────────────────────────────────────────────────────────────────────
 // FinalPrompt — anteprima READ-ONLY del "Prompt finale". Ricompone, lato
-// client e a sola lettura, la stringa che il server costruira in
-// lib/echo-prompt.buildEchoPrompt, RISPETTANDO LO STESSO ORDINE:
-//   1. la scena tra virgolette (la direzione dell'utente),
-//   2. il token della posa (poseToken, saltato se vuoto),
-//   3. le clausole dei riferimenti (una breve per ref: ruolo + descrizione),
-//   4. il segmento fotografico (photographicSegment: stile colore, inquadratura,
-//      espressione, macchina, ottica, luce),
-//   5. una nota muted: prefisso identita di sistema (lato server).
+// client e a sola lettura, gli stessi PEZZI che il server comporra in
+// lib/echo-prompt.buildEchoPrompt, usando GLI STESSI token-helper e lo STESSO
+// insieme di token di @/lib/studio-options:
+//   - la scena tra virgolette (la direzione dell'utente),
+//   - il token della posa (poseToken, saltato se vuoto),
+//   - le clausole dei riferimenti (una breve per ref: ruolo + descrizione),
+//   - il segmento fotografico (photographicSegment: stile colore, inquadratura,
+//     espressione, macchina, ottica, luce),
+//   - una nota muted: prefisso identita di sistema (lato server).
+// ATTENZIONE all'ordine: l'anteprima mette la SCENA PER PRIMA come headline,
+// scelta di leggibilita (UX). Il server invece la appende per ULTIMA, come
+// "Additional direction: <scene>". La composizione e' fedele nel CONTENUTO
+// (stessi token, stesso insieme); l'ordine di visualizzazione e' solo una
+// scelta presentazionale, non rispecchia l'ordine del server.
 // I token DOPO la scena sono de-enfatizzati in amber (come .add del prototipo).
-// Usa i token-helper di @/lib/studio-options cosi l'anteprima resta sempre
-// fedele a quello che il server comporra.
 // Sorgente di verita del LOOK: design/anteprima_match_mobile.html (.finalp).
 // NB testi italiani senza trattini lunghi (regola di Morelz).
 // ──────────────────────────────────────────────────────────────────────────
@@ -20,6 +24,7 @@
 import { poseToken, photographicSegment } from "@/lib/studio-options";
 import type {
   FramingVal,
+  ExpressionVal,
   LightVal,
   ColorStyleVal,
   LensVal,
@@ -59,7 +64,7 @@ export function FinalPrompt({
   scene: string;
   pose: string;
   framing: FramingVal;
-  expression: string;
+  expression: ExpressionVal;
   colorStyle: ColorStyleVal;
   camera: CameraVal;
   lens: LensVal;
