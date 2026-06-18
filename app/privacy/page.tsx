@@ -88,8 +88,7 @@ export default function PrivacyPage() {
               Per erogare il servizio ci appoggiamo a fornitori selezionati, che trattano i dati solo per nostro conto e
               limitatamente a ciò che serve: <strong className="text-foreground">Supabase</strong> (database, autenticazione
               e archiviazione cifrata delle foto), <strong className="text-foreground">Anthropic (Claude)</strong>, solo se
-              scegli di far analizzare le foto per pre-compilare l&apos;identikit, <strong className="text-foreground">OpenAI</strong> e
-              <strong className="text-foreground"> Higgsfield</strong> per la generazione delle immagini quando autorizzata.
+              scegli di far analizzare le foto per pre-compilare l&apos;identikit, <strong className="text-foreground">OpenAI</strong> (ECHO, gpt-image) per la generazione delle immagini quando autorizzata.
               Alcuni di questi fornitori hanno sede fuori dall&apos;UE: i trasferimenti avvengono con le garanzie previste dal
               GDPR. Non cediamo i tuoi dati a nessun altro e non li usiamo per addestrare modelli senza il tuo consenso.
             </Section>
