@@ -63,10 +63,8 @@ export interface StudioPanelProps {
   // L'avatar di questa card + contesto della ricerca.
   avatar: StudioAvatar;
   category: string | null;
-  resultsLength: number;
 
-  // Selezione corrente (per nascondere "Seleziona" sul volto gia' scelto).
-  selectedHandle: string | null;
+  // Reset della selezione (usato dall'hero "Cambia volto").
   setSelectedHandle: (h: string | null) => void;
 
   // Stato di generazione, posseduto da MatchClient.
@@ -147,8 +145,6 @@ export function StudioPanel(props: StudioPanelProps) {
   const {
     avatar,
     category,
-    resultsLength,
-    selectedHandle,
     setSelectedHandle,
     gen,
     generating,
@@ -197,10 +193,6 @@ export function StudioPanel(props: StudioPanelProps) {
   // sono lette qui per evitare "unused variable" finche' i task successivi non
   // le rendono. usato dai task successivi
   void pose; void setPose; void expression; void setExpression; void camera; void setCamera;
-  // selectedHandle/resultsLength restano nell'interfaccia (passati da MatchClient)
-  // ma il vecchio bottone "Seleziona" e' rimpiazzato dall'hero: void per non
-  // lasciarli "unused".
-  void selectedHandle; void resultsLength;
 
   // Avvio per obiettivo: applica i preset del GoalPreset scelto (formato,
   // inquadratura, luce, stile colore, ottica) e poi entra in composizione
@@ -274,58 +266,43 @@ export function StudioPanel(props: StudioPanelProps) {
         goalLabel={goalLabel}
         onClearGoal={() => setGoal(null)}
       />
-      <p className="mt-4 font-mono text-[0.7rem] tracking-wide text-teal/90">
-        <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
-        <span className="text-faint">affinità: {avatar.reasons.join(" · ")}</span>
-      </p>
-
-      {avatar.gallery_count > 0 && (
-        <div className="mt-5">
-          <span className="mb-2 block text-xs font-semibold text-muted">
-            Repertorio <span className="font-normal text-faint">· esempi generati da questo volto</span>
-          </span>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {Array.from({ length: avatar.gallery_count }).map((_, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`} loading="lazy"
-                className="h-[150px] w-[112px] shrink-0 rounded-lg border border-border bg-obsidian-3 object-cover" />
-            ))}
-          </div>
-        </div>
-      )}
 
       {!gen ? (
         <>
+          {/* Blocco "La scena" (Task 7): primo controllo sotto l'hero in composizione.
+              Struttura/etichette dal prototipo design/anteprima_match_mobile.html
+              (.blk "La scena"), tradotto nei token dell'app: label amber, textarea
+              su superficie input, enhancer in tinta amber, proposta con azioni
+              salvia "Usa questa" / neutra "Tieni la mia". */}
           <div className="mt-5">
-            <label className="mb-2 block text-xs font-bold tracking-[0.1em] text-violet-light">PASSO 2: SCENA / DIREZIONE</label>
+            <span className="mb-2 block text-[0.66rem] font-semibold uppercase tracking-[0.06em] text-amber">La scena</span>
             <textarea
               value={sceneByHandle[avatar.handle] ?? ""}
               onChange={(e) => setSceneByHandle((m) => ({ ...m, [avatar.handle]: e.target.value }))}
               placeholder="Es. che balla in spiaggia al tramonto, luce dorata, look estivo, 35mm"
               rows={2}
-              className="w-full resize-y rounded-xl border border-border bg-obsidian px-3 py-3 text-sm text-foreground outline-none focus:border-violet/50"
+              className="w-full resize-y rounded-xl border border-border bg-obsidian-2 px-3 py-3 text-sm leading-relaxed text-foreground outline-none focus:border-amber/40"
             />
 
             {/* A1 — Prompt Enhancer: mai automatico, parte solo da qui */}
-            <div className="mt-2 flex items-center justify-between gap-3">
-              <p className="text-[0.7rem] leading-relaxed text-faint">
-                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, identità bloccata dalle sue foto reali.
-              </p>
-              <button
-                type="button"
-                onClick={() => enhance(avatar.handle)}
-                disabled={enhancingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
-                className="shrink-0 rounded-full border border-violet/35 bg-violet/10 px-3 py-1.5 text-[0.72rem] font-bold text-violet-light transition-all hover:bg-violet/20 disabled:opacity-40"
-              >
-                {enhancingHandle === avatar.handle ? "✨ Miglioro…" : "✨ Migliora prompt"}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => enhance(avatar.handle)}
+              disabled={enhancingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
+              className="mt-2 w-full rounded-xl border border-amber/30 bg-amber/10 px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber/20 disabled:opacity-40"
+            >
+              {enhancingHandle === avatar.handle ? "✦ Miglioro…" : "✦ Migliora prompt"}
+            </button>
+            <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
+              Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, identità bloccata dalle sue foto reali.
+            </p>
 
-            {/* Proposta migliorata, evidenziata: usa / ignora (modificabile dopo l'uso) */}
+            {/* Proposta migliorata: tag "Proposta", testo suggerito e due azioni
+                (Usa questa / Tieni la mia). Modificabile dopo l'uso. */}
             {enhancedByHandle[avatar.handle] && (
-              <div className="mt-2 rounded-xl border border-violet/40 bg-violet/[0.08] p-3 shadow-[0_0_24px_rgba(242,169,59,0.15)]">
-                <span className="label-mono text-violet-light">Proposta</span>
-                <p className="mt-1.5 text-sm leading-relaxed text-foreground">{enhancedByHandle[avatar.handle]}</p>
+              <div className="mt-2.5 rounded-xl border border-amber/30 bg-amber/[0.07] p-3">
+                <span className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-amber">Proposta</span>
+                <p className="mt-1.5 text-[0.82rem] leading-relaxed text-foreground">{enhancedByHandle[avatar.handle]}</p>
                 <div className="mt-2.5 flex gap-2">
                   <button
                     type="button"
@@ -333,14 +310,14 @@ export function StudioPanel(props: StudioPanelProps) {
                       setSceneByHandle((m) => ({ ...m, [avatar.handle]: enhancedByHandle[avatar.handle] ?? "" }));
                       setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }));
                     }}
-                    className="rounded-lg border border-teal/40 bg-teal/10 px-3 py-1.5 text-[0.72rem] font-bold text-teal transition-colors hover:bg-teal/20"
+                    className="flex-1 rounded-lg border border-teal/40 bg-teal/10 px-3 py-2 text-center text-[0.75rem] font-semibold text-teal transition-colors hover:bg-teal/20"
                   >
-                    ✓ Usa questa (poi modificabile)
+                    Usa questa
                   </button>
                   <button
                     type="button"
                     onClick={() => setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }))}
-                    className="rounded-lg border border-border px-3 py-1.5 text-[0.72rem] font-semibold text-muted transition-colors hover:bg-white/5"
+                    className="flex-1 rounded-lg border border-border px-3 py-2 text-center text-[0.75rem] font-semibold text-muted transition-colors hover:bg-white/5"
                   >
                     Tieni la mia
                   </button>
@@ -356,6 +333,26 @@ export function StudioPanel(props: StudioPanelProps) {
               </div>
             )}
           </div>
+
+          <p className="mt-5 font-mono text-[0.7rem] tracking-wide text-teal/90">
+            <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
+            <span className="text-faint">affinità: {avatar.reasons.join(" · ")}</span>
+          </p>
+
+          {avatar.gallery_count > 0 && (
+            <div className="mt-5">
+              <span className="mb-2 block text-xs font-semibold text-muted">
+                Repertorio <span className="font-normal text-faint">· esempi generati da questo volto</span>
+              </span>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {Array.from({ length: avatar.gallery_count }).map((_, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`} loading="lazy"
+                    className="h-[150px] w-[112px] shrink-0 rounded-lg border border-border bg-obsidian-3 object-cover" />
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="mt-4">
             <p className="text-[0.7rem] leading-relaxed text-teal">
