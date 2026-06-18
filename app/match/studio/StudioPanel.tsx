@@ -21,13 +21,14 @@ import { voltStr } from "@/lib/strings/volt";
 // Tipi delle nuove selezioni dello Studio: il segmento fotografico (Task
 // successivi) usera' i tipi letterali derivati dai cataloghi di studio-options.
 import { GOALS, FRAMINGS, EXPRESSIONS } from "@/lib/studio-options";
-import type { FramingVal, LightVal, ColorStyleVal, LensVal, GoalPreset } from "@/lib/studio-options";
+import type { FramingVal, LightVal, ColorStyleVal, LensVal, CameraVal, GoalPreset } from "@/lib/studio-options";
 import { GoalStart } from "./GoalStart";
 import { AvatarHero } from "./AvatarHero";
 import { PosePicker } from "./PosePicker";
 import { IconPicker } from "./IconPicker";
 import { ColorStyleRow } from "./ColorStyleRow";
 import { PhotographicLook } from "./PhotographicLook";
+import { FinalPrompt } from "./FinalPrompt";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -131,8 +132,8 @@ export interface StudioPanelProps {
   setExpression: (v: string) => void;
   colorStyle: ColorStyleVal;
   setColorStyle: (v: ColorStyleVal) => void;
-  camera: string;
-  setCamera: (v: string) => void;
+  camera: CameraVal;
+  setCamera: (v: CameraVal) => void;
   lens: LensVal;
   setLens: (v: LensVal) => void;
   light: LightVal;
@@ -347,7 +348,7 @@ export function StudioPanel(props: StudioPanelProps) {
             camera={camera}
             lens={lens}
             light={light}
-            onCamera={setCamera}
+            onCamera={(v) => setCamera(v as CameraVal)}
             onLens={(v) => setLens(v as LensVal)}
             onLight={(v) => setLight(v as LightVal)}
           />
@@ -372,15 +373,18 @@ export function StudioPanel(props: StudioPanelProps) {
             </div>
           )}
 
-          <div className="mt-4">
-            <p className="text-[0.7rem] leading-relaxed text-teal">
-              Motore ECHO · massima fedeltà: l&apos;identità è bloccata dalle foto reali della persona.
-            </p>
-          </div>
-
-          {/* ECHO — formato, risoluzione e qualità (incidono sul prezzo) */}
+          {/* Motore e formato (restyle Task 11): il motore NON e' un toggle ma una
+              chip fissa "ECHO fotoreale · identita bloccata" (.enginechip del
+              prototipo). Formato/risoluzione/qualita' restano (logica invariata),
+              ma lo stato attivo passa ad AMBER, unico colore d'azione SEMBLIC. */}
           {engine === "echo" && (
-            <div className="mt-4 space-y-3">
+            <div className="mt-5 space-y-3">
+              <span className="block text-[0.66rem] font-semibold uppercase tracking-[0.06em] text-amber">Motore e formato</span>
+              {/* Motore fisso: identita bloccata, nessuna scelta di modello. */}
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-amber/10 px-3 py-1.5 text-xs font-medium text-amber">
+                <span aria-hidden>◉</span> ECHO fotoreale
+                <span className="text-[0.65rem] font-normal text-muted">identità bloccata</span>
+              </span>
               <div>
                 <span className="mb-1.5 block text-xs font-semibold text-muted">Formato</span>
                 <div className="flex flex-wrap gap-2">
@@ -501,6 +505,22 @@ export function StudioPanel(props: StudioPanelProps) {
             </div>
           )}
 
+          {/* Prompt finale (Task 11): anteprima READ-ONLY, subito prima del
+              bottone Genera. Ricompone client-side, nello stesso ordine del
+              server (lib/echo-prompt), cio' che ECHO ricevera': scena +
+              posa + clausole riferimenti + segmento fotografico + nota di
+              sistema. Usa i token-helper di studio-options: sempre fedele. */}
+          <FinalPrompt
+            scene={sceneByHandle[avatar.handle] ?? ""}
+            pose={pose}
+            framing={framing}
+            expression={expression}
+            colorStyle={colorStyle}
+            camera={camera}
+            lens={lens}
+            light={light}
+            refs={echoRefs}
+          />
 
           {voltBalance !== null && voltBalance >= priceCents && (
             <p className="mt-4 text-center text-[0.7rem] text-faint">
@@ -584,8 +604,10 @@ export function StudioPanel(props: StudioPanelProps) {
   );
 }
 
-// Chip e EuroRow: copie locali identiche a quelle di MatchClient (presentazionali,
-// nessuno stato). Tenute qui per non dover esportare/riorganizzare MatchClient.
+// Chip e EuroRow: copie locali (presentazionali, nessuno stato). La Chip qui
+// serve SOLO ai selettori ECHO (formato/risoluzione/qualita'): lo stato attivo
+// e' AMBER, unico colore d'azione SEMBLIC, in linea coi chip posa/look (mai
+// violet). Tenute qui per non dover esportare/riorganizzare MatchClient.
 function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
@@ -593,7 +615,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       onClick={onClick}
       aria-pressed={active}
       className={`focus-ring rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
-        active ? "border border-violet bg-violet/20 text-foreground" : "border border-border bg-obsidian-2 text-muted hover:text-foreground"
+        active ? "border border-amber bg-amber/10 text-amber" : "border border-border bg-obsidian-2 text-muted hover:text-foreground"
       }`}
     >
       {children}

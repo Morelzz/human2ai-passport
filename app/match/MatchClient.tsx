@@ -9,7 +9,7 @@ import { KineticText } from "@/components/motion/KineticText";
 // Motore Higgsfield/Soul rimosso dalla UI: ECHO (gpt-image-2) e' l'unico motore.
 import { voltStr, VOLT_STRINGS, voltLoadingLine, voltSuccessMission } from "@/lib/strings/volt";
 import { StudioPanel } from "@/app/match/studio/StudioPanel";
-import type { FramingVal, LightVal, ColorStyleVal, LensVal } from "@/lib/studio-options";
+import type { FramingVal, LightVal, ColorStyleVal, LensVal, CameraVal } from "@/lib/studio-options";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -243,7 +243,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   const [framing, setFraming] = useState<FramingVal>("mezzo_busto");
   const [expression, setExpression] = useState("naturale");
   const [colorStyle, setColorStyle] = useState<ColorStyleVal>("naturale");
-  const [camera, setCamera] = useState("full_frame");
+  const [camera, setCamera] = useState<CameraVal>("full_frame");
   const [lens, setLens] = useState<LensVal>("85mm");
   const [light, setLight] = useState<LightVal>("naturale");
 
@@ -382,10 +382,17 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
               .filter((r): r is NonNullable<EchoRef> => !!r?.dataUrl)
               .map((r) => ({ data: r.dataUrl, desc: r.desc, role: r.role }))
           : undefined,
-        // La posa-da-libreria non vive più nei riferimenti: il client non manda
-        // più un poseId scelto qui (la posa è un controllo indipendente, wiring
-        // nel task successivo). Manteniamo il campo a null per compatibilità.
-        poseId: null,
+        // Selezioni fotografiche dello Studio: il server le valida su whitelist
+        // (lib/studio-options) e le compone nel prompt finale (mai testo libero
+        // come parametro). `pose` (enum) sostituisce il vecchio poseId-da-libreria.
+        pose,
+        framing,
+        expression,
+        colorStyle,
+        camera,
+        lens,
+        light,
+        // ECHO non ha stili Soul: il campo resta null per compatibilità.
         styleId: null,
       }),
     });

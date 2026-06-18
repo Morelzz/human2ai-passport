@@ -89,6 +89,7 @@ export type FramingVal = (typeof FRAMINGS)[number]["v"];
 export type LightVal = (typeof LIGHTS)[number]["v"];
 export type ColorStyleVal = (typeof COLOR_STYLES)[number]["v"];
 export type LensVal = (typeof LENSES)[number]["v"];
+export type CameraVal = (typeof CAMERAS)[number]["v"];
 
 // 3.2 Preset "Avvio per obiettivo". format mappa su ECHO_FORMATS (quadrato/verticale/orizzontale).
 export interface GoalPreset {
