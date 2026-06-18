@@ -13,6 +13,7 @@ import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
 import { prepareExtras, identityPromptFor } from "@/lib/echo-job";
 import { fetchPosePrompt } from "@/lib/poses";
+import { photographicSegment, poseToken, validEnum, CAMERAS, LENSES, LIGHTS, COLOR_STYLES, FRAMINGS, EXPRESSIONS } from "@/lib/studio-options";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { logBlockedRequest } from "@/lib/blocked";
 import { spendVolt, grantVolt } from "@/lib/volt";
@@ -106,16 +107,35 @@ export async function POST(request: Request) {
   const echoSize = isEchoSize(body?.echoSize) ? body.echoSize : "1024x1024";
   const echoQuality = isEchoQuality(body?.echoQuality) ? body.echoQuality : "high";
 
+  // Parametri fotografici: tutti opzionali, validati su whitelist (mai testo
+  // libero del client come parametro). Ignorati se ignoti.
+  const photo = {
+    camera: validEnum(CAMERAS, body?.camera),
+    lens: validEnum(LENSES, body?.lens),
+    light: validEnum(LIGHTS, body?.light),
+    colorStyle: validEnum(COLOR_STYLES, body?.colorStyle),
+    framing: validEnum(FRAMINGS, body?.framing),
+    expression: validEnum(EXPRESSIONS, body?.expression),
+  };
+  const photographic = photographicSegment(photo);
+
   // Posa dalla libreria: il client manda SOLO l'id; lo risolviamo in una
   // direttiva TESTUALE di posa (mai l'immagine del manichino al motore: la
   // metterebbe in scena). Posa inesistente → 400 PRIMA di toccare OpenAI.
   const extraRefs: Array<{ data?: unknown; role?: unknown; desc?: unknown }> =
     Array.isArray(body?.extraRefs) ? body.extraRefs.slice(0, 2) : [];
+  // Posa: nuovo flusso = enum `pose` tradotto dalla whitelist (lib/studio-options).
+  // Fallback retrocompatibile: vecchio `poseId` dalla libreria su storage.
   let poseText: string | null = null;
-  if (useEcho && body?.poseId) {
-    poseText = await fetchPosePrompt(String(body.poseId));
-    if (!poseText) {
-      return NextResponse.json({ error: "Posa non trovata nella libreria" }, { status: 400 });
+  if (useEcho) {
+    const pt = poseToken(body?.pose);
+    if (pt) {
+      poseText = pt;
+    } else if (body?.poseId) {
+      poseText = await fetchPosePrompt(String(body.poseId));
+      if (!poseText) {
+        return NextResponse.json({ error: "Posa non trovata nella libreria" }, { status: 400 });
+      }
     }
   }
   // Prefisso identità: i metadati verificati dell'avatar rafforzano le reference.
@@ -147,6 +167,8 @@ export async function POST(request: Request) {
       extras,
       poseText,
       identityText,
+      photographic,
+      photo,
       pricing: { gross_cents, fee_cents, royalty_cents: net_cents, surcharge_cents },
     };
     // VOLT: la spesa avviene QUI, insieme alla creazione del job (VOLT_SYSTEM
@@ -244,7 +266,7 @@ export async function POST(request: Request) {
 
     let png: Buffer;
     try {
-      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta, poseText, identityText), references, size: echoSize, quality: echoQuality });
+      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta, poseText, identityText, photographic), references, size: echoSize, quality: echoQuality });
       png = echoResult.png;
       echoUsage = echoResult.usage;
     } catch (e) {
@@ -386,6 +408,12 @@ export async function POST(request: Request) {
   {
     const meta: Record<string, unknown> = { tier: "ECHO" };
     if (engineCostCents != null) meta.engine_cost_cents = engineCostCents;
+    if (photo.camera) meta.camera = photo.camera;
+    if (photo.lens) meta.lens = photo.lens;
+    if (photo.light) meta.light = photo.light;
+    if (photo.colorStyle) meta.color_style = photo.colorStyle;
+    if (photo.framing) meta.framing = photo.framing;
+    if (photo.expression) meta.expression = photo.expression;
     await admin.from("generations").update(meta).eq("id", genId);
   }
 

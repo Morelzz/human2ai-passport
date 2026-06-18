@@ -50,6 +50,13 @@ export interface EchoJobParams {
   poseText?: string | null;
   // Prefisso identità dai metadati verificati dell'avatar (identityPromptFor).
   identityText?: string | null;
+  // Segmento fotografico gia composto all'enqueue (whitelist server).
+  photographic?: string | null;
+  // Enum grezzi, per persistere le colonne additive su generations.
+  photo?: {
+    camera?: string | null; lens?: string | null; light?: string | null;
+    colorStyle?: string | null; framing?: string | null; expression?: string | null;
+  };
   pricing: EchoPricing;
 }
 
@@ -242,7 +249,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     let result!: Awaited<ReturnType<typeof generateEcho>>;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       result = await generateEcho({
-        prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText, p.identityText),
+        prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText, p.identityText, p.photographic),
         references,
         size: p.echoSize,
         quality: p.echoQuality,
@@ -289,6 +296,13 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     // echo_cost.sql). Se mancano, l'update fallisce in silenzio senza intaccare la gen.
     const meta: Record<string, unknown> = { tier: "ECHO" };
     if (engineCostCents != null) meta.engine_cost_cents = engineCostCents;
+    const ph = p.photo;
+    if (ph?.camera) meta.camera = ph.camera;
+    if (ph?.lens) meta.lens = ph.lens;
+    if (ph?.light) meta.light = ph.light;
+    if (ph?.colorStyle) meta.color_style = ph.colorStyle;
+    if (ph?.framing) meta.framing = ph.framing;
+    if (ph?.expression) meta.expression = ph.expression;
     await admin.from("generations").update(meta).eq("id", genId);
 
     // Accredita la royalty NETTA + incrementa utilizzi.
