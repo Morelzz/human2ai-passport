@@ -23,6 +23,8 @@ import { AccordionSection } from "./parts/AccordionSection";
 import { HslMixer, type HslMode } from "./parts/HslMixer";
 import { CurveEditor } from "./parts/CurveEditor";
 import { ExportSheet } from "./parts/ExportSheet";
+import { AskBar } from "./parts/AskBar";
+import { keywordCommand, applyCommand, isEmptyCommand, type EditCommand } from "@/lib/editor/commands";
 
 type Channel = "rgb" | "r" | "g" | "b";
 
@@ -43,6 +45,8 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
   const [downloading, setDownloading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [asking, setAsking] = useState(false);
+  const [askHint, setAskHint] = useState<string | null>(null);
 
   const preview = composeFilter(state);
   const tables = curveTables(state.curves);
@@ -105,6 +109,33 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
       flashToast("Salvataggio non riuscito");
     }
     setSaving(false);
+  }
+
+  // "Dimmi cosa cambiare": prova la route Claude, poi fallback offline a parole
+  // chiave; applica i delta allo stato (non distruttivo).
+  async function applyAsk(text: string) {
+    setAsking(true);
+    setAskHint(null);
+    let cmd: EditCommand | null = null;
+    try {
+      const res = await fetch("/api/edit/interpret", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (res.ok) cmd = (await res.json()) as EditCommand;
+    } catch {
+      cmd = null;
+    }
+    if (isEmptyCommand(cmd)) cmd = keywordCommand(text);
+    if (!isEmptyCommand(cmd)) {
+      const applied = cmd as EditCommand;
+      setState((s) => applyCommand(s, applied));
+      setAskHint("Fatto");
+    } else {
+      setAskHint("Prova: caldo, contrasto, nitido, grana, vignetta, bianco e nero");
+    }
+    setAsking(false);
   }
 
   // Esporta: stesso contenuto in due collocazioni (barra fissa in fondo su
@@ -172,6 +203,8 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
             onPreset={(key) => setState((s) => ({ ...s, preset: key }))}
             onIntensity={(v) => setState((s) => ({ ...s, intensity: v }))}
           />
+
+          <AskBar onSubmit={applyAsk} busy={asking} hint={askHint} />
 
           <div className="mt-3 space-y-2">
             <SliderSection title="Luce" defs={LIGHT} values={state.light} onChange={setLight} open={openSection === "luce"} onToggle={() => toggle("luce")} />
