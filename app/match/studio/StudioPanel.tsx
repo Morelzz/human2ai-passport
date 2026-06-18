@@ -15,13 +15,15 @@ import Link from "next/link";
 import { TIER_CONFIG, Tier } from "@/lib/types";
 import { formatEur } from "@/lib/wallet";
 import { echoResLabel } from "@/lib/engines/echo-cost";
-import { ScannerFrame } from "@/components/motion/ScannerFrame";
 import { avatarArt } from "@/lib/avatar-art";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 import { voltStr } from "@/lib/strings/volt";
 // Tipi delle nuove selezioni dello Studio: il segmento fotografico (Task
 // successivi) usera' i tipi letterali derivati dai cataloghi di studio-options.
-import type { FramingVal, LightVal, ColorStyleVal, LensVal } from "@/lib/studio-options";
+import { GOALS } from "@/lib/studio-options";
+import type { FramingVal, LightVal, ColorStyleVal, LensVal, GoalPreset } from "@/lib/studio-options";
+import { GoalStart } from "./GoalStart";
+import { AvatarHero } from "./AvatarHero";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -191,11 +193,34 @@ export function StudioPanel(props: StudioPanelProps) {
     colorStyle, setColorStyle, camera, setCamera, lens, setLens, light, setLight,
   } = props;
 
-  // Le nuove selezioni sono lette qui per evitare "unused variable" finche'
-  // i task successivi non le rendono nei controlli. usato dai task successivi
-  void goal; void setGoal; void pose; void setPose; void framing; void setFraming;
-  void expression; void setExpression; void colorStyle; void setColorStyle;
-  void camera; void setCamera; void lens; void setLens; void light; void setLight;
+  // Le selezioni ancora senza controllo dedicato (posa, espressione, macchina)
+  // sono lette qui per evitare "unused variable" finche' i task successivi non
+  // le rendono. usato dai task successivi
+  void pose; void setPose; void expression; void setExpression; void camera; void setCamera;
+  // selectedHandle/resultsLength restano nell'interfaccia (passati da MatchClient)
+  // ma il vecchio bottone "Seleziona" e' rimpiazzato dall'hero: void per non
+  // lasciarli "unused".
+  void selectedHandle; void resultsLength;
+
+  // Avvio per obiettivo: applica i preset del GoalPreset scelto (formato,
+  // inquadratura, luce, stile colore, ottica) e poi entra in composizione
+  // settando goal. "Scena libera" (libera) non ha campi: setta solo goal.
+  // Sorgente di verita dei preset: lib/studio-options.ts (GOALS).
+  function applyGoal(g: string) {
+    // GOALS e' "as const": il membro "libera" non ha i campi opzionali, quindi
+    // tipizziamo il risultato come GoalPreset (che li ha tutti opzionali).
+    const preset = GOALS.find((x) => x.v === g) as GoalPreset | undefined;
+    if (preset) {
+      if (preset.format) setEchoFormat(preset.format);
+      if (preset.framing) setFraming(preset.framing);
+      if (preset.light) setLight(preset.light);
+      if (preset.colorStyle) setColorStyle(preset.colorStyle);
+      if (preset.lens) setLens(preset.lens);
+    }
+    setGoal(g);
+  }
+  // Etichetta dell'obiettivo corrente (per la goalpill nell'hero).
+  const goalLabel = goal ? (GOALS.find((x) => x.v === goal)?.l ?? null) : null;
 
   // Stato "in lavorazione" mostrato durante la generazione (con copy
   // ECHO-aware: la generazione async puo' durare minuti).
@@ -215,57 +240,44 @@ export function StudioPanel(props: StudioPanelProps) {
   // Regola unica: avatar con galleria -> ritratto reale via route interna.
   const portrait = (avatar.gallery_count ?? 0) > 0 ? `/api/sample/${avatar.handle}/0` : avatarArt(avatar.handle, avatar.alias);
 
+  // Schermata di avvio per obiettivo: finche' l'utente non sceglie un obiettivo
+  // (goal === null) mostriamo l'hero del volto + GoalStart e NON la composizione.
+  if (goal === null) {
+    return (
+      <div className="glass rounded-2xl border-teal/25 p-6">
+        <AvatarHero
+          alias={avatar.alias}
+          handle={avatar.handle}
+          portrait={portrait}
+          tierLabel={tier.label}
+          category={category}
+          approvedCategories={avatar.approved_categories}
+          excludedCategories={avatar.excluded_categories}
+          onChangeFace={() => setSelectedHandle(null)}
+        />
+        <GoalStart alias={avatar.alias} onPick={applyGoal} />
+      </div>
+    );
+  }
+
   return (
     <div className="glass rounded-2xl border-teal/25 p-6">
-      <div className="flex items-center gap-4">
-        <ScannerFrame className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-obsidian-3">
-          {portrait && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={portrait} alt={avatar.alias} className="h-full w-full object-cover" />
-          )}
-        </ScannerFrame>
-        <div className="flex-1">
-          <div className="text-lg font-bold">{avatar.alias}</div>
-          <div className="mb-1 text-sm text-muted">@{avatar.handle}</div>
-          <span className="rounded-full px-2.5 py-0.5 text-[0.7rem] font-bold" style={{ background: tier.bg, color: tier.color }}>{tier.label}</span>
-        </div>
-        {!selectedHandle && resultsLength > 1 && (
-          <button
-            type="button"
-            onClick={() => setSelectedHandle(avatar.handle)}
-            className="shrink-0 self-start rounded-full border border-teal/35 bg-teal/10 px-3.5 py-1.5 text-[0.72rem] font-bold text-teal transition-colors hover:bg-teal/20"
-          >
-            Seleziona
-          </button>
-        )}
-      </div>
+      <AvatarHero
+        alias={avatar.alias}
+        handle={avatar.handle}
+        portrait={portrait}
+        tierLabel={tier.label}
+        category={category}
+        approvedCategories={avatar.approved_categories}
+        excludedCategories={avatar.excluded_categories}
+        onChangeFace={() => setSelectedHandle(null)}
+        goalLabel={goalLabel}
+        onClearGoal={() => setGoal(null)}
+      />
       <p className="mt-4 font-mono text-[0.7rem] tracking-wide text-teal/90">
         <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
         <span className="text-faint">affinità: {avatar.reasons.join(" · ")}</span>
       </p>
-
-      {/* Review D2 — lo stato di consenso rispetto alla ricerca, in chiaro */}
-      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-        {category ? (
-          <span className="rounded-full border border-teal/35 bg-teal/10 px-2.5 py-0.5 text-[0.68rem] font-bold text-teal">
-            ✓ disponibile per {category}
-          </span>
-        ) : (
-          <>
-            {avatar.approved_categories.slice(0, 4).map((c) => (
-              <span key={c} className="rounded-full border border-teal/25 bg-teal/5 px-2.5 py-0.5 text-[0.68rem] font-semibold text-teal/90">✓ {c}</span>
-            ))}
-            {avatar.approved_categories.length > 4 && (
-              <span className="text-[0.68rem] text-faint">+{avatar.approved_categories.length - 4}</span>
-            )}
-          </>
-        )}
-        {avatar.excluded_categories.length > 0 && (
-          <span className="rounded-full border border-crimson/25 bg-crimson/5 px-2.5 py-0.5 text-[0.68rem] font-semibold text-crimson/90">
-            ✗ non concede {avatar.excluded_categories.join(", ")}
-          </span>
-        )}
-      </div>
 
       {avatar.gallery_count > 0 && (
         <div className="mt-5">
