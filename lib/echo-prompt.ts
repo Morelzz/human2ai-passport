@@ -7,7 +7,7 @@
 
 export type ExtraMeta = { role: string; desc: string };
 
-export function clauseForExtra(e: ExtraMeta): string {
+function clauseForExtra(e: ExtraMeta): string {
   const d = e.desc.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
   switch (e.role) {
     case "outfit":
