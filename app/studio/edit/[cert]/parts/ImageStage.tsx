@@ -18,12 +18,14 @@ export function ImageStage({
   imageUrl,
   preview,
   comparing,
+  curveTables,
   onCompareStart,
   onCompareEnd,
 }: {
   imageUrl: string;
   preview: ComposedPreview;
   comparing: boolean;
+  curveTables: { r: string; g: string; b: string };
   onCompareStart: () => void;
   onCompareEnd: () => void;
 }) {
@@ -34,6 +36,17 @@ export function ImageStage({
 
   return (
     <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-obsidian-3 shadow-[0_16px_44px_rgba(0,0,0,0.4)]">
+      {/* Filtro curve (feComponentTransfer): definito qui, referenziato dal CSS
+          filter dell'immagine via url(#curveFilter). All'identita e un no-op. */}
+      <svg width="0" height="0" className="absolute" aria-hidden focusable="false">
+        <filter id="curveFilter" colorInterpolationFilters="sRGB">
+          <feComponentTransfer>
+            <feFuncR type="table" tableValues={curveTables.r} />
+            <feFuncG type="table" tableValues={curveTables.g} />
+            <feFuncB type="table" tableValues={curveTables.b} />
+          </feComponentTransfer>
+        </filter>
+      </svg>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageUrl}

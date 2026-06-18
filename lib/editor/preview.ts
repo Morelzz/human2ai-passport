@@ -85,9 +85,11 @@ export function composeFilter(s: EditState): ComposedPreview {
   con *= (1 + D.sharp / 420) * (1 + D.clar / 220) * (1 + D.tex / 520) * (1 + D.haze / 200);
   sat *= 1 + D.haze / 320;
 
+  // url(#curveFilter): feComponentTransfer per le curve (vedi lib/editor/curves +
+  // ImageStage). All'identita e un no-op. Ultimo, dopo le funzioni cromatiche.
   const filter =
     `grayscale(${gray.toFixed(3)}) sepia(${sep.toFixed(3)}) saturate(${sat.toFixed(3)}) ` +
-    `contrast(${con.toFixed(3)}) brightness(${bri.toFixed(3)}) hue-rotate(${hue.toFixed(1)}deg)`;
+    `contrast(${con.toFixed(3)}) brightness(${bri.toFixed(3)}) hue-rotate(${hue.toFixed(1)}deg) url(#curveFilter)`;
 
   // Vignettatura e grana = layer separati sullo stage (opacita).
   const vig = clamp01(D.vig / 100);

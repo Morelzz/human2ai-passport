@@ -13,11 +13,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { defaultEditState, LIGHT, COLOR, type EditState } from "@/lib/editor/types";
+import { defaultEditState, LIGHT, COLOR, DETAIL, type EditState, type CurvePoint } from "@/lib/editor/types";
 import { composeFilter } from "@/lib/editor/preview";
+import { curveTables } from "@/lib/editor/curves";
 import { ImageStage } from "./parts/ImageStage";
 import { PresetStrip } from "./parts/PresetStrip";
 import { SliderSection } from "./parts/SliderSection";
+import { AccordionSection } from "./parts/AccordionSection";
+import { HslMixer, type HslMode } from "./parts/HslMixer";
+import { CurveEditor } from "./parts/CurveEditor";
+
+type Channel = "rgb" | "r" | "g" | "b";
 
 export interface EditorClientProps {
   cert: string;
@@ -34,9 +40,17 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
   const [openSection, setOpenSection] = useState<string | null>("luce");
 
   const preview = composeFilter(state);
+  const tables = curveTables(state.curves);
 
   const setLight = (k: string, v: number) => setState((s) => ({ ...s, light: { ...s.light, [k]: v } }));
   const setColor = (k: string, v: number) => setState((s) => ({ ...s, color: { ...s.color, [k]: v } }));
+  const setDetail = (k: string, v: number) => setState((s) => ({ ...s, detail: { ...s.detail, [k]: v } }));
+  const setHsl = (mode: HslMode, k: string, v: number) =>
+    setState((s) => ({ ...s, hsl: { ...s.hsl, [mode]: { ...s.hsl[mode], [k]: v } } }));
+  const setCurve = (channel: Channel, points: CurvePoint[]) =>
+    setState((s) => ({ ...s, curves: { ...s.curves, [channel]: points } }));
+  const resetCurve = (channel: Channel) =>
+    setState((s) => ({ ...s, curves: { ...s.curves, [channel]: [[0, 0], [100, 100]] as CurvePoint[] } }));
   const toggle = (id: string) => setOpenSection((o) => (o === id ? null : id));
   const reset = () => setState(defaultEditState());
 
@@ -69,6 +83,7 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
               imageUrl={imageUrl}
               preview={preview}
               comparing={comparing}
+              curveTables={tables}
               onCompareStart={() => setComparing(true)}
               onCompareEnd={() => setComparing(false)}
             />
@@ -88,6 +103,13 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
           <div className="mt-3 space-y-2">
             <SliderSection title="Luce" defs={LIGHT} values={state.light} onChange={setLight} open={openSection === "luce"} onToggle={() => toggle("luce")} />
             <SliderSection title="Colore" defs={COLOR} values={state.color} onChange={setColor} open={openSection === "colore"} onToggle={() => toggle("colore")} />
+            <SliderSection title="Dettaglio ed effetti" defs={DETAIL} values={state.detail} onChange={setDetail} open={openSection === "dettaglio"} onToggle={() => toggle("dettaglio")} />
+            <AccordionSection title="Mixer colore" badge="HSL" open={openSection === "mixer"} onToggle={() => toggle("mixer")}>
+              <HslMixer hsl={state.hsl} onChange={setHsl} />
+            </AccordionSection>
+            <AccordionSection title="Curve" badge="tonale e RGB" open={openSection === "curve"} onToggle={() => toggle("curve")}>
+              <CurveEditor curves={state.curves} onChange={setCurve} onReset={resetCurve} />
+            </AccordionSection>
           </div>
 
           <button
