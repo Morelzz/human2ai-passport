@@ -35,7 +35,7 @@ export function ImageStage({
   const grainOpacity = comparing ? 0 : preview.grain;
 
   return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-obsidian-3 shadow-[0_16px_44px_rgba(0,0,0,0.4)]">
+    <div className="relative h-[40dvh] w-full overflow-hidden rounded-2xl border border-border bg-obsidian-3 shadow-[0_16px_44px_rgba(0,0,0,0.4)] lg:h-auto lg:aspect-[4/5]">
       {/* Filtro curve (feComponentTransfer): definito qui, referenziato dal CSS
           filter dell'immagine via url(#curveFilter). All'identita e un no-op. */}
       <svg width="0" height="0" className="absolute" aria-hidden focusable="false">
@@ -51,7 +51,7 @@ export function ImageStage({
       <img
         src={imageUrl}
         alt="Anteprima della generazione"
-        className="absolute inset-0 h-full w-full object-cover transition-[filter] duration-100"
+        className="absolute inset-0 h-full w-full object-contain transition-[filter] duration-100"
         style={{ filter }}
       />
       {/* Vignettatura */}

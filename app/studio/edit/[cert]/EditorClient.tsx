@@ -54,10 +54,26 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
   const toggle = (id: string) => setOpenSection((o) => (o === id ? null : id));
   const reset = () => setState(defaultEditState());
 
+  // Esporta: stesso contenuto in due collocazioni (barra fissa in fondo su
+  // mobile, in coda alla colonna parametri su desktop).
+  const exportInner = (
+    <>
+      <a
+        href={`/api/content/${cert}`}
+        className="block w-full rounded-xl bg-[#F2A93B] px-4 py-3.5 text-center text-sm font-bold text-[#412402] shadow-[0_8px_28px_rgba(242,169,59,0.32)] transition-[filter] hover:brightness-110"
+      >
+        Esporta e scarica →
+      </a>
+      <p className="mt-1.5 text-center text-[0.62rem] leading-snug text-faint">
+        Per ora scarica l&apos;originale certificato. Le modifiche entreranno nell&apos;export alla prossima fase.
+      </p>
+    </>
+  );
+
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl">
+    <main className="mx-auto flex h-[100dvh] w-full max-w-6xl flex-col overflow-hidden lg:block lg:h-auto lg:min-h-screen lg:overflow-visible">
       {/* Appbar */}
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border bg-obsidian/85 px-4 py-3 backdrop-blur-md">
+      <header className="z-30 flex shrink-0 items-center justify-between gap-3 border-b border-border bg-obsidian/85 px-4 py-3 backdrop-blur-md lg:sticky lg:top-0">
         <Link href="/match" className="shrink-0 text-[0.8rem] text-muted transition-colors hover:text-foreground">
           ← Scena
         </Link>
@@ -74,10 +90,12 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
         </button>
       </header>
 
-      {/* Corpo: mobile single-column, desktop due colonne (immagine sticky sx) */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:items-start lg:gap-6 lg:px-4 lg:py-5">
-        {/* Immagine */}
-        <div className="px-3 pt-3 lg:px-0 lg:pt-0">
+      {/* Corpo: MOBILE = colonna ad altezza fissa, immagine FERMA in alto e
+          parametri che scorrono internamente. DESKTOP = due colonne, immagine
+          sticky a sinistra, parametri che scorrono con la pagina. */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:grid lg:flex-none lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:items-start lg:gap-6 lg:overflow-visible lg:px-4 lg:py-5">
+        {/* Immagine: mobile ferma in alto (shrink-0); desktop sticky */}
+        <div className="shrink-0 px-3 pt-3 lg:px-0 lg:pt-0">
           <div className="lg:sticky lg:top-20">
             <ImageStage
               imageUrl={imageUrl}
@@ -90,8 +108,9 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
           </div>
         </div>
 
-        {/* Parametri (pb extra su mobile per non finire sotto la barra Esporta fissa) */}
-        <div className="px-3 pb-32 pt-4 lg:px-0 lg:pb-0">
+        {/* Parametri: mobile scroll INTERNO (flex-1 + overflow-y-auto) cosi
+            l'immagine sopra resta ferma; desktop flusso normale della pagina. */}
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6 pt-4 lg:flex-none lg:overflow-visible lg:px-0 lg:pb-0">
           <PresetStrip
             imageUrl={imageUrl}
             preset={state.preset}
@@ -120,20 +139,13 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
             Azzera tutte le modifiche
           </button>
 
-          {/* Barra Esporta: fissa in fondo su mobile, in colonna su desktop */}
-          <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-obsidian/95 p-3 backdrop-blur-md lg:static lg:mt-4 lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
-            <a
-              href={`/api/content/${cert}`}
-              className="block w-full rounded-xl bg-[#F2A93B] px-4 py-3.5 text-center text-sm font-bold text-[#412402] shadow-[0_8px_28px_rgba(242,169,59,0.32)] transition-[filter] hover:brightness-110"
-            >
-              Esporta e scarica →
-            </a>
-            <p className="mt-1.5 text-center text-[0.62rem] leading-snug text-faint">
-              Per ora scarica l&apos;originale certificato. Le modifiche entreranno nell&apos;export alla prossima fase.
-            </p>
-          </div>
+          {/* Esporta su DESKTOP: in coda alla colonna parametri */}
+          <div className="mt-4 hidden lg:block">{exportInner}</div>
         </div>
       </div>
+
+      {/* Esporta su MOBILE: barra fissa in fondo alla colonna (shrink-0) */}
+      <div className="shrink-0 border-t border-border bg-obsidian/95 p-3 backdrop-blur-md lg:hidden">{exportInner}</div>
     </main>
   );
 }
