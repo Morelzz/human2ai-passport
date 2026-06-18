@@ -10,7 +10,8 @@
 // NB: in preview headless l'animazione translateY e' ferma, ma open/close toggla.
 // ──────────────────────────────────────────────────────────────────────────
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 
 type IconOpt = { v: string; l: string };
 
@@ -71,15 +72,8 @@ export function IconPicker({
   const [open, setOpen] = useState(false);
   const current = options.find((o) => o.v === value) ?? options[0];
 
-  // Blocco dello scroll di sfondo quando il foglio e aperto (bug desktop).
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
+  // Blocca lo scroll di sfondo (e Lenis) quando il foglio e aperto.
+  useScrollLock(open);
 
   return (
     <div className="mt-4">
@@ -120,7 +114,7 @@ export function IconPicker({
                 ✕
               </button>
             </div>
-            <div className="overflow-y-auto px-4 pb-6 pt-3">
+            <div data-lenis-prevent className="overflow-y-auto px-4 pb-6 pt-3">
               <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
                 {options.map((o) => {
                   const active = o.v === value;

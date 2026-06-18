@@ -11,8 +11,9 @@
 // NB: in preview headless l'animazione translateY e' ferma, ma open/close toggla.
 // ──────────────────────────────────────────────────────────────────────────
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { POSES } from "@/lib/studio-options";
+import { useScrollLock } from "@/lib/use-scroll-lock";
 
 // Silhouette SVG portate dal prototipo (oggetto SIL): un disegnino per ogni
 // posa, mappato sul valore .v del catalogo. currentColor = colore del campo
@@ -73,16 +74,9 @@ export function PosePicker({ value, onChange }: { value: string; onChange: (v: s
     items: POSES.filter((p) => p.cat === cat),
   })).filter((g) => g.items.length > 0);
 
-  // Blocco dello scroll di sfondo quando il foglio e aperto: cosi la rotella
-  // scorre il pannello e non il sito dietro (bug desktop).
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
+  // Blocca lo scroll di sfondo (e Lenis) quando il foglio e aperto, cosi la
+  // rotella scorre il pannello e non il sito dietro (bug desktop).
+  useScrollLock(open);
 
   return (
     <div className="mt-4">
@@ -125,7 +119,7 @@ export function PosePicker({ value, onChange }: { value: string; onChange: (v: s
                 ✕
               </button>
             </div>
-            <div className="overflow-y-auto px-4 pb-6 pt-3">
+            <div data-lenis-prevent className="overflow-y-auto px-4 pb-6 pt-3">
               {groups.map((g) => (
                 <div key={g.cat}>
                   <p className="mb-2 mt-3 text-[0.62rem] uppercase tracking-[0.06em] text-faint first:mt-1">{g.cat}</p>
