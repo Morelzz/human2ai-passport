@@ -88,6 +88,6 @@ export type Category = (typeof CATEGORIES)[number];
 export const TIER_CONFIG: Record<Tier, { label: string; color: string; bg: string; description: string }> = {
   SPARK:  { label: "SPARK",  color: "#8A857B", bg: "rgba(242,233,216,0.05)", description: "Ispirato a" },
   SHAPE:  { label: "SHAPE",  color: "#ADA89E", bg: "rgba(242,233,216,0.08)", description: "Somiglianza stilizzata" },
-  SOUL:   { label: "SOUL",   color: "#D8D2C6", bg: "rgba(242,233,216,0.11)", description: "Alta fedeltà" },
+  SOUL:   { label: "ECHO",   color: "#D8D2C6", bg: "rgba(242,233,216,0.11)", description: "Alta fedeltà" },
   HUMAN:  { label: "HUMAN",  color: "#F2E9D8", bg: "rgba(242,233,216,0.15)", description: "Identity-locked" },
 };
