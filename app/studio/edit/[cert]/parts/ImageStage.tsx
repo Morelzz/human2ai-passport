@@ -56,7 +56,7 @@ export function ImageStage({
       />
 
       <div className="absolute left-2.5 top-2.5 rounded-full border border-border bg-obsidian/50 px-2 py-1 font-mono text-[0.55rem] uppercase tracking-[0.07em] text-foreground/70 backdrop-blur-sm">
-        anteprima · watermark
+        anteprima
       </div>
       <div className="absolute bottom-2.5 right-2.5 font-mono text-[0.6rem] tracking-[0.12em] text-foreground/55">SEMBLIC</div>
 

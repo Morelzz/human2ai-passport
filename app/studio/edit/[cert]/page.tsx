@@ -39,7 +39,7 @@ export default async function EditPage({ params }: { params: Promise<{ cert: str
   return (
     <EditorClient
       cert={cert}
-      imageUrl={`/api/content/${cert}`}
+      imageUrl={gen.image_url}
       alias={av?.alias ?? "—"}
       category={gen.category ?? null}
       initialState={defaultEditState()}

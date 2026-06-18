@@ -543,6 +543,13 @@ export function StudioPanel(props: StudioPanelProps) {
             // così l'immagine che l'utente vede/salva porta già il codice nascosto.
             <img src={gen.certificate ? `/api/content/${gen.certificate}` : gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-border bg-obsidian-3" />
           )}
+          {/* CTA verso il Semblic Editor (non un redirect forzato: la
+              generazione e async, la gente edita anche dopo, da /account). */}
+          {gen.certificate && (
+            <a href={`/studio/edit/${gen.certificate}`} className="mb-4 block w-full rounded-xl bg-[#F2A93B] px-4 py-3 text-center text-sm font-bold text-[#412402] shadow-[0_8px_28px_rgba(242,169,59,0.3)] transition-[filter] hover:brightness-110">
+              ✦ Modifica con Semblic Editor
+            </a>
+          )}
           <div className="mb-4 rounded-lg bg-obsidian-2 p-4">
             <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
             <EuroRow label="Fee piattaforma" value={`− ${formatEur((gen.fee_cents ?? 0) - (gen.surcharge_cents ?? 0))}`} dim />

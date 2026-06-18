@@ -101,6 +101,10 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                   </p>
                   {g.certificate && (
                     <>
+                      {/* Tasto grande Modifica (Semblic Editor) sopra Scarica/Condividi */}
+                      <a href={`/studio/edit/${g.certificate}`} className="mb-1.5 block w-full rounded-lg bg-[#F2A93B] px-2 py-2 text-center text-[0.74rem] font-bold text-[#412402] transition-[filter] hover:brightness-110">
+                        ✦ Modifica
+                      </a>
                       <div className="flex gap-1.5">
                         <a href={`/api/content/${g.certificate}`} className="flex-1 rounded-lg border border-violet/30 bg-violet/10 px-2 py-1.5 text-center text-[0.72rem] font-semibold text-violet-light transition-colors hover:bg-violet/20">
                           Scarica

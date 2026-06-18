@@ -18,7 +18,10 @@ type NavEntry =
 
 const NAV: NavEntry[] = [
   { label: "Avatar", href: "/catalogo" },
-  { label: "Genera", href: "/match" },
+  { label: "Genera", items: [
+    { href: "/match", label: "Genera" },
+    { href: "/studio/edit", label: "Semblic Editor" },
+  ] },
   { label: "Il tuo volto", items: [
     { href: "/scansione", label: "Scansione" },
     { href: "/proteggi", label: "Proteggi" },
