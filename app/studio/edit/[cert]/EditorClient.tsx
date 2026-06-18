@@ -22,6 +22,7 @@ import { SliderSection } from "./parts/SliderSection";
 import { AccordionSection } from "./parts/AccordionSection";
 import { HslMixer, type HslMode } from "./parts/HslMixer";
 import { CurveEditor } from "./parts/CurveEditor";
+import { ExportSheet } from "./parts/ExportSheet";
 
 type Channel = "rgb" | "r" | "g" | "b";
 
@@ -38,6 +39,10 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
   const [comparing, setComparing] = useState(false);
   // Accordion: una sezione aperta alla volta (Luce di default).
   const [openSection, setOpenSection] = useState<string | null>("luce");
+  const [exportOpen, setExportOpen] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   const preview = composeFilter(state);
   const tables = curveTables(state.curves);
@@ -54,18 +59,67 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
   const toggle = (id: string) => setOpenSection((o) => (o === id ? null : id));
   const reset = () => setState(defaultEditState());
 
+  const flashToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2200);
+  };
+
+  // Scarica l'immagine MODIFICATA: la resa avviene server-side (/api/edit/render),
+  // con upscale, formato e provenienza. Riceviamo il PNG come blob e lo salviamo.
+  async function download(opts: { upscale: "2k" | "4k" | null; format: string | null }) {
+    setDownloading(true);
+    try {
+      const res = await fetch("/api/edit/render", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cert, editState: state, upscale: opts.upscale, format: opts.format }),
+      });
+      if (!res.ok) throw new Error("render");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `semblic-edit-${cert.slice(0, 12)}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setExportOpen(false);
+    } catch {
+      flashToast("Export non riuscito, riprova");
+    }
+    setDownloading(false);
+  }
+
+  // Salvataggio NON distruttivo dello stato (riapribile).
+  async function save() {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/edit/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cert, editState: state }),
+      });
+      flashToast(res.ok ? "✓ Modifiche salvate" : "Salvataggio non riuscito");
+    } catch {
+      flashToast("Salvataggio non riuscito");
+    }
+    setSaving(false);
+  }
+
   // Esporta: stesso contenuto in due collocazioni (barra fissa in fondo su
-  // mobile, in coda alla colonna parametri su desktop).
+  // mobile, in coda alla colonna parametri su desktop). Apre lo sheet Esporta.
   const exportInner = (
     <>
-      <a
-        href={`/api/content/${cert}`}
+      <button
+        type="button"
+        onClick={() => setExportOpen(true)}
         className="block w-full rounded-xl bg-[#F2A93B] px-4 py-3.5 text-center text-sm font-bold text-[#412402] shadow-[0_8px_28px_rgba(242,169,59,0.32)] transition-[filter] hover:brightness-110"
       >
         Esporta e scarica →
-      </a>
+      </button>
       <p className="mt-1.5 text-center text-[0.62rem] leading-snug text-faint">
-        Per ora scarica l&apos;originale certificato. Le modifiche entreranno nell&apos;export alla prossima fase.
+        Upscale, formato e download con le tue modifiche e la provenienza.
       </p>
     </>
   );
@@ -82,11 +136,11 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
         </span>
         <button
           type="button"
-          disabled
-          title="Salvataggio in arrivo"
-          className="shrink-0 cursor-not-allowed rounded-full bg-amber/40 px-3.5 py-1.5 text-[0.75rem] font-semibold text-[#412402]/70"
+          onClick={save}
+          disabled={saving}
+          className="shrink-0 rounded-full bg-amber px-3.5 py-1.5 text-[0.75rem] font-semibold text-[#412402] transition-[filter] hover:brightness-110 disabled:opacity-60"
         >
-          Salva
+          {saving ? "Salvo…" : "Salva"}
         </button>
       </header>
 
@@ -146,6 +200,13 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
 
       {/* Esporta su MOBILE: barra fissa in fondo alla colonna (shrink-0) */}
       <div className="shrink-0 border-t border-border bg-obsidian/95 p-3 backdrop-blur-md lg:hidden">{exportInner}</div>
+
+      <ExportSheet open={exportOpen} onClose={() => setExportOpen(false)} onDownload={download} downloading={downloading} cert={cert} />
+      {toast && (
+        <div className="fixed bottom-24 left-1/2 z-[60] -translate-x-1/2 rounded-full border border-border bg-elevated px-4 py-2 text-[0.8rem] font-medium text-foreground shadow-[0_8px_30px_rgba(0,0,0,0.5)] lg:bottom-8">
+          {toast}
+        </div>
+      )}
     </main>
   );
 }

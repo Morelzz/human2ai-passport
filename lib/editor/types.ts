@@ -129,3 +129,46 @@ export function defaultEditState(): EditState {
     curves: { rgb: identityCurve(), r: identityCurve(), g: identityCurve(), b: identityCurve() },
   };
 }
+
+// Coerce di un input non fidato (dal client) in un EditState completo e sano:
+// merge coi default, numeri finiti e clampati, preset valido, curve valide.
+// Usato lato server (resa/salvataggio): mai fidarsi del body cosi com'e.
+export function coerceEditState(input: unknown): EditState {
+  const d = defaultEditState();
+  if (!input || typeof input !== "object") return d;
+  const o = input as Record<string, unknown>;
+  const num = (v: unknown, fb: number, lo = -1000, hi = 1000): number =>
+    typeof v === "number" && Number.isFinite(v) ? Math.max(lo, Math.min(hi, v)) : fb;
+  const obj = (v: unknown): Record<string, unknown> => (v && typeof v === "object" ? (v as Record<string, unknown>) : {});
+
+  if (typeof o.preset === "string" && PRESETS.some((p) => p.key === o.preset)) d.preset = o.preset;
+  d.intensity = num(o.intensity, d.intensity, 0, 1);
+  d.grain = num(o.grain, d.grain, 0, 100);
+
+  const L = obj(o.light);
+  d.light = { exp: num(L.exp, 0), con: num(L.con, 0), hi: num(L.hi, 0), sha: num(L.sha, 0), wh: num(L.wh, 0), bl: num(L.bl, 0) };
+  const C = obj(o.color);
+  d.color = { temp: num(C.temp, 0), tint: num(C.tint, 0), vib: num(C.vib, 0), sat: num(C.sat, 0) };
+  const D = obj(o.detail);
+  d.detail = { sharp: num(D.sharp, 0), clar: num(D.clar, 0), tex: num(D.tex, 0), haze: num(D.haze, 0), vig: num(D.vig, 0, 0, 100), grain: num(D.grain, 0, 0, 100) };
+
+  const H = obj(o.hsl);
+  (["hue", "sat", "lum"] as const).forEach((mode) => {
+    const m = obj(H[mode]);
+    for (const c of HSL_COLORS) d.hsl[mode][c.key] = num(m[c.key], 0, -100, 100);
+  });
+
+  const cv = obj(o.curves);
+  (["rgb", "r", "g", "b"] as const).forEach((ch) => {
+    const pts = cv[ch];
+    if (Array.isArray(pts) && pts.length >= 2) {
+      const clean = pts
+        .filter((p): p is [number, number] => Array.isArray(p) && p.length === 2 && Number.isFinite(p[0]) && Number.isFinite(p[1]))
+        .map((p) => [Math.max(0, Math.min(100, p[0])), Math.max(0, Math.min(100, p[1]))] as CurvePoint)
+        .sort((a, b) => a[0] - b[0]);
+      if (clean.length >= 2) d.curves[ch] = clean;
+    }
+  });
+
+  return d;
+}

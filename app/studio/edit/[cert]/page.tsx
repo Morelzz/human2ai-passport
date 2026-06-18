@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase";
 import { createAuthClient } from "@/lib/supabase-auth";
-import { defaultEditState } from "@/lib/editor/types";
+import { defaultEditState, coerceEditState } from "@/lib/editor/types";
 import { EditorClient } from "./EditorClient";
 
 export const runtime = "nodejs";
@@ -28,7 +28,7 @@ export default async function EditPage({ params }: { params: Promise<{ cert: str
   const admin = createServerClient();
   const { data: gen } = await admin
     .from("generations")
-    .select("certificate, buyer_id, image_url, category, avatars(alias)")
+    .select("certificate, buyer_id, image_url, category, edit_state, avatars(alias)")
     .eq("certificate", cert)
     .maybeSingle();
 
@@ -42,7 +42,7 @@ export default async function EditPage({ params }: { params: Promise<{ cert: str
       imageUrl={gen.image_url}
       alias={av?.alias ?? "—"}
       category={gen.category ?? null}
-      initialState={defaultEditState()}
+      initialState={gen.edit_state ? coerceEditState(gen.edit_state) : defaultEditState()}
     />
   );
 }

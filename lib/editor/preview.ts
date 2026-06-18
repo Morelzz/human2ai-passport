@@ -45,7 +45,21 @@ function hslAggregate(hsl: EditState["hsl"]) {
   };
 }
 
-export function composeFilter(s: EditState): ComposedPreview {
+export interface FilterScalars {
+  gray: number;
+  sep: number;
+  sat: number;
+  con: number;
+  bri: number;
+  hue: number;
+  vig: number;
+  grain: number;
+}
+
+// Scalari finali dei filtri, dopo aver ripiegato preset/intensita, luce, colore,
+// HSL aggregato e dettaglio. UNA matematica sola, condivisa dal client
+// (composeFilter -> stringa CSS) e dal server (render-pixels -> matrici colore).
+export function composeScalars(s: EditState): FilterScalars {
   const k = clamp01(s.intensity);
   const p = presetByKey(s.preset);
   const lin = (v: number) => 1 + k * (v - 1);
@@ -85,15 +99,17 @@ export function composeFilter(s: EditState): ComposedPreview {
   con *= (1 + D.sharp / 420) * (1 + D.clar / 220) * (1 + D.tex / 520) * (1 + D.haze / 200);
   sat *= 1 + D.haze / 320;
 
-  // url(#curveFilter): feComponentTransfer per le curve (vedi lib/editor/curves +
-  // ImageStage). All'identita e un no-op. Ultimo, dopo le funzioni cromatiche.
-  const filter =
-    `grayscale(${gray.toFixed(3)}) sepia(${sep.toFixed(3)}) saturate(${sat.toFixed(3)}) ` +
-    `contrast(${con.toFixed(3)}) brightness(${bri.toFixed(3)}) hue-rotate(${hue.toFixed(1)}deg) url(#curveFilter)`;
-
-  // Vignettatura e grana = layer separati sullo stage (opacita).
   const vig = clamp01(D.vig / 100);
   const grain = clamp01(Math.max(D.grain, s.grain) / 130);
 
-  return { filter, vig, grain };
+  return { gray, sep, sat, con, bri, hue, vig, grain };
+}
+
+export function composeFilter(s: EditState): ComposedPreview {
+  const k = composeScalars(s);
+  // url(#curveFilter): feComponentTransfer per le curve. All'identita e un no-op.
+  const filter =
+    `grayscale(${k.gray.toFixed(3)}) sepia(${k.sep.toFixed(3)}) saturate(${k.sat.toFixed(3)}) ` +
+    `contrast(${k.con.toFixed(3)}) brightness(${k.bri.toFixed(3)}) hue-rotate(${k.hue.toFixed(1)}deg) url(#curveFilter)`;
+  return { filter, vig: k.vig, grain: k.grain };
 }
