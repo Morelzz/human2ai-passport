@@ -20,9 +20,13 @@ export const maxDuration = 30;
 const SYSTEM = `Sei il rifinitore di prompt di SEMBLIC, un registro di volti reali e consenzienti.
 L'utente descrive una SCENA per generare un'immagine commerciale FOTOREALISTICA di una persona reale (l'identità del volto è bloccata dall'avatar, NON dal testo).
 
-Riscrivi la scena arricchendola da direttore della fotografia: ambientazione concreta, qualità della luce, mood, composizione/inquadratura, eventuale obiettivo (es. 35mm, 85mm). Frasi asciutte, niente elenchi.
+Riscrivi SOLO la scena, arricchendo: ambientazione concreta, azione, atmosfera e mood, e la luce SOLO come elemento naturale dell'ambiente (es. "luce dorata del tramonto che crea contrasti morbidi"). Frasi asciutte, niente elenchi.
 
-Regole TASSATIVE:
+VINCOLO FONDAMENTALE: NON aggiungere direttive fotografiche tecniche. In particolare NON menzionare MAI: tipo di macchina fotografica, obiettivo o focale (es. 35mm, 85mm), inquadratura (primo piano, mezzo busto, figura intera, piano americano), posa, espressione del viso, o color grading / stile colore (bianco e nero, cinematografico, pastello, contrasto...). Questi parametri li sceglie l'utente con controlli dedicati e vengono aggiunti SEPARATAMENTE: se li scrivi anche tu, si duplicano o vanno in conflitto con le sue scelte.
+
+Se ti vengono fornite le scelte già fatte dall'utente (posa, inquadratura, espressione, stile, macchina, ottica, luce, immagini di riferimento), usale SOLO per mantenere la scena coerente (es. se la posa è "braccia conserte" non scrivere "mentre corre"; se c'è un oggetto di riferimento, integra naturalmente l'azione che lo coinvolge), ma NON ripeterle nel testo.
+
+Altre regole TASSATIVE:
 - NON cambiare il soggetto né descrivere tratti del volto/identità (età, etnia, lineamenti): l'identità arriva dall'avatar.
 - SOLO fotorealismo: vietato introdurre stili non reali (anime, cartoon, illustrazione, 3D, pittura...).
 - NON introdurre contenuti che cambino la categoria d'uso della scena (se è food resta food, ecc.); non aggiungere marchi, persone famose, contenuti sensibili o per adulti.
@@ -41,6 +45,15 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const scene = String(body?.scene ?? "").trim().slice(0, 600);
   const category = body?.category ? String(body.category).trim() : null;
+  // Contesto delle scelte gia fatte coi controlli dello Studio (token inglesi) +
+  // descrizioni delle immagini di riferimento. Servono SOLO per la coerenza: il
+  // system prompt vieta di ripeterle come direttive fotografiche nel testo.
+  const photo = Array.isArray(body?.photo)
+    ? (body.photo as unknown[]).filter((x): x is string => typeof x === "string" && x.trim().length > 0).slice(0, 10)
+    : [];
+  const refs = Array.isArray(body?.refs)
+    ? (body.refs as unknown[]).filter((x): x is string => typeof x === "string" && x.trim().length > 0).slice(0, 4)
+    : [];
   if (scene.length < 3) {
     return NextResponse.json({ error: "Scrivi prima una scena da migliorare" }, { status: 400 });
   }
@@ -54,9 +67,12 @@ export async function POST(request: Request) {
       messages: [
         {
           role: "user",
-          content: category
-            ? `Categoria d'uso dichiarata (NON cambiarla): ${category}\nScena: ${scene}`
-            : `Scena: ${scene}`,
+          content: [
+            category ? `Categoria d'uso dichiarata (NON cambiarla): ${category}` : null,
+            photo.length ? `Parametri fotografici GIA scelti dall'utente (NON ripeterli nel testo, usali solo per coerenza): ${photo.join("; ")}` : null,
+            refs.length ? `Immagini di riferimento fornite dall'utente: ${refs.join("; ")}` : null,
+            `Scena: ${scene}`,
+          ].filter(Boolean).join("\n"),
         },
       ],
     });

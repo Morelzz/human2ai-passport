@@ -10,6 +10,9 @@ import { KineticText } from "@/components/motion/KineticText";
 import { voltStr, VOLT_STRINGS, voltLoadingLine, voltSuccessMission } from "@/lib/strings/volt";
 import { StudioPanel } from "@/app/match/studio/StudioPanel";
 import type { FramingVal, ExpressionVal, LightVal, ColorStyleVal, LensVal, CameraVal } from "@/lib/studio-options";
+// Token-helper per dare all'enhancer le scelte gia fatte coi controlli (le tiene
+// coerenti nella scena, senza ripeterle come direttive: quelle le aggiunge il server).
+import { poseToken, framingToken, expressionToken, colorStyleToken, cameraToken, lensToken, lightToken } from "@/lib/studio-options";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -436,11 +439,24 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
     if (!scene) return;
     setEnhancingHandle(handle);
     setError(null);
+    // Scelte gia fatte coi controlli (posa, inquadratura, espressione, stile,
+    // macchina, ottica, luce) + descrizioni delle immagini di riferimento. Le
+    // passiamo all'enhancer come CONTESTO: deve tenere la scena coerente con
+    // queste, ma NON ripeterle come direttive fotografiche (le aggiunge il
+    // server in /api/generate). Per questo il bottone sta in fondo.
+    const photo = [
+      poseToken(pose), framingToken(framing), expressionToken(expression),
+      colorStyleToken(colorStyle), cameraToken(camera), lensToken(lens), lightToken(light),
+    ].filter(Boolean);
+    const refs = echoRefs
+      .filter((r): r is NonNullable<EchoRef> => !!r?.dataUrl)
+      .map((r) => [r.role, r.desc].filter(Boolean).join(": "))
+      .filter(Boolean);
     try {
       const res = await fetch("/api/enhance-prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scene, category: category || null }),
+        body: JSON.stringify({ scene, category: category || null, photo, refs }),
       });
       const json = await res.json();
       if (!res.ok) setError(json.error ?? "Miglioramento non riuscito");
@@ -518,7 +534,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   ) : null;
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14">
+    <main className="mx-auto max-w-2xl px-5 py-10 sm:px-8 sm:py-14 lg:max-w-4xl">
       {/* Kicker in stile HUD: stato del registro + passo corrente */}
       <div className="flex items-center gap-2.5 font-mono text-[0.68rem] font-bold tracking-[0.14em]">
         <span className="relative flex h-2 w-2">
