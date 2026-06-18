@@ -20,10 +20,12 @@ import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 import { voltStr } from "@/lib/strings/volt";
 // Tipi delle nuove selezioni dello Studio: il segmento fotografico (Task
 // successivi) usera' i tipi letterali derivati dai cataloghi di studio-options.
-import { GOALS } from "@/lib/studio-options";
+import { GOALS, FRAMINGS, EXPRESSIONS } from "@/lib/studio-options";
 import type { FramingVal, LightVal, ColorStyleVal, LensVal, GoalPreset } from "@/lib/studio-options";
 import { GoalStart } from "./GoalStart";
 import { AvatarHero } from "./AvatarHero";
+import { PosePicker } from "./PosePicker";
+import { IconPicker } from "./IconPicker";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -189,10 +191,11 @@ export function StudioPanel(props: StudioPanelProps) {
     colorStyle, setColorStyle, camera, setCamera, lens, setLens, light, setLight,
   } = props;
 
-  // Le selezioni ancora senza controllo dedicato (posa, espressione, macchina)
-  // sono lette qui per evitare "unused variable" finche' i task successivi non
-  // le rendono. usato dai task successivi
-  void pose; void setPose; void expression; void setExpression; void camera; void setCamera;
+  // Le selezioni ancora senza controllo dedicato (stile colore, macchina,
+  // ottica, luce) sono lette qui per evitare "unused variable" finche' i task
+  // successivi non le rendono. Posa, inquadratura ed espressione sono ora usate
+  // dai picker qui sotto. usato dai task successivi
+  void colorStyle; void camera; void setCamera; void lens; void light;
 
   // Avvio per obiettivo: applica i preset del GoalPreset scelto (formato,
   // inquadratura, luce, stile colore, ottica) e poi entra in composizione
@@ -333,6 +336,16 @@ export function StudioPanel(props: StudioPanelProps) {
               </div>
             )}
           </div>
+
+          {/* Composizione (Task 8): tre selettori sotto "La scena", nell'ordine
+              del prototipo (Posa, Inquadratura, Espressione). Posa apre un bottom
+              sheet con le pose per categoria; inquadratura ed espressione usano
+              lo stesso pattern campo + foglio (IconPicker riutilizzabile). I
+              valori scrivono su pose/framing/expression (gia' threadati via props).
+              L'invio al prompt /api/generate arriva in un task successivo. */}
+          <PosePicker value={pose} onChange={setPose} />
+          <IconPicker label="Inquadratura" sheetTitle="Scegli l'inquadratura" options={FRAMINGS} value={framing} onChange={(v) => setFraming(v as FramingVal)} />
+          <IconPicker label="Espressione" sheetTitle="Scegli l'espressione" options={EXPRESSIONS} value={expression} onChange={setExpression} />
 
           <p className="mt-5 font-mono text-[0.7rem] tracking-wide text-teal/90">
             <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
