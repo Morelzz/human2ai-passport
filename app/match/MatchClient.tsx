@@ -7,7 +7,7 @@ import { formatEur, grossForCategory, grossForEcho } from "@/lib/wallet";
 import { echoSurchargeCents, echoResLabel } from "@/lib/engines/echo-cost";
 import { KineticText } from "@/components/motion/KineticText";
 import { ScannerFrame } from "@/components/motion/ScannerFrame";
-import { SOUL_MODELS, SOUL_STYLES, DEFAULT_MODEL, SoulModel } from "@/lib/soul-models";
+// Motore Higgsfield/Soul rimosso dalla UI: ECHO (gpt-image-2) e' l'unico motore.
 import { avatarArt } from "@/lib/avatar-art";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 import { voltStr, VOLT_STRINGS, voltLoadingLine, voltSuccessMission } from "@/lib/strings/volt";
@@ -220,9 +220,9 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialHandle]);
 
-  // Impostazioni di generazione: motore + modello (qualità) + stile (solo Soul ID)
-  // engine 'higgsfield' = Soul (HUMAN/SHAPE); 'echo' = gpt-image-2 con identity-lock.
-  const [engine, setEngine] = useState<"higgsfield" | "echo">("higgsfield");
+  // Impostazioni di generazione ECHO (formato, risoluzione, qualità, immagini extra).
+  // ECHO (gpt-image-2) e' l'unico motore: nessuna scelta Higgsfield/Soul.
+  const engine = "echo" as const;
   const [echoFormat, setEchoFormat] = useState("quadrato");
   const [echoRes, setEchoRes] = useState("standard");
   const [echoQuality, setEchoQuality] = useState("high");
@@ -288,9 +288,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
     setSceneByHandle((m) => { const n = { ...m }; delete n[handle]; return n; });
     setEchoRefs([]);
   }
-  const [model, setModel] = useState<SoulModel>(DEFAULT_MODEL);
-  const [styleId, setStyleId] = useState("");
-  const modelSupportsStyles = engine === "higgsfield" && (SOUL_MODELS.find((m) => m.id === model)?.supportsStyles ?? false);
+  // model/styleId/stili Soul rimossi: ECHO non ha modelli ne stili.
 
   const toggle = (cur: string, v: string, set: (s: string) => void) => set(cur === v ? "" : v);
 
@@ -382,8 +380,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
               .map((r) => ({ data: r.dataUrl, desc: r.desc, role: r.role }))
           : undefined,
         poseId: engine === "echo" ? (echoRefs.find((r) => r?.poseId)?.poseId ?? null) : null,
-        model,
-        styleId: modelSupportsStyles ? (styleId || null) : null,
+        styleId: null,
       }),
     });
     const json = await res.json();
@@ -779,7 +776,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             {/* A1 — Prompt Enhancer: mai automatico, parte solo da qui */}
                             <div className="mt-2 flex items-center justify-between gap-3">
                               <p className="text-[0.7rem] leading-relaxed text-faint">
-                                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, {engine === "echo" ? "identità bloccata dalle sue foto reali" : "garantito dal Soul"}.
+                                Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, identità bloccata dalle sue foto reali.
                               </p>
                               <button
                                 type="button"
@@ -828,18 +825,9 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                           </div>
 
                           <div className="mt-4">
-                            <span className="mb-2 block text-xs font-semibold text-muted">Modello</span>
-                            <div className="flex flex-wrap gap-2">
-                              {SOUL_MODELS.map((m) => (
-                                <Chip key={m.id} active={engine === "higgsfield" && model === m.id} onClick={() => { setEngine("higgsfield"); setModel(m.id); }}>{m.label} · {m.quality}</Chip>
-                              ))}
-                              <Chip active={engine === "echo"} onClick={() => setEngine("echo")}>ECHO · fotoreale</Chip>
-                            </div>
-                            {engine === "echo" && (
-                              <p className="mt-2 text-[0.7rem] leading-relaxed text-teal">
-                                Massima fedeltà: l&apos;identità è bloccata dalle foto reali della persona.
-                              </p>
-                            )}
+                            <p className="text-[0.7rem] leading-relaxed text-teal">
+                              Motore ECHO · massima fedeltà: l&apos;identità è bloccata dalle foto reali della persona.
+                            </p>
                           </div>
 
                           {/* ECHO — formato, risoluzione e qualità (incidono sul prezzo) */}
@@ -982,16 +970,6 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                             </div>
                           )}
 
-                          {modelSupportsStyles && (
-                            <div className="mt-3">
-                              <span className="mb-2 block text-xs font-semibold text-muted">Stile <span className="font-normal text-faint">· opzionale</span></span>
-                              <div className="flex flex-wrap gap-2">
-                                {SOUL_STYLES.map((s) => (
-                                  <Chip key={s.id} active={styleId === s.id} onClick={() => setStyleId(styleId === s.id ? "" : s.id)}>{s.label}</Chip>
-                                ))}
-                              </div>
-                            </div>
-                          )}
 
                           {voltBalance !== null && voltBalance >= priceCents && (
                             <p className="mt-4 text-center text-[0.7rem] text-faint">
