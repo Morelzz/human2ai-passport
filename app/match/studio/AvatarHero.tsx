@@ -34,16 +34,10 @@ export function AvatarHero(props: AvatarHeroProps) {
     handle,
     portrait,
     tierLabel,
-    category,
-    approvedCategories,
-    excludedCategories,
     onChangeFace,
     goalLabel,
     onClearGoal,
   } = props;
-
-  // Consenziente per la categoria della ricerca?
-  const allowedForCategory = category !== null && approvedCategories.includes(category) && !excludedCategories.includes(category);
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-4">
@@ -72,32 +66,6 @@ export function AvatarHero(props: AvatarHeroProps) {
         >
           ← Cambia volto
         </button>
-      </div>
-
-      {/* Stato di consenso per la categoria cercata */}
-      <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        {category ? (
-          allowedForCategory ? (
-            <span className="rounded-full border border-teal/30 bg-teal/10 px-2.5 py-1 text-[0.7rem] font-semibold text-teal">
-              ✓ consenziente per {category}
-            </span>
-          ) : (
-            <span className="rounded-full border border-crimson/30 bg-crimson/10 px-2.5 py-1 text-[0.7rem] font-semibold text-crimson">
-              ✗ non concede {category}
-            </span>
-          )
-        ) : (
-          <>
-            {approvedCategories.slice(0, 4).map((c) => (
-              <span key={c} className="rounded-full border border-teal/25 bg-teal/5 px-2.5 py-1 text-[0.68rem] font-semibold text-teal/90">
-                ✓ {c}
-              </span>
-            ))}
-            {approvedCategories.length > 4 && (
-              <span className="text-[0.68rem] text-faint">+{approvedCategories.length - 4}</span>
-            )}
-          </>
-        )}
       </div>
 
       {/* Goalpill: l'obiettivo scelto, con la x per tornare alla scelta */}

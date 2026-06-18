@@ -278,46 +278,9 @@ export function StudioPanel(props: StudioPanelProps) {
               className="w-full resize-y rounded-xl border border-border bg-obsidian-2 px-3 py-3 text-sm leading-relaxed text-foreground outline-none focus:border-amber/40"
             />
 
-            {/* A1 — Prompt Enhancer: mai automatico, parte solo da qui */}
-            <button
-              type="button"
-              onClick={() => enhance(avatar.handle)}
-              disabled={enhancingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
-              className="mt-2 w-full rounded-xl border border-amber/30 bg-amber/10 px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber/20 disabled:opacity-40"
-            >
-              {enhancingHandle === avatar.handle ? "✦ Miglioro…" : "✦ Migliora prompt"}
-            </button>
             <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
               Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, identità bloccata dalle sue foto reali.
             </p>
-
-            {/* Proposta migliorata: tag "Proposta", testo suggerito e due azioni
-                (Usa questa / Tieni la mia). Modificabile dopo l'uso. */}
-            {enhancedByHandle[avatar.handle] && (
-              <div className="mt-2.5 rounded-xl border border-amber/30 bg-amber/[0.07] p-3">
-                <span className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-amber">Proposta</span>
-                <p className="mt-1.5 text-[0.82rem] leading-relaxed text-foreground">{enhancedByHandle[avatar.handle]}</p>
-                <div className="mt-2.5 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSceneByHandle((m) => ({ ...m, [avatar.handle]: enhancedByHandle[avatar.handle] ?? "" }));
-                      setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }));
-                    }}
-                    className="flex-1 rounded-lg border border-teal/40 bg-teal/10 px-3 py-2 text-center text-[0.75rem] font-semibold text-teal transition-colors hover:bg-teal/20"
-                  >
-                    Usa questa
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }))}
-                    className="flex-1 rounded-lg border border-border px-3 py-2 text-center text-[0.75rem] font-semibold text-muted transition-colors hover:bg-white/5"
-                  >
-                    Tieni la mia
-                  </button>
-                </div>
-              </div>
-            )}
             {styleRisk.length > 0 && (
               <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber/40 bg-amber/10 p-3 text-[0.72rem] leading-relaxed text-amber">
                 <span aria-hidden>⚠️</span>
@@ -352,26 +315,6 @@ export function StudioPanel(props: StudioPanelProps) {
             onLens={(v) => setLens(v as LensVal)}
             onLight={(v) => setLight(v as LightVal)}
           />
-
-          <p className="mt-5 font-mono text-[0.7rem] tracking-wide text-teal/90">
-            <span className="text-faint">[</span> IDENTITÀ VERIFICATA <span className="text-faint">]</span>{" "}
-            <span className="text-faint">affinità: {avatar.reasons.join(" · ")}</span>
-          </p>
-
-          {avatar.gallery_count > 0 && (
-            <div className="mt-5">
-              <span className="mb-2 block text-xs font-semibold text-muted">
-                Repertorio <span className="font-normal text-faint">· esempi generati da questo volto</span>
-              </span>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {Array.from({ length: avatar.gallery_count }).map((_, i) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={`/api/sample/${avatar.handle}/${i}`} alt={`esempio ${i + 1}`} loading="lazy"
-                    className="h-[150px] w-[112px] shrink-0 rounded-lg border border-border bg-obsidian-3 object-cover" />
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Motore e formato (restyle Task 11): il motore NON e' un toggle ma una
               chip fissa "ECHO fotoreale · identita bloccata" (.enginechip del
@@ -510,6 +453,48 @@ export function StudioPanel(props: StudioPanelProps) {
               server (lib/echo-prompt), cio' che ECHO ricevera': scena +
               posa + clausole riferimenti + segmento fotografico + nota di
               sistema. Usa i token-helper di studio-options: sempre fedele. */}
+
+          {/* Migliora prompt: SPOSTATO in fondo (penultimo, prima del prompt
+              finale e di Genera). Cosi l'enhancer ha gia davanti tutte le scelte
+              fatte coi controlli (posa, inquadratura, espressione, stile, look,
+              riferimenti) e migliora SOLO la scena rafforzandole, senza aggiungere
+              direttive fotografiche che andrebbero in conflitto coi pulsanti. */}
+          <div className="mt-5">
+            <button
+              type="button"
+              onClick={() => enhance(avatar.handle)}
+              disabled={enhancingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
+              className="w-full rounded-xl border border-amber/30 bg-amber/10 px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber/20 disabled:opacity-40"
+            >
+              {enhancingHandle === avatar.handle ? "✦ Miglioro la scena…" : "✦ Migliora prompt"}
+            </button>
+            {enhancedByHandle[avatar.handle] && (
+              <div className="mt-2.5 rounded-xl border border-amber/30 bg-amber/[0.07] p-3">
+                <span className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-amber">Proposta</span>
+                <p className="mt-1.5 text-[0.82rem] leading-relaxed text-foreground">{enhancedByHandle[avatar.handle]}</p>
+                <div className="mt-2.5 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSceneByHandle((m) => ({ ...m, [avatar.handle]: enhancedByHandle[avatar.handle] ?? "" }));
+                      setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }));
+                    }}
+                    className="flex-1 rounded-lg border border-teal/40 bg-teal/10 px-3 py-2 text-center text-[0.75rem] font-semibold text-teal transition-colors hover:bg-teal/20"
+                  >
+                    Usa questa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }))}
+                    className="flex-1 rounded-lg border border-border px-3 py-2 text-center text-[0.75rem] font-semibold text-muted transition-colors hover:bg-white/5"
+                  >
+                    Tieni la mia
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <FinalPrompt
             scene={sceneByHandle[avatar.handle] ?? ""}
             pose={pose}
