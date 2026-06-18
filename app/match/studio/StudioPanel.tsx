@@ -60,8 +60,9 @@ export interface StudioGenResult {
   voltMission?: string | null;
 }
 
-// Immagine extra ECHO (stessa forma di MatchClient.EchoRef).
-export type StudioEchoRef = { dataUrl: string; desc: string; role: string; poseId?: string } | undefined;
+// Immagine extra ECHO (stessa forma di MatchClient.EchoRef): SOLO immagini del
+// cliente. La posa è un controllo a sé (PosePicker), non vive più qui.
+export type StudioEchoRef = { dataUrl: string; desc: string; role: string } | undefined;
 
 export interface StudioPanelProps {
   // L'avatar di questa card + contesto della ricerca.
@@ -108,13 +109,6 @@ export interface StudioPanelProps {
   pickEcho: (i: number, file: File | undefined) => void;
   updateEcho: (i: number, patch: Partial<NonNullable<StudioEchoRef>>) => void;
   removeEcho: (i: number) => void;
-
-  // Posa dalla libreria.
-  poseLib: { id: string; label: string; url: string }[] | null;
-  poseOpenFor: number | null;
-  setPoseOpenFor: (v: number | null) => void;
-  pickPose: (i: number, pose: { id: string; label: string; url: string }) => void;
-  poseChosen: boolean;
 
   // Azioni + gate VOLT (tutto posseduto da MatchClient).
   generate: (handle: string, mode: "preview" | "commercial") => void;
@@ -176,11 +170,6 @@ export function StudioPanel(props: StudioPanelProps) {
     pickEcho,
     updateEcho,
     removeEcho,
-    poseLib,
-    poseOpenFor,
-    setPoseOpenFor,
-    pickPose,
-    poseChosen,
     generate,
     resetGeneration,
     voltBalance,
@@ -425,106 +414,89 @@ export function StudioPanel(props: StudioPanelProps) {
             </div>
           )}
 
-          {/* ECHO — fino a 2 immagini extra del cliente (outfit, scenario…) */}
+          {/* Immagini di riferimento (Task 10): SOLO immagini del cliente, fino a
+              2 slot. La posa NON vive più qui (è il PosePicker indipendente).
+              Struttura/etichette dal prototipo design/anteprima_match_mobile.html
+              (.blk "Immagini di riferimento"): label amber + hint ".opt" «fino a
+              2», la nota amber «Un solo outfit per generazione», e 2 .ref con
+              thumbnail + ruolo (select) + come si usa (input). Vincolo singolo
+              outfit: se uno slot è "outfit", l'altro non offre più "Outfit". */}
           {engine === "echo" && (
             <div className="mt-4">
-              <span className="mb-2 block text-xs font-semibold text-muted">
-                Capi e scenari <span className="font-normal text-faint">· opzionale, fino a 2</span>
+              <span className="mb-2 flex items-center gap-2 text-[0.66rem] font-semibold uppercase tracking-[0.06em] text-amber">
+                Immagini di riferimento <span className="font-normal normal-case tracking-normal text-faint">· fino a 2</span>
               </span>
-              <div className="grid grid-cols-2 gap-2">
+              <p className="mb-2 rounded-lg border border-amber/30 bg-amber/10 px-2.5 py-2 text-[0.66rem] leading-snug text-amber">
+                ⚠️ Un solo outfit per generazione
+              </p>
+              <div className="space-y-2">
                 {[0, 1].map((i) => {
                   const ref = echoRefs[i];
+                  // Vincolo "un solo outfit": se l'ALTRO slot è già "outfit",
+                  // questo slot non può scegliere "outfit" (opzione nascosta). Se
+                  // questo slot fosse rimasto su "outfit", lo si riallinea.
+                  const other = echoRefs[i === 0 ? 1 : 0];
+                  const outfitTakenElsewhere = other?.role === "outfit";
                   return (
-                    <div key={i} className="rounded-xl border border-border bg-obsidian p-2">
+                    <div key={i} className="rounded-xl border border-border bg-obsidian-2 p-2.5">
                       {ref?.dataUrl ? (
-                        <>
-                          <div className="relative">
+                        <div className="flex gap-2.5">
+                          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border bg-obsidian">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={ref.dataUrl} alt="" className={`h-24 w-full rounded-lg ${ref.poseId ? "object-contain bg-white/[0.04]" : "object-cover"}`} />
+                            <img src={ref.dataUrl} alt="" className="h-full w-full object-cover" />
                             <button
                               type="button"
                               onClick={() => removeEcho(i)}
                               aria-label="Rimuovi"
-                              className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black/80"
+                              className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-[0.6rem] text-white hover:bg-black/80"
                             >
                               ✕
                             </button>
                           </div>
-                          {ref.poseId ? (
-                            <p className="mt-2 truncate text-xs text-teal">Posa · {ref.desc}</p>
-                          ) : (
-                            <>
-                              <select
-                                value={ref.role}
-                                onChange={(e) => updateEcho(i, { role: e.target.value })}
-                                className="mt-2 w-full rounded-lg border border-border bg-obsidian-2 px-2 py-1.5 text-xs text-foreground outline-none focus:border-teal/50"
-                              >
-                                <option value="outfit">Outfit / capo</option>
-                                <option value="accessorio">Accessorio</option>
-                                <option value="sfondo">Sfondo / scenario</option>
-                                <option value="oggetto">Oggetto</option>
-                              </select>
-                              <input
-                                value={ref.desc}
-                                onChange={(e) => updateEcho(i, { desc: e.target.value })}
-                                placeholder="descrizione (opzionale)"
-                                className="mt-1.5 w-full rounded-lg border border-border bg-obsidian-2 px-2.5 py-2 text-xs text-foreground outline-none focus:border-teal/50"
-                              />
-                            </>
-                          )}
-                        </>
-                      ) : (
-                        <div className="flex h-[124px] flex-col gap-1.5">
-                          <label className="focus-ring flex flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border text-center text-faint transition-colors hover:border-teal/40 hover:text-teal">
-                            <span className="text-xl leading-none">+</span>
-                            <span className="px-2 text-[0.66rem] leading-tight">{i === 0 ? "Outfit / capo" : "Scenario / altro"}</span>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              aria-label={i === 0 ? "Carica un outfit o un capo" : "Carica uno scenario o altro"}
-                              className="sr-only"
-                              onChange={(e) => { pickEcho(i, e.target.files?.[0]); e.currentTarget.value = ""; }}
-                            />
-                          </label>
-                          {!poseChosen && (poseLib?.length ?? 0) > 0 && (
-                            <button
-                              type="button"
-                              onClick={() => setPoseOpenFor(poseOpenFor === i ? null : i)}
-                              aria-expanded={poseOpenFor === i}
-                              className={`focus-ring rounded-lg border px-2 py-1.5 text-[0.66rem] transition-colors ${poseOpenFor === i ? "border-teal/50 text-teal" : "border-border text-faint hover:border-teal/40 hover:text-teal"}`}
+                          <div className="flex flex-1 flex-col gap-1.5">
+                            <select
+                              value={ref.role}
+                              onChange={(e) => updateEcho(i, { role: e.target.value })}
+                              className="w-full rounded-lg border border-border bg-obsidian px-2.5 py-2 text-xs text-foreground outline-none focus:border-amber/40"
                             >
-                              🧍 Posa dalla libreria
-                            </button>
-                          )}
+                              {/* "Outfit" disponibile solo se l'altro slot non lo è
+                                  già; resta selezionabile se è questo slot ad averlo. */}
+                              {(!outfitTakenElsewhere || ref.role === "outfit") && (
+                                <option value="outfit">Outfit / capo</option>
+                              )}
+                              <option value="accessorio">Accessorio</option>
+                              <option value="sfondo">Sfondo / scenario</option>
+                              <option value="oggetto">Oggetto</option>
+                            </select>
+                            <input
+                              value={ref.desc}
+                              onChange={(e) => updateEcho(i, { desc: e.target.value })}
+                              placeholder="come si usa (opzionale)"
+                              className="w-full rounded-lg border border-border bg-obsidian px-2.5 py-2 text-xs text-foreground outline-none focus:border-amber/40"
+                            />
+                          </div>
                         </div>
+                      ) : (
+                        <label className="focus-ring flex h-16 cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border text-center text-faint transition-colors hover:border-amber/40 hover:text-amber">
+                          <span className="text-xl leading-none">+</span>
+                          <span className="text-[0.7rem] leading-tight">{i === 0 ? "Outfit / capo" : "Scenario / altro"}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            aria-label={i === 0 ? "Carica un outfit o un capo" : "Carica uno scenario o altro"}
+                            className="sr-only"
+                            onChange={(e) => { pickEcho(i, e.target.files?.[0]); e.currentTarget.value = ""; }}
+                          />
+                        </label>
                       )}
                     </div>
                   );
                 })}
               </div>
-              {poseOpenFor !== null && !poseChosen && (
-                <div className="mt-2 rounded-xl border border-border bg-obsidian p-2">
-                  <p className="mb-2 px-1 text-[0.66rem] text-faint">Scegli la posa: il manichino guida SOLO il corpo, l&apos;identità resta della persona.</p>
-                  <div className="grid max-h-56 grid-cols-4 gap-1.5 overflow-y-auto">
-                    {(poseLib ?? []).map((p) => (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => pickPose(poseOpenFor, p)}
-                        className="focus-ring group rounded-lg border border-border bg-white/[0.03] p-1 text-left transition-colors hover:border-teal/50"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={p.url} alt={p.label} className="h-16 w-full rounded object-contain" loading="lazy" />
-                        <span className="mt-1 block truncate px-0.5 text-[0.6rem] text-faint group-hover:text-teal">{p.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
               <p className="mt-2 text-[0.68rem] leading-relaxed text-faint">
                 Carica le immagini e scegli <span className="text-muted">cosa sono</span>: al collegamento pensiamo noi.
-                Es. outfit + sfondo → {avatar.alias} indossa quell&apos;outfit in quell&apos;ambiente, automaticamente.
-                Il campo &laquo;scena&raquo; sopra è solo per direzioni extra (luce, espressione) ed è opzionale.
+                Es. outfit + sfondo, {avatar.alias} indossa quell&apos;outfit in quell&apos;ambiente, automaticamente.
+                Il campo «scena» sopra è solo per direzioni extra (luce, espressione) ed è opzionale.
               </p>
             </div>
           )}

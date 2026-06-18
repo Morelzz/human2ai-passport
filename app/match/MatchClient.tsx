@@ -228,9 +228,9 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   const echoSize = ECHO_SIZE_GRID[echoFormat]?.[echoRes] ?? ECHO_SIZE_GRID[echoFormat]?.["2k"] ?? "1024x1024";
   // ECHO: fino a 2 immagini extra del cliente. Ogni box ha un RUOLO: noi
   // colleghiamo l'immagine al soggetto in automatico, l'utente non scrive nulla.
-  // poseId presente = lo slot è occupato da una posa della LIBRERIA (il client
-  // non manda i byte: solo l'id; dataUrl qui è l'URL pubblico per l'anteprima).
-  type EchoRef = { dataUrl: string; desc: string; role: string; poseId?: string } | undefined;
+  // I riferimenti sono SOLO immagini del cliente (la posa è un controllo a sé,
+  // il PosePicker, e non vive più dentro questi slot).
+  type EchoRef = { dataUrl: string; desc: string; role: string } | undefined;
   const [echoRefs, setEchoRefs] = useState<EchoRef[]>([]);
 
   // Nuove selezioni dello Studio (usato dai task successivi): obiettivo, posa
@@ -246,27 +246,6 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   const [camera, setCamera] = useState("full_frame");
   const [lens, setLens] = useState<LensVal>("85mm");
   const [light, setLight] = useState<LightVal>("naturale");
-
-  // Libreria pose: caricata una volta quando si sceglie ECHO; null = mai chiesta.
-  const [poseLib, setPoseLib] = useState<{ id: string; label: string; url: string }[] | null>(null);
-  const [poseOpenFor, setPoseOpenFor] = useState<number | null>(null);
-  useEffect(() => {
-    if (engine !== "echo" || poseLib !== null) return;
-    fetch("/api/poses")
-      .then((r) => r.json())
-      .then((j) => setPoseLib(Array.isArray(j?.poses) ? j.poses : []))
-      .catch(() => setPoseLib([]));
-  }, [engine, poseLib]);
-
-  function pickPose(i: number, pose: { id: string; label: string; url: string }) {
-    setEchoRefs((prev) => {
-      const next = [...prev];
-      next[i] = { dataUrl: pose.url, desc: pose.label, role: "posa", poseId: pose.id };
-      return next;
-    });
-    setPoseOpenFor(null);
-  }
-  const poseChosen = echoRefs.some((r) => r?.poseId);
 
   async function pickEcho(i: number, file: File | undefined) {
     if (!file) return;
@@ -389,10 +368,13 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         echoQuality,
         extraRefs: engine === "echo"
           ? echoRefs
-              .filter((r): r is NonNullable<EchoRef> => !!r?.dataUrl && !r?.poseId)
+              .filter((r): r is NonNullable<EchoRef> => !!r?.dataUrl)
               .map((r) => ({ data: r.dataUrl, desc: r.desc, role: r.role }))
           : undefined,
-        poseId: engine === "echo" ? (echoRefs.find((r) => r?.poseId)?.poseId ?? null) : null,
+        // La posa-da-libreria non vive più nei riferimenti: il client non manda
+        // più un poseId scelto qui (la posa è un controllo indipendente, wiring
+        // nel task successivo). Manteniamo il campo a null per compatibilità.
+        poseId: null,
         styleId: null,
       }),
     });
@@ -726,11 +708,6 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                       pickEcho={pickEcho}
                       updateEcho={updateEcho}
                       removeEcho={removeEcho}
-                      poseLib={poseLib}
-                      poseOpenFor={poseOpenFor}
-                      setPoseOpenFor={setPoseOpenFor}
-                      pickPose={pickPose}
-                      poseChosen={poseChosen}
                       generate={generate}
                       resetGeneration={resetGeneration}
                       voltBalance={voltBalance}
