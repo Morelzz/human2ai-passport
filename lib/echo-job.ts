@@ -19,6 +19,7 @@ import { generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/ech
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected } from "@/lib/face-scan-server";
+import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 
 type Admin = ReturnType<typeof createServerClient>;
 
@@ -129,43 +130,6 @@ export function identityPromptFor(a: AvatarIdentity): string | null {
   const hair = a.hair_color ? HAIR_EN[a.hair_color.toLowerCase().trim()] : null;
   if (hair) s += ` Their natural hair is ${hair}.`;
   return s;
-}
-
-// ── Prompt (spostato da /api/generate, invariato) ───────────────────────────
-type ExtraMeta = { role: string; desc: string };
-
-function clauseForExtra(e: ExtraMeta): string {
-  const d = e.desc.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
-  switch (e.role) {
-    case "outfit":
-      return `the person is wearing the ${d || "outfit"} shown in the additional reference images`;
-    case "accessorio":
-      return `the person is wearing or using the ${d || "accessory"} shown in the additional reference images`;
-    case "sfondo":
-      return `the scene takes place in the ${d || "location"} shown in the additional reference images, used as the background and environment`;
-    default:
-      return `the image includes the ${d || "object"} shown in the additional reference images`;
-  }
-}
-
-export function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null, identityText?: string | null): string {
-  const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
-  let base =
-    "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
-  // Ancoraggio identità dai metadati verificati (mai testo del client).
-  if (identityText) {
-    base += ` ${identityText}`;
-  }
-  // Posa dalla libreria: direttiva TESTUALE (la whitelist è la libreria stessa,
-  // vedi lib/poses.ts — qui arriva solo testo nostro, mai del client).
-  if (poseText) {
-    base += ` The person's body pose: ${poseText}.`;
-  }
-  const clauses = extras.map(clauseForExtra);
-  if (clauses.length > 0) {
-    base += " " + clauses.join("; ") + ". Apply each one faithfully and exactly as depicted.";
-  }
-  return safe ? `${base} Additional direction: ${safe}.` : base;
 }
 
 // Decodifica un data-URL immagine e lo ridimensiona a ≤1024px (JPEG).

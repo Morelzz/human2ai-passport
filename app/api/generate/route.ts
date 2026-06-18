@@ -13,6 +13,7 @@ import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
 import { prepareExtras, identityPromptFor } from "@/lib/echo-job";
 import { fetchPosePrompt } from "@/lib/poses";
+import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { logBlockedRequest } from "@/lib/blocked";
 import { spendVolt, grantVolt } from "@/lib/volt";
 import sharp from "sharp";
@@ -22,45 +23,6 @@ export const runtime = "nodejs";
 // limite. NB: su Vercel Hobby resta capato a ~60s → le risoluzioni alte vanno
 // usate in locale o con un piano superiore (o, in futuro, generazione async).
 export const maxDuration = 300;
-
-// Compone il prompt finale per ECHO. L'utente NON scrive il collegamento: indica
-// solo il RUOLO di ogni immagine (outfit/accessorio/sfondo/oggetto) e noi
-// generiamo la frase giusta in modo automatico, semantico (niente numerazione).
-type ExtraMeta = { role: string; desc: string };
-
-function clauseForExtra(e: ExtraMeta): string {
-  const d = e.desc.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
-  switch (e.role) {
-    case "outfit":
-      return `the person is wearing the ${d || "outfit"} shown in the additional reference images`;
-    case "accessorio":
-      return `the person is wearing or using the ${d || "accessory"} shown in the additional reference images`;
-    case "sfondo":
-      return `the scene takes place in the ${d || "location"} shown in the additional reference images, used as the background and environment`;
-    default:
-      return `the image includes the ${d || "object"} shown in the additional reference images`;
-  }
-}
-
-function buildEchoPrompt(scene: string, extras: ExtraMeta[], poseText?: string | null, identityText?: string | null): string {
-  const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
-  let base =
-    "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
-  // Ancoraggio identità dai metadati verificati (mai testo del client).
-  if (identityText) {
-    base += ` ${identityText}`;
-  }
-  // Posa dalla libreria: direttiva TESTUALE (la whitelist è la libreria stessa,
-  // vedi lib/poses.ts — qui arriva solo testo nostro, mai del client).
-  if (poseText) {
-    base += ` The person's body pose: ${poseText}.`;
-  }
-  const clauses = extras.map(clauseForExtra);
-  if (clauses.length > 0) {
-    base += " " + clauses.join("; ") + ". Apply each one faithfully and exactly as depicted.";
-  }
-  return safe ? `${base} Additional direction: ${safe}.` : base;
-}
 
 // Decodifica un data-URL immagine e lo ridimensiona per l'invio al motore.
 async function dataUrlToBuffer(dataUrl: string): Promise<Buffer | null> {
