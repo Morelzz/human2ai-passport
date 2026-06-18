@@ -10,7 +10,7 @@
 // NB: in preview headless l'animazione translateY e' ferma, ma open/close toggla.
 // ──────────────────────────────────────────────────────────────────────────
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type IconOpt = { v: string; l: string };
 
@@ -71,6 +71,16 @@ export function IconPicker({
   const [open, setOpen] = useState(false);
   const current = options.find((o) => o.v === value) ?? options[0];
 
+  // Blocco dello scroll di sfondo quando il foglio e aperto (bug desktop).
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   return (
     <div className="mt-4">
       <span className="mb-2 block text-[0.66rem] font-semibold uppercase tracking-[0.06em] text-amber">{label}</span>
@@ -102,8 +112,8 @@ export function IconPicker({
             onClick={() => setOpen(false)}
             className="absolute inset-0 cursor-default bg-black/50"
           />
-          <div className="absolute inset-x-0 bottom-0 flex max-h-[80vh] translate-y-0 flex-col rounded-t-2xl border-t border-border bg-surface shadow-[0_-12px_40px_rgba(0,0,0,0.5)] transition-transform duration-200">
-            <div className="mx-auto mt-2.5 h-1 w-9 rounded-full bg-edge" />
+          <div className="absolute inset-x-0 bottom-0 flex max-h-[80vh] flex-col rounded-t-2xl border-t border-border bg-surface shadow-[0_-12px_40px_rgba(0,0,0,0.5)] sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-h-[70vh] sm:w-[min(90vw,480px)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:border">
+            <div className="mx-auto mt-2.5 h-1 w-9 rounded-full bg-edge sm:hidden" />
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <span className="text-sm font-medium text-foreground">{sheetTitle}</span>
               <button type="button" onClick={() => setOpen(false)} aria-label="Chiudi" className="text-lg text-faint hover:text-foreground">
@@ -111,7 +121,7 @@ export function IconPicker({
               </button>
             </div>
             <div className="overflow-y-auto px-4 pb-6 pt-3">
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
                 {options.map((o) => {
                   const active = o.v === value;
                   return (
