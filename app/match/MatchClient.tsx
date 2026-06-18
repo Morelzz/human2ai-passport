@@ -253,7 +253,18 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       const dataUrl = await resizeImage(file);
       setEchoRefs((prev) => {
         const next = [...prev];
-        next[i] = { dataUrl, desc: next[i]?.desc ?? "", role: next[i]?.role ?? (i === 0 ? "outfit" : "sfondo") };
+        const otherIsOutfit = prev.some((r, j) => j !== i && r?.role === "outfit");
+        const existing = next[i]?.role;
+        // Mai due outfit: se l'altro slot e' gia' outfit, questo slot ripiega su "sfondo".
+        const role =
+          existing && !(existing === "outfit" && otherIsOutfit)
+            ? existing
+            : otherIsOutfit
+              ? "sfondo"
+              : i === 0
+                ? "outfit"
+                : "sfondo";
+        next[i] = { dataUrl, desc: next[i]?.desc ?? "", role };
         return next;
       });
     } catch {

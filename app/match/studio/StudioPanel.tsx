@@ -427,7 +427,7 @@ export function StudioPanel(props: StudioPanelProps) {
                 Immagini di riferimento <span className="font-normal normal-case tracking-normal text-faint">· fino a 2</span>
               </span>
               <p className="mb-2 rounded-lg border border-amber/30 bg-amber/10 px-2.5 py-2 text-[0.66rem] leading-snug text-amber">
-                ⚠️ Un solo outfit per generazione
+                <span aria-hidden>⚠️</span> Un solo outfit per generazione
               </p>
               <div className="space-y-2">
                 {[0, 1].map((i) => {
