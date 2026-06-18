@@ -6,7 +6,7 @@ import { avatarVetoReason } from "@/lib/avatar-gate";
 import { grossForCategory, splitRoyalty, splitEcho } from "@/lib/wallet";
 import { echoCostCentsFromUsage } from "@/lib/engines/echo-cost";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
-import { DEFAULT_MODEL, isValidModel, isValidStyle, modelTierLabel } from "@/lib/soul-models";
+import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
 import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
 import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
@@ -138,9 +138,9 @@ export async function POST(request: Request) {
     }
   }
 
-  // Selezione del motore. ECHO = gpt-image-2 con identity-lock dal reference-set;
-  // default = Higgsfield Soul. I motori restano terze parti INVISIBILI, lato server.
-  const useEcho = body?.engine === "echo";
+  // ECHO (gpt-image-2 con identity-lock dal reference-set) e' l'unico motore.
+  // Il ramo Higgsfield resta nel file ma irraggiungibile (dormiente).
+  const useEcho = true;
   const echoSize = isEchoSize(body?.echoSize) ? body.echoSize : "1024x1024";
   const echoQuality = isEchoQuality(body?.echoQuality) ? body.echoQuality : "high";
 
@@ -235,7 +235,7 @@ export async function POST(request: Request) {
   let voltCharged = false;
   let voltBalanceAfter: number | null = null;
   if (syncCost > 0) {
-    const tierLabel = useEcho ? "ECHO" : modelTierLabel(model);
+    const tierLabel = "ECHO";
     const spent = await spendVolt(user.id, syncCost, `${tierLabel}:${genId}`);
     if (!spent.ok && spent.reason === "insufficient") {
       return NextResponse.json(
@@ -422,7 +422,7 @@ export async function POST(request: Request) {
   // additive (migrazione echo_cost.sql): se mancano, l'update fallisce in silenzio
   // senza intaccare la generazione già registrata.
   {
-    const meta: Record<string, unknown> = { tier: useEcho ? "ECHO" : modelTierLabel(model) };
+    const meta: Record<string, unknown> = { tier: "ECHO" };
     if (engineCostCents != null) meta.engine_cost_cents = engineCostCents;
     await admin.from("generations").update(meta).eq("id", genId);
   }
