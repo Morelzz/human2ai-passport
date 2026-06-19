@@ -54,6 +54,16 @@ export function submitStyle(loading: boolean): React.CSSProperties {
   };
 }
 
+// Coerente con la policy server di Supabase Auth. Ritorna un messaggio d'errore
+// in italiano, o null se la password va bene. Validazione lato UX: la verita'
+// e' comunque lato server (Auth + leaked-password protection).
+export function passwordIssue(pw: string): string | null {
+  if (pw.length < 10) return "La password deve avere almeno 10 caratteri";
+  if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw)) return "Servono lettere maiuscole e minuscole";
+  if (!/[0-9]/.test(pw)) return "Serve almeno un numero";
+  return null;
+}
+
 export function Shell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-obsidian p-6 text-foreground">

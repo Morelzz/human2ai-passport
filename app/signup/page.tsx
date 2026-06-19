@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
-import { Field, Shell, labelStyle, submitStyle } from "../auth-ui";
+import { Field, Shell, labelStyle, submitStyle, passwordIssue } from "../auth-ui";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -20,6 +20,10 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    // Validazione robustezza password lato UX (coerente con la policy Auth server).
+    const pwErr = passwordIssue(password);
+    if (pwErr) { setError(pwErr); setLoading(false); return; }
 
     const supabase = createClient();
     // Il trigger handle_new_user accetta solo buyer/seller: l'azienda nasce
