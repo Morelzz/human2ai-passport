@@ -4,8 +4,10 @@ import { WardDemo } from "./WardDemo";
 
 // Sezione Ward in homepage (#ward): presentazionale, introduce Ward e mostra la
 // demo simulata. NON tocca mai dati utente. Va dopo il blocco "Avatars" cosi'
-// l'ordine racconta: prima si crea, poi si protegge. CTA -> /signup (la rotta
-// reale di ingresso; il deep-link al fork protetto arriva con la sez. 4).
+// l'ordine racconta: prima si crea, poi si protegge. CTA -> /proteggi (il flusso
+// REALE di protezione del volto, modulo VETO): se l'utente e' loggato apre la
+// registrazione protetta, altrimenti manda a /login. NON /signup, che a chi e'
+// gia' dentro rimostrerebbe "crea account" (loop "rifa l'account").
 export function WardSection() {
   return (
     <section id="ward" className="w-full py-16 lg:py-24">
@@ -25,7 +27,7 @@ export function WardSection() {
           </p>
           <div className="mt-7">
             <Button asChild size="lg">
-              <Link href="/signup">Blinda la tua faccia</Link>
+              <Link href="/proteggi">Blinda la tua faccia</Link>
             </Button>
           </div>
         </div>
