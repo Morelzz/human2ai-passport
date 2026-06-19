@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 // F1 — banner cookie conforme: default SOLO essenziali, scelta granulare,
@@ -26,6 +27,7 @@ export function CookieBanner() {
   const [open, setOpen] = useState(false);
   const [detail, setDetail] = useState(false);
   const [analytics, setAnalytics] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const prefs = readCookiePrefs();
@@ -42,6 +44,9 @@ export function CookieBanner() {
     } catch { /* storage non disponibile: il banner riapparirà */ }
     setOpen(false);
   }
+
+  // L'app Ward (loggata) ha la sua bottom-nav: il banner cookie globale non deve coprirla.
+  if (pathname?.startsWith("/ward")) return null;
 
   if (!open) return null;
 

@@ -1,7 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import type { WardData } from "./demo";
 import { Radar } from "./Radar";
+
+// Icone bottom-nav (portate dal mockup, stroke=currentColor cosi' seguono lo
+// stato del tab: muted / amber / strike).
+const ICONS: Record<Tab, ReactNode> = {
+  radar: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 3l7 3v5c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3z" /><circle cx="12" cy="11" r="2.3" /></svg>),
+  detections: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-3.5-3.5" /></svg>),
+  nemesis: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2l9 5v6c0 5-3.8 8.6-9 10C6.8 21.6 3 18 3 13V7l9-5z" /><path d="M12 7v5" /></svg>),
+  vault: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="4" y="4" width="16" height="16" rx="2.5" /><path d="M9 4v16M4 9h5" /></svg>),
+};
 
 type Tab = "radar" | "detections" | "nemesis" | "vault";
 
@@ -26,10 +35,10 @@ export function WardApp({ data }: { data: WardData }) {
       </main>
 
       <nav className="tabbar">
-        <TabBtn id="radar" cur={tab} set={setTab} label="Radar" />
-        <TabBtn id="detections" cur={tab} set={setTab} label="Detections" />
-        <TabBtn id="nemesis" cur={tab} set={setTab} label="Nemesis" nem badge={data.nemesis.inProgress} />
-        <TabBtn id="vault" cur={tab} set={setTab} label="Vault" />
+        <TabBtn id="radar" cur={tab} set={setTab} label="Radar" icon={ICONS.radar} />
+        <TabBtn id="detections" cur={tab} set={setTab} label="Detections" icon={ICONS.detections} />
+        <TabBtn id="nemesis" cur={tab} set={setTab} label="Nemesis" icon={ICONS.nemesis} nem badge={data.nemesis.inProgress} />
+        <TabBtn id="vault" cur={tab} set={setTab} label="Vault" icon={ICONS.vault} />
       </nav>
     </div>
   );
@@ -46,12 +55,13 @@ function Placeholder({ title }: { title: string }) {
   );
 }
 
-function TabBtn({ id, cur, set, label, nem, badge }: {
-  id: Tab; cur: Tab; set: (t: Tab) => void; label: string; nem?: boolean; badge?: number;
+function TabBtn({ id, cur, set, label, icon, nem, badge }: {
+  id: Tab; cur: Tab; set: (t: Tab) => void; label: string; icon: ReactNode; nem?: boolean; badge?: number;
 }) {
   const on = cur === id;
   return (
     <button type="button" className={`tab${on ? " on" : ""}${nem ? " nemtab" : ""}`} onClick={() => set(id)}>
+      {icon}
       <span className="lb">{label}</span>
       {nem && badge ? <span className="badge show">{badge}</span> : null}
     </button>
