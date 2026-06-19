@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     "@tensorflow/tfjs",
     "@tensorflow/tfjs-backend-wasm",
     "sharp",
+    "playwright",
   ],
   images: {
     // Copertine del blog generate con Higgsfield (CDN della libreria utente).

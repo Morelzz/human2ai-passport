@@ -104,7 +104,10 @@ describe("runScan: pipeline + data-minimization (A2.3)", () => {
   it("salva solo confirmed/review e cancella OGNI candidato (zero residui)", async () => {
     const m = memRepo([[0, 0]]);
     const d = provider(urls);
-    const res = await runScan("av1", { repo: m.repo, audit, gate: okGate, discovery: d.p, fetchImage, match });
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: d.p, fetchImage, match,
+      phash: async () => "ph_test", // A2.3: il match conserva URL + phash
+    });
 
     expect(res.ok).toBe(true);
     expect(res.status).toBe("done");
@@ -122,7 +125,7 @@ describe("runScan: pipeline + data-minimization (A2.3)", () => {
     expect(first.host).toBe("a.test");
     expect(first.score).toBe(95);
     expect(first.sensitivity).toBe("standard");
-    expect(first.phash).toBeNull();
+    expect(first.phash).toBe("ph_test");
 
     expect(m.finished.at(-1)).toMatchObject({ status: "done", stats: { candidates: 5, matches: 2, discarded: 3 } });
   });

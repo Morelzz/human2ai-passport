@@ -47,6 +47,7 @@ export interface ScanDeps {
   discovery?: DiscoveryProvider;
   fetchImage?: (url: string) => Promise<Uint8Array | null>;
   match?: (refs: number[][], bytes: Uint8Array) => Promise<MatchResult>;
+  phash?: (bytes: Uint8Array) => Promise<string | null>;
   audit?: AuditFn;
   referenceImageUrl?: string; // per i provider reali (Google Vision); lo stub lo ignora
   limit?: number;
@@ -84,6 +85,17 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
   const audit: AuditFn = deps.audit ?? (await import("./audit")).appendAudit;
   const fetchImage = deps.fetchImage ?? defaultFetchImage;
   const matchFn = deps.match ?? (await import("./matching")).match;
+  let phashFn = deps.phash;
+  if (!phashFn) {
+    const { phashOf } = await import("./evidence/phash");
+    phashFn = async (b) => {
+      try {
+        return await phashOf(b);
+      } catch {
+        return null;
+      }
+    };
+  }
   const limit = deps.limit ?? DEFAULT_LIMIT;
 
   // 1. GATE (A2.1): nessuno scan senza consenso attivo. Il gate logga gia' l'esito.
@@ -130,6 +142,13 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
       }
       const m = await matchFn(refs, bytes);
       if (m.band === "confirmed" || m.band === "review") {
+        // A2.3: sul match si tiene solo URL + phash (mai il descrittore/bytes).
+        let phash: string | null = null;
+        try {
+          phash = await phashFn(bytes);
+        } catch {
+          phash = null;
+        }
         await repo.insertMatch({
           avatarId,
           scanJobId: jobId,
@@ -140,7 +159,7 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
           // Module 1: la classificazione sensibilita' (standard/sensitive/minor,
           // child-safety) e' una slice separata; il default DB e' 'standard'.
           sensitivity: "standard",
-          phash: null, // phash + evidenza arrivano con la slice evidence (Playwright)
+          phash,
         });
         matches++;
         await audit({ actor: null, action: "scan.match", target: avatarId, meta: { jobId, host: cand.host, band: m.band, score: m.score } });
