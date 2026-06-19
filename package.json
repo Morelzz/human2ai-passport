@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start:railway": "node worker/start-prod.mjs"
+    "start:railway": "node worker/start-prod.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
@@ -45,6 +46,7 @@
     "@types/three": "^0.184.1",
     "ffmpeg-static": "^5.3.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }
