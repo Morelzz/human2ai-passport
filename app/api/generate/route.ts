@@ -11,6 +11,7 @@ import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
 import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
+import { allowRequest } from "@/lib/rate-limit";
 import { prepareExtras, identityPromptFor } from "@/lib/echo-job";
 import { fetchPosePrompt } from "@/lib/poses";
 import { photographicSegment, poseToken, validEnum, CAMERAS, LENSES, LIGHTS, COLOR_STYLES, FRAMINGS, EXPRESSIONS } from "@/lib/studio-options";
@@ -45,6 +46,11 @@ export async function POST(request: Request) {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return NextResponse.json({ error: "Devi accedere" }, { status: 401 });
+
+  // Rate-limit per utente: la generazione costa crediti e tempo motore. Max 10/min.
+  if (!(await allowRequest(`generate:${user.id}`, 10, 60))) {
+    return NextResponse.json({ error: "Troppe richieste, attendi un momento" }, { status: 429 });
+  }
 
   const body = await request.json().catch(() => null);
   const handle = String(body?.handle ?? "").trim();

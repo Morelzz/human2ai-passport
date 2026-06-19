@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase";
 import { truncateToken } from "@/lib/token";
 import { isPublicAvatar } from "@/lib/registry";
 import { siteUrl } from "@/lib/site";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 // ──────────────────────────────────────────────────────────────────────────
 // IL FILTRO SEMBLIC — consent-check API (demo pubblica, Fase 2 "Il Filtro per
@@ -34,6 +35,11 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const subject = (url.searchParams.get("subject") ?? url.searchParams.get("handle") ?? "").trim().toLowerCase();
   const use = (url.searchParams.get("use") ?? url.searchParams.get("category") ?? "").trim();
+
+  // Rate-limit per IP: demo pubblica, niente enumerazione massiva del registro.
+  if (!(await allowRequest(`filter:${ipFrom(request)}`, 30, 60))) {
+    return json({ error: "Troppe richieste, attendi un momento" }, 429);
+  }
 
   const note =
     "Semblic è il filtro del consenso che precede la generazione. Senza ALLOW, nessun sistema dovrebbe generare questa persona; ogni output autorizzato esce con filigrana invisibile e certificato verificabile.";

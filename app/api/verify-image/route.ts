@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase";
 import { extractStego } from "@/lib/stegano";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { NextResponse } from "next/server";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,10 @@ export async function POST(req: Request) {
   //    Il server NON ha visto i pixel: di questo path non può garantire "marked".
   //  - JSON { image: dataURL }: retrocompatibilità (il server legge i pixel).
   // serverExtracted = la filigrana l'ha estratta IL SERVER (prova di marcatura).
+  // Rate-limit per IP: estrazione stego (sharp) costosa, evitiamo abuso anonimo.
+  if (!(await allowRequest(`verify-image:${ipFrom(req)}`, 15, 60))) {
+    return NextResponse.json({ valid: false, error: "Troppe richieste, attendi un momento" }, { status: 429 });
+  }
   let cert: string | null = null;
   let serverExtracted = false;
   const ctype = req.headers.get("content-type") ?? "";

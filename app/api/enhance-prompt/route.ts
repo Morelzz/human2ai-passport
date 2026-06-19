@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { createAuthClient } from "@/lib/supabase-auth";
+import { allowRequest } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -37,6 +38,11 @@ export async function POST(request: Request) {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return NextResponse.json({ error: "Devi accedere" }, { status: 401 });
+
+  // Rate-limit per utente: l'enhancer chiama Claude (costo). Max 20/min.
+  if (!(await allowRequest(`enhance:${user.id}`, 20, 60))) {
+    return NextResponse.json({ error: "Troppe richieste, attendi un momento" }, { status: 429 });
+  }
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: "Enhancer non configurato" }, { status: 503 });

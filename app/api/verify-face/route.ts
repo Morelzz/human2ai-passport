@@ -11,6 +11,7 @@ import { similarityFromDistance } from "@/lib/face-similarity";
 import { fuzzyEq, ethnicityEq } from "@/lib/matching";
 import { loadProtectedIndex } from "@/lib/protected-index";
 import { logProtectionAlert } from "@/lib/protection-alert";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -95,6 +96,11 @@ export async function POST(request: Request) {
   }
   const filters = sanitizeFilters(body?.filters);
   const filtersActive = Object.keys(filters).length > 0;
+
+  // Rate-limit per IP: l'indice volti e' dato biometrico, niente enumerazione di massa.
+  if (!(await allowRequest(`verify-face:${ipFrom(request)}`, 12, 60))) {
+    return NextResponse.json({ match: false, error: "Troppe richieste, attendi un momento" }, { status: 429 });
+  }
 
   // Fase 2.5 (VETO): se il volto e' di una persona in SOLA PROTEZIONE, NON si
   // rivela MAI chi e'. Solo "volto protetto" + alert al titolare (e' lui che
