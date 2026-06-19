@@ -11,6 +11,11 @@ async function ensureBucket(name: string, isPublic: boolean): Promise<void> {
   const admin = createServerClient();
   const { data } = await admin.storage.getBucket(name);
   if (data) return;
+  if (isPublic) {
+    // Creare un bucket PUBBLICO e' una scelta consapevole: lasciane traccia.
+    // I dati sensibili (volti sorgente, documenti, selfie) NON vanno mai qui.
+    console.warn(`[storage] creo bucket PUBBLICO '${name}' (solo output non sensibili)`);
+  }
   const { error } = await admin.storage.createBucket(name, { public: isPublic });
   if (error && !/exist/i.test(error.message)) {
     throw new Error(`Storage: impossibile creare il bucket '${name}': ${error.message}`);
