@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import type { EditState } from "@/lib/editor/types";
 import { processImage } from "@/lib/editor/pipeline";
 
-const WORK_MAX = 640; // risoluzione di lavoro dell'anteprima (l'export e a piena res)
+const WORK_CAP = 1600; // tetto della risoluzione di lavoro (perf); l'export e a piena res
 
 export function ImageStage({
   imageUrl,
@@ -41,7 +41,16 @@ export function ImageStage({
     img.crossOrigin = "anonymous";
     img.onload = () => {
       if (cancelled) return;
-      const scale = Math.min(1, WORK_MAX / Math.max(img.width, img.height));
+      // Risoluzione di lavoro = quella che serve al display (dimensione del box ×
+      // densita pixel dello schermo), mai oltre la nativa, con un tetto per le
+      // performance. Cosi e nitida come l'originale senza processare invano.
+      const cv0 = canvasRef.current;
+      const rect = cv0 ? cv0.getBoundingClientRect() : { width: 800, height: 1000 };
+      const dpr = Math.min(2, typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1);
+      const need = Math.max(rect.width || 0, rect.height || 0) * dpr;
+      const nativeMax = Math.max(img.width, img.height);
+      const target = Math.max(512, Math.min(nativeMax, need || nativeMax, WORK_CAP));
+      const scale = Math.min(1, target / nativeMax);
       const w = Math.max(1, Math.round(img.width * scale));
       const h = Math.max(1, Math.round(img.height * scale));
       const off = document.createElement("canvas");
