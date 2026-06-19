@@ -2,8 +2,19 @@ import type { WardData } from "./demo";
 
 // Home Radar: l'elemento firma di Ward. Radar con sweep salvia, blip per
 // severita', core identita' (gradiente depth), tri-stat, presenza Nemesis,
-// e l'azione "Avvia scansione" (inerte in demo). Dati da WardData.
-export function Radar({ data }: { data: WardData }) {
+// e l'azione "Avvia scansione". Con onScan (modalita' dati reali) il bottone
+// lancia lo scan; in demo resta inerte. Dati da WardData.
+export function Radar({
+  data,
+  onScan,
+  scanning,
+  scanMsg,
+}: {
+  data: WardData;
+  onScan?: () => void;
+  scanning?: boolean;
+  scanMsg?: string | null;
+}) {
   const { stats, blips, nemesis, identity, lastSweep, nextScan } = data;
   return (
     <section className="screen on" id="s-radar">
@@ -37,7 +48,10 @@ export function Radar({ data }: { data: WardData }) {
         </div>
       </div>
 
-      <button className="btn" type="button"><span>Avvia scansione</span></button>
+      <button className="btn" type="button" onClick={onScan} disabled={scanning}>
+        <span>{scanning ? "Scansione in corso..." : "Avvia scansione"}</span>
+      </button>
+      {scanMsg ? <div className="scan-msg" role="status">{scanMsg}</div> : null}
     </section>
   );
 }

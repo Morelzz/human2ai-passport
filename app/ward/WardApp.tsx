@@ -21,7 +21,7 @@ const ICONS: Record<Tab, ReactNode> = {
 
 const STRIKE_ICON = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" /><path d="M12 8v5" /></svg>);
 
-export function WardApp({ data }: { data: WardData }) {
+export function WardApp({ data, scanAvatarId }: { data: WardData; scanAvatarId?: string }) {
   const [tab, setTab] = useState<Tab>("radar");
   const [sel, setSel] = useState<Set<string>>(() => new Set());
   const [openId, setOpenId] = useState<string | null>(null);
@@ -30,6 +30,31 @@ export function WardApp({ data }: { data: WardData }) {
   const [struck, setStruck] = useState<Set<string>>(() => new Set());
   const [extraOps, setExtraOps] = useState<WardOp[]>([]);
   const [inProgressDelta, setInProgressDelta] = useState(0);
+  const [scanning, setScanning] = useState(false);
+  const [scanMsg, setScanMsg] = useState<string | null>(null);
+
+  // Avvia uno scan reale per l'avatar protetto (solo in modalita' dati reali:
+  // scanAvatarId presente). In demo il bottone resta inerte come prima.
+  const handleScan = async () => {
+    if (!scanAvatarId || scanning) return;
+    setScanning(true);
+    setScanMsg("Scansione in corso...");
+    try {
+      const res = await fetch("/api/ward/scan", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ avatarId: scanAvatarId }),
+      });
+      const j = await res.json().catch(() => null);
+      if (res.ok && j?.ok) setScanMsg(`Scansione completata: ${j.matches} match su ${j.candidates} candidati.`);
+      else if (res.status === 403) setScanMsg("Monitoraggio non consentito per questo avatar.");
+      else setScanMsg(j?.reason || j?.error || "Scansione non riuscita.");
+    } catch {
+      setScanMsg("Errore di rete durante la scansione.");
+    } finally {
+      setScanning(false);
+    }
+  };
 
   const toggle = (id: string) => setSel((prev) => {
     const n = new Set(prev);
@@ -63,7 +88,7 @@ export function WardApp({ data }: { data: WardData }) {
       </header>
 
       <main className="body">
-        {tab === "radar" && <Radar data={data} />}
+        {tab === "radar" && <Radar data={data} onScan={scanAvatarId ? handleScan : undefined} scanning={scanning} scanMsg={scanMsg} />}
         {tab === "detections" && (
           openDetection
             ? <DetectionDetail detection={openDetection} onBack={() => setOpenId(null)} />

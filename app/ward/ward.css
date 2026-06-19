@@ -111,6 +111,8 @@
   color:var(--on-amber-c); padding:15px; border-radius:14px; background:var(--amber-c);
   box-shadow:0 12px 30px -12px rgba(242,169,59,.6); margin-top:16px; }
 .ward-app .btn:active{ transform:scale(.99); }
+.ward-app .btn:disabled{ opacity:.6; cursor:default; box-shadow:none; }
+.ward-app .scan-msg{ margin-top:10px; text-align:center; font-family:var(--font-ward-mono); font-size:10.5px; color:var(--ward-muted); }
 
 /* ── Bottom nav ─────────────────────────────────────────────────────────── */
 .ward-app .tabbar{ position:sticky; bottom:0; z-index:20; display:flex;
