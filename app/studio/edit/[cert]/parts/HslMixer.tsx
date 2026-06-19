@@ -4,8 +4,8 @@
 // HslMixer — Mixer colore HSL: 3 settori (Tonalita, Saturazione, Luminanza),
 // in ciascuno gli 8 colori con cursore -100..100. Dal prototipo
 // design/anteprima_editor_mobile.html (.hslmode/.hslrow).
-// In ANTEPRIMA l'effetto e aggregato (composeFilter): l'HSL selettivo "vero"
-// per gamma di tinta arrivera nella resa server con sharp (fase 3).
+// L'effetto e SELETTIVO per gamma di tinta (lib/editor/pipeline, sui pixel reali):
+// agisce colore per colore, sia in anteprima (canvas) sia nell'export.
 // ──────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
