@@ -1,10 +1,11 @@
 "use client";
 import { useState, type ReactNode } from "react";
-import type { WardData } from "./demo";
+import type { WardData, WardOp } from "./demo";
 import { Radar } from "./Radar";
 import { Detections } from "./Detections";
 import { DetectionDetail } from "./DetectionDetail";
 import { NemesisOps } from "./NemesisOps";
+import { NemesisStrike } from "./NemesisStrike";
 import { Vault } from "./Vault";
 
 type Tab = "radar" | "detections" | "nemesis" | "vault";
@@ -24,6 +25,11 @@ export function WardApp({ data }: { data: WardData }) {
   const [tab, setTab] = useState<Tab>("radar");
   const [sel, setSel] = useState<Set<string>>(() => new Set());
   const [openId, setOpenId] = useState<string | null>(null);
+  // Stato dinamico dopo uno strike (demo): bersagli colpiti + nuove operazioni.
+  const [strikeOpen, setStrikeOpen] = useState(false);
+  const [struck, setStruck] = useState<Set<string>>(() => new Set());
+  const [extraOps, setExtraOps] = useState<WardOp[]>([]);
+  const [inProgressDelta, setInProgressDelta] = useState(0);
 
   const toggle = (id: string) => setSel((prev) => {
     const n = new Set(prev);
@@ -32,6 +38,21 @@ export function WardApp({ data }: { data: WardData }) {
   });
 
   const openDetection = data.detections.find((d) => d.id === openId) ?? null;
+  const strikeTargets = data.detections.filter((d) => sel.has(d.id));
+  const inProgress = data.nemesis.inProgress + inProgressDelta;
+
+  const completeStrike = (ids: string[]) => {
+    setStruck((prev) => new Set([...prev, ...ids]));
+    const newOps: WardOp[] = ids.map((id) => {
+      const d = data.detections.find((x) => x.id === id);
+      return { id: "op-" + id, dom: d ? d.dom : id, meta: "DMCA + GDPR inviati, ora", status: "pending" };
+    });
+    setExtraOps((prev) => [...newOps, ...prev]);
+    setInProgressDelta((n) => n + ids.length);
+    setSel(new Set());
+    setStrikeOpen(false);
+    setTab("nemesis");
+  };
 
   return (
     <div className="ward-frame">
@@ -46,23 +67,27 @@ export function WardApp({ data }: { data: WardData }) {
         {tab === "detections" && (
           openDetection
             ? <DetectionDetail detection={openDetection} onBack={() => setOpenId(null)} />
-            : <Detections data={data} selected={sel} onToggle={toggle} onOpen={setOpenId} />
+            : <Detections data={data} selected={sel} struck={struck} onToggle={toggle} onOpen={setOpenId} />
         )}
-        {tab === "nemesis" && <NemesisOps data={data} />}
+        {tab === "nemesis" && <NemesisOps nemesis={{ ...data.nemesis, inProgress }} ops={[...extraOps, ...data.ops]} />}
         {tab === "vault" && <Vault data={data} />}
       </main>
 
       {tab === "detections" && !openDetection && (
         <div className={`selbar${sel.size > 0 ? " up" : ""}`}>
           <div className="cnt"><b>{sel.size}</b> bersagli selezionati</div>
-          <button type="button" className="nem-btn" title="Strike Nemesis (in arrivo)">{STRIKE_ICON}Attiva Nemesis</button>
+          <button type="button" className="nem-btn" onClick={() => { if (sel.size > 0) setStrikeOpen(true); }}>{STRIKE_ICON}Attiva Nemesis</button>
         </div>
+      )}
+
+      {strikeOpen && strikeTargets.length > 0 && (
+        <NemesisStrike targets={strikeTargets} onClose={() => setStrikeOpen(false)} onComplete={completeStrike} />
       )}
 
       <nav className="tabbar">
         <TabBtn id="radar" cur={tab} set={setTab} label="Radar" icon={ICONS.radar} />
         <TabBtn id="detections" cur={tab} set={setTab} label="Detections" icon={ICONS.detections} />
-        <TabBtn id="nemesis" cur={tab} set={setTab} label="Nemesis" icon={ICONS.nemesis} nem badge={data.nemesis.inProgress} />
+        <TabBtn id="nemesis" cur={tab} set={setTab} label="Nemesis" icon={ICONS.nemesis} nem badge={inProgress} />
         <TabBtn id="vault" cur={tab} set={setTab} label="Vault" icon={ICONS.vault} />
       </nav>
     </div>

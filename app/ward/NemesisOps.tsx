@@ -9,8 +9,7 @@ const CHK = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWi
 
 const STATUS_LABEL: Record<WardOp["status"], string> = { pending: "Host in attesa", removed: "Rimosso", legal: "Legale" };
 
-export function NemesisOps({ data }: { data: WardData }) {
-  const { nemesis, ops } = data;
+export function NemesisOps({ nemesis, ops }: { nemesis: WardData["nemesis"]; ops: WardOp[] }) {
   const active = ops.filter((o) => o.status !== "removed");
   const resolved = ops.filter((o) => o.status === "removed");
   return (
