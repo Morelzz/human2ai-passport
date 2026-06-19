@@ -14,8 +14,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { defaultEditState, LIGHT, COLOR, DETAIL, type EditState, type CurvePoint } from "@/lib/editor/types";
-import { composeFilter } from "@/lib/editor/preview";
-import { curveTables } from "@/lib/editor/curves";
 import { ImageStage } from "./parts/ImageStage";
 import { PresetStrip } from "./parts/PresetStrip";
 import { SliderSection } from "./parts/SliderSection";
@@ -47,9 +45,6 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
   const [toast, setToast] = useState<string | null>(null);
   const [asking, setAsking] = useState(false);
   const [askHint, setAskHint] = useState<string | null>(null);
-
-  const preview = composeFilter(state);
-  const tables = curveTables(state.curves);
 
   const setLight = (k: string, v: number) => setState((s) => ({ ...s, light: { ...s.light, [k]: v } }));
   const setColor = (k: string, v: number) => setState((s) => ({ ...s, color: { ...s.color, [k]: v } }));
@@ -184,9 +179,8 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
           <div className="lg:sticky lg:top-20">
             <ImageStage
               imageUrl={imageUrl}
-              preview={preview}
+              state={state}
               comparing={comparing}
-              curveTables={tables}
               onCompareStart={() => setComparing(true)}
               onCompareEnd={() => setComparing(false)}
             />

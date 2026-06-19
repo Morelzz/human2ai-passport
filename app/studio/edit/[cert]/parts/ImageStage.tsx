@@ -1,72 +1,94 @@
 "use client";
 
 // ──────────────────────────────────────────────────────────────────────────
-// ImageStage — l'immagine dell'editor (FISSA in alto su mobile, sticky a
-// sinistra su desktop). Porta il CSS `filter` dell'anteprima live; i layer
-// vignettatura e grana stanno sopra. "Tieni premuto: originale" mostra
-// l'immagine senza modifiche finche resta premuto. Markup/etichette dal
-// prototipo design/anteprima_editor_mobile.html (.stage/.canvas/.imgtools).
+// ImageStage — anteprima a PIXEL REALI (canvas). Carica l'immagine una volta a
+// risoluzione di lavoro, e ad ogni cambio di stato riprocessa i pixel con la
+// pipeline condivisa (lib/editor/pipeline) e li ridisegna. Cosi ogni parametro
+// (temperatura, HSL selettivo, nitidezza reale, ...) funziona DAVVERO e
+// l'anteprima combacia con l'export server. "Tieni premuto: originale" mostra i
+// pixel grezzi. Mobile fissa in alto / desktop sticky (gestito dal padre).
 // ──────────────────────────────────────────────────────────────────────────
 
-import type { ComposedPreview } from "@/lib/editor/preview";
+import { useEffect, useRef, useState } from "react";
+import type { EditState } from "@/lib/editor/types";
+import { processImage } from "@/lib/editor/pipeline";
 
-// Rumore per la grana (stesso SVG del prototipo, riga 44).
-const GRAIN_BG =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+const WORK_MAX = 640; // risoluzione di lavoro dell'anteprima (l'export e a piena res)
 
 export function ImageStage({
   imageUrl,
-  preview,
+  state,
   comparing,
-  curveTables,
   onCompareStart,
   onCompareEnd,
 }: {
   imageUrl: string;
-  preview: ComposedPreview;
+  state: EditState;
   comparing: boolean;
-  curveTables: { r: string; g: string; b: string };
   onCompareStart: () => void;
   onCompareEnd: () => void;
 }) {
-  // Durante il confronto: nessun filtro, nessun layer.
-  const filter = comparing ? "none" : preview.filter;
-  const vigOpacity = comparing ? 0 : preview.vig;
-  const grainOpacity = comparing ? 0 : preview.grain;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const srcRef = useRef<{ data: Uint8ClampedArray; w: number; h: number } | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // Carica l'immagine (CORS) e cattura i pixel originali a risoluzione di lavoro.
+  useEffect(() => {
+    let cancelled = false;
+    setReady(false);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      if (cancelled) return;
+      const scale = Math.min(1, WORK_MAX / Math.max(img.width, img.height));
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const off = document.createElement("canvas");
+      off.width = w;
+      off.height = h;
+      const octx = off.getContext("2d", { willReadFrequently: true });
+      if (!octx) return;
+      octx.drawImage(img, 0, 0, w, h);
+      srcRef.current = { data: octx.getImageData(0, 0, w, h).data, w, h };
+      const cv = canvasRef.current;
+      if (cv) {
+        cv.width = w;
+        cv.height = h;
+      }
+      setReady(true);
+    };
+    img.onerror = () => setReady(false);
+    img.src = imageUrl;
+    return () => {
+      cancelled = true;
+    };
+  }, [imageUrl]);
+
+  // Ridisegna su cambio stato/confronto. Throttle con setTimeout (coalesce i
+  // cambi rapidi dei cursori; scatta anche a tab nascosta, a differenza di rAF).
+  useEffect(() => {
+    if (!ready || !srcRef.current || !canvasRef.current) return;
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      const src = srcRef.current;
+      const cv = canvasRef.current;
+      if (!src || !cv) return;
+      const ctx = cv.getContext("2d");
+      if (!ctx) return;
+      const out = new Uint8ClampedArray(src.data); // copia dei pixel originali
+      if (!comparing) processImage(out, src.w, src.h, state);
+      ctx.putImageData(new ImageData(out, src.w, src.h), 0, 0);
+    }, 24);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [state, comparing, ready]);
 
   return (
     <div className="relative h-[40dvh] w-full overflow-hidden rounded-2xl border border-border bg-obsidian-3 shadow-[0_16px_44px_rgba(0,0,0,0.4)] lg:h-auto lg:aspect-[4/5]">
-      {/* Filtro curve (feComponentTransfer): definito qui, referenziato dal CSS
-          filter dell'immagine via url(#curveFilter). All'identita e un no-op. */}
-      <svg width="0" height="0" className="absolute" aria-hidden focusable="false">
-        <filter id="curveFilter" colorInterpolationFilters="sRGB">
-          <feComponentTransfer>
-            <feFuncR type="table" tableValues={curveTables.r} />
-            <feFuncG type="table" tableValues={curveTables.g} />
-            <feFuncB type="table" tableValues={curveTables.b} />
-          </feComponentTransfer>
-        </filter>
-      </svg>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imageUrl}
-        alt="Anteprima della generazione"
-        className="absolute inset-0 h-full w-full object-contain transition-[filter] duration-100"
-        style={{ filter }}
-      />
-      {/* Vignettatura */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: vigOpacity,
-          background: "radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0,0,0,0.85))",
-        }}
-      />
-      {/* Grana */}
-      <div
-        className="pointer-events-none absolute inset-0 mix-blend-overlay"
-        style={{ opacity: grainOpacity, backgroundSize: "170px 170px", backgroundImage: GRAIN_BG }}
-      />
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full object-contain" />
+      {!ready && <div className="absolute inset-0 grid place-items-center text-[0.7rem] text-faint">Carico l&apos;anteprima…</div>}
 
       <div className="absolute left-2.5 top-2.5 rounded-full border border-border bg-obsidian/50 px-2 py-1 font-mono text-[0.55rem] uppercase tracking-[0.07em] text-foreground/70 backdrop-blur-sm">
         anteprima
