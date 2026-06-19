@@ -2,6 +2,10 @@
 import { useState, type ReactNode } from "react";
 import type { WardData } from "./demo";
 import { Radar } from "./Radar";
+import { Detections } from "./Detections";
+import { DetectionDetail } from "./DetectionDetail";
+
+type Tab = "radar" | "detections" | "nemesis" | "vault";
 
 // Icone bottom-nav (portate dal mockup, stroke=currentColor cosi' seguono lo
 // stato del tab: muted / amber / strike).
@@ -12,13 +16,21 @@ const ICONS: Record<Tab, ReactNode> = {
   vault: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="4" y="4" width="16" height="16" rx="2.5" /><path d="M9 4v16M4 9h5" /></svg>),
 };
 
-type Tab = "radar" | "detections" | "nemesis" | "vault";
+const STRIKE_ICON = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" /><path d="M12 8v5" /></svg>);
 
-// Guscio della app Ward: topbar (identita' + consenso), le 4 schermate
-// toggled (come il mockup, una alla volta), e la bottom-nav. In questa fase
-// solo Radar e' costruita; le altre 3 tab mostrano uno stato "in arrivo".
 export function WardApp({ data }: { data: WardData }) {
   const [tab, setTab] = useState<Tab>("radar");
+  const [sel, setSel] = useState<Set<string>>(() => new Set());
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const toggle = (id: string) => setSel((prev) => {
+    const n = new Set(prev);
+    if (n.has(id)) n.delete(id); else n.add(id);
+    return n;
+  });
+
+  const openDetection = data.detections.find((d) => d.id === openId) ?? null;
+
   return (
     <div className="ward-frame">
       <header className="topbar">
@@ -29,10 +41,21 @@ export function WardApp({ data }: { data: WardData }) {
 
       <main className="body">
         {tab === "radar" && <Radar data={data} />}
-        {tab === "detections" && <Placeholder title="Detections" />}
+        {tab === "detections" && (
+          openDetection
+            ? <DetectionDetail detection={openDetection} onBack={() => setOpenId(null)} />
+            : <Detections data={data} selected={sel} onToggle={toggle} onOpen={setOpenId} />
+        )}
         {tab === "nemesis" && <Placeholder title="Nemesis" />}
         {tab === "vault" && <Placeholder title="Vault" />}
       </main>
+
+      {tab === "detections" && !openDetection && (
+        <div className={`selbar${sel.size > 0 ? " up" : ""}`}>
+          <div className="cnt"><b>{sel.size}</b> bersagli selezionati</div>
+          <button type="button" className="nem-btn" title="Strike Nemesis (in arrivo)">{STRIKE_ICON}Attiva Nemesis</button>
+        </div>
+      )}
 
       <nav className="tabbar">
         <TabBtn id="radar" cur={tab} set={setTab} label="Radar" icon={ICONS.radar} />
