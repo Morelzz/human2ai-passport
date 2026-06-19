@@ -127,7 +127,11 @@
   font-size:9px; font-weight:600; display:none; align-items:center; justify-content:center; }
 .ward-app .tab .badge.show{ display:flex; }
 
-@media (prefers-reduced-motion:reduce){ .ward-app .sweep{ animation:none; } }
+@media (prefers-reduced-motion:reduce){
+  .ward-app .sweep,.ward-app .blip.c,.ward-app .blip.a,.ward-app .core,
+  .ward-app .spin,.ward-app .screen{ animation:none !important; }
+  .ward-app .nem,.ward-app .selbar,.ward-app .card,.ward-app .btn,.ward-app .tab{ transition:none !important; }
+}
 @keyframes ward-spin{ to{ transform:rotate(360deg); } }
 
 /* ── Detections (lista + select-to-act + selection bar) ─────────────────── */
@@ -344,3 +348,40 @@
 .ward-app .cancel-line .cbtn{ font-family:var(--font-ward-display); font-weight:600; font-size:12px; color:var(--text); background:transparent; border:1px solid var(--ward-line-strong); padding:11px 16px; border-radius:11px; cursor:pointer; }
 .ward-app .done-line{ text-align:center; font-family:var(--font-ward-display); font-weight:600; font-size:14px; color:var(--verified-c); display:flex; align-items:center; justify-content:center; gap:9px; }
 .ward-app .done-line svg{ width:18px; height:18px; }
+
+/* ── Passata estetica (design-last): focus visibile + micro-interazioni ───── */
+/* A11y: il tap-highlight e' off di proposito, ma il focus DA TASTIERA deve
+   sempre vedersi. Anello Amber (il colore d'azione del brand), mai invadente. */
+.ward-app a:focus-visible,
+.ward-app button:focus-visible,
+.ward-app [tabindex]:focus-visible{ outline:2px solid var(--amber-c); outline-offset:3px; }
+.ward-app .card:focus-visible{ outline-offset:2px; border-radius:18px; }
+.ward-app .tab:focus-visible{ outline-offset:-4px; border-radius:10px; }
+
+/* Micro-interazioni: brevi e discrete. Hover SOLO dove c'e' un puntatore reale
+   (desktop), cosi' su touch non resta "appiccicato". L'active da' il feedback tattile. */
+.ward-app .btn{ transition:transform .12s ease, box-shadow .2s ease, filter .2s ease; }
+.ward-app .btn:active{ transform:scale(.985); }
+.ward-app .tab:active{ transform:scale(.94); }
+.ward-app .nem-btn:active,.ward-app .mini-act:active,.ward-app .se:active,
+.ward-app .vb:active,.ward-app .chip:active,.ward-app .det-back:active,
+.ward-app .strike-btn:active,.ward-app .pr:not(.status):active{ transform:scale(.97); }
+@media (hover:hover){
+  .ward-app .card:hover{ border-color:var(--ward-line-strong); transform:translateY(-1px); }
+  .ward-app .btn:hover{ box-shadow:0 16px 34px -12px rgba(242,169,59,.72); }
+  .ward-app .tab:hover{ color:var(--text); }
+  .ward-app .chip:hover{ border-color:var(--ward-line-strong); color:var(--text); }
+  .ward-app .nem-btn:hover,.ward-app .pr:not(.status):hover,.ward-app .strike-btn:hover{ filter:brightness(1.06); }
+  .ward-app .det-back:hover,.ward-app .se:hover,.ward-app .mini-act:hover{ border-color:var(--amber-c); }
+}
+
+/* Radar piu' vivo: i blip pulsano (confermati subito, da-rivedere sfasati di .6s),
+   il core "respira". currentColor = il colore del blip. */
+.ward-app .blip.c{ color:var(--blocked-c); animation:ward-pulse 2.4s ease-in-out infinite; }
+.ward-app .blip.a{ color:var(--amber-c); animation:ward-pulse 2.4s ease-in-out infinite .6s; }
+.ward-app .core{ animation:ward-breath 5s ease-in-out infinite; }
+@keyframes ward-pulse{ 0%,100%{ box-shadow:0 0 8px currentColor; } 50%{ box-shadow:0 0 17px 2px currentColor; } }
+@keyframes ward-breath{
+  0%,100%{ box-shadow:0 0 0 1px var(--ward-line-strong),0 0 26px -4px rgba(123,108,246,.8); }
+  50%{ box-shadow:0 0 0 1px var(--ward-line-strong),0 0 36px 0 rgba(123,108,246,.95); }
+}
