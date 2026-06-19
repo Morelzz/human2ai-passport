@@ -12,6 +12,7 @@ import { Manifesto } from "@/components/marketing/Manifesto";
 import { Audiences } from "@/components/marketing/Audiences";
 import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
+import { WardSection } from "@/components/marketing/WardSection";
 import { FilterMiniDemo, FilterDemoAvatar } from "@/components/marketing/FilterMiniDemo";
 import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
@@ -79,6 +80,7 @@ export default async function Home() {
         <Reveal><FilterMiniDemo avatars={demoAvatars} /></Reveal>
         <Reveal><Audiences /></Reveal>
         <Reveal><Registry avatars={featured} total={approved.length} /></Reveal>
+        <Reveal><WardSection /></Reveal>
         <Reveal><Trust /></Reveal>
         <Reveal><PublicRoadmap /></Reveal>
         <Reveal><ClosingCTA /></Reveal>

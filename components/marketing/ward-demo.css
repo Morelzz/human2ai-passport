@@ -1,0 +1,24 @@
+/* Radar della demo Ward in homepage (presentazionale). Riusa il linguaggio del
+   radar dell'app ma vive FUORI da .ward-app, quindi usa i token globali del repo
+   (color-mix per le alfa, niente hex hardcoded). */
+.ward-demo-radar { position: relative; width: 200px; height: 200px; margin-inline: auto; }
+.ward-demo-radar .ring { position: absolute; inset: 0; border: 1px solid var(--hairline-soft); border-radius: 50%; }
+.ward-demo-radar .ring.r2 { inset: 28px; opacity: 0.6; }
+.ward-demo-radar .ring.r3 { inset: 54px; opacity: 0.5; }
+.ward-demo-radar .sweep {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0 300deg,
+    color-mix(in srgb, var(--verified-c) 12%, transparent) 340deg,
+    color-mix(in srgb, var(--verified-c) 36%, transparent) 360deg);
+  animation: ward-demo-spin 4s linear infinite;
+}
+.ward-demo-radar .core {
+  position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; border-radius: 50%;
+  transform: translate(-50%, -50%); background: var(--grad-tramonto);
+  box-shadow: 0 0 24px -4px color-mix(in srgb, var(--amber-c) 55%, transparent);
+}
+.ward-demo-radar .blip { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%, -50%); transition: 0.6s ease; }
+.ward-demo-radar .blip.c { background: var(--blocked-c); box-shadow: 0 0 9px var(--blocked-c); }
+.ward-demo-radar .blip.s { width: 5px; height: 5px; background: var(--verified-c); opacity: 0.5; }
+@keyframes ward-demo-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ward-demo-radar .sweep { animation: none; } }
