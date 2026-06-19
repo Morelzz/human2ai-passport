@@ -1,0 +1,130 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   WARD app — stili SCOPED sotto .ward-app. Portati da sentinel-mobile-v2.html
+   (rinominato Ward), con i colori mappati ai token reali del repo + i token
+   Ward net-new. Font: display = Space Grotesk, mono = JetBrains Mono (firma
+   Ward), body = Geist. Niente impatto sul resto del sito.
+   ────────────────────────────────────────────────────────────────────────── */
+.ward-app {
+  /* superfici Ward */
+  --ward-bg:#0A0C12; --ward-s1:#0E1019; --ward-s2:#141826; --ward-s3:#1B2032;
+  --ward-line:rgba(180,196,224,.09); --ward-line-strong:rgba(180,196,224,.18);
+  --ward-muted:#8A93A6; --ward-muted-dim:#525B70;
+  /* NET-NEW Ward (gli altri colori arrivano dai token globali del repo:
+     var(--amber-c)=azione, var(--verified-c)=salvia, var(--blocked-c)=coral) */
+  --ward-strike:#FF5247; --ward-indigo:#7B6CF6; --ward-cyan:#46C6D6;
+  --ward-grad-depth:linear-gradient(150deg,#7B6CF6,#46C6D6);
+  --ward-grad-strike:linear-gradient(135deg,#FF5247,#9c1722);
+
+  position:relative; width:100%; min-height:100dvh;
+  background:var(--ward-bg); color:var(--text);
+  font-family:var(--font-geist-sans),system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.ward-app *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+/* Su desktop l'app resta una colonna mobile centrata. */
+.ward-frame{
+  max-width:480px; margin:0 auto; min-height:100dvh; position:relative;
+  display:flex; flex-direction:column;
+  background:var(--ward-bg);
+}
+
+/* ── Topbar ─────────────────────────────────────────────────────────────── */
+.ward-app .topbar{ position:relative; z-index:3; display:flex; align-items:center; gap:11px;
+  padding:16px 18px 13px; border-bottom:1px solid var(--ward-line);
+  background:linear-gradient(180deg,rgba(20,24,38,.5),transparent); }
+.ward-app .tmark{ width:34px; height:34px; border-radius:10px; flex:none;
+  background:var(--grad-tramonto); display:grid; place-items:center;
+  font-family:var(--font-ward-display); font-weight:700; color:#170d05; font-size:17px; }
+.ward-app .twrap{ min-width:0; flex:1; }
+.ward-app .twrap .eb{ font-family:var(--font-ward-mono); font-size:8.5px; letter-spacing:.2em; color:var(--ward-muted); }
+.ward-app .twrap .nm{ font-family:var(--font-ward-display); font-weight:600; font-size:15px; line-height:1.1; margin-top:1px; }
+.ward-app .id-chip{ display:flex; align-items:center; gap:7px; background:var(--ward-s2);
+  border:1px solid var(--ward-line); border-radius:20px; padding:5px 10px 5px 6px; }
+.ward-app .id-chip .o{ width:20px; height:20px; border-radius:50%; background:var(--ward-grad-depth); flex:none; }
+.ward-app .id-chip span{ font-family:var(--font-ward-mono); font-size:10px; color:var(--text); }
+.ward-app .id-chip .cdot{ width:7px; height:7px; border-radius:50%; flex:none;
+  background:var(--verified-c); box-shadow:0 0 8px var(--verified-c); }
+
+/* ── Body + screens ─────────────────────────────────────────────────────── */
+.ward-app .body{ position:relative; z-index:1; flex:1; overflow-y:auto; overflow-x:hidden; }
+.ward-app .body::-webkit-scrollbar{ width:0; }
+.ward-app .screen{ display:none; padding:18px 16px 96px; animation:ward-fade .25s ease; }
+.ward-app .screen.on{ display:block; }
+@keyframes ward-fade{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none} }
+.ward-app .h-row{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
+.ward-app .h-row h2{ font-family:var(--font-ward-display); font-weight:600; font-size:19px; }
+.ward-app .h-row .sub{ font-family:var(--font-ward-mono); font-size:10.5px; color:var(--ward-muted); }
+
+/* ── Radar (firma) ──────────────────────────────────────────────────────── */
+.ward-app .radar{ position:relative; width:200px; height:200px; margin:6px auto 4px; }
+.ward-app .ring{ position:absolute; border-radius:50%; border:1px solid var(--ward-line); inset:0; }
+.ward-app .ring.r2{ inset:28px; opacity:.6; } .ward-app .ring.r3{ inset:60px; opacity:.5; }
+.ward-app .ring.r4{ inset:86px; border-color:var(--ward-line-strong); }
+.ward-app .cross{ position:absolute; inset:0; }
+.ward-app .cross::before,.ward-app .cross::after{ content:""; position:absolute; background:var(--ward-line-strong); }
+.ward-app .cross::before{ left:50%; top:0; bottom:0; width:1px; }
+.ward-app .cross::after{ top:50%; left:0; right:0; height:1px; }
+.ward-app .sweep{ position:absolute; inset:0; border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0 300deg,rgba(127,174,150,.10) 340deg,rgba(127,174,150,.34) 360deg);
+  animation:ward-spin 4.4s linear infinite; }
+.ward-app .core{ position:absolute; left:50%; top:50%; width:54px; height:54px; border-radius:50%;
+  transform:translate(-50%,-50%); background:var(--ward-grad-depth);
+  box-shadow:0 0 0 1px var(--ward-line-strong),0 0 26px -4px rgba(123,108,246,.8); display:grid; place-items:center; }
+.ward-app .core span{ font-family:var(--font-ward-mono); font-size:8px; color:rgba(255,255,255,.85); }
+.ward-app .blip{ position:absolute; width:9px; height:9px; border-radius:50%; transform:translate(-50%,-50%); }
+.ward-app .blip.c{ background:var(--blocked-c); box-shadow:0 0 10px var(--blocked-c); }
+.ward-app .blip.a{ background:var(--amber-c); box-shadow:0 0 10px var(--amber-c); }
+.ward-app .blip.s{ width:6px; height:6px; background:var(--verified-c); opacity:.5; }
+.ward-app .status-line{ text-align:center; margin-top:4px; }
+.ward-app .status-line .b{ font-family:var(--font-ward-display); font-weight:700; font-size:18px;
+  color:var(--verified-c); display:inline-flex; align-items:center; gap:8px; }
+.ward-app .status-line .b .d{ width:8px; height:8px; border-radius:50%; background:var(--verified-c); box-shadow:0 0 10px var(--verified-c); }
+.ward-app .status-line .s{ font-family:var(--font-ward-mono); font-size:10.5px; color:var(--ward-muted); margin-top:6px; }
+
+/* ── Tri-stat ───────────────────────────────────────────────────────────── */
+.ward-app .tri{ display:flex; gap:9px; margin-top:16px; }
+.ward-app .tri .m{ flex:1; background:var(--ward-s2); border:1px solid var(--ward-line);
+  border-radius:13px; padding:11px 8px; text-align:center; }
+.ward-app .tri .m .n{ font-family:var(--font-ward-display); font-weight:700; font-size:21px; }
+.ward-app .tri .m .n.c{ color:var(--blocked-c); } .ward-app .tri .m .n.a{ color:var(--amber-c); }
+.ward-app .tri .m .n.s{ color:var(--verified-c); }
+.ward-app .tri .m .k{ font-family:var(--font-ward-mono); font-size:8.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ward-muted); margin-top:6px; }
+
+/* ── Striscia presenza Nemesis ──────────────────────────────────────────── */
+.ward-app .nem-strip{ display:flex; align-items:center; gap:12px; margin-top:14px; padding:13px 14px;
+  border-radius:15px; background:linear-gradient(120deg,rgba(255,82,71,.14),rgba(255,82,71,.04));
+  border:1px solid rgba(255,82,71,.32); position:relative; overflow:hidden; }
+.ward-app .nem-strip::after{ content:""; position:absolute; right:-20px; top:-30px; width:120px; height:120px;
+  border-radius:50%; background:radial-gradient(circle,rgba(255,82,71,.18),transparent 70%); }
+.ward-app .nem-strip .nmk{ width:36px; height:36px; border-radius:10px; flex:none; z-index:1;
+  background:var(--ward-grad-strike); box-shadow:0 0 18px -4px var(--ward-strike); }
+.ward-app .nem-strip .ns-txt{ flex:1; z-index:1; }
+.ward-app .nem-strip .ns-txt .t{ font-family:var(--font-ward-display); font-weight:700; font-size:13px;
+  letter-spacing:.1em; color:var(--ward-strike); }
+.ward-app .nem-strip .ns-txt .m{ font-family:var(--font-ward-mono); font-size:10px; color:#d49b95; margin-top:3px; }
+
+/* ── Bottone primario (Amber PIENO, regola repo: mai gradienti sui bottoni) ─ */
+.ward-app .btn{ display:flex; align-items:center; justify-content:center; gap:9px; width:100%;
+  border:none; cursor:pointer; font-family:var(--font-ward-display); font-weight:700; font-size:14px;
+  color:var(--on-amber-c); padding:15px; border-radius:14px; background:var(--amber-c);
+  box-shadow:0 12px 30px -12px rgba(242,169,59,.6); margin-top:16px; }
+.ward-app .btn:active{ transform:scale(.99); }
+
+/* ── Bottom nav ─────────────────────────────────────────────────────────── */
+.ward-app .tabbar{ position:sticky; bottom:0; z-index:20; display:flex;
+  background:rgba(10,12,20,.92); backdrop-filter:blur(18px); border-top:1px solid var(--ward-line);
+  padding:9px 8px calc(9px + env(safe-area-inset-bottom,0px)); }
+.ward-app .tab{ flex:1; background:transparent; border:none; cursor:pointer; display:flex;
+  flex-direction:column; align-items:center; gap:5px; color:var(--ward-muted); padding:8px 0; position:relative; }
+.ward-app .tab .lb{ font-family:var(--font-ward-mono); font-size:9.5px; letter-spacing:.04em; }
+.ward-app .tab.on{ color:var(--amber-c); }
+.ward-app .tab.nemtab.on{ color:var(--ward-strike); }
+.ward-app .tab .badge{ position:absolute; top:-2px; right:50%; margin-right:-22px; min-width:15px; height:15px;
+  padding:0 4px; border-radius:8px; background:var(--ward-strike); color:#fff; font-family:var(--font-ward-mono);
+  font-size:9px; font-weight:600; display:none; align-items:center; justify-content:center; }
+.ward-app .tab .badge.show{ display:flex; }
+
+@media (prefers-reduced-motion:reduce){ .ward-app .sweep{ animation:none; } }
+@keyframes ward-spin{ to{ transform:rotate(360deg); } }
