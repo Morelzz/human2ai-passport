@@ -25,6 +25,7 @@ const NAV: NavEntry[] = [
   { label: "Il tuo volto", items: [
     { href: "/scansione", label: "Scansione" },
     { href: "/proteggi", label: "Proteggi" },
+    { href: "/#ward", label: "Ward" },
   ] },
   { label: "Aziende", items: [
     { href: "/studio", label: "Studio" },
