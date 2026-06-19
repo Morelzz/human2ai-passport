@@ -4,6 +4,8 @@ import type { WardData } from "./demo";
 import { Radar } from "./Radar";
 import { Detections } from "./Detections";
 import { DetectionDetail } from "./DetectionDetail";
+import { NemesisOps } from "./NemesisOps";
+import { Vault } from "./Vault";
 
 type Tab = "radar" | "detections" | "nemesis" | "vault";
 
@@ -46,8 +48,8 @@ export function WardApp({ data }: { data: WardData }) {
             ? <DetectionDetail detection={openDetection} onBack={() => setOpenId(null)} />
             : <Detections data={data} selected={sel} onToggle={toggle} onOpen={setOpenId} />
         )}
-        {tab === "nemesis" && <Placeholder title="Nemesis" />}
-        {tab === "vault" && <Placeholder title="Vault" />}
+        {tab === "nemesis" && <NemesisOps data={data} />}
+        {tab === "vault" && <Vault data={data} />}
       </main>
 
       {tab === "detections" && !openDetection && (
@@ -64,17 +66,6 @@ export function WardApp({ data }: { data: WardData }) {
         <TabBtn id="vault" cur={tab} set={setTab} label="Vault" icon={ICONS.vault} />
       </nav>
     </div>
-  );
-}
-
-function Placeholder({ title }: { title: string }) {
-  return (
-    <section className="screen on" style={{ padding: "40px 16px" }}>
-      <div className="h-row"><h2>{title}</h2></div>
-      <p style={{ fontFamily: "var(--font-ward-mono)", fontSize: 12, color: "var(--ward-muted)" }}>
-        In arrivo nella prossima fase.
-      </p>
-    </section>
   );
 }
 
