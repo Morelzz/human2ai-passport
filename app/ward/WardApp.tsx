@@ -111,7 +111,7 @@ export function WardApp({ data, scanAvatarId }: { data: WardData; scanAvatarId?:
 
       <nav className="tabbar">
         <TabBtn id="radar" cur={tab} set={setTab} label="Radar" icon={ICONS.radar} />
-        <TabBtn id="detections" cur={tab} set={setTab} label="Detections" icon={ICONS.detections} />
+        <TabBtn id="detections" cur={tab} set={setTab} label="Trovati" icon={ICONS.detections} />
         <TabBtn id="nemesis" cur={tab} set={setTab} label="Nemesis" icon={ICONS.nemesis} nem badge={inProgress} />
         <TabBtn id="vault" cur={tab} set={setTab} label="Vault" icon={ICONS.vault} />
       </nav>

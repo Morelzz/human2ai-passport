@@ -24,8 +24,8 @@ const NAV: NavEntry[] = [
   ] },
   { label: "Il tuo volto", items: [
     { href: "/scansione", label: "Scansione" },
-    { href: "/proteggi", label: "Proteggi" },
-    { href: "/#ward", label: "Ward" },
+    { href: "/signup/avatar", label: "Proteggi" },
+    { href: "/ward", label: "Ward" },
   ] },
   { label: "Aziende", items: [
     { href: "/studio", label: "Studio" },
@@ -140,6 +140,9 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
           <Button asChild variant="outline" size="sm">
             <Link href="/verify">Verifica</Link>
           </Button>
+          <Button asChild size="sm">
+            <Link href="/signup/avatar">Proteggiti</Link>
+          </Button>
         </div>
 
         {/* Sotto lg (mobile, tablet touch): VOLT compatto + hamburger */}
@@ -213,8 +216,11 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 </Link>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 flex flex-col gap-2">
                 <Button asChild variant="primary" size="lg" className="w-full">
+                  <Link href="/signup/avatar" onClick={() => setOpen(false)}>Proteggiti</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="w-full">
                   <Link href="/verify" onClick={() => setOpen(false)}>Verifica un contenuto</Link>
                 </Button>
               </div>
