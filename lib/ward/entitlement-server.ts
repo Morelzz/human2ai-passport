@@ -15,11 +15,16 @@ export async function loadWardEntitlement(userId: string | null): Promise<WardEn
   if (!userId) return { state: "locked" };
 
   const admin = createServerClient();
+  // Ward riguarda SOLO le identita protette (protection_only): il faceprint
+  // difensivo e il monitoraggio esistono solo per loro. Un avatar aperto non e'
+  // monitorabile da Ward (l'attivazione richiede protection_only), quindi senza
+  // un avatar protetto lo stato e' "locked" (si vedono i 3 pannelli, incluso
+  // "Proteggiti ora"), MAI "demo" che porterebbe a un vicolo cieco in attivazione.
   const { data: avatars } = await admin
     .from("avatars")
-    .select("id, protection_only, created_at")
+    .select("id, created_at")
     .eq("owner_id", userId)
-    .order("protection_only", { ascending: false })
+    .eq("protection_only", true)
     .order("created_at", { ascending: true })
     .limit(1);
   const avatar = avatars?.[0];

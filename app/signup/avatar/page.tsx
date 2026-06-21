@@ -23,6 +23,19 @@ export default async function AvatarSignupPage({
   }
 
   const admin = createServerClient();
+  // "Hai gia un avatar" (existing=1) attiva col solo consenso: ha senso SOLO se
+  // esiste gia' un'identita protetta (il faceprint c'e'). Altrimenti si va al
+  // flusso protetto a registrarla, evitando il vicolo cieco 409 in attivazione.
+  if (existing) {
+    const { data: prot } = await admin
+      .from("avatars")
+      .select("id")
+      .eq("owner_id", user.id)
+      .eq("protection_only", true)
+      .limit(1);
+    if (!prot?.[0]) redirect("/signup/avatar/protected");
+  }
+
   const { data: prof } = await admin.from("profiles").select("kyc_status").eq("id", user.id).maybeSingle();
   const kycDone = prof?.kyc_status === "approved";
 
