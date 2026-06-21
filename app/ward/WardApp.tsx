@@ -1,5 +1,6 @@
 "use client";
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
 import type { WardData, WardOp } from "./demo";
 import { Radar } from "./Radar";
 import { Detections } from "./Detections";
@@ -21,7 +22,17 @@ const ICONS: Record<Tab, ReactNode> = {
 
 const STRIKE_ICON = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" /><path d="M12 8v5" /></svg>);
 
-export function WardApp({ data, scanAvatarId }: { data: WardData; scanAvatarId?: string }) {
+export function WardApp({
+  data,
+  scanAvatarId,
+  demo = false,
+  demoCtaHref = "/signup/avatar/protected",
+}: {
+  data: WardData;
+  scanAvatarId?: string;
+  demo?: boolean;
+  demoCtaHref?: string;
+}) {
   const [tab, setTab] = useState<Tab>("radar");
   const [sel, setSel] = useState<Set<string>>(() => new Set());
   const [openId, setOpenId] = useState<string | null>(null);
@@ -56,6 +67,21 @@ export function WardApp({ data, scanAvatarId }: { data: WardData; scanAvatarId?:
     }
   };
 
+  // Scan FINTO della demo (spec PARTE D): nessuna rete, solo un esito simulato.
+  // Non tocca mai dati reali ne' chiama /api/ward/scan.
+  const runDemoScan = () => {
+    if (scanning) return;
+    setScanning(true);
+    setScanMsg("Scansione in corso...");
+    setTimeout(() => {
+      const analyzed = (1100 + Math.floor(Math.random() * 600)).toLocaleString("it-IT");
+      const found = 4 + Math.floor(Math.random() * 9);
+      const conf = 2 + Math.floor(Math.random() * 4);
+      setScanMsg(`Scansione completata: ${analyzed} contenuti analizzati, ${found} nuovi ritrovamenti, ${conf} confermati.`);
+      setScanning(false);
+    }, 1400);
+  };
+
   const toggle = (id: string) => setSel((prev) => {
     const n = new Set(prev);
     if (n.has(id)) n.delete(id); else n.add(id);
@@ -81,14 +107,22 @@ export function WardApp({ data, scanAvatarId }: { data: WardData; scanAvatarId?:
 
   return (
     <div className="ward-frame">
+      {demo && (
+        <div className="ward-demo-wm" aria-hidden>
+          <span>DEMO · SIMULATO · DEMO · SIMULATO</span>
+        </div>
+      )}
       <header className="topbar">
         <div className="tmark">S</div>
         <div className="twrap"><div className="eb">SEMBLIC</div><div className="nm">Ward</div></div>
-        <div className="id-chip"><span className="o" /><span>{data.identity.handle}</span><span className="cdot" /></div>
+        {demo
+          ? <div className="ward-demo-chip"><span className="d" /> DEMO</div>
+          : <div className="id-chip"><span className="o" /><span>{data.identity.handle}</span><span className="cdot" /></div>}
       </header>
+      {demo && <div className="ward-demo-strip">Anteprima simulata, dati casuali, i pulsanti non eseguono nulla di reale.</div>}
 
       <main className="body">
-        {tab === "radar" && <Radar data={data} onScan={scanAvatarId ? handleScan : undefined} scanning={scanning} scanMsg={scanMsg} />}
+        {tab === "radar" && <Radar data={data} onScan={demo ? runDemoScan : (scanAvatarId ? handleScan : undefined)} scanning={scanning} scanMsg={scanMsg} />}
         {tab === "detections" && (
           openDetection
             ? <DetectionDetail detection={openDetection} onBack={() => setOpenId(null)} />
@@ -107,6 +141,10 @@ export function WardApp({ data, scanAvatarId }: { data: WardData; scanAvatarId?:
 
       {strikeOpen && strikeTargets.length > 0 && (
         <NemesisStrike targets={strikeTargets} onClose={() => setStrikeOpen(false)} onComplete={completeStrike} />
+      )}
+
+      {demo && (
+        <Link className="ward-demo-exit" href={demoCtaHref}>{STRIKE_ICON}Esci dalla demo e proteggiti davvero</Link>
       )}
 
       <nav className="tabbar">

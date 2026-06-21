@@ -1,27 +1,23 @@
-import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { WardApp } from "./WardApp";
+import { WardEntry } from "./WardEntry";
 import { DEMO_WARD } from "./demo";
-import { loadWardData } from "@/lib/ward/load-server";
+import { loadWardEntitlement } from "@/lib/ward/entitlement-server";
 
-// Per ora la UI gira sui dati DEMO (CLAUDE.md: demo finche' non si decide di
-// passare ai dati reali). Il percorso reale e' gia' pronto dietro il flag
-// WARD_REAL_DATA=1: quando c'e' la chiave Vision e gli scan producono match si
-// accende senza altro codice. Fallback a demo se l'utente non ha un avatar o se
-// il caricamento fallisce (non rompe mai la pagina).
+// /ward (spec B3 + C2): pagina entitlement-aware dietro AvatarHolderGate.
+//  - locked (visitatore / nessun avatar): i 3 pannelli d'ingresso (pubblico).
+//  - demo (ha un avatar ma Ward non e' attivo): il tool in modalita demo, con
+//    la CTA per attivare Ward sull'avatar esistente (consenso).
+//  - full (avatar + monitoraggio attivo): il tool reale coi dati dell'utente.
 export default async function WardPage() {
   const supabase = await createAuthClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
 
-  const real =
-    process.env.WARD_REAL_DATA === "1" ? await loadWardData(user.id).catch(() => null) : null;
+  const ent = await loadWardEntitlement(user?.id ?? null);
 
-  return real ? (
-    <WardApp data={real.data} scanAvatarId={real.avatarId} />
-  ) : (
-    <WardApp data={DEMO_WARD} />
-  );
+  if (ent.state === "locked") return <WardEntry />;
+  if (ent.state === "full") return <WardApp data={ent.data} scanAvatarId={ent.avatarId} />;
+  return <WardApp data={DEMO_WARD} demo demoCtaHref="/signup/avatar?existing=1" />;
 }

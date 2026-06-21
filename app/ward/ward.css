@@ -387,3 +387,62 @@
   0%,100%{ box-shadow:0 0 0 1px var(--ward-line-strong),0 0 26px -4px rgba(123,108,246,.8); }
   50%{ box-shadow:0 0 0 1px var(--ward-line-strong),0 0 36px 0 rgba(123,108,246,.95); }
 }
+
+/* ── Modalita DEMO (badge + fascia + filigrana + uscita) — spec PARTE D ────── */
+.ward-app .ward-demo-chip{ display:flex; align-items:center; gap:6px; flex:none;
+  background:rgba(242,169,59,.12); border:1px solid rgba(242,169,59,.4); border-radius:20px;
+  padding:5px 10px; font-family:var(--font-ward-mono); font-size:9px; letter-spacing:.1em; color:var(--amber-c); }
+.ward-app .ward-demo-chip .d{ width:6px; height:6px; border-radius:50%; background:var(--amber-c); box-shadow:0 0 6px var(--amber-c); }
+.ward-app .ward-demo-strip{ position:relative; z-index:3; font-family:var(--font-ward-mono); font-size:9.5px; line-height:1.4;
+  color:#d8c39a; background:rgba(242,169,59,.08); border-bottom:1px solid rgba(242,169,59,.25); padding:8px 16px; text-align:center; }
+.ward-app .ward-demo-wm{ position:absolute; inset:0; z-index:2; pointer-events:none; display:grid; place-items:center; overflow:hidden; }
+.ward-app .ward-demo-wm span{ font-family:var(--font-ward-display); font-weight:700; font-size:42px; letter-spacing:.1em;
+  color:rgba(242,169,59,.05); transform:rotate(-30deg); white-space:nowrap; }
+.ward-app .ward-demo-exit{ position:relative; z-index:3; display:flex; align-items:center; justify-content:center; gap:8px;
+  margin:0 14px 12px; text-decoration:none; font-family:var(--font-ward-display); font-weight:700; font-size:13.5px;
+  color:#170d05; padding:13px; border-radius:13px; background:var(--grad-tramonto); }
+.ward-app .ward-demo-exit svg{ width:16px; height:16px; }
+
+/* ── Entry pubblico /ward (3 pannelli) — spec C2, ward-homepage-flow.html ──── */
+.ward-entry{ max-width:1080px; margin:0 auto; padding:26px clamp(16px,3vw,40px) 70px; }
+.ward-entry .we-top{ display:inline-flex; align-items:center; gap:10px; padding:6px 0 28px; text-decoration:none; }
+.ward-entry .we-top .mk{ width:32px; height:32px; border-radius:9px; background:var(--grad-tramonto);
+  display:grid; place-items:center; font-family:var(--font-ward-display); font-weight:700; color:#170d05; font-size:16px; }
+.ward-entry .we-top .wm{ font-family:var(--font-ward-display); font-weight:600; font-size:15px; color:var(--text); }
+.ward-entry .we-top .wm span{ color:var(--ward-muted); font-weight:400; }
+.ward-entry .we-intro{ text-align:center; max-width:560px; margin:6px auto 26px; }
+.ward-entry .we-eyebrow{ font-family:var(--font-ward-mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--amber-c); }
+.ward-entry .we-intro h1{ font-family:var(--font-ward-display); font-weight:700; font-size:clamp(24px,3.4vw,34px); margin:10px 0; color:var(--text); }
+.ward-entry .we-intro p{ font-size:14px; color:var(--ward-muted); line-height:1.55; }
+.ward-entry .we-panels{ display:grid; gap:18px; grid-template-columns:repeat(3,1fr); }
+@media (max-width:860px){ .ward-entry .we-panels{ grid-template-columns:1fr; } }
+.ward-entry .we-panel{ position:relative; display:flex; flex-direction:column; min-height:280px;
+  border:1px solid var(--ward-line); border-radius:20px; background:var(--ward-s1); padding:22px;
+  text-decoration:none; color:var(--text); transition:transform .18s, border-color .18s; }
+.ward-entry .we-panel.protect{ border-color:rgba(127,174,150,.35); background:linear-gradient(160deg,rgba(127,174,150,.06),transparent); }
+.ward-entry .we-badge{ position:absolute; top:16px; right:16px; font-family:var(--font-ward-mono); font-size:8.5px; letter-spacing:.1em; padding:4px 9px; border-radius:6px; }
+.ward-entry .we-badge.demo{ color:var(--amber-c); background:rgba(242,169,59,.12); border:1px solid rgba(242,169,59,.4); }
+.ward-entry .we-badge.reco{ color:var(--verified-c); background:rgba(127,174,150,.12); border:1px solid rgba(127,174,150,.4); }
+.ward-entry .we-ic{ width:46px; height:46px; border-radius:13px; display:grid; place-items:center; margin-bottom:16px; }
+.ward-entry .we-ic svg{ width:23px; height:23px; }
+.ward-entry .we-ic.demo{ background:rgba(242,169,59,.1); color:var(--amber-c); }
+.ward-entry .we-ic.exist{ background:rgba(123,108,246,.12); color:var(--ward-indigo); }
+.ward-entry .we-ic.protect{ background:rgba(127,174,150,.12); color:var(--verified-c); }
+.ward-entry .we-panel h3{ font-family:var(--font-ward-display); font-weight:600; font-size:18px; margin-bottom:8px; }
+.ward-entry .we-desc{ font-size:13px; color:var(--ward-muted); line-height:1.55; flex:1; }
+.ward-entry .we-steps{ font-family:var(--font-ward-mono); font-size:10px; color:var(--ward-muted-dim); margin-top:14px; line-height:1.7; }
+.ward-entry .we-go{ display:inline-flex; align-items:center; gap:7px; margin-top:16px; font-family:var(--font-ward-display); font-weight:600; font-size:13px; }
+.ward-entry .we-go svg{ width:15px; height:15px; }
+.ward-entry .we-panel.demo .we-go{ color:var(--amber-c); }
+.ward-entry .we-panel.exist .we-go{ color:var(--ward-indigo); }
+.ward-entry .we-panel.protect .we-go{ color:var(--verified-c); }
+@media (hover:hover){
+  .ward-entry .we-panel:hover{ transform:translateY(-3px); }
+  .ward-entry .we-panel.demo:hover{ border-color:rgba(242,169,59,.5); }
+  .ward-entry .we-panel.exist:hover{ border-color:rgba(123,108,246,.5); }
+  .ward-entry .we-panel.protect:hover{ border-color:var(--verified-c); }
+}
+@media (prefers-reduced-motion:reduce){
+  .ward-app .ward-demo-wm span{ }
+  .ward-entry .we-panel{ transition:none; }
+}
