@@ -30,6 +30,12 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Devi accedere per proteggere il tuo volto" }, { status: 401 });
   const uid = user.id;
 
+  const admin = createServerClient();
+  // Se l'identita e' gia' verificata via KYC (flusso protetto Ward), il documento
+  // e il selfie non sono richiesti: basta la cattura del volto (spec Passo 3b).
+  const { data: prof } = await admin.from("profiles").select("kyc_status").eq("id", uid).maybeSingle();
+  const kycApproved = prof?.kyc_status === "approved";
+
   const form = await request.formData().catch(() => null);
   if (!form) return NextResponse.json({ error: "Dati non validi" }, { status: 400 });
 
@@ -52,11 +58,9 @@ export async function POST(request: Request) {
   const docFront = form.get("document_front");
   const selfie = form.get("selfie");
   const photos = form.getAll("photos").filter((p): p is File => p instanceof File && p.size > 0);
-  if (!(docFront instanceof File) || !(selfie instanceof File)) {
+  if (!kycApproved && (!(docFront instanceof File) || !(selfie instanceof File))) {
     return NextResponse.json({ error: "Servono il documento (fronte) e un selfie per confermare che il volto sia tuo." }, { status: 400 });
   }
-
-  const admin = createServerClient();
 
   // 1:1: chi concede il proprio volto nel registro non puo' al tempo stesso
   // proteggerlo (e viceversa). Se esiste gia' una protezione, e' una ri-registrazione.
@@ -113,8 +117,8 @@ export async function POST(request: Request) {
       .catch(() => {});
   }
   try {
-    await up(docFront, "document-front");
-    await up(selfie, "selfie");
+    if (docFront instanceof File) await up(docFront, "document-front");
+    if (selfie instanceof File) await up(selfie, "selfie");
     for (let i = 0; i < photos.length; i++) await up(photos[i], `photo-${i + 1}`);
     const fm = form.get("face_match");
     if (typeof fm === "string" && fm.length > 0 && fm.length < 4000) {

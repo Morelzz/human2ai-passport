@@ -443,6 +443,60 @@
   .ward-entry .we-panel.protect:hover{ border-color:var(--verified-c); }
 }
 @media (prefers-reduced-motion:reduce){
-  .ward-app .ward-demo-wm span{ }
   .ward-entry .we-panel{ transition:none; }
 }
+
+/* ── Funnel protetto /signup/avatar (KYC -> foto -> consenso) — spec E/F3 ──── */
+.ward-app .wf{ max-width:540px; margin:0 auto; padding:26px clamp(14px,3vw,22px) 70px; }
+.ward-app .wf-card{ background:var(--ward-s1); border:1px solid var(--ward-line); border-radius:18px; padding:22px; }
+.ward-app .wf-eyebrow{ font-family:var(--font-ward-mono); font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--amber-c); }
+.ward-app .wf-title{ font-family:var(--font-ward-display); font-weight:700; font-size:22px; margin:8px 0; color:var(--text); }
+.ward-app .wf-lede{ font-size:13px; line-height:1.55; color:var(--ward-muted); }
+.ward-app .wf-feats{ display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px; }
+.ward-app .wf-feats span{ font-family:var(--font-ward-mono); font-size:9.5px; color:var(--ward-muted); background:var(--ward-s2); border:1px solid var(--ward-line); padding:5px 10px; border-radius:7px; }
+.ward-app .wf-err{ color:var(--blocked-c); font-size:12.5px; margin:10px 0 0; }
+.ward-app .wf-hint{ font-family:var(--font-ward-mono); font-size:10px; color:var(--ward-muted); margin-top:8px; line-height:1.5; }
+.ward-app .wf-btn{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin-top:16px;
+  border:none; cursor:pointer; text-decoration:none; font-family:var(--font-ward-display); font-weight:700; font-size:14px;
+  color:#170d05; padding:14px; border-radius:13px; background:var(--grad-tramonto); }
+.ward-app .wf-btn:disabled{ opacity:.5; cursor:default; }
+.ward-app .wf-btn.salvia{ background:var(--grad-fiducia); color:#06231c; }
+.ward-app .wf-live{ position:relative; width:150px; height:150px; margin:6px auto 16px; }
+.ward-app .wf-live-ring{ position:absolute; inset:0; border-radius:50%; border:2px dashed var(--ward-line-strong); }
+.ward-app .wf-live-face{ position:absolute; inset:22px; border-radius:50%; background:var(--ward-grad-depth); opacity:.5; }
+.ward-app .wf-caps{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0 4px; }
+.ward-app .wf-cap{ position:relative; aspect-ratio:3/4; border-radius:12px; background:var(--ward-s2); border:1px dashed var(--ward-line-strong);
+  display:grid; place-items:center; gap:6px; cursor:pointer; overflow:hidden; }
+.ward-app .wf-cap.filled{ border-style:solid; border-color:rgba(127,174,150,.5); }
+.ward-app .wf-cap-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.ward-app .wf-cap-lab{ font-family:var(--font-ward-mono); font-size:8px; color:var(--ward-muted); text-align:center; }
+@media (max-width:520px){ .ward-app .wf-caps{ grid-template-columns:repeat(3,1fr); } }
+.ward-app .wf-crows{ margin:16px 0; border:1px solid var(--ward-line); border-radius:13px; overflow:hidden; }
+.ward-app .wf-crow{ padding:12px 14px; border-bottom:1px solid var(--ward-line); }
+.ward-app .wf-crow:last-child{ border-bottom:none; }
+.ward-app .wf-crow-t{ font-family:var(--font-ward-display); font-weight:600; font-size:13px; }
+.ward-app .wf-crow-m{ font-size:11.5px; color:var(--ward-muted); margin-top:3px; line-height:1.45; }
+.ward-app .wf-row{ display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--ward-line); }
+.ward-app .wf-row > div:first-child{ flex:1; }
+.ward-app .wf-row-t{ font-family:var(--font-ward-display); font-weight:600; font-size:13px; }
+.ward-app .wf-row-m{ font-size:11px; color:var(--ward-muted); margin-top:2px; }
+.ward-app .wf-seg{ display:flex; background:var(--ward-s2); border:1px solid var(--ward-line); border-radius:9px; padding:3px; flex:none; }
+.ward-app .wf-seg button{ font-family:var(--font-ward-mono); font-size:10px; padding:6px 10px; border-radius:7px; border:none; background:transparent; color:var(--ward-muted); cursor:pointer; }
+.ward-app .wf-seg button.on{ background:var(--ward-s3); color:var(--text); }
+.ward-app .wf-toggle{ width:42px; height:24px; border-radius:13px; background:var(--ward-s3); border:1px solid var(--ward-line-strong); position:relative; flex:none; }
+.ward-app .wf-toggle.on{ background:var(--verified-c); border-color:var(--verified-c); }
+.ward-app .wf-toggle::after{ content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left .2s; }
+.ward-app .wf-toggle.on::after{ left:20px; }
+.ward-app .wf-legal{ background:rgba(123,108,246,.07); border:1px solid rgba(123,108,246,.25); border-radius:12px; padding:12px; font-size:11px; line-height:1.5; color:#b9b6d6; margin:14px 0; }
+.ward-app .wf-agree{ display:flex; align-items:flex-start; gap:11px; padding:13px; background:var(--ward-s1); border:1px solid var(--ward-line); border-radius:12px; cursor:pointer; }
+.ward-app .wf-agree input{ margin-top:2px; width:18px; height:18px; flex:none; accent-color:var(--verified-c); }
+.ward-app .wf-agree span{ font-size:12px; line-height:1.5; color:var(--text); }
+.ward-app .wf-fork{ display:grid; gap:12px; margin-top:16px; }
+.ward-app .wf-fork-card{ text-align:left; cursor:pointer; border:1px solid var(--ward-line); border-radius:14px; padding:16px; background:var(--ward-s1); color:var(--text); }
+.ward-app .wf-fork-card.protect{ border-color:rgba(127,174,150,.4); background:linear-gradient(160deg,rgba(127,174,150,.07),transparent); }
+.ward-app .wf-fork-card h3{ font-family:var(--font-ward-display); font-weight:600; font-size:16px; margin-bottom:6px; }
+.ward-app .wf-fork-card p{ font-size:12.5px; color:var(--ward-muted); line-height:1.5; }
+.ward-app .wf-success{ text-align:center; }
+.ward-app .wf-shield{ width:96px; height:96px; margin:6px auto 18px; border-radius:28px; display:grid; place-items:center;
+  color:var(--verified-c); background:radial-gradient(120% 120% at 50% 0%,rgba(127,174,150,.2),rgba(127,174,150,.04)); border:1px solid rgba(127,174,150,.4); }
+.ward-app .wf-shield svg{ width:48px; height:48px; }
