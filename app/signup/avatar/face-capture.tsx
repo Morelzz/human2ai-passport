@@ -2,17 +2,31 @@
 
 import { useState } from "react";
 import { descriptorForFile } from "@/lib/face-match";
-import { POSES, PoseGlyph } from "@/components/avatar/poses";
 
-// Cattura del volto riusabile (spec Passo 3b: SOLO foto del viso). I descrittori
+// Cattura del volto riusabile (spec A4/Passo 3b: per l'avatar PROTETTO bastano
+// le foto del VISO, fronte piu' un paio di tre quarti -> 3 foto; le ~8 pose
+// servono solo all'avatar APERTO per la qualita' generativa). I descrittori
 // FaceNet si calcolano SUL DISPOSITIVO e formano il faceprint difensivo; i pixel
 // restano privati. Registra la protezione via /api/veto/register (crea l'avatar
-// protection_only + il faceprint). L'identita e' gia' verificata dal KYC a monte,
-// quindi niente documento qui. onDone scatta a registrazione riuscita.
+// protection_only + il faceprint). L'identita' e' gia' verificata dal KYC a
+// monte, quindi niente documento qui. onDone scatta a registrazione riuscita.
 type Slot = { file: File; url: string } | null;
 
+// I 3 angoli del volto (mockup ward-homepage-flow / sentinel-entry-journey).
+const FACE_POSES = [
+  { key: "front", label: "Fronte", tip: "viso frontale, ben illuminato" },
+  { key: "left", label: "Sinistra", tip: "tre quarti verso sinistra" },
+  { key: "right", label: "Destra", tip: "tre quarti verso destra" },
+];
+
+const FaceGlyph = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" width="26" height="26">
+    <circle cx="12" cy="12" r="8" /><circle cx="9.5" cy="10.5" r=".6" /><circle cx="14.5" cy="10.5" r=".6" /><path d="M9.5 15c.8.7 4.2.7 5 0" />
+  </svg>
+);
+
 export function FaceCapture({ onDone }: { onDone: () => void }) {
-  const [slots, setSlots] = useState<Slot[]>(() => Array(POSES.length).fill(null));
+  const [slots, setSlots] = useState<Slot[]>(() => Array(FACE_POSES.length).fill(null));
   const [busy, setBusy] = useState(false);
   const [phase, setPhase] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -21,7 +35,7 @@ export function FaceCapture({ onDone }: { onDone: () => void }) {
   const slotFrom = (file: File | undefined): Slot => (file ? { file, url: URL.createObjectURL(file) } : null);
 
   async function submit() {
-    if (count < 1) { setErr("Carica almeno una foto frontale del tuo volto."); return; }
+    if (count < 1) { setErr("Carica almeno la foto frontale del tuo volto."); return; }
     setBusy(true); setErr(null);
     try {
       setPhase("Preparo le foto...");
@@ -54,14 +68,14 @@ export function FaceCapture({ onDone }: { onDone: () => void }) {
   return (
     <div>
       <div className="wf-caps">
-        {POSES.map((p, i) => (
+        {FACE_POSES.map((p, i) => (
           <label key={p.key} title={p.tip} className={`wf-cap${slots[i] ? " filled" : ""}`}>
             {slots[i] ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={slots[i]!.url} alt={p.label} className="wf-cap-img" />
             ) : (
               <>
-                <PoseGlyph pose={p} />
+                <FaceGlyph />
                 <span className="wf-cap-lab">{p.label}</span>
               </>
             )}
@@ -73,7 +87,7 @@ export function FaceCapture({ onDone }: { onDone: () => void }) {
           </label>
         ))}
       </div>
-      <p className="wf-hint">{count > 0 ? `${count} su ${POSES.length} pose caricate` : "Carica almeno una posa frontale, piu' ne carichi piu' robusta e' la protezione."}</p>
+      <p className="wf-hint">{count > 0 ? `${count} su ${FACE_POSES.length} foto del volto caricate` : "Carica la foto frontale (piu' angoli carichi, piu' robusta e' la protezione)."}</p>
       <p className="wf-hint">Cifrate. Solo tue. Mai vendute, mai usate per addestrare nulla.</p>
       {err && <p className="wf-err">{err}</p>}
       <button type="button" className="wf-btn" disabled={busy} onClick={submit}>

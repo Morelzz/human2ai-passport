@@ -464,7 +464,7 @@
 .ward-app .wf-live{ position:relative; width:150px; height:150px; margin:6px auto 16px; }
 .ward-app .wf-live-ring{ position:absolute; inset:0; border-radius:50%; border:2px dashed var(--ward-line-strong); }
 .ward-app .wf-live-face{ position:absolute; inset:22px; border-radius:50%; background:var(--ward-grad-depth); opacity:.5; }
-.ward-app .wf-caps{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0 4px; }
+.ward-app .wf-caps{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0 4px; }
 .ward-app .wf-cap{ position:relative; aspect-ratio:3/4; border-radius:12px; background:var(--ward-s2); border:1px dashed var(--ward-line-strong);
   display:grid; place-items:center; gap:6px; cursor:pointer; overflow:hidden; }
 .ward-app .wf-cap.filled{ border-style:solid; border-color:rgba(127,174,150,.5); }
