@@ -22,9 +22,9 @@ export function AvatarFlow({ existing, kycDone }: { existing: boolean; kycDone: 
           <span className="wf-eyebrow">Il bivio</span>
           <h2 className="wf-title">Cosa vuoi che succeda al tuo volto?</h2>
           <div className="wf-fork">
-            <button type="button" className="wf-fork-card open" onClick={() => router.push("/signup/creator")}>
+            <button type="button" className="wf-fork-card open" onClick={() => router.push("/account")}>
               <h3>Avatar aperto</h3>
-              <p>Disponibile alla generazione su licenza. Guadagni royalty a ogni utilizzo.</p>
+              <p>Disponibile alla generazione su licenza, guadagni royalty a ogni utilizzo. Lo configuri dal tuo account.</p>
             </button>
             <button type="button" className="wf-fork-card protect" onClick={() => router.push("/signup/avatar/protected")}>
               <h3>Identita protetta</h3>
