@@ -6,6 +6,11 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import { Field, Shell, labelStyle, submitStyle, passwordIssue } from "../auth-ui";
 
+// Accetta solo path interni (niente open redirect).
+function safeNext(raw: string | null): string | null {
+  return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : null;
+}
+
 export default function SignupForm() {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
@@ -47,8 +52,10 @@ export default function SignupForm() {
     // handle_new_user popola il profilo alla creazione utente, robusto anche con
     // la conferma email attiva (qui non c'e' sessione per fare un UPDATE sotto RLS).
     if (data.session) {
-      // Azienda: dritti al form KYB (l'org si crea lì). Gli altri all'account.
-      router.push(isEnterprise ? "/enterprise/register" : "/account");
+      // Azienda: dritti al form KYB (l'org si crea lì). Gli altri a ?next (i
+      // flussi gated come /signup/avatar lo portano fin qui) oppure all'account.
+      const next = safeNext(new URLSearchParams(window.location.search).get("next"));
+      router.push(isEnterprise ? "/enterprise/register" : (next ?? "/account"));
       router.refresh();
     } else {
       setDone(true);

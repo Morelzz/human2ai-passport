@@ -1,10 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import { Field, Shell, submitStyle } from "../auth-ui";
+
+// Accetta solo path interni (niente open redirect): "/x" si', "//x" o "http..." no.
+function safeNext(raw: string | null): string | null {
+  return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : null;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +17,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // Destinazione post-login: i flussi gated (es. /signup/avatar) passano ?next=
+  // per riportare l'utente dove stava dopo l'accesso.
+  const [next, setNext] = useState<string | null>(null);
+  useEffect(() => { setNext(safeNext(new URLSearchParams(window.location.search).get("next"))); }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,7 +36,8 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/account");
+    const dest = safeNext(new URLSearchParams(window.location.search).get("next")) ?? "/account";
+    router.push(dest);
     router.refresh();
   }
 
@@ -45,7 +55,7 @@ export default function LoginPage() {
 
         <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
           Non hai un account?{" "}
-          <Link href="/signup" style={{ color: "#F2A93B" }}>Registrati</Link>
+          <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"} style={{ color: "#F2A93B" }}>Registrati</Link>
         </p>
       </form>
     </Shell>
