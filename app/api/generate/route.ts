@@ -71,7 +71,7 @@ export async function POST(request: Request) {
   // Rivalida: l'avatar esiste, è SOUL, ha consenso attivo e copre la categoria d'uso.
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents, soul_ref, approved_categories, excluded_categories, gender, age_range, ethnicity, hair_color, eye_color, height, body_type, tattoos, facial_hair, protection_only")
+    .select("id, alias, tier, revoked_at, usage_count, royalty_accrued_cents, soul_ref, commercial_consent, gender, age_range, ethnicity, hair_color, eye_color, height, body_type, tattoos, facial_hair, protection_only")
     .eq("handle", handle)
     .maybeSingle();
 
@@ -94,17 +94,12 @@ export async function POST(request: Request) {
       { status: 403 }
     );
   }
-  // Guardrail consenso: solo per uso COMMERCIALE la categoria dev'essere autorizzata.
-  // L'anteprima watermarkata è discovery non commerciale: non vincola la categoria.
-  if (!isPreview && category) {
-    if (avatar.excluded_categories?.includes(category)) {
-      logBlockedRequest(admin, { source: "generate", reason: "category_excluded", category });
-      return NextResponse.json({ error: `"${avatar.alias}" ha escluso la categoria ${category}` }, { status: 403 });
-    }
-    if (avatar.approved_categories && !avatar.approved_categories.includes(category)) {
-      logBlockedRequest(admin, { source: "generate", reason: "category_not_approved", category });
-      return NextResponse.json({ error: `"${avatar.alias}" non ha autorizzato la categoria ${category}` }, { status: 403 });
-    }
+  // Guardrail consenso (modello sì/no, senza categorie): l'uso COMMERCIALE richiede
+  // il consenso all'uso commerciale. L'anteprima watermarkata è discovery non
+  // commerciale e non lo richiede. Revoca e protezione sono già coperte dal veto sopra.
+  if (!isPreview && avatar.commercial_consent === false) {
+    logBlockedRequest(admin, { source: "generate", reason: "no_commercial_consent", category });
+    return NextResponse.json({ error: `"${avatar.alias}" non ha autorizzato l'uso commerciale del proprio volto` }, { status: 403 });
   }
 
   // ECHO (gpt-image-2 con identity-lock dal reference-set) e' l'unico motore.
