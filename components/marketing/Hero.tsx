@@ -19,6 +19,20 @@ const item = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } },
 };
+// Cinematica LINEARE (scelta di Morelz): il titolo si solleva RIGA PER RIGA con
+// uno stagger interno calmo; sotto, una hairline elegante che sfuma in dolce.
+const titleLines = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.14 } },
+};
+const titleLine = {
+  hidden: { opacity: 0, y: 26 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const } },
+};
+const rule = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] as const } },
+};
 
 export function Hero({ count, blockedMonth, protectedFaces }: { count: number; blockedMonth: number; protectedFaces: number }) {
   return (
@@ -40,15 +54,21 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
           </motion.span>
 
           <motion.h1
-            variants={item}
+            variants={titleLines}
             className="mt-6 text-balance text-[3.2rem] font-extralight leading-[0.97] tracking-[-0.04em] sm:text-[4.4rem] lg:text-[5rem]"
           >
-            Real Humans.
-            <br />
-            Real Rights.
-            <br />
-            Real <ShimmerWord>Earnings</ShimmerWord>.
+            <motion.span variants={titleLine} className="block">Real Humans.</motion.span>
+            <motion.span variants={titleLine} className="block">Real Rights.</motion.span>
+            <motion.span variants={titleLine} className="block">Real <ShimmerWord>Earnings</ShimmerWord>.</motion.span>
           </motion.h1>
+
+          {/* Hairline tramonto: la "firma" della cinematica lineare, sotto il titolo */}
+          <motion.div
+            variants={rule}
+            aria-hidden
+            className="mx-auto mt-7 h-px w-full max-w-[260px] sm:mx-0"
+            style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.55), var(--hairline) 42%, transparent 85%)" }}
+          />
 
           <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[rgba(242,233,216,0.70)] sm:mx-0">
             Nessuna AI genera un essere umano senza il permesso di una persona reale:{" "}
@@ -103,9 +123,9 @@ function ShimmerWord({ children }: { children: React.ReactNode }) {
   return (
     <motion.span
       className="bg-[length:200%_auto] bg-clip-text font-light text-transparent"
-      style={{ backgroundImage: "linear-gradient(90deg,#F2A93B,#E29A2E,#F2A93B)" }}
+      style={{ backgroundImage: "linear-gradient(90deg,#E5B57A,#F2A93B,#E5B57A)" }}
       animate={reduce ? undefined : { backgroundPosition: ["0% center", "200% center"] }}
-      transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+      transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
     >
       {children}
     </motion.span>

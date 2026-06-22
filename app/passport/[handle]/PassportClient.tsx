@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Fingerprint, Link2, Handshake } from "lucide-react";
+import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Link2, Handshake } from "lucide-react";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -110,94 +110,101 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       <Link href="/catalogo" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> Avatar
       </Link>
-      {/* Header card */}
-      <motion.div custom={0} variants={fade} initial="hidden" animate="show" className="glass relative overflow-hidden rounded-3xl p-6 sm:p-8">
-        <div aria-hidden className="absolute inset-0" style={{ background: `radial-gradient(70% 90% at 15% 0%, ${tier.color}22, transparent 65%)` }} />
-        <div className="relative flex flex-wrap items-start gap-6">
-          {/* Portrait */}
-          <div className="shrink-0">
-            <div className="h-28 w-28 overflow-hidden rounded-2xl border bg-obsidian-3" style={{ borderColor: `${tier.color}55` }}>
-              {portrait ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={portrait} alt={avatar.alias} className="h-full w-full object-cover" style={{ viewTransitionName: `vt-portrait-${avatar.handle}` }} />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-4xl">👤</div>
-              )}
-            </div>
+      {/* Header: hero cinematic (base vetro). Il volto a tutto campo, i badge
+          in alto su vetro scuro, e il blocco identita in un pannello di vetro
+          ancorato in basso: la foto respira sopra, il testo resta leggibile
+          sotto in ogni tema (la .glass si adatta a chiaro/scuro). */}
+      <motion.div custom={0} variants={fade} initial="hidden" animate="show"
+        className="relative h-[440px] overflow-hidden rounded-3xl border border-border sm:h-[480px]">
+        {/* Ritratto a tutto campo (foto reale watermarkata o avatar-art). Per i
+            revocati il volto e' desaturato: l'identita e' "spenta". */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={portrait}
+          alt={avatar.alias}
+          className="absolute inset-0 h-full w-full object-cover object-[50%_30%]"
+          style={{
+            viewTransitionName: `vt-portrait-${avatar.handle}`,
+            filter: status === "REVOCATO" ? "grayscale(0.75) brightness(0.8)" : undefined,
+          }}
+        />
+        {/* Glow tramonto del tier in alto + vignette per dare profondita */}
+        <div aria-hidden className="absolute inset-0" style={{ background: `radial-gradient(80% 55% at 80% 8%, ${tier.color}33, transparent 60%)` }} />
+        <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(125% 100% at 50% 18%, transparent 52%, rgba(0,0,0,0.38))" }} />
+
+        {/* Badge sopra la foto: pillole su vetro scuro, leggibili su ogni scatto */}
+        <div className="absolute inset-x-4 top-4 flex flex-wrap gap-2">
+          {isRealPerson && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/40 bg-[rgba(12,15,23,0.55)] px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal backdrop-blur-md">
+              <BadgeCheck className="h-3.5 w-3.5" /> PERSONA REALE VERIFICATA
+            </span>
+          )}
+          {isPublicFigure && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/40 bg-[rgba(12,15,23,0.55)] px-3 py-1 text-[0.7rem] font-bold tracking-wide text-violet-light backdrop-blur-md">
+              <Sparkles className="h-3.5 w-3.5" /> NOTORIETÀ VERIFICATA
+            </span>
+          )}
+          {availableForBooking && status === "ATTIVO" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/40 bg-[rgba(12,15,23,0.55)] px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal backdrop-blur-md">
+              <Handshake className="h-3.5 w-3.5" /> DISPONIBILE PER INGAGGI
+            </span>
+          )}
+        </div>
+
+        {/* Pannello identita in vetro, ancorato in basso (bottom-left su desktop).
+            !absolute: la .glass impone position:relative, va forzato l'absolute. */}
+        <div className="glass !absolute inset-x-3 bottom-3 rounded-2xl p-5 sm:inset-x-4 sm:bottom-4 sm:max-w-md">
+          {/* Tier come kicker sopra al nome */}
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ background: tier.bg, borderColor: `${tier.color}44` }}>
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: tier.color }} />
+            <span className="text-xs font-bold tracking-wide" style={{ color: tier.color }}>{tier.label}</span>
+            <span className="text-xs" style={{ color: `${tier.color}99` }}>· {tier.description}</span>
           </div>
 
-          {/* Info */}
-          <div className="min-w-[200px] flex-1">
-            <div className="mb-3 flex flex-wrap gap-2">
-              {/* Ogni volto del registro è una persona reale verificata (gli
-                  ambassador conosciuti di persona, i creatori via KYC). Badge
-                  unico: niente più "SEMBLIC VERIFIED" doppione. Mai sui demo. */}
-              {isRealPerson && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal">
-                  <BadgeCheck className="h-3.5 w-3.5" /> PERSONA REALE VERIFICATA
-                </span>
-              )}
-              {/* Volto noto (personaggio pubblico): badge premium di notorietà.
-                  Solo display, il pricing public-figure resta dormiente. */}
-              {isPublicFigure && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-violet/30 bg-violet/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-violet-light">
-                  <Sparkles className="h-3.5 w-3.5" /> NOTORIETÀ VERIFICATA
-                </span>
-              )}
-              {/* B3: disponibile per ingaggi reali (solo se il consenso e' attivo). */}
-              {availableForBooking && status === "ATTIVO" && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal">
-                  <Handshake className="h-3.5 w-3.5" /> DISPONIBILE PER INGAGGI
-                </span>
-              )}
+          {/* Nome in display sottile (Geist peso 200, tracking -0.04em) */}
+          <h1 className="text-4xl font-extralight leading-[1.02] tracking-[-0.04em] sm:text-5xl">{avatar.alias}</h1>
+          <p className="mt-1 text-sm text-muted">@{avatar.handle}</p>
+          {/* Nome e cognome PUBBLICO: compare solo se la persona lo dichiara */}
+          {avatar.real_name && (
+            <p className="mt-0.5 text-sm font-semibold text-foreground/90">{avatar.real_name}</p>
+          )}
+          {(avatar.instagram || avatar.facebook) && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {avatar.instagram && <SocialPill kind="instagram" value={avatar.instagram} />}
+              {avatar.facebook && <SocialPill kind="facebook" value={avatar.facebook} />}
             </div>
+          )}
 
-            <h1 className="text-3xl font-extrabold tracking-tight">{avatar.alias}</h1>
-            <p className="mb-1 text-sm text-muted">@{avatar.handle}</p>
-            {/* Nome e cognome PUBBLICO: compare solo se la persona lo dichiara */}
-            {avatar.real_name && (
-              <p className="mb-1 text-sm font-semibold text-foreground/90">{avatar.real_name}</p>
+          <div className="mt-3">
+            {status === "ATTIVO" ? (
+              <span className="inline-block rounded-full border border-green/30 bg-green/10 px-4 py-1 text-sm font-bold tracking-wide text-green">● ATTIVO</span>
+            ) : (
+              <span className="inline-block rounded-full border border-crimson/40 bg-crimson/10 px-4 py-1 text-sm font-bold tracking-wide text-crimson">✕ REVOCATO</span>
             )}
-            {(avatar.instagram || avatar.facebook) && (
-              <div className="mb-3 mt-1 flex flex-wrap gap-2">
-                {avatar.instagram && <SocialPill kind="instagram" value={avatar.instagram} />}
-                {avatar.facebook && <SocialPill kind="facebook" value={avatar.facebook} />}
-              </div>
+            {status === "REVOCATO" && (
+              <p className="mt-2 max-w-xs text-xs leading-relaxed text-crimson-light">
+                Questa persona ha ritirato il consenso. Il suo volto non è più generabile.
+              </p>
             )}
-            {!avatar.real_name && !avatar.instagram && !avatar.facebook && <div className="mb-2" />}
-
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ background: tier.bg, borderColor: `${tier.color}44` }}>
-              <span className="h-1.5 w-1.5 rounded-full" style={{ background: tier.color }} />
-              <span className="text-xs font-bold tracking-wide" style={{ color: tier.color }}>{tier.label}</span>
-              <span className="text-xs" style={{ color: `${tier.color}99` }}>· {tier.description}</span>
-            </div>
-
-            <div>
-              {status === "ATTIVO" ? (
-                <span className="inline-block rounded-full border border-green/30 bg-green/10 px-4 py-1 text-sm font-bold tracking-wide text-green">● ATTIVO</span>
-              ) : (
-                <span className="inline-block rounded-full border border-crimson/40 bg-crimson/10 px-4 py-1 text-sm font-bold tracking-wide text-crimson">✕ REVOCATO</span>
-              )}
-              {status === "REVOCATO" && (
-                <p className="mt-2 max-w-xs text-xs leading-relaxed text-crimson-light">
-                  Questa persona ha ritirato il consenso. Il suo volto non è più generabile.
-                </p>
-              )}
-            </div>
           </div>
         </div>
       </motion.div>
 
       {/* Atto di proprietà */}
       <motion.div custom={1} variants={fade} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-        className="glass mt-4 overflow-hidden rounded-2xl p-6">
-        <div className="mb-4 flex items-center gap-2">
-          <Fingerprint className="h-4 w-4 text-violet-light" />
-          <p className="text-xs tracking-[0.1em] text-muted">ATTO DI PROPRIETÀ</p>
-          {ownership.soulbound && (
-            <span className="rounded-full border border-violet/30 bg-violet/10 px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-violet-light">SOULBOUND</span>
-          )}
-        </div>
+        className="glass relative mt-4 overflow-hidden rounded-2xl p-6">
+        <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(55% 38% at 94% -6%, rgba(242,169,59,0.12), transparent 60%)" }} />
+        <div className="relative">
+          {/* Header editoriale: indice 01 + etichetta + hairline tramonto */}
+          <div className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="shrink-0 text-2xl font-extralight leading-none tracking-[-0.04em] text-foreground/35 sm:text-[1.7rem]">01</span>
+            <span aria-hidden className="h-6 w-px shrink-0 bg-border" />
+            <p className="text-xs tracking-[0.08em] text-muted sm:tracking-[0.16em]">ATTO DI PROPRIETÀ</p>
+            {ownership.soulbound && (
+              <span className="ml-auto shrink-0 rounded-full border border-violet/30 bg-violet/10 px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-violet-light">SOULBOUND</span>
+            )}
+          </div>
+          <div className="mb-5 mt-3 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.55), var(--hairline) 38%, transparent 80%)" }} />
 
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -236,6 +243,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           Questo è il titolo del volto: <strong className="text-muted">non vendibile</strong> (non si vende la propria identità).
           Le licenze d&apos;uso sono separate e tracciabili, con royalty alla persona a ogni utilizzo.
         </p>
+        </div>
       </motion.div>
 
       {/* Repertorio */}
@@ -303,7 +311,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       )}
 
       {/* Identity kit */}
-      <Card i={2} label="IDENTITY KIT" badge="IMMUTABILE">
+      <Card i={2} index="02" label="IDENTITY KIT" badge="IMMUTABILE" accent="teal">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {(Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).map((field) => (
             <div key={field}>
@@ -315,7 +323,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       </Card>
 
       {/* Token */}
-      <Card i={3} label="TOKEN DI VERIFICA">
+      <Card i={3} index="03" label="TOKEN DI VERIFICA">
         <div className="flex flex-wrap items-center gap-3">
           <code className="rounded-lg bg-violet/10 px-3 py-2 font-mono text-base tracking-wide text-violet-light">{tokenShort}</code>
           <button onClick={copyToken}
@@ -339,7 +347,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       {/* Timeline — review C4: il consent ledger reso come timeline GRAFICA.
           La linea CONTINUA per i consensi attivi; per i revocati SI INTERROMPE
           alla revoca: l'interruzione è la prova. Solo rendering, zero logica. */}
-      <Card i={4} label="TIMELINE DI CONSENSO">
+      <Card i={4} index="04" label="TIMELINE DI CONSENSO">
         {(() => {
           const isRevokedAvatar = Boolean(avatar.revoked_at);
           // Fallback se il ledger è vuoto: la concessione dal passport stesso.
@@ -422,7 +430,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       </Card>
 
       {/* Consenso all'uso (modello senza categorie: sì/no) */}
-      <Card i={5} label="CONSENSO ALL'USO">
+      <Card i={5} index="05" label="CONSENSO ALL'USO" accent="teal">
         {avatar.revoked_at ? (
           <span className="inline-block rounded-full border border-crimson/25 bg-crimson/10 px-3 py-1 text-sm font-semibold text-crimson">Consenso revocato</span>
         ) : avatar.commercial_consent === false ? (
@@ -437,13 +445,14 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
 
       {/* Statistiche */}
       <div className="mt-4 grid grid-cols-2 gap-4">
-        <div className="glass rounded-2xl p-5">
-          <p className="mb-1 text-xs tracking-[0.1em] text-muted">UTILIZZI TOTALI</p>
-          <p className="text-3xl font-extrabold">{avatar.usage_count.toLocaleString("it-IT")}</p>
+        <div className="glass relative overflow-hidden rounded-2xl p-5">
+          <p className="mb-2 text-xs tracking-[0.08em] text-muted sm:tracking-[0.16em]">UTILIZZI TOTALI</p>
+          <p className="text-3xl font-extralight leading-none tracking-[-0.04em] sm:text-5xl">{avatar.usage_count.toLocaleString("it-IT")}</p>
         </div>
-        <div className="glass rounded-2xl p-5">
-          <p className="mb-1 text-xs tracking-[0.1em] text-muted">ROYALTY MATURATE</p>
-          <p className="text-3xl font-extrabold text-violet-light">€{royaltyEur}</p>
+        <div className="glass relative overflow-hidden rounded-2xl p-5">
+          <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(70% 60% at 100% 0%, rgba(242,169,59,0.12), transparent 60%)" }} />
+          <p className="relative mb-2 text-xs tracking-[0.08em] text-muted sm:tracking-[0.16em]">ROYALTY MATURATE</p>
+          <p className="relative text-3xl font-extralight leading-none tracking-[-0.04em] text-violet-light sm:text-5xl">€{royaltyEur}</p>
         </div>
       </div>
 
@@ -467,16 +476,28 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
   );
 }
 
-// Card di sezione in vetro, con etichetta e badge opzionale + reveal allo scroll.
-function Card({ i, label, badge, children }: { i: number; label: string; badge?: string; children: React.ReactNode }) {
+// Card di sezione in vetro: header editoriale (indice numerato sottile +
+// etichetta + hairline tramonto) e glow d'angolo tematico, con reveal allo
+// scroll. L'accento (amber o salvia) tinge glow, hairline e badge. L'header va a
+// capo se stretto: regge sia mobile sia desktop.
+function Card({ i, index, label, badge, accent = "amber", children }: { i: number; index?: string; label: string; badge?: string; accent?: "amber" | "teal"; children: React.ReactNode }) {
+  const a = accent === "teal"
+    ? { glow: "rgba(127,174,150,0.12)", line: "rgba(127,174,150,0.5)", badge: "border-teal/30 bg-teal/10 text-teal" }
+    : { glow: "rgba(242,169,59,0.12)", line: "rgba(242,169,59,0.55)", badge: "border-violet/30 bg-violet/10 text-violet-light" };
   return (
     <motion.section custom={i} variants={fade} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-      className="glass mt-4 rounded-2xl p-6">
-      <div className="mb-4 flex items-center gap-2">
-        <p className="text-xs tracking-[0.1em] text-muted">{label}</p>
-        {badge && <span className="rounded-full border border-violet/30 bg-violet/10 px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-violet-light">{badge}</span>}
+      className="glass relative mt-4 overflow-hidden rounded-2xl p-6">
+      <div aria-hidden className="absolute inset-0" style={{ background: `radial-gradient(55% 38% at 94% -6%, ${a.glow}, transparent 60%)` }} />
+      <div className="relative">
+        <div className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+          {index && <span className="shrink-0 text-2xl font-extralight leading-none tracking-[-0.04em] text-foreground/35 sm:text-[1.7rem]">{index}</span>}
+          {index && <span aria-hidden className="h-6 w-px shrink-0 bg-border" />}
+          <p className="text-xs tracking-[0.08em] text-muted sm:tracking-[0.16em]">{label}</p>
+          {badge && <span className={`ml-auto shrink-0 rounded-full border px-2 py-0.5 text-[0.62rem] font-bold tracking-wide ${a.badge}`}>{badge}</span>}
+        </div>
+        <div className="mb-5 mt-3 h-px" style={{ background: `linear-gradient(90deg, ${a.line}, var(--hairline) 38%, transparent 80%)` }} />
+        {children}
       </div>
-      {children}
     </motion.section>
   );
 }

@@ -237,6 +237,8 @@ export function StudioPanel(props: StudioPanelProps) {
           category={category}
           onChangeFace={() => setSelectedHandle(null)}
         />
+        {/* Hairline tramonto: lo stesso filo delle altre superfici, separa l'hero dalle scelte */}
+        <div aria-hidden className="mt-5 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 38%, transparent 80%)" }} />
         <GoalStart alias={avatar.alias} onPick={applyGoal} />
       </div>
     );
@@ -254,6 +256,8 @@ export function StudioPanel(props: StudioPanelProps) {
         goalLabel={goalLabel}
         onClearGoal={() => setGoal(null)}
       />
+      {/* Hairline tramonto: separa l'hero dai controlli di composizione */}
+      <div aria-hidden className="mt-5 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 38%, transparent 80%)" }} />
 
       {!gen ? (
         <>

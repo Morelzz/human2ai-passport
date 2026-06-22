@@ -199,12 +199,14 @@ export default async function AccountPage() {
 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem", flexWrap: "wrap", margin: "0 0 0.4rem" }}>
-          <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: 0 }}>
+          <h1 style={{ fontSize: "2.1rem", fontWeight: 200, letterSpacing: "-0.04em", margin: 0 }}>
             Ciao, {profile?.full_name || "utente"}
           </h1>
           {profile?.kyc_status === "approved" && <VerifiedBadge />}
         </div>
-        <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", margin: "0 0 2rem" }}>{user.email}</p>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", margin: "0 0 1.3rem" }}>{user.email}</p>
+        {/* Hairline tramonto, lo stesso filo delle altre superfici */}
+        <div aria-hidden style={{ height: 1, background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 34%, transparent 72%)", marginBottom: "1.6rem" }} />
 
         <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
           <Row label="Tipo di account" value={ROLE_LABEL[role] ?? role} />
@@ -248,12 +250,12 @@ export default async function AccountPage() {
         {/* Saldo VOLT: i crediti che alimentano le generazioni. Visibile a tutti
             (nascosto solo se il sistema VOLT non è configurato). */}
         {volt !== null && (
-          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ background: "radial-gradient(55% 42% at 97% -10%, rgba(242,169,59,0.12), transparent 60%), var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
             <div>
               <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
                 <span aria-hidden style={{ fontSize: "1.4rem" }}>⚡</span>
-                <span style={{ color: volt <= 0 ? "var(--blocked-c)" : volt < LOW_BALANCE_THRESHOLD ? "#F2A93B" : "var(--text)", fontSize: "2.2rem", fontWeight: 800, lineHeight: 1 }}>
+                <span style={{ color: volt <= 0 ? "var(--blocked-c)" : volt < LOW_BALANCE_THRESHOLD ? "#F2A93B" : "var(--text)", fontSize: "2.6rem", fontWeight: 200, letterSpacing: "-0.04em", lineHeight: 1 }}>
                   {volt.toLocaleString("it-IT")}
                 </span>
               </div>
@@ -289,7 +291,7 @@ export default async function AccountPage() {
             {protection.total > 0 ? (
               <>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", margin: "1.1rem 0 0.3rem" }}>
-                  <span style={{ color: "var(--text)", fontSize: "1.8rem", fontWeight: 800 }}>{protection.total}</span>
+                  <span style={{ color: "var(--text)", fontSize: "2.1rem", fontWeight: 200, letterSpacing: "-0.04em" }}>{protection.total}</span>
                   <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
                     {protection.total === 1 ? "volta il tuo volto è stato riconosciuto" : "volte il tuo volto è stato riconosciuto"} in immagini caricate su Semblic
                     {protection.last30 > 0 && ` (${protection.last30} negli ultimi 30 giorni)`}
@@ -402,7 +404,7 @@ export default async function AccountPage() {
         )}
 
         {role === "seller" && myAvatar && (
-          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
+          <div style={{ background: "radial-gradient(55% 38% at 97% -10%, rgba(127,174,150,0.12), transparent 60%), var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO WALLET</p>
 
             {/* Revenue-hero: il guadagno in grande (dolore #1 risolto), col passo
@@ -410,7 +412,7 @@ export default async function AccountPage() {
             <div style={{ marginBottom: "1.1rem" }}>
               <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>Royalty accumulate</span>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.7rem", flexWrap: "wrap", marginTop: "0.15rem" }}>
-                <span style={{ color: "var(--verified-c)", fontSize: "2.6rem", fontWeight: 800, lineHeight: 1 }}>{formatEur(royaltyCents)}</span>
+                <span style={{ color: "var(--verified-c)", fontSize: "2.9rem", fontWeight: 200, letterSpacing: "-0.04em", lineHeight: 1 }}>{formatEur(royaltyCents)}</span>
                 {revenue && revenue.last30Cents > 0 && (
                   <span style={{ color: "#F2A93B", fontSize: "0.85rem", fontWeight: 700 }}>
                     +{formatEur(revenue.last30Cents)} <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>ultimi 30 giorni</span>
@@ -476,7 +478,7 @@ export default async function AccountPage() {
             <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È STATO CERCATO</p>
 
             <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", marginBottom: "0.3rem" }}>
-              <span style={{ color: "var(--text)", fontSize: "1.8rem", fontWeight: 800 }}>{demand.compatible}</span>
+              <span style={{ color: "var(--text)", fontSize: "2.1rem", fontWeight: 200, letterSpacing: "-0.04em" }}>{demand.compatible}</span>
               <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
                 {demand.compatible === 1 ? "ricerca compatibile" : "ricerche compatibili"} col tuo volto negli ultimi {demand.days} giorni
               </span>
@@ -503,7 +505,8 @@ export default async function AccountPage() {
 
         {myGenerations.length > 0 && (
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>I MIEI CONTENUTI</p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>I MIEI CONTENUTI</p>
+            <div aria-hidden style={{ height: 1, background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 38%, transparent 80%)", margin: "0 0 1rem" }} />
             <ContentsGrid items={gridItems} shareVariant="buyer" />
             <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
               Ogni contenuto è certificato e la persona reale è stata remunerata.

@@ -29,13 +29,16 @@ export default async function VerifyPage({
         <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
           <div className="mb-8">
             <span className="text-xs font-bold tracking-[0.14em] text-teal">SIGIL</span>
-            <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Verifica un contenuto</h1>
+            {/* Titolo in display sottile (Geist peso 200, tracking -0.04em) */}
+            <h1 className="mt-2 text-4xl font-extralight tracking-[-0.04em] sm:text-5xl">Verifica un contenuto</h1>
             <p className="mt-3 leading-relaxed text-muted">
               <span className="text-foreground">Sigil</span> è il verificatore pubblico di Semblic.
               Carica un&apos;immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e ti mostriamo
               chi l&apos;ha autorizzato e con quale consenso. Se non lo è, possiamo confrontare il volto col
               registro, <span className="text-foreground">a tutela della persona</span>.
             </p>
+            {/* Hairline tramonto, lo stesso filo di passport, catalogo e match */}
+            <div aria-hidden className="mt-6 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 34%, transparent 72%)" }} />
           </div>
           <VerifyClient initialToken={token ?? ""} />
         </main>

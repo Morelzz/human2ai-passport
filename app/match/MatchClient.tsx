@@ -542,27 +542,36 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         <span className="text-faint">/</span>
         <span className="text-violet-light">PASSO 1: CHI</span>
       </div>
-      <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+      <h1 className="mt-2 text-4xl font-extralight tracking-[-0.04em] sm:text-5xl">
         <KineticText text="Descrivi chi cerchi" />
       </h1>
-      <p className="mt-2 mb-8 text-sm leading-relaxed text-muted sm:text-base">
+      <p className="mt-2 mb-6 text-sm leading-relaxed text-muted sm:text-base">
         Scrivi il tuo brief come lo diresti a un&apos;agenzia: il matching trova la{" "}
         <span className="text-foreground">persona reale e consenziente</span> più affine nel registro.
         La <em>scena</em> la dirigi dopo.
       </p>
 
+      {/* Hairline tramonto, lo stesso filo di passport e catalogo */}
+      <div aria-hidden className="mb-8 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 34%, transparent 72%)" }} />
+
       <form onSubmit={search} className="flex flex-col gap-6">
         {/* Review D1 — il brief in linguaggio naturale al centro */}
         <div>
           <label htmlFor="brief" className="mb-2 block text-xs font-bold tracking-[0.1em] text-violet-light">IL TUO BRIEF</label>
-          <textarea
-            id="brief"
-            value={brief}
-            onChange={(e) => setBrief(e.target.value)}
-            placeholder={'Es. "donna 30-40, mediterranea, sorriso naturale, capelli castani"'}
-            rows={3}
-            className="w-full resize-y rounded-2xl border border-border bg-obsidian px-4 py-3.5 text-base text-foreground outline-none transition-colors focus:border-violet/50"
-          />
+          {/* Palco del brief: il centro della pagina. Bordo amber tenue + glow
+              d'angolo; al focus il bordo si accende. La textarea e' trasparente
+              dentro al palco (il bordo lo da il contenitore). */}
+          <div className="relative rounded-2xl border border-violet/25 bg-obsidian transition-colors focus-within:border-violet/50">
+            <div aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl" style={{ background: "radial-gradient(60% 80% at 100% 0%, rgba(242,169,59,0.10), transparent 60%)" }} />
+            <textarea
+              id="brief"
+              value={brief}
+              onChange={(e) => setBrief(e.target.value)}
+              placeholder={'Es. "donna 30-40, mediterranea, sorriso naturale, capelli castani"'}
+              rows={3}
+              className="relative w-full resize-y border-none bg-transparent px-4 py-3.5 text-base text-foreground outline-none"
+            />
+          </div>
           {/* Review D4 — principio vincolante, dichiarato dove serve */}
           <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
             Qui si <span className="text-muted">descrive</span>, non si carica: nessuna ricerca per

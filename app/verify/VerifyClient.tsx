@@ -331,13 +331,22 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           data-state={portalState}
           className={`relative flex h-60 w-60 cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black sm:h-72 sm:w-72 ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
         >
+          {/* Aura di verifica (solo a riposo: su un'immagine caricata la toglie per non tingerla) */}
+          {!preview && (
+            <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 55% at 50% 42%, rgba(127,174,150,0.12), transparent 62%)" }} />
+          )}
+          {/* Cornice a mirino (scanner): l'identita di Sigil = verifica (salvia) */}
+          <span aria-hidden className="pointer-events-none absolute left-3.5 top-3.5 h-5 w-5 rounded-tl-lg border-l-[1.5px] border-t-[1.5px] border-teal/50" />
+          <span aria-hidden className="pointer-events-none absolute right-3.5 top-3.5 h-5 w-5 rounded-tr-lg border-r-[1.5px] border-t-[1.5px] border-teal/50" />
+          <span aria-hidden className="pointer-events-none absolute bottom-3.5 left-3.5 h-5 w-5 rounded-bl-lg border-b-[1.5px] border-l-[1.5px] border-teal/50" />
+          <span aria-hidden className="pointer-events-none absolute bottom-3.5 right-3.5 h-5 w-5 rounded-br-lg border-b-[1.5px] border-r-[1.5px] border-teal/50" />
           {preview ? (
             // L'immagine si SCALA dentro al portale: soggetto sempre intero, mai tagliato.
             // eslint-disable-next-line @next/next/no-img-element
             <img src={preview} alt="" className={`h-full w-full object-contain p-2 transition-opacity ${busy ? "opacity-40" : "opacity-90"}`} />
           ) : (
             <span className="px-8 text-center text-[0.8rem] leading-relaxed text-faint">
-              <span aria-hidden className="mb-2 block text-2xl font-extralight text-muted">⌖</span>
+              <span aria-hidden className="mb-2 block text-4xl font-extralight text-muted">⌖</span>
               Trascina qui un&apos;immagine
               <span className="block text-[0.7rem]">o tocca per sceglierla</span>
             </span>
