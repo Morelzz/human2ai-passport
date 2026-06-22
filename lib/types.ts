@@ -18,10 +18,7 @@ export interface Avatar {
   glasses: string | null;
   tattoos: string | null;
   language: string | null;
-  approved_categories: string[];
-  excluded_categories: string[];
-  // Consenso uso commerciale sì/no (modello senza categorie, Fase 2). Gli array
-  // qui sopra restano come specchio legacy per i gate non ancora migrati.
+  // Consenso uso commerciale sì/no (modello senza categorie).
   commercial_consent?: boolean;
   consent_start: string;
   consent_end: string | null;

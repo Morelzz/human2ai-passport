@@ -93,11 +93,8 @@ export interface ScorableAvatar {
   eye_color?: string | null;
   height?: string | null;
   body_type?: string | null;
-  // Consenso uso commerciale sì/no (modello senza categorie, Fase 2): è il gate.
+  // Consenso uso commerciale sì/no (modello senza categorie): è il gate.
   commercial_consent?: boolean;
-  // Legacy categoria d'uso: NON più usate nel match (Fase 4 le rimuove dal DB).
-  approved_categories?: string[];
-  excluded_categories?: string[];
 }
 
 export interface MatchResult {

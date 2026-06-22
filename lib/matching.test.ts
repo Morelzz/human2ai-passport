@@ -23,11 +23,6 @@ describe("scoreAvatar (modello senza categorie: gate sul consenso commerciale)",
     expect(scoreAvatar(avatar({ gender: "donna" }), attrs({ gender: "uomo" })).allowed).toBe(false);
   });
 
-  it("le categorie legacy non contano più (excluded ignorato)", () => {
-    const r = scoreAvatar(avatar({ excluded_categories: ["Politics"] }), attrs({ gender: "uomo" }));
-    expect(r.allowed).toBe(true);
-  });
-
   it("consenso assente (undefined dal DB NOT NULL) trattato come consenziente", () => {
     expect(scoreAvatar(avatar({ commercial_consent: undefined }), attrs({ gender: "uomo" })).allowed).toBe(true);
   });

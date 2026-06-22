@@ -52,7 +52,7 @@ export async function POST(req: Request) {
   const supabase = createServerClient();
   const { data: gen } = await supabase
     .from("generations")
-    .select("created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, approved_categories, excluded_categories, protection_only)")
+    .select("created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, commercial_consent, protection_only)")
     .eq("certificate", cert)
     .maybeSingle();
 
@@ -101,10 +101,9 @@ export async function POST(req: Request) {
     revoked_at: av?.revoked_at ?? null,
     generated_at: gen.created_at,
     category: gen.category ?? null,
-    // Per il check "categoria d'uso coerente col consenso ATTUALE" e la
-    // correlazione visiva col ritratto pubblico dell'avatar.
-    approved_categories: av?.approved_categories ?? null,
-    excluded_categories: av?.excluded_categories ?? null,
+    // Modello senza categorie: per il check "la persona consente ancora l'uso
+    // commerciale" e la correlazione visiva col ritratto pubblico dell'avatar.
+    commercial_consent: av?.commercial_consent ?? null,
     // NB: gallery_urls vive nella migrazione avatar_public_profile (non ancora
     // applicata): galleryFromRow usa la mappa fallback per handle.
     has_portrait: av?.handle ? galleryFromRow(av.handle, undefined).length > 0 : false,

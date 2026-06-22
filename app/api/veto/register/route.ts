@@ -4,7 +4,6 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { appendProtectedFaces } from "@/lib/protected-index";
 import { isValidDescriptor } from "@/lib/face-index";
-import { CATEGORIES } from "@/lib/types";
 
 export const runtime = "nodejs";
 
@@ -89,8 +88,7 @@ export async function POST(request: Request) {
         alias: "Volto protetto",
         tier: "SOUL",
         protection_only: true,
-        approved_categories: [],
-        excluded_categories: [...CATEGORIES], // tutto bloccato, non modificabile (2.1)
+        commercial_consent: false, // sola protezione: nessun uso commerciale (gate via protection_only)
         consent_start: today,
         token_hash: tokenHash,
         owner_id: uid,

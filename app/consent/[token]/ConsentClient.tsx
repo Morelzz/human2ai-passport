@@ -6,11 +6,11 @@ interface Props {
   token: string;
   alias: string;
   identity: string;
-  categories: string[];
+  commercialConsent: boolean;
   alreadyConsented: boolean;
 }
 
-export default function ConsentClient({ token, alias, identity, categories, alreadyConsented }: Props) {
+export default function ConsentClient({ token, alias, identity, commercialConsent, alreadyConsented }: Props) {
   const [signature, setSignature] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ export default function ConsentClient({ token, alias, identity, categories, alre
             <div style={{ background: "var(--bg)", border: "1px solid var(--hairline-soft)", borderRadius: 12, padding: "1.1rem", marginBottom: "1.5rem" }}>
               <Row label="Nome pubblico" value={alias} />
               {identity && <Row label="Caratteristiche" value={identity} />}
-              <Row label="Usi autorizzati" value={categories.length ? categories.join(" · ") : "—"} />
+              <Row label="Uso" value={commercialConsent ? "commerciale" : "non commerciale"} />
             </div>
 
             <label style={{ display: "flex", gap: "0.6rem", alignItems: "flex-start", marginBottom: "1.2rem", cursor: "pointer" }}>

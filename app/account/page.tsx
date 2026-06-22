@@ -65,7 +65,7 @@ export default async function AccountPage() {
     const admin = createServerClient();
     const { data: av } = await admin
       .from("avatars")
-      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count, owner_wallet, gender, age_range, ethnicity, hair_color, approved_categories, excluded_categories")
+      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count, owner_wallet, gender, age_range, ethnicity, hair_color, commercial_consent")
       .eq("owner_id", user.id)
       .maybeSingle();
     myAvatar = av?.handle ?? null;

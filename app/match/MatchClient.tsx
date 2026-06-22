@@ -70,9 +70,6 @@ interface MatchAvatar {
   tier: Tier;
   reasons: string[];
   gallery_count: number;
-  // D2 — lo scope di consenso viaggia col risultato (dato già pubblico).
-  approved_categories: string[];
-  excluded_categories: string[];
 }
 
 interface MatchResponse {

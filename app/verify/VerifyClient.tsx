@@ -40,9 +40,8 @@ interface VerifyResult {
   // per il server) → NON e' un verdetto, e l'analisi del volto va offerta lo stesso.
   wm_checked?: boolean;
   certificate?: string;
-  // Esteso (esito "autorità"): categorie correnti + catena del consenso.
-  approved_categories?: string[] | null;
-  excluded_categories?: string[] | null;
+  // Esteso (esito "autorità"): consenso commerciale corrente + catena del consenso.
+  commercial_consent?: boolean | null;
   has_portrait?: boolean;
   events?: Array<{ event_type: string; detail: string | null; occurred_at: string }>;
   face?: {
@@ -453,19 +452,15 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 )}
               </div>
 
-              {/* Check di coerenza: la categoria del contenuto vs consenso ATTUALE */}
-              {result.type === "content" && result.category && Array.isArray(result.approved_categories) && (
-                result.excluded_categories?.includes(result.category) ? (
-                  <p className="mt-4 rounded-xl border border-crimson/25 bg-crimson/5 p-3 text-[0.78rem] leading-relaxed text-crimson">
-                    ✗ Oggi la categoria <strong>{result.category}</strong> è esclusa dal consenso: usi futuri in questa categoria sono bloccati.
-                  </p>
-                ) : result.approved_categories.includes(result.category) ? (
+              {/* Check di coerenza: consenso commerciale ATTUALE della persona */}
+              {result.type === "content" && typeof result.commercial_consent === "boolean" && (
+                result.commercial_consent ? (
                   <p className="mt-4 rounded-xl border border-teal/25 bg-teal/5 p-3 text-[0.78rem] leading-relaxed text-teal">
-                    ✓ La categoria <strong>{result.category}</strong> è coerente col consenso attuale della persona.
+                    ✓ La persona consente l&apos;uso commerciale del proprio volto. La concessione valeva al momento della generazione.
                   </p>
                 ) : (
-                  <p className="mt-4 rounded-xl border border-border bg-white/[0.03] p-3 text-[0.78rem] leading-relaxed text-muted">
-                    La categoria <strong>{result.category}</strong> oggi non è più tra quelle consentite: la concessione valeva al momento della generazione.
+                  <p className="mt-4 rounded-xl border border-crimson/25 bg-crimson/5 p-3 text-[0.78rem] leading-relaxed text-crimson">
+                    ✗ Oggi la persona non consente più l&apos;uso commerciale: usi futuri sono bloccati. La concessione valeva al momento della generazione.
                   </p>
                 )
               )}

@@ -17,10 +17,7 @@ export interface AvatarHeroProps {
   handle: string;
   portrait: string | null;
   tierLabel: string; // per i SOUL = "ECHO" (da TIER_CONFIG)
-  // Consenso rispetto alla ricerca (stessa logica del vecchio header).
   category: string | null;
-  approvedCategories: string[];
-  excludedCategories: string[];
   // Azione "Cambia volto": torna ai risultati.
   onChangeFace: () => void;
   // Obiettivo selezionato (goalpill): se presente, mostra la pillola + la x.

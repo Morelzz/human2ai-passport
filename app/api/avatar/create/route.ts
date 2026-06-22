@@ -5,7 +5,7 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { uploadPrivate } from "@/lib/storage";
 import { computeTokenHash } from "@/lib/token";
-import { CATEGORIES, IDENTITY_KIT, Tier } from "@/lib/types";
+import { IDENTITY_KIT, Tier } from "@/lib/types";
 import { classifyIdentityMatch } from "@/lib/identity-match";
 import type { FaceMatchResult } from "@/lib/face-match";
 
@@ -171,12 +171,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Identity kit incompleto o non valido: ${field}` }, { status: 400 });
     }
   }
-  // Avatar aperto = consenso a ogni categoria d'uso. Le categorie spariscono dalla
-  // UI; qui restano popolate "tutte" per compatibilita con matching/token finche
-  // non si ripulisce a DB (Fase 2/4).
-  const validApproved = [...CATEGORIES];
-  const validExcluded: string[] = [];
-
   // Verifica identità (Fase 3b): pre-screening del match calcolato sul dispositivo.
   // AIUTO alla certificazione manuale, mai una prova. Salvato sanificato + esito.
   const fm = sanitizeFaceMatch(body.face_match);
@@ -216,14 +210,10 @@ export async function POST(request: Request) {
     glasses,
     tattoos,
     language,
-    // Consenso uso commerciale sì/no (modello senza categorie, Fase 2). La
-    // creazione richiede comunque il consenso (sopra), quindi qui è sempre true;
-    // resta un campo perché in futuro è togglabile da /account/consent.
+    // Consenso uso commerciale sì/no (modello senza categorie). La creazione
+    // richiede comunque il consenso (sopra), quindi qui è sempre true; resta un
+    // campo perché in futuro è togglabile da /account/consent.
     commercial_consent: commercialConsent,
-    // Legacy: array categoria popolati "tutte" per compat dei display finché la
-    // Fase 4 non rimuove colonne e UI. Il matching ora gira sul boolean sopra.
-    approved_categories: validApproved,
-    excluded_categories: validExcluded,
     consent_start: consentStart,
     token_hash: tokenHash,
     usage_count: 0,

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { deletePrefix } from "@/lib/storage";
-import { CATEGORIES } from "@/lib/types";
 
 export const runtime = "nodejs";
 
@@ -73,14 +72,7 @@ export async function POST(request: Request) {
 
   if (action.type === "set_commercial_consent") {
     const value = action.value === true;
-    // Specchiamo gli array categoria (tutte/nessuna) così i gate legacy che ancora
-    // li leggono (generazione, verify) restano coerenti col boolean finché non
-    // migrano anch'essi al modello sì/no.
-    await admin.from("avatars").update({
-      commercial_consent: value,
-      approved_categories: value ? [...CATEGORIES] : [],
-      excluded_categories: [],
-    }).eq("id", avatar.id);
+    await admin.from("avatars").update({ commercial_consent: value }).eq("id", avatar.id);
     await admin.from("consent_events").insert({
       avatar_id: avatar.id,
       event_type: value ? "GRANTED" : "CATEGORY_REMOVED",

@@ -13,7 +13,7 @@ export default async function ConsentPage({ params }: Props) {
 
   const { data: avatar } = await admin
     .from("avatars")
-    .select("alias, gender, age_range, ethnicity, approved_categories, person_consented_at")
+    .select("alias, gender, age_range, ethnicity, commercial_consent, person_consented_at")
     .eq("consent_token", token)
     .maybeSingle();
 
@@ -24,7 +24,7 @@ export default async function ConsentPage({ params }: Props) {
       token={token}
       alias={avatar.alias}
       identity={[avatar.gender, avatar.age_range, avatar.ethnicity].filter(Boolean).join(" · ")}
-      categories={avatar.approved_categories ?? []}
+      commercialConsent={avatar.commercial_consent ?? true}
       alreadyConsented={!!avatar.person_consented_at}
     />
   );

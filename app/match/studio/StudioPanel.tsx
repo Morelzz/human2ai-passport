@@ -40,8 +40,6 @@ export interface StudioAvatar {
   tier: Tier;
   reasons: string[];
   gallery_count: number;
-  approved_categories: string[];
-  excluded_categories: string[];
 }
 
 // Risultato di una generazione (stessa forma di MatchClient.GenResult).
@@ -237,8 +235,6 @@ export function StudioPanel(props: StudioPanelProps) {
           portrait={portrait}
           tierLabel={tier.label}
           category={category}
-          approvedCategories={avatar.approved_categories}
-          excludedCategories={avatar.excluded_categories}
           onChangeFace={() => setSelectedHandle(null)}
         />
         <GoalStart alias={avatar.alias} onPick={applyGoal} />
@@ -254,8 +250,6 @@ export function StudioPanel(props: StudioPanelProps) {
         portrait={portrait}
         tierLabel={tier.label}
         category={category}
-        approvedCategories={avatar.approved_categories}
-        excludedCategories={avatar.excluded_categories}
         onChangeFace={() => setSelectedHandle(null)}
         goalLabel={goalLabel}
         onClearGoal={() => setGoal(null)}
