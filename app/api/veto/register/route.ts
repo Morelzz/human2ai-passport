@@ -61,6 +61,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Servono il documento (fronte) e un selfie per confermare che il volto sia tuo." }, { status: 400 });
   }
 
+  // Gate identità: se la persona è verificata col KYC, il volto che protegge deve
+  // essere il SUO (quello verificato). Confronto server-side sulle foto se
+  // disponibili, altrimenti sui descrittori inviati; banda "weak" = blocco.
+  // Senza riferimento (no KYC / link scaduto / niente volto) niente blocco: la
+  // protezione resta protect-first.
+  if (kycApproved) {
+    const { checkBestFaceAgainstIdentity, checkDescriptorsAgainstIdentity } = await import("@/lib/kyc/identity-face");
+    let idCheck;
+    if (photos.length > 0) {
+      const imgs: Uint8Array[] = [];
+      for (const p of photos.slice(0, 5)) imgs.push(new Uint8Array(await p.arrayBuffer()));
+      idCheck = await checkBestFaceAgainstIdentity(uid, imgs);
+    } else {
+      idCheck = await checkDescriptorsAgainstIdentity(uid, descriptors);
+    }
+    if (idCheck && idCheck.band === "weak") {
+      return NextResponse.json(
+        { error: "Il volto delle foto non corrisponde al documento con cui ti sei verificato. Puoi proteggere solo il tuo volto." },
+        { status: 403 },
+      );
+    }
+  }
+
   // 1:1: chi concede il proprio volto nel registro non puo' al tempo stesso
   // proteggerlo (e viceversa). Se esiste gia' una protezione, e' una ri-registrazione.
   const { data: existing } = await admin

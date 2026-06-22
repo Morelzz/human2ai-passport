@@ -37,9 +37,14 @@ export async function POST(request: Request) {
   const kyc = diditStatusToKyc(payload.status);
   if (userId && kyc) {
     // Idempotente: scrivere lo stesso kyc_status e' un no-op, quindi i retry di
-    // Didit (stesso event_id) non causano effetti collaterali.
+    // Didit (stesso event_id) non causano effetti collaterali. Salviamo anche la
+    // session: serve a ricavare il volto verificato (decisione Didit) quando la
+    // persona carica le foto avatar/Ward, per il confronto identita'.
     const admin = createServerClient();
-    await admin.from("profiles").update({ kyc_status: kyc }).eq("id", userId);
+    await admin
+      .from("profiles")
+      .update({ kyc_status: kyc, identity_session_id: payload.session_id })
+      .eq("id", userId);
     await appendAudit({
       actor: userId,
       action: "kyc.didit_webhook",

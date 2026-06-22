@@ -177,6 +177,27 @@ export async function POST(request: Request) {
   const idVerdict = classifyIdentityMatch(fm);
   const identityMatch = fm ? { ...fm, verdict: idVerdict.verdict, score: idVerdict.score } : null;
 
+  // Gate identità (anti-impersonazione): per i privati il volto delle foto deve
+  // corrispondere al volto VERIFICATO col KYC (Didit). Confronto SERVER-side sui
+  // bytes; se nemmeno la foto migliore combacia (banda "weak", distanza >0.6) si
+  // blocca. Se non c'è riferimento (link Didit scaduto, nessun volto leggibile)
+  // niente blocco cieco: l'avatar resta in revisione manuale, come già previsto.
+  if (!isEnterprise) {
+    const { checkBestFaceAgainstIdentity } = await import("@/lib/kyc/identity-face");
+    const refImgs: Uint8Array[] = [];
+    for (const r of (Array.isArray(body.references) ? body.references.slice(0, 5) : [])) {
+      const buf = await refFromDataUrl(r?.data);
+      if (buf) refImgs.push(buf);
+    }
+    const idCheck = refImgs.length ? await checkBestFaceAgainstIdentity(user.id, refImgs) : null;
+    if (idCheck && idCheck.band === "weak") {
+      return NextResponse.json(
+        { error: "Il volto delle foto non corrisponde al documento con cui ti sei verificato. Carica foto del tuo volto, lo stesso del KYC." },
+        { status: 403 },
+      );
+    }
+  }
+
   // 5. Handle univoco
   const { data: existing } = await admin.from("avatars").select("id").eq("handle", handle).maybeSingle();
   if (existing) {

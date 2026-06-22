@@ -71,6 +71,27 @@ export async function createDiditSession(vendorData: string): Promise<{ url: str
   return { url: data.url, sessionId: String(data.session_id ?? "") };
 }
 
+// Recupera dalla decisione di una sessione il VOLTO verificato dal documento
+// (id_verifications[].portrait_image). I link immagine sono presigned a scadenza
+// breve: vanno scaricati subito. null se non disponibile.
+export async function getDiditPortraitUrl(sessionId: string): Promise<string | null> {
+  const apiKey = process.env.DIDIT_API_KEY;
+  if (!apiKey || !sessionId) return null;
+  const res = await fetch(`${DIDIT_BASE_URL}/v3/session/${encodeURIComponent(sessionId)}/decision/`, {
+    headers: { "X-API-Key": apiKey },
+  });
+  if (!res.ok) return null;
+  const data = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+  if (!data) return null;
+  // La decisione puo' avere id_verifications in radice o sotto "decision".
+  const decision = (data.decision as Record<string, unknown> | undefined) ?? data;
+  const idv = Array.isArray(decision.id_verifications) ? (decision.id_verifications as Record<string, unknown>[]) : [];
+  for (const v of idv) {
+    if (typeof v.portrait_image === "string" && v.portrait_image) return v.portrait_image;
+  }
+  return null;
+}
+
 // Verifica un webhook Didit. Imponiamo la freschezza (X-Timestamp entro 300s,
 // anti-replay) e accettiamo UNA firma valida (timing-safe) tra le tre che Didit
 // invia, in ordine di robustezza: V2 (JSON canonico, raccomandata), raw (body
