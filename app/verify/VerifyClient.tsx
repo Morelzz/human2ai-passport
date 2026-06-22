@@ -329,7 +329,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       >
         <label
           data-state={portalState}
-          className={`relative flex h-60 w-60 cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black sm:h-72 sm:w-72 ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
+          className={`relative flex h-[clamp(15rem,40vw,18rem)] w-[clamp(15rem,40vw,18rem)] cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
         >
           {/* Aura di verifica (solo a riposo: su un'immagine caricata la toglie per non tingerla) */}
           {!preview && (

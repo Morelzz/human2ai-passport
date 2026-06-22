@@ -14,8 +14,30 @@ import { POSES, PoseGlyph } from "@/components/avatar/poses";
 
 type Slot = { file: File; url: string } | null;
 
-export default function VerifyClient({ initialStatus }: { initialStatus: string }) {
+export default function VerifyClient({ initialStatus, diditEnabled = false }: { initialStatus: string; diditEnabled?: boolean }) {
   const router = useRouter();
+  const [diditBusy, setDiditBusy] = useState(false);
+
+  // Verifica automatica: apre una sessione Didit e ci redireziona. Lo stato
+  // (approved/rejected) torna dal webhook firmato; al rientro il profilo e' gia'
+  // "in revisione", quindi qui si vede la schermata "in revisione".
+  async function startDidit() {
+    setDiditBusy(true);
+    setErr(null);
+    try {
+      const res = await fetch("/api/kyc/didit/start", { method: "POST" });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.url) {
+        setErr(j.error ?? "Avvio verifica non riuscito");
+        setDiditBusy(false);
+        return;
+      }
+      window.location.href = j.url;
+    } catch {
+      setErr("Errore di rete");
+      setDiditBusy(false);
+    }
+  }
   const [docFront, setDocFront] = useState<Slot>(null);
   const [docBack, setDocBack] = useState<Slot>(null);
   const [selfie, setSelfie] = useState<Slot>(null);
@@ -115,11 +137,37 @@ export default function VerifyClient({ initialStatus }: { initialStatus: string 
   return (
     <section className="mx-auto max-w-xl px-5 py-14 sm:px-8">
       <span className="text-xs font-bold tracking-[0.14em] text-teal">VERIFICA IDENTITÀ</span>
-      <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Carica i tuoi documenti</h1>
+      <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Verifica la tua identità</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
         Per entrare nel registro confermiamo che sei una persona reale e che il volto è il tuo.
         I file restano <span className="text-foreground">privati</span>, usati solo per la verifica.
       </p>
+
+      {/* Verifica automatica (Didit): documento + selfie con liveness, in un
+          minuto. Compare solo se il provider e' configurato (env). Il form
+          manuale resta sotto come fallback. */}
+      {diditEnabled && (
+        <>
+          <div className="glass mt-8 rounded-2xl p-6">
+            <p className="text-xs font-bold tracking-[0.14em] text-violet-light">VERIFICA AUTOMATICA</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              Verifica in un minuto: documento e un selfie con controllo di vivenza, guidato dal nostro partner. Niente da caricare a mano.
+            </p>
+            <button
+              type="button"
+              onClick={startDidit}
+              disabled={diditBusy}
+              className="mt-4 w-full rounded-xl bg-[#F2A93B] px-6 py-3.5 text-sm font-bold text-[#412402] shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50"
+            >
+              {diditBusy ? "Apro la verifica…" : "Verifica la mia identità →"}
+            </button>
+            {err && <p className="mt-3 text-sm text-crimson">{err}</p>}
+          </div>
+          <div className="mt-6 flex items-center gap-3 text-xs text-faint">
+            <span className="h-px flex-1 bg-border" /> oppure carica i documenti a mano <span className="h-px flex-1 bg-border" />
+          </div>
+        </>
+      )}
 
       <form onSubmit={submit} className="mt-8 flex flex-col gap-7">
         {/* Documento: fronte + retro */}

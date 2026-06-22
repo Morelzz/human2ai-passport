@@ -13,7 +13,7 @@ import type { ReactNode } from "react";
 export function Reveal({
   children,
   className,
-  y = 16,
+  y = 20,
   delay = 0,
 }: {
   children: ReactNode;
@@ -27,10 +27,10 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y, filter: "blur(4px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      initial={{ opacity: 0, y, scale: 0.985, filter: "blur(4px)" }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "0px 0px 18% 0px" }}
-      transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
@@ -40,11 +40,11 @@ export function Reveal({
 // Variants per liste con stagger: usa <RevealStagger> sul contenitore e
 // `revealItem` sui figli (motion.*) per un'entrata sfalsata.
 export const revealItem: Variants = {
-  hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 16, scale: 0.99, filter: "blur(4px)" },
+  show: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
 };
 
-export function RevealStagger({ children, className, gap = 0.07 }: { children: ReactNode; className?: string; gap?: number }) {
+export function RevealStagger({ children, className, gap = 0.09 }: { children: ReactNode; className?: string; gap?: number }) {
   const reduce = useReducedMotion();
   if (reduce) return <div className={className}>{children}</div>;
   return (

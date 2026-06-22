@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
+import { diditConfigured } from "@/lib/kyc/didit";
 import VerifyClient from "./VerifyClient";
 
 export default async function VerifyIdentityPage() {
@@ -24,7 +25,7 @@ export default async function VerifyIdentityPage() {
       <CineBackground />
       <div className="relative z-[2]">
         <SiteNav />
-        <VerifyClient initialStatus={profile?.kyc_status ?? "none"} />
+        <VerifyClient initialStatus={profile?.kyc_status ?? "none"} diditEnabled={diditConfigured()} />
       </div>
     </div>
   );
