@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES, IDENTITY_KIT, IDENTITY_LABELS, TIER_CONFIG, Tier } from "@/lib/types";
+import { IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { POSES, PoseGlyph } from "@/components/avatar/poses";
-
-const TIERS: Tier[] = ["SPARK", "SHAPE", "SOUL", "HUMAN"];
 
 export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: { defaultAlias: string; isEnterprise?: boolean }) {
   const router = useRouter();
@@ -16,13 +14,12 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
   const [realName, setRealName] = useState("");
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
-  const [tier, setTier] = useState<Tier>("SOUL");
-  const [approved, setApproved] = useState<string[]>([]);
-  const [excluded, setExcluded] = useState<string[]>([]);
+  const [commercialConsent, setCommercialConsent] = useState(true);
   const [kit, setKit] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [consentUrl, setConsentUrl] = useState<string | null>(null);
+  const [submittedPending, setSubmittedPending] = useState(false);
   const [copied, setCopied] = useState(false);
   const [refs, setRefs] = useState<(string | null)[]>(() => Array(POSES.length).fill(null));
   const [analyzing, setAnalyzing] = useState(false);
@@ -67,22 +64,13 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
     setAnalyzing(false);
   }
 
-  function toggle(list: string[], setList: (v: string[]) => void, cat: string, otherList: string[], setOther: (v: string[]) => void) {
-    if (list.includes(cat)) {
-      setList(list.filter((c) => c !== cat));
-    } else {
-      setList([...list, cat]);
-      if (otherList.includes(cat)) setOther(otherList.filter((c) => c !== cat));
-    }
-  }
-
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!kitComplete) { setError("Completa tutti i campi dell'identity kit"); return; }
-    // SOUL/HUMAN (identity-lock, motore ECHO) richiedono almeno una foto: senza,
-    // l'avatar nascerebbe non generabile.
-    if ((tier === "SOUL" || tier === "HUMAN") && refs.every((d) => !d)) {
-      setError(`Per il livello ${tier} carica almeno una foto: bloccano l'identità reale per le generazioni fedeli.`);
+    if (!commercialConsent) { setError("Per creare un avatar serve il consenso all'uso commerciale. Per la sola protezione del volto usa Ward."); return; }
+    // L'avatar nasce a livello ECHO (identity-lock): senza foto non sarebbe generabile.
+    if (refs.every((d) => !d)) {
+      setError("Carica almeno una foto: bloccano l'identità reale per le generazioni fedeli.");
       return;
     }
     setError(null);
@@ -91,7 +79,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        handle, alias, tier, approved_categories: approved, excluded_categories: excluded, ...kit,
+        handle, alias, commercial_consent: commercialConsent, ...kit,
         real_name: realName, instagram, facebook,
         references: refs.map((d, slot) => (d ? { slot, data: d } : null)).filter(Boolean),
       }),
@@ -111,7 +99,9 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
       setLoading(false);
       return;
     }
-    router.push(`/passport/${json.handle}`);
+    // Privato: l'avatar NON va live in automatico, entra in certificazione.
+    setSubmittedPending(true);
+    setLoading(false);
     router.refresh();
   }
 
@@ -132,6 +122,14 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
               </button>
             </div>
             <Link href="/account" style={{ display: "inline-block", marginTop: "1.5rem", color: "var(--text-muted)", fontSize: "0.85rem", textDecoration: "none" }}>← Torna all&apos;account</Link>
+          </div>
+        ) : submittedPending ? (
+          <div style={{ background: "var(--surface)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 18, padding: "2rem" }}>
+            <p style={{ color: "var(--verified-c)", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>✓ Avatar inviato per la certificazione</p>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.2rem" }}>
+              Prima di andare live certifichiamo a mano che il volto dell&apos;avatar sia la stessa persona della tua verifica d&apos;identità. Appena approvato il tuo avatar diventa pubblico e ti avvisiamo.
+            </p>
+            <Link href="/account" style={{ display: "inline-block", color: "var(--text-muted)", fontSize: "0.85rem", textDecoration: "none" }}>← Vai all&apos;account</Link>
           </div>
         ) : (
         <>
@@ -238,28 +236,27 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
 
           <div>
             <label style={lbl}>Livello</label>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-              {TIERS.map((t) => {
-                const cfg = TIER_CONFIG[t];
-                const on = tier === t;
-                return (
-                  <button key={t} type="button" aria-pressed={on} className="focus-ring" onClick={() => setTier(t)} style={{ padding: "0.6rem", borderRadius: 10, cursor: "pointer", textAlign: "left", background: on ? cfg.bg : "var(--surface)", border: `1px solid ${on ? cfg.color : "var(--hairline)"}` }}>
-                    <div style={{ color: cfg.color, fontWeight: 700, fontSize: "0.8rem" }}>{cfg.label}</div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>{cfg.description}</div>
-                  </button>
-                );
-              })}
+            <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 0.6rem", lineHeight: 1.5 }}>
+              Lo assegniamo noi in base alla scansione. Il tuo avatar nasce a livello ECHO.
+            </p>
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid #F2A93B", color: "var(--text)", fontWeight: 700, fontSize: "0.8rem" }}>ECHO</span>
+              <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "var(--surface)", border: "1px dashed var(--hairline)", color: "var(--text-faint)", fontSize: "0.8rem" }}>HUMAN · coming soon</span>
             </div>
           </div>
 
-          <div>
-            <label style={lbl}>Categorie consentite</label>
-            <Chips list={CATEGORIES as readonly string[]} selected={approved} accent="var(--verified-c)" onToggle={(c) => toggle(approved, setApproved, c, excluded, setExcluded)} />
-          </div>
-
-          <div>
-            <label style={lbl}>Categorie escluse</label>
-            <Chips list={CATEGORIES as readonly string[]} selected={excluded} accent="var(--blocked-c)" onToggle={(c) => toggle(excluded, setExcluded, c, approved, setApproved)} />
+          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 12, padding: "1.2rem" }}>
+            <label style={{ ...lbl, marginBottom: "0.8rem" }}>Consenso</label>
+            <button type="button" role="switch" aria-checked={commercialConsent} className="focus-ring" onClick={() => setCommercialConsent((v) => !v)}
+              style={{ display: "flex", alignItems: "center", gap: "0.8rem", width: "100%", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", padding: 0 }}>
+              <span style={{ flex: "none", width: 40, height: 23, borderRadius: 999, background: commercialConsent ? "var(--verified-c)" : "var(--hairline)", position: "relative", transition: "background 0.15s" }}>
+                <span style={{ position: "absolute", top: 2, left: commercialConsent ? 19 : 2, width: 19, height: 19, borderRadius: "50%", background: "#fff", transition: "left 0.15s" }} />
+              </span>
+              <span>
+                <span style={{ display: "block", color: "var(--text)", fontSize: "0.85rem", fontWeight: 600 }}>Uso commerciale: {commercialConsent ? "consentito" : "non consentito"}</span>
+                <span style={{ display: "block", color: "var(--text-faint)", fontSize: "0.72rem", marginTop: "0.2rem", lineHeight: 1.5 }}>Puoi revocare quando vuoi: la revoca blocca gli usi futuri, non il passato.</span>
+              </span>
+            </button>
           </div>
 
           {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.85rem", margin: 0 }}>{error}</p>}
@@ -296,21 +293,6 @@ function resizeFile(file: File, max = 1024): Promise<string> {
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("img")); };
     img.src = url;
   });
-}
-
-function Chips({ list, selected, accent, onToggle }: { list: readonly string[]; selected: string[]; accent: string; onToggle: (c: string) => void }) {
-  return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
-      {list.map((c) => {
-        const on = selected.includes(c);
-        return (
-          <button key={c} type="button" aria-pressed={on} className="focus-ring" onClick={() => onToggle(c)} style={{ padding: "0.3rem 0.75rem", borderRadius: 999, fontSize: "0.78rem", cursor: "pointer", fontWeight: 600, background: on ? `color-mix(in oklab, ${accent} 13%, transparent)` : "var(--surface)", color: on ? accent : "var(--text-muted)", border: `1px solid ${on ? accent : "var(--hairline)"}` }}>
-            {c}
-          </button>
-        );
-      })}
-    </div>
-  );
 }
 
 const lbl: React.CSSProperties = { display: "block", color: "var(--text-muted)", fontSize: "0.78rem", marginBottom: "0.5rem", letterSpacing: "0.04em" };

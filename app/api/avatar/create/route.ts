@@ -9,7 +9,6 @@ import { CATEGORIES, IDENTITY_KIT, Tier } from "@/lib/types";
 
 export const runtime = "nodejs";
 
-const TIERS: Tier[] = ["SPARK", "SHAPE", "SOUL", "HUMAN"];
 const REFERENCES_BUCKET = "references";
 
 // Decodifica un data-url immagine e lo ridimensiona a ≤1024px (JPEG) per lo
@@ -92,9 +91,10 @@ export async function POST(request: Request) {
 
   const handle = String(body.handle ?? "").trim().toLowerCase();
   const alias = String(body.alias ?? "").trim();
-  const tier = body.tier as Tier;
-  const approved: string[] = Array.isArray(body.approved_categories) ? body.approved_categories : [];
-  const excluded: string[] = Array.isArray(body.excluded_categories) ? body.excluded_categories : [];
+  // Il livello non lo sceglie l'utente: nasce ECHO (tier SOUL), lo assegniamo noi dopo.
+  const tier: Tier = "SOUL";
+  // Niente piu categorie: un avatar "aperto" acconsente a ogni uso commerciale.
+  const commercialConsent = body.commercial_consent !== false;
 
   // Identity kit (immutabile)
   const gender = String(body.gender ?? "");
@@ -115,14 +115,13 @@ export async function POST(request: Request) {
   if (alias.length < 2) {
     return NextResponse.json({ error: "Nome troppo corto" }, { status: 400 });
   }
-  if (!TIERS.includes(tier)) {
-    return NextResponse.json({ error: "Livello non valido" }, { status: 400 });
+  if (!commercialConsent) {
+    return NextResponse.json({ error: "Serve il consenso all'uso commerciale per creare un avatar (per la sola protezione del volto usa Ward)." }, { status: 400 });
   }
-  // SOUL/HUMAN sono identity-locked (motore ECHO): senza reference l'avatar
-  // nascerebbe non generabile. Richiediamo almeno una foto (anche lato client).
+  // ECHO e identity-locked: senza reference l'avatar non sarebbe generabile.
   const providedRefCount = Array.isArray(body.references) ? body.references.length : 0;
-  if ((tier === "SOUL" || tier === "HUMAN") && providedRefCount === 0) {
-    return NextResponse.json({ error: "Per il livello SOUL o HUMAN carica almeno una foto: bloccano l'identità reale per le generazioni fedeli." }, { status: 400 });
+  if (providedRefCount === 0) {
+    return NextResponse.json({ error: "Carica almeno una foto: bloccano l'identità reale per le generazioni fedeli." }, { status: 400 });
   }
 
   // Tutti i campi dell'identity kit sono obbligatori e devono essere tra le opzioni valide
@@ -136,11 +135,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Identity kit incompleto o non valido: ${field}` }, { status: 400 });
     }
   }
-  const validApproved = approved.filter((c) => (CATEGORIES as readonly string[]).includes(c));
-  const validExcluded = excluded.filter((c) => (CATEGORIES as readonly string[]).includes(c));
-  if (validApproved.length === 0) {
-    return NextResponse.json({ error: "Seleziona almeno una categoria consentita" }, { status: 400 });
-  }
+  // Avatar aperto = consenso a ogni categoria d'uso. Le categorie spariscono dalla
+  // UI; qui restano popolate "tutte" per compatibilita con matching/token finche
+  // non si ripulisce a DB (Fase 2/4).
+  const validApproved = [...CATEGORIES];
+  const validExcluded: string[] = [];
 
   // 5. Handle univoco
   const { data: existing } = await admin.from("avatars").select("id").eq("handle", handle).maybeSingle();
@@ -183,8 +182,10 @@ export async function POST(request: Request) {
     royalty_accrued_cents: 0,
     is_demo: false,
     org_id: orgId,
-    // Gate: privato verificato -> live subito; org -> attende la revisione operatori.
-    verification_status: isEnterprise ? "pending_review" : "approved",
+    // Hard point identita: NESSUN avatar va live in automatico. Anche il privato
+    // passa dalla certificazione manuale (volto = documento = selfie) prima di
+    // diventare pubblico. Coda in /api/admin/review (UI /account/review).
+    verification_status: "pending_review",
     consent_token: consentToken,
   });
 
