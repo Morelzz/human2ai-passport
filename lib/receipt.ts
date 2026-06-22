@@ -37,7 +37,7 @@ export async function buildComplianceReceipt(
   const admin = createServerClient();
   const { data: gen } = await admin
     .from("generations")
-    .select("certificate, category, mode, created_at, avatars(handle, alias, consent_start, approved_categories, revoked_at)")
+    .select("certificate, category, mode, created_at, avatars(handle, alias, consent_start, commercial_consent, revoked_at)")
     .eq("certificate", cert)
     .maybeSingle();
   if (!gen) return null;
@@ -45,8 +45,9 @@ export async function buildComplianceReceipt(
   const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
   const base = siteUrl();
   const category = gen.category ?? null;
-  // Ambito CORRENTE; al momento della generazione il gate del consenso l'ha gia' imposto.
-  const inScope = !category || (Array.isArray(av?.approved_categories) && av!.approved_categories.includes(category));
+  // Modello senza categorie (Fase 2/4): l'uso è autorizzato se la persona acconsente
+  // all'uso commerciale. Al momento della generazione il gate del consenso l'ha già imposto.
+  const inScope = av?.commercial_consent !== false;
 
   return {
     issuer: "Semblic",
@@ -69,8 +70,8 @@ export async function buildComplianceReceipt(
     verification_url: `${base}/verify`,
     statement:
       "Questa generazione e' stata prodotta tramite Semblic dal percorso di consenso verificato: il volto " +
-      "appartiene a una persona reale presente nel registro, che ha prestato consenso per l'uso, e la categoria " +
-      "rientrava nell'ambito autorizzato al momento della generazione. Il certificato e' verificabile su " +
+      "appartiene a una persona reale presente nel registro, che ha prestato consenso all'uso commerciale " +
+      "della propria immagine al momento della generazione. Il certificato e' verificabile su " +
       `${base}/verify.`,
   };
 }

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
   }
 
   // Serve almeno un criterio concreto, altrimenti la ricerca è troppo vaga
-  if (specifiedCount(attrs, category) === 0) {
+  if (specifiedCount(attrs) === 0) {
     return NextResponse.json({
       matched: false,
       attrs,
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
   // dati di test — fonte unica lib/registry) che soddisfano TUTTI i criteri
   const matches = (candidates ?? [])
     .filter(isPublicAvatar)
-    .map((av) => ({ av, result: scoreAvatar(av, attrs, category) }))
+    .map((av) => ({ av, result: scoreAvatar(av, attrs) }))
     .filter((x) => x.result.allowed)
     .sort((a, b) => b.result.score - a.result.score);
 

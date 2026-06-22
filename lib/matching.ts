@@ -93,8 +93,11 @@ export interface ScorableAvatar {
   eye_color?: string | null;
   height?: string | null;
   body_type?: string | null;
-  approved_categories: string[];
-  excluded_categories: string[];
+  // Consenso uso commerciale sì/no (modello senza categorie, Fase 2): è il gate.
+  commercial_consent?: boolean;
+  // Legacy categoria d'uso: NON più usate nel match (Fase 4 le rimuove dal DB).
+  approved_categories?: string[];
+  excluded_categories?: string[];
 }
 
 export interface MatchResult {
@@ -160,20 +163,15 @@ export function ethnicityEq(a: string, b: string): boolean {
 // Modello a filtro rigido: l'avatar è un match SOLO se soddisfa OGNI attributo
 // esplicitamente richiesto. Gli attributi NON richiesti vengono ignorati del tutto
 // (es. "uomo caucasico capelli neri" -> tutti, a prescindere dagli occhi/corporatura).
-export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes, category: string | null): MatchResult {
+export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes): MatchResult {
   const reasons: string[] = [];
   let score = 0;
 
-  // Vincolo categoria/consenso (hard) — la categoria è scelta esplicitamente dal menu.
-  if (category) {
-    if (av.excluded_categories?.includes(category)) {
-      return { score: 0, allowed: false, reasons: [`categoria "${category}" esclusa dal consenso`] };
-    }
-    if (!av.approved_categories?.includes(category)) {
-      return { score: 0, allowed: false, reasons: [`categoria "${category}" non consentita`] };
-    }
-    score += 1;
-    reasons.push(`categoria ${category}`);
+  // Gate del consenso (hard): senza consenso all'uso commerciale, nessun match.
+  // Sostituisce il vecchio gate per-categoria: il consenso ora è sì/no (Fase 2),
+  // non più dichiarato per singola categoria d'uso.
+  if (av.commercial_consent === false) {
+    return { score: 0, allowed: false, reasons: ["consenso all'uso commerciale non concesso"] };
   }
 
   if (attrs.gender) {
@@ -238,10 +236,11 @@ export function scoreAvatar(av: ScorableAvatar, attrs: PromptAttributes, categor
   return { score, allowed: true, reasons };
 }
 
-// Numero di criteri esplicitamente richiesti (identità + categoria scelta).
-export function specifiedCount(attrs: PromptAttributes, category: string | null): number {
+// Numero di criteri identità esplicitamente richiesti. La categoria d'uso NON è
+// più un criterio di matching (Fase 2): resta scelta dal buyer e registrata sulla
+// generazione, ma non filtra il registro.
+export function specifiedCount(attrs: PromptAttributes): number {
   let n = 0;
-  if (category) n++;
   if (attrs.gender) n++;
   if (attrs.ethnicity) n++;
   if (attrs.hair_color) n++;

@@ -13,7 +13,7 @@ export default async function ConsentPage() {
   const admin = createServerClient();
   const { data: avatar } = await admin
     .from("avatars")
-    .select("handle, approved_categories, excluded_categories, revoked_at, available_for_booking, protection_only, gender, age_range, ethnicity, hair_color, eye_color, body_type, height, facial_hair, glasses, tattoos, language")
+    .select("handle, commercial_consent, revoked_at, available_for_booking, protection_only, gender, age_range, ethnicity, hair_color, eye_color, body_type, height, facial_hair, glasses, tattoos, language")
     .eq("owner_id", user.id)
     .maybeSingle();
 
@@ -26,8 +26,7 @@ export default async function ConsentPage() {
         <SiteNav />
     <ConsentClient
       handle={avatar.handle}
-      approved={avatar.approved_categories ?? []}
-      excluded={avatar.excluded_categories ?? []}
+      commercialConsent={avatar.commercial_consent ?? true}
       revokedAt={avatar.revoked_at}
       availableForBooking={avatar.available_for_booking ?? false}
       protectionOnly={avatar.protection_only ?? false}

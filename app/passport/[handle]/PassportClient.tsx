@@ -421,20 +421,18 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         </div>
       </Card>
 
-      {/* Categorie */}
-      <Card i={5} label="CATEGORIE DI UTILIZZO">
-        <p className="mb-2 text-sm text-muted">Consentite</p>
-        <div className="mb-4 flex flex-wrap gap-2">
-          {avatar.approved_categories.map((cat) => (
-            <span key={cat} className="rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-sm font-semibold text-teal">✓ {cat}</span>
-          ))}
-        </div>
-        <p className="mb-2 text-sm text-muted">Escluse</p>
-        <div className="flex flex-wrap gap-2">
-          {avatar.excluded_categories.map((cat) => (
-            <span key={cat} className="rounded-full border border-crimson/25 bg-crimson/10 px-3 py-1 text-sm font-semibold text-crimson line-through">{cat}</span>
-          ))}
-        </div>
+      {/* Consenso all'uso (modello senza categorie: sì/no) */}
+      <Card i={5} label="CONSENSO ALL'USO">
+        {avatar.revoked_at ? (
+          <span className="inline-block rounded-full border border-crimson/25 bg-crimson/10 px-3 py-1 text-sm font-semibold text-crimson">Consenso revocato</span>
+        ) : avatar.commercial_consent === false ? (
+          <span className="inline-block rounded-full border border-crimson/25 bg-crimson/10 px-3 py-1 text-sm font-semibold text-crimson">Uso commerciale non consentito</span>
+        ) : (
+          <span className="inline-block rounded-full border border-teal/30 bg-teal/10 px-3 py-1 text-sm font-semibold text-teal">✓ Uso commerciale consentito</span>
+        )}
+        <p className="mt-3 text-xs leading-relaxed text-faint">
+          Il consenso è sì o no, non più per categoria: vale per ogni uso commerciale e si può revocare in qualsiasi momento. La revoca è prospettica.
+        </p>
       </Card>
 
       {/* Statistiche */}
@@ -452,7 +450,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       {/* Nota legale */}
       <div className="mt-4 rounded-2xl border border-border bg-white/[0.02] p-5">
         <p className="text-xs leading-relaxed text-faint">
-          Questo soggetto è una persona reale che ha dato consenso esplicito all&apos;utilizzo della propria immagine nelle categorie indicate.
+          Questo soggetto è una persona reale che ha dato consenso esplicito all&apos;utilizzo commerciale della propria immagine.
           Ogni utilizzo genera una royalty a suo favore. La revoca del consenso è prospettica: blocca gli utilizzi futuri, non cancella quelli passati.
           Nessun dato biometrico è memorizzato o trasmesso.
         </p>

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { POSES, PoseGlyph } from "@/components/avatar/poses";
+import { computeFaceMatchFromSrcs, type FaceMatchResult } from "@/lib/face-match";
+import { classifyIdentityMatch } from "@/lib/identity-match";
 
 export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: { defaultAlias: string; isEnterprise?: boolean }) {
   const router = useRouter();
@@ -24,8 +26,35 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
   const [refs, setRefs] = useState<(string | null)[]>(() => Array(POSES.length).fill(null));
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzeNote, setAnalyzeNote] = useState<string | null>(null);
+  // Verifica identità (Fase 3b): documento (fronte) + selfie. Il match foto↔doc↔selfie
+  // si calcola SUL DISPOSITIVO e aiuta i nostri operatori a certificare che sei tu.
+  const [docFront, setDocFront] = useState<string | null>(null);
+  const [selfie, setSelfie] = useState<string | null>(null);
+  const [matchRaw, setMatchRaw] = useState<FaceMatchResult | null>(null);
+  const [matching, setMatching] = useState(false);
 
   const kitComplete = (Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).every((f) => kit[f]);
+  const photoCount = refs.filter((d) => !!d).length;
+  const verdict = matchRaw ? classifyIdentityMatch(matchRaw) : null;
+
+  // Appena ci sono documento + selfie + almeno una foto, leggo i volti sul
+  // dispositivo (face-api, modelli locali): niente pixel verso l'esterno qui.
+  useEffect(() => {
+    if (isEnterprise || !docFront || !selfie || photoCount === 0) { setMatchRaw(null); return; }
+    let cancelled = false;
+    setMatching(true);
+    (async () => {
+      const photos = refs.filter((d): d is string => !!d);
+      const r = await computeFaceMatchFromSrcs(docFront, selfie, photos);
+      if (cancelled) return;
+      setMatchRaw(r);
+      setMatching(false);
+    })();
+    return () => { cancelled = true; };
+    // refs è letto dentro ma la dipendenza utile è il numero di foto: ricalcolo
+    // quando cambiano documento, selfie o quante foto ci sono.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docFront, selfie, photoCount, isEnterprise]);
 
   async function pickPhoto(slot: number, file?: File) {
     if (!file) return;
@@ -35,6 +64,13 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
     } catch {
       setError("Immagine non leggibile, riprova.");
     }
+  }
+
+  // Documento e selfie: uno slot singolo a testa (resize sul client come le foto).
+  async function pickSingle(setter: (d: string | null) => void, file?: File) {
+    if (!file) return;
+    try { setter(await resizeFile(file)); }
+    catch { setError("Immagine non leggibile, riprova."); }
   }
 
   // Claude SUGGERISCE i campi visivi dell'identikit dalle foto; la persona conferma.
@@ -73,6 +109,11 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
       setError("Carica almeno una foto: bloccano l'identità reale per le generazioni fedeli.");
       return;
     }
+    // Verifica identità (solo privati): documento + selfie servono alla certificazione manuale.
+    if (!isEnterprise && (!docFront || !selfie)) {
+      setError("Carica il documento (fronte) e un selfie: ci servono per certificare a mano che l'avatar sei tu.");
+      return;
+    }
     setError(null);
     setLoading(true);
     const res = await fetch("/api/avatar/create", {
@@ -82,6 +123,9 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
         handle, alias, commercial_consent: commercialConsent, ...kit,
         real_name: realName, instagram, facebook,
         references: refs.map((d, slot) => (d ? { slot, data: d } : null)).filter(Boolean),
+        document_front: docFront,
+        selfie,
+        face_match: matchRaw,
       }),
     });
     let json: { error?: string; consent_url?: string; handle?: string } = {};
@@ -208,6 +252,71 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             {analyzeNote && <p style={{ color: "var(--text-muted)", fontSize: "0.72rem", margin: "0.6rem 0 0", lineHeight: 1.5 }}>{analyzeNote}</p>}
           </div>
 
+          {/* Verifica identità (Fase 3b): documento + selfie -> match sul dispositivo */}
+          {!isEnterprise && (
+          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 12, padding: "1.2rem" }}>
+            <p style={{ color: "var(--text)", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Verifica che sei tu</p>
+            <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+              Confrontiamo il tuo <strong>documento</strong> (fronte), un <strong>selfie</strong> e le tue foto. Il confronto avviene <strong>sul tuo dispositivo</strong> e ci aiuta a certificare a mano che l&apos;avatar sei davvero tu. Documento e selfie restano <strong>privati e cifrati</strong>.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+              <label title="Documento d'identità, lato con la foto" className="focus-ring"
+                style={{ cursor: "pointer", border: `1px dashed ${docFront ? "#F2A93B" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: docFront ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "4 / 3", overflow: "hidden", position: "relative" }}>
+                {docFront ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={docFront} alt="Documento" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <>
+                    <DocGlyph />
+                    <span style={{ color: "var(--text-muted)", fontSize: "0.62rem", fontWeight: 600, textAlign: "center" }}>Documento (fronte)</span>
+                  </>
+                )}
+                <input type="file" accept="image/*" aria-label="Carica documento (fronte)" onChange={(e) => { pickSingle(setDocFront, e.target.files?.[0]); e.currentTarget.value = ""; }} className="sr-only" />
+              </label>
+              <label title="Un selfie frontale, ben illuminato" className="focus-ring"
+                style={{ cursor: "pointer", border: `1px dashed ${selfie ? "#F2A93B" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: selfie ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "4 / 3", overflow: "hidden", position: "relative" }}>
+                {selfie ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={selfie} alt="Selfie" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <>
+                    <SelfieGlyph />
+                    <span style={{ color: "var(--text-muted)", fontSize: "0.62rem", fontWeight: 600, textAlign: "center" }}>Selfie</span>
+                  </>
+                )}
+                <input type="file" accept="image/*" aria-label="Carica selfie" onChange={(e) => { pickSingle(setSelfie, e.target.files?.[0]); e.currentTarget.value = ""; }} className="sr-only" />
+              </label>
+            </div>
+
+            {(matching || verdict) && (
+              <div style={{ marginTop: "1rem", background: "var(--bg)", border: "1px solid var(--hairline)", borderRadius: 10, padding: "0.85rem" }}>
+                {matching ? (
+                  <p style={{ color: "var(--text-muted)", fontSize: "0.74rem", margin: 0, lineHeight: 1.5 }}>Leggo i volti sul tuo dispositivo… (la prima analisi scarica i modelli)</p>
+                ) : verdict ? (
+                  <>
+                    {[
+                      { label: "Documento e selfie", leg: verdict.docSelfie },
+                      { label: "Selfie e foto avatar", leg: verdict.selfiePhoto },
+                    ].map(({ label, leg }) => (
+                      <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem", padding: "0.2rem 0" }}>
+                        <span style={{ color: "var(--text-muted)" }}>{label}</span>
+                        {leg ? (
+                          <span style={{ color: bandColor(leg.band), fontWeight: 700 }}>{leg.similarity}% {bandWord(leg.band)}</span>
+                        ) : (
+                          <span style={{ color: "var(--text-faint)", fontWeight: 600 }}>volto non leggibile</span>
+                        )}
+                      </div>
+                    ))}
+                    <div style={{ marginTop: "0.6rem", display: "inline-flex", alignItems: "center", borderRadius: 999, padding: "0.35rem 0.8rem", fontSize: "0.72rem", fontWeight: 700, background: VERDICT_UI[verdict.verdict].bg, color: VERDICT_UI[verdict.verdict].color, border: `1px solid ${VERDICT_UI[verdict.verdict].border}` }}>
+                      {VERDICT_UI[verdict.verdict].text}
+                    </div>
+                  </>
+                ) : null}
+              </div>
+            )}
+          </div>
+          )}
+
           {/* Identity kit — immutabile dopo la creazione */}
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 12, padding: "1.2rem" }}>
             <p style={{ color: "var(--text)", fontSize: "0.85rem", fontWeight: 700, margin: "0 0 0.3rem" }}>Identity kit</p>
@@ -294,6 +403,37 @@ function resizeFile(file: File, max = 1024): Promise<string> {
     img.src = url;
   });
 }
+
+// Glyph per le tessere documento/selfie (coerenti con le icone outline del sito).
+function DocGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.4" width="24" height="24" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="8.5" cy="11" r="2" /><path d="M14 9h4M14 13h4M5 16h8" />
+    </svg>
+  );
+}
+function SelfieGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.4" width="24" height="24" aria-hidden="true">
+      <circle cx="12" cy="12" r="8" /><circle cx="9.5" cy="10.5" r=".6" /><circle cx="14.5" cy="10.5" r=".6" /><path d="M9.5 15c.8.7 4.2.7 5 0" />
+    </svg>
+  );
+}
+
+// Colore/parola per banda del match (salvia=forte, amber=media, coral=bassa).
+function bandColor(band: "strong" | "review" | "weak"): string {
+  return band === "strong" ? "var(--verified-c)" : band === "review" ? "#F2A93B" : "var(--blocked-c)";
+}
+function bandWord(band: "strong" | "review" | "weak"): string {
+  return band === "strong" ? "coerente" : band === "review" ? "media" : "bassa";
+}
+// Pillola di esito (sempre: la certificazione resta manuale, qui solo trasparenza).
+const VERDICT_UI: Record<string, { bg: string; color: string; border: string; text: string }> = {
+  strong: { bg: "rgba(127,174,150,0.12)", color: "var(--verified-c)", border: "rgba(127,174,150,0.4)", text: "Coerente, pronto per la certificazione" },
+  review: { bg: "rgba(242,169,59,0.12)", color: "#F2A93B", border: "rgba(242,169,59,0.4)", text: "Somiglianza media: certifichiamo a mano" },
+  weak: { bg: "rgba(238,122,112,0.12)", color: "var(--blocked-c)", border: "rgba(238,122,112,0.4)", text: "Somiglianza bassa: verifichiamo con attenzione" },
+  inconclusive: { bg: "var(--elevated)", color: "var(--text-muted)", border: "var(--hairline)", text: "Verifichiamo a mano (volto non sempre leggibile)" },
+};
 
 const lbl: React.CSSProperties = { display: "block", color: "var(--text-muted)", fontSize: "0.78rem", marginBottom: "0.5rem", letterSpacing: "0.04em" };
 // NB: niente outline:"none" — l'anello di focus del browser deve restare

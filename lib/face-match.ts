@@ -359,3 +359,61 @@ export async function computeFaceMatch(
     return null;
   }
 }
+
+// Descrittore del volto piu' grande da un data-url / URL immagine. Gemello di
+// descriptorFor(File): nel flusso di CREAZIONE le foto sono gia' data-url
+// leggeri (resize sul client), quindi non abbiamo File da ripassare.
+async function descriptorForSrc(f: FaceApi, src: string): Promise<Float32Array | null> {
+  try {
+    const img = await loadImage(src);
+    const det = await f
+      .detectAllFaces(img, new f.SsdMobilenetv1Options({ minConfidence: 0.3 }))
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+    if (!det.length) return null;
+    return det.sort((a, b) => b.detection.box.area - a.detection.box.area)[0].descriptor;
+  } catch {
+    return null;
+  }
+}
+
+/** Come computeFaceMatch ma da data-url / URL immagine (foto del flusso di
+ *  creazione). Stessa logica e stesso significato. Non lancia mai: null = non
+ *  calcolabile. Tutto sul dispositivo: i pixel non lasciano il browser. */
+export async function computeFaceMatchFromSrcs(
+  documentFrontSrc: string,
+  selfieSrc: string,
+  photoSrcs: string[],
+): Promise<FaceMatchResult | null> {
+  try {
+    const f = await ensureModels();
+    const [dDoc, dSelfie] = await Promise.all([
+      descriptorForSrc(f, documentFrontSrc),
+      descriptorForSrc(f, selfieSrc),
+    ]);
+
+    let best: { distance: number; similarity: number } | null = null;
+    let checked = 0;
+    let anyPhotoFace = false;
+    if (dSelfie) {
+      for (const src of photoSrcs) {
+        const dPhoto = await descriptorForSrc(f, src);
+        if (!dPhoto) continue;
+        anyPhotoFace = true;
+        checked++;
+        const p = pair(f, dSelfie, dPhoto);
+        if (p && (!best || p.distance < best.distance)) best = p;
+      }
+    }
+
+    return {
+      engine: "face-api-client",
+      doc_selfie: pair(f, dDoc, dSelfie),
+      selfie_photo: best ? { ...best, checked } : null,
+      faces_found: { document: !!dDoc, selfie: !!dSelfie, photo: anyPhotoFace },
+      computed_at: new Date().toISOString(),
+    };
+  } catch {
+    return null;
+  }
+}

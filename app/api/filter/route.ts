@@ -3,6 +3,7 @@ import { truncateToken } from "@/lib/token";
 import { isPublicAvatar } from "@/lib/registry";
 import { siteUrl } from "@/lib/site";
 import { allowRequest, ipFrom } from "@/lib/rate-limit";
+import { CATEGORIES } from "@/lib/types";
 
 // ──────────────────────────────────────────────────────────────────────────
 // IL FILTRO SEMBLIC — consent-check API (demo pubblica, Fase 2 "Il Filtro per
@@ -79,9 +80,11 @@ export async function GET(request: Request) {
     verify_url: `${SITE_URL}/verify?token=${encodeURIComponent(av.token_hash)}`,
     passport_url: `${SITE_URL}/passport/${av.handle}`,
   };
-  const approved: string[] = av.approved_categories ?? [];
-  const excluded: string[] = av.excluded_categories ?? [];
-  const eq = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+  // Modello senza categorie (Fase 2): il consenso è sì/no. Se l'avatar acconsente
+  // all'uso commerciale ed è attivo, è generabile per qualsiasi uso; la categoria
+  // resta un'informazione, non un filtro.
+  const consents = av.commercial_consent !== false;
+  const categoriesAllowed = consents ? [...CATEGORIES] : [];
 
   // Consenso revocato → blocco prospettico.
   if (av.revoked_at) {
@@ -91,32 +94,34 @@ export async function GET(request: Request) {
       decision: "BLOCK",
       reason: "Consenso revocato: il volto non è più generabile.",
       consent: { status: "revoked", since: av.consent_start, revoked_at: av.revoked_at },
-      categories_allowed: approved,
+      categories_allowed: [],
+      proof,
+    });
+  }
+
+  // Consenso all'uso commerciale non concesso → blocco.
+  if (!consents) {
+    return json({
+      ...base,
+      allowed: false,
+      decision: "BLOCK",
+      reason: "La persona non ha concesso l'uso commerciale del proprio volto.",
+      consent: { status: "no_commercial_consent", since: av.consent_start, revoked_at: null },
+      categories_allowed: [],
       proof,
     });
   }
 
   const consent = { status: "active", since: av.consent_start, revoked_at: null };
-
-  // Controllo per categoria d'uso (stessa logica di scoreAvatar).
-  if (use) {
-    if (excluded.some((c) => eq(c, use))) {
-      return json({ ...base, allowed: false, decision: "BLOCK", reason: `La categoria "${use}" è esplicitamente esclusa dal consenso.`, consent, categories_allowed: approved, proof });
-    }
-    if (approved.length > 0 && !approved.some((c) => eq(c, use))) {
-      return json({ ...base, allowed: false, decision: "BLOCK", reason: `La categoria "${use}" non rientra nel consenso dichiarato.`, consent, categories_allowed: approved, proof });
-    }
-    return json({ ...base, allowed: true, decision: "ALLOW", reason: `Consenso attivo per la categoria "${use}".`, consent, categories_allowed: approved, proof });
-  }
-
-  // Nessuna categoria specificata: consenso attivo, ma invitiamo a precisare l'uso.
   return json({
     ...base,
     allowed: true,
     decision: "ALLOW",
-    reason: "Consenso attivo nel registro. Specifica il parametro 'use' per il controllo per categoria d'uso.",
+    reason: use
+      ? `Consenso attivo: la persona è generabile, anche per l'uso "${use}".`
+      : "Consenso attivo nel registro: la persona è generabile.",
     consent,
-    categories_allowed: approved,
+    categories_allowed: categoriesAllowed,
     proof,
   });
 }

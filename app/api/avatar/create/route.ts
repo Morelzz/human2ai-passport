@@ -6,10 +6,46 @@ import { createServerClient } from "@/lib/supabase";
 import { uploadPrivate } from "@/lib/storage";
 import { computeTokenHash } from "@/lib/token";
 import { CATEGORIES, IDENTITY_KIT, Tier } from "@/lib/types";
+import { classifyIdentityMatch } from "@/lib/identity-match";
+import type { FaceMatchResult } from "@/lib/face-match";
 
 export const runtime = "nodejs";
 
 const REFERENCES_BUCKET = "references";
+// Documento e selfie della verifica identità: bucket PRIVATO 'documents' (come VETO).
+const DOCUMENTS_BUCKET = "documents";
+
+function finiteNum(v: unknown): number | null {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+// Un legame del match: accetta solo numeri nei range attesi (il client potrebbe
+// inviare qualsiasi cosa: il dato è un AIUTO, non una prova, quindi lo sanifichiamo).
+function sanitizeLeg(v: unknown): { distance: number; similarity: number } | null {
+  if (!v || typeof v !== "object") return null;
+  const o = v as Record<string, unknown>;
+  const d = finiteNum(o.distance);
+  if (d === null) return null;
+  const s = finiteNum(o.similarity);
+  return {
+    distance: Math.max(0, Math.min(4, d)),
+    similarity: s === null ? 0 : Math.max(0, Math.min(100, Math.round(s))),
+  };
+}
+
+// Match volto sanificato dal body (mai i pixel: solo distanze/similarità + esiti).
+function sanitizeFaceMatch(fm: unknown): FaceMatchResult | null {
+  if (!fm || typeof fm !== "object") return null;
+  const f = fm as Record<string, unknown>;
+  const ff = (f.faces_found && typeof f.faces_found === "object") ? f.faces_found as Record<string, unknown> : {};
+  return {
+    engine: "face-api-client",
+    doc_selfie: sanitizeLeg(f.doc_selfie),
+    selfie_photo: sanitizeLeg(f.selfie_photo),
+    faces_found: { document: !!ff.document, selfie: !!ff.selfie, photo: !!ff.photo },
+    computed_at: typeof f.computed_at === "string" ? f.computed_at.slice(0, 40) : new Date().toISOString(),
+  };
+}
 
 // Decodifica un data-url immagine e lo ridimensiona a ≤1024px (JPEG) per lo
 // storage del reference-set (identity-lock dei motori ECHO/TWIN).
@@ -141,6 +177,12 @@ export async function POST(request: Request) {
   const validApproved = [...CATEGORIES];
   const validExcluded: string[] = [];
 
+  // Verifica identità (Fase 3b): pre-screening del match calcolato sul dispositivo.
+  // AIUTO alla certificazione manuale, mai una prova. Salvato sanificato + esito.
+  const fm = sanitizeFaceMatch(body.face_match);
+  const idVerdict = classifyIdentityMatch(fm);
+  const identityMatch = fm ? { ...fm, verdict: idVerdict.verdict, score: idVerdict.score } : null;
+
   // 5. Handle univoco
   const { data: existing } = await admin.from("avatars").select("id").eq("handle", handle).maybeSingle();
   if (existing) {
@@ -150,7 +192,7 @@ export async function POST(request: Request) {
   // 6. Inserimento
   const id = crypto.randomUUID();
   const consentStart = new Date().toISOString().slice(0, 10);
-  const tokenHash = computeTokenHash(id, consentStart, validApproved);
+  const tokenHash = computeTokenHash(id, consentStart);
   // Nessun ritratto esterno: l'avatar visivo è generato localmente (lib/avatar-art) al render.
   const portraitUrl: string | null = null;
   // Enterprise: token per il consenso "persona-nel-loop" (link da condividere).
@@ -174,6 +216,12 @@ export async function POST(request: Request) {
     glasses,
     tattoos,
     language,
+    // Consenso uso commerciale sì/no (modello senza categorie, Fase 2). La
+    // creazione richiede comunque il consenso (sopra), quindi qui è sempre true;
+    // resta un campo perché in futuro è togglabile da /account/consent.
+    commercial_consent: commercialConsent,
+    // Legacy: array categoria popolati "tutte" per compat dei display finché la
+    // Fase 4 non rimuove colonne e UI. Il matching ora gira sul boolean sopra.
     approved_categories: validApproved,
     excluded_categories: validExcluded,
     consent_start: consentStart,
@@ -187,6 +235,7 @@ export async function POST(request: Request) {
     // diventare pubblico. Coda in /api/admin/review (UI /account/review).
     verification_status: "pending_review",
     consent_token: consentToken,
+    identity_match: identityMatch,
   });
 
   if (insErr) {
@@ -238,6 +287,23 @@ export async function POST(request: Request) {
     await admin.from("avatars").delete().eq("id", id);
     return NextResponse.json({ error: "Non siamo riusciti a salvare le tue foto, riprova (se persiste usa immagini piu' leggere o meno foto)." }, { status: 502 });
   }
+
+  // Documento (fronte) + selfie nel bucket PRIVATO 'documents' sotto {uid}/avatar/
+  // (stessa convenzione del VETO). Servono ai nostri operatori per certificare a
+  // mano che il volto dell'avatar sia la stessa persona del documento e del selfie.
+  // Best-effort: un problema di storage NON annulla la creazione dell'avatar.
+  const ownerId = user.id;
+  async function storeIdImage(dataUrl: unknown, name: string) {
+    const buf = await refFromDataUrl(dataUrl);
+    if (!buf) return;
+    try {
+      await uploadPrivate(DOCUMENTS_BUCKET, `${ownerId}/avatar/${name}.jpg`, buf, "image/jpeg");
+    } catch {
+      /* audit best-effort: l'avatar resta valido */
+    }
+  }
+  await storeIdImage(body.document_front, "document-front");
+  await storeIdImage(body.selfie, "selfie");
 
   // Per le org: link tokenizzato che la persona deve aprire per confermare il consenso.
   const consentUrl = consentToken ? `${new URL(request.url).origin}/consent/${consentToken}` : null;

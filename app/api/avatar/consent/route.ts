@@ -6,13 +6,13 @@ import { CATEGORIES } from "@/lib/types";
 
 export const runtime = "nodejs";
 
+// Modello senza categorie (Fase 2/4): il consenso all'uso commerciale è sì/no.
+// Niente più gestione per-categoria. Restano la revoca totale (kill-switch) e la
+// riattivazione, che sono la timeline del consenso (guardrail CLAUDE.md #2).
 type Action =
   | { type: "revoke_all" }
   | { type: "reactivate" }
-  | { type: "remove_category"; category: string }
-  | { type: "add_category"; category: string }
-  | { type: "add_excluded"; category: string }
-  | { type: "remove_excluded"; category: string };
+  | { type: "set_commercial_consent"; value: boolean };
 
 export async function POST(request: Request) {
   const auth = await createAuthClient();
@@ -27,20 +27,18 @@ export async function POST(request: Request) {
   // L'avatar deve appartenere all'utente
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, handle, approved_categories, excluded_categories, revoked_at, protection_only")
+    .select("id, handle, revoked_at, protection_only")
     .eq("owner_id", user.id)
     .maybeSingle();
   if (!avatar) return NextResponse.json({ error: "Nessun avatar da gestire" }, { status: 404 });
 
-  // Fase 2.1 (VETO): un profilo in sola protezione ha TUTTE le categorie bloccate
-  // e non modificabili verso ALLOW. Qui ogni azione di consenso e' vietata.
+  // Fase 2.1 (VETO): un profilo in sola protezione non concede alcun uso e non è
+  // modificabile verso ALLOW. Qui ogni azione di consenso è vietata.
   if ((avatar as { protection_only?: boolean }).protection_only) {
-    return NextResponse.json({ error: "Profilo in sola protezione: il consenso e' bloccato su tutte le categorie e non e' modificabile." }, { status: 403 });
+    return NextResponse.json({ error: "Profilo in sola protezione: il consenso è bloccato e non modificabile." }, { status: 403 });
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const approved: string[] = avatar.approved_categories ?? [];
-  const excluded: string[] = avatar.excluded_categories ?? [];
 
   if (action.type === "revoke_all") {
     if (avatar.revoked_at) return NextResponse.json({ error: "Già revocato" }, { status: 409 });
@@ -73,64 +71,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  if (action.type === "remove_category") {
-    const cat = String(action.category);
-    if (!approved.includes(cat)) return NextResponse.json({ error: "Categoria non presente" }, { status: 400 });
-    await admin.from("avatars").update({ approved_categories: approved.filter((c) => c !== cat) }).eq("id", avatar.id);
-    await admin.from("consent_events").insert({
-      avatar_id: avatar.id,
-      event_type: "CATEGORY_REMOVED",
-      detail: `Categoria revocata: ${cat}`,
-      occurred_at: today,
-    });
-    return NextResponse.json({ ok: true });
-  }
-
-  if (action.type === "add_category") {
-    const cat = String(action.category);
-    if (!(CATEGORIES as readonly string[]).includes(cat)) return NextResponse.json({ error: "Categoria non valida" }, { status: 400 });
-    if (approved.includes(cat)) return NextResponse.json({ error: "Categoria già presente" }, { status: 400 });
+  if (action.type === "set_commercial_consent") {
+    const value = action.value === true;
+    // Specchiamo gli array categoria (tutte/nessuna) così i gate legacy che ancora
+    // li leggono (generazione, verify) restano coerenti col boolean finché non
+    // migrano anch'essi al modello sì/no.
     await admin.from("avatars").update({
-      approved_categories: [...approved, cat],
-      excluded_categories: excluded.filter((c) => c !== cat),
+      commercial_consent: value,
+      approved_categories: value ? [...CATEGORIES] : [],
+      excluded_categories: [],
     }).eq("id", avatar.id);
     await admin.from("consent_events").insert({
       avatar_id: avatar.id,
-      event_type: "CATEGORY_ADDED",
-      detail: `Categoria aggiunta: ${cat}`,
-      occurred_at: today,
-    });
-    return NextResponse.json({ ok: true });
-  }
-
-  if (action.type === "add_excluded") {
-    const cat = String(action.category);
-    if (!(CATEGORIES as readonly string[]).includes(cat)) return NextResponse.json({ error: "Categoria non valida" }, { status: 400 });
-    if (excluded.includes(cat)) return NextResponse.json({ error: "Già esclusa" }, { status: 400 });
-    // Esclusiva mutua: se era consentita, viene rimossa dalle consentite
-    await admin.from("avatars").update({
-      excluded_categories: [...excluded, cat],
-      approved_categories: approved.filter((c) => c !== cat),
-    }).eq("id", avatar.id);
-    await admin.from("consent_events").insert({
-      avatar_id: avatar.id,
-      event_type: "CATEGORY_REMOVED",
-      detail: `Categoria esclusa: ${cat}`,
-      occurred_at: today,
-    });
-    return NextResponse.json({ ok: true });
-  }
-
-  if (action.type === "remove_excluded") {
-    const cat = String(action.category);
-    if (!excluded.includes(cat)) return NextResponse.json({ error: "Categoria non esclusa" }, { status: 400 });
-    await admin.from("avatars").update({
-      excluded_categories: excluded.filter((c) => c !== cat),
-    }).eq("id", avatar.id);
-    await admin.from("consent_events").insert({
-      avatar_id: avatar.id,
-      event_type: "CATEGORY_ADDED",
-      detail: `Esclusione rimossa: ${cat}`,
+      event_type: value ? "GRANTED" : "CATEGORY_REMOVED",
+      detail: value ? "Uso commerciale: consentito" : "Uso commerciale: non consentito",
       occurred_at: today,
     });
     return NextResponse.json({ ok: true });

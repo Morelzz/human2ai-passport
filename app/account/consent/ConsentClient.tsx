@@ -3,23 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CATEGORIES, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
+import { IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 
 interface Props {
   handle: string;
-  approved: string[];
-  excluded: string[];
+  commercialConsent: boolean;
   revokedAt: string | null;
   availableForBooking: boolean;
   protectionOnly?: boolean;
   kit: Record<keyof typeof IDENTITY_KIT, string | null>;
 }
 
-export default function ConsentClient({ handle, approved, excluded, revokedAt, availableForBooking, protectionOnly = false, kit }: Props) {
+export default function ConsentClient({ handle, commercialConsent, revokedAt, availableForBooking, protectionOnly = false, kit }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [booking, setBooking] = useState(availableForBooking);
+  const [consent, setConsent] = useState(commercialConsent);
 
   async function toggleBooking() {
     const next = !booking;
@@ -35,10 +35,21 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, a
     if (!res.ok) { setError(json.error ?? "Errore"); return; }
     setBooking(next);
   }
-  // Disponibili per essere consentite: né già consentite né escluse
-  const available = (CATEGORIES as readonly string[]).filter((c) => !approved.includes(c) && !excluded.includes(c));
-  // Disponibili per essere escluse: non già escluse
-  const availableToExclude = (CATEGORIES as readonly string[]).filter((c) => !excluded.includes(c));
+
+  async function setCommercialConsent(next: boolean) {
+    setBusy(true);
+    setError(null);
+    const res = await fetch("/api/avatar/consent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "set_commercial_consent", value: next }),
+    });
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) { setError(json.error ?? "Errore"); return; }
+    setConsent(next);
+    router.refresh();
+  }
 
   async function act(body: object) {
     setBusy(true);
@@ -99,67 +110,22 @@ export default function ConsentClient({ handle, approved, excluded, revokedAt, a
           </div>
         ) : (
           <>
-            {/* Categorie consentite */}
+            {/* Uso commerciale: consenso sì/no (modello senza categorie) */}
             <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>CATEGORIE CONSENTITE</p>
-              {approved.length === 0 ? (
-                <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>Nessuna categoria attiva.</p>
-              ) : (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                  {approved.map((c) => (
-                    <button key={c} disabled={busy} onClick={() => act({ type: "remove_category", category: c })}
-                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "rgba(127,174,150,0.12)", color: "var(--verified-c)", border: "1px solid rgba(127,174,150,0.3)", cursor: busy ? "default" : "pointer" }}>
-                      {c} <span style={{ color: "var(--blocked-c)", fontWeight: 800 }}>×</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-              <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0.8rem 0 0" }}>Clicca una categoria per revocarla.</p>
-            </div>
-
-            {/* Aggiungi categoria */}
-            {available.length > 0 && (
-              <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-                <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>AGGIUNGI CATEGORIA</p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                  {available.map((c) => (
-                    <button key={c} disabled={busy} onClick={() => act({ type: "add_category", category: c })}
-                      style={{ padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "var(--surface)", color: "var(--text-muted)", border: "1px solid var(--hairline-soft)", cursor: busy ? "default" : "pointer" }}>
-                      + {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Categorie escluse */}
-            <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>CATEGORIE ESCLUSE</p>
-              <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem" }}>Usi che vieti esplicitamente, qualunque cosa accada.</p>
-              {excluded.length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
-                  {excluded.map((c) => (
-                    <button key={c} disabled={busy} onClick={() => act({ type: "remove_excluded", category: c })}
-                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "rgba(238,122,112,0.12)", color: "var(--blocked-c)", border: "1px solid rgba(238,122,112,0.3)", cursor: busy ? "default" : "pointer" }}>
-                      {c} <span style={{ fontWeight: 800 }}>×</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {availableToExclude.length > 0 && (
-                <>
-                  <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 0.6rem" }}>Aggiungi un&apos;esclusione:</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    {availableToExclude.map((c) => (
-                      <button key={c} disabled={busy} onClick={() => act({ type: "add_excluded", category: c })}
-                        style={{ padding: "0.35rem 0.7rem", borderRadius: 999, fontSize: "0.78rem", fontWeight: 600, background: "var(--surface)", color: "var(--text-muted)", border: "1px solid var(--hairline-soft)", cursor: busy ? "default" : "pointer" }}>
-                        ⊘ {c}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-              <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0.8rem 0 0" }}>Clicca un&apos;esclusione per rimuoverla. Escludere una categoria la toglie dalle consentite.</p>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>USO COMMERCIALE</p>
+              <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+                Decidi se il tuo volto può essere usato per generazioni commerciali. È un sì o no, niente più categorie. Vale solo per il futuro.
+              </p>
+              <button type="button" role="switch" aria-checked={consent} disabled={busy} onClick={() => setCommercialConsent(!consent)}
+                style={{ display: "flex", alignItems: "center", gap: "0.8rem", width: "100%", background: "transparent", border: "none", cursor: busy ? "default" : "pointer", textAlign: "left", padding: 0 }}>
+                <span style={{ flex: "none", width: 40, height: 23, borderRadius: 999, background: consent ? "var(--verified-c)" : "var(--hairline)", position: "relative", transition: "background 0.15s" }}>
+                  <span style={{ position: "absolute", top: 2, left: consent ? 19 : 2, width: 19, height: 19, borderRadius: "50%", background: "#fff", transition: "left 0.15s" }} />
+                </span>
+                <span>
+                  <span style={{ display: "block", color: "var(--text)", fontSize: "0.85rem", fontWeight: 600 }}>Uso commerciale: {consent ? "consentito" : "non consentito"}</span>
+                  <span style={{ display: "block", color: "var(--text-faint)", fontSize: "0.72rem", marginTop: "0.2rem", lineHeight: 1.5 }}>Puoi cambiare idea quando vuoi: blocca gli usi futuri, non il passato.</span>
+                </span>
+              </button>
             </div>
 
             {/* Ingaggi reali (B3): segnale opt-in. Il brand contatta via /contatti.

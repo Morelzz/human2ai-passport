@@ -20,11 +20,39 @@ export async function GET() {
   const admin = createServerClient();
   const { data } = await admin
     .from("avatars")
-    .select("id, handle, alias, gender, age_range, ethnicity, hair_color, created_at, org_id, person_consented_at")
+    .select("id, handle, alias, gender, age_range, ethnicity, hair_color, created_at, org_id, owner_id, person_consented_at, identity_match")
     .eq("verification_status", "pending_review")
     .order("created_at", { ascending: true });
 
-  return NextResponse.json({ items: data ?? [] });
+  const rows = data ?? [];
+  const TTL = 600; // URL firmati a vita breve: l'operatore guarda, non scarica.
+  async function sign(bucket: string, path: string): Promise<string | null> {
+    try {
+      const { data: s } = await admin.storage.from(bucket).createSignedUrl(path, TTL);
+      return s?.signedUrl ?? null;
+    } catch { return null; }
+  }
+  async function firstPhoto(handle: string | null): Promise<string | null> {
+    if (!handle) return null;
+    try {
+      const { data: list } = await admin.storage.from("references").list(handle);
+      const f = (list ?? []).find((x) => /\.(jpe?g|png|webp)$/i.test(x.name));
+      return f ? sign("references", `${handle}/${f.name}`) : null;
+    } catch { return null; }
+  }
+
+  // Miniature firmate (documento + selfie dal bucket privato 'documents', prima
+  // foto dell'avatar da 'references') per assistere la certificazione manuale.
+  const items = await Promise.all(rows.map(async (a) => {
+    const [doc_url, selfie_url, photo_url] = await Promise.all([
+      a.owner_id ? sign("documents", `${a.owner_id}/avatar/document-front.jpg`) : null,
+      a.owner_id ? sign("documents", `${a.owner_id}/avatar/selfie.jpg`) : null,
+      firstPhoto(a.handle),
+    ]);
+    return { ...a, doc_url, selfie_url, photo_url };
+  }));
+
+  return NextResponse.json({ items });
 }
 
 export async function POST(request: Request) {
@@ -40,10 +68,13 @@ export async function POST(request: Request) {
 
   const admin = createServerClient();
 
-  // Non si può approvare un avatar senza il consenso confermato dalla persona.
+  // Solo gli avatar onboardati da un'ORGANIZZAZIONE (org_id) richiedono il consenso
+  // separato della persona prima dell'approvazione. Il privato ha creato e firmato
+  // lui stesso il proprio avatar: il consenso è implicito, qui conta la certificazione
+  // del volto (documento = selfie = foto) che l'operatore valuta a mano.
   if (action === "approve") {
-    const { data: av } = await admin.from("avatars").select("person_consented_at").eq("id", avatarId).maybeSingle();
-    if (!av?.person_consented_at) {
+    const { data: av } = await admin.from("avatars").select("org_id, person_consented_at").eq("id", avatarId).maybeSingle();
+    if (av?.org_id && !av.person_consented_at) {
       return NextResponse.json({ error: "La persona non ha ancora confermato il consenso" }, { status: 400 });
     }
   }

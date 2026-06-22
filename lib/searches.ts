@@ -57,13 +57,13 @@ export async function demandForAvatar(
   if (error || !data) return null;
 
   let compatible = 0;
-  let notGranted = 0;
   for (const row of data) {
     const attrs = normalizeIdentity(row.attrs);
-    if (!scoreAvatar(avatar, attrs, null).allowed) continue;
+    if (!scoreAvatar(avatar, attrs).allowed) continue;
     compatible++;
-    const cat = typeof row.category === "string" && row.category ? row.category : null;
-    if (cat && !(avatar.approved_categories ?? []).includes(cat)) notGranted++;
   }
-  return { compatible, notGranted, days };
+  // Modello senza categorie (Fase 2): non esiste più "uso non concesso" per
+  // categoria. Chi è compatibile ed è consenziente è interamente concesso, quindi
+  // notGranted resta 0 (il campo sparirà dalla card creatore con la Fase 4).
+  return { compatible, notGranted: 0, days };
 }
