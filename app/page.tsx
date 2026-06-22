@@ -6,18 +6,17 @@ import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import { Hero } from "@/components/marketing/Hero";
+import { Impact } from "@/components/marketing/Impact";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
-import { Tension } from "@/components/marketing/Tension";
-import { Manifesto } from "@/components/marketing/Manifesto";
-import { Audiences } from "@/components/marketing/Audiences";
 import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
 import { WardSection } from "@/components/marketing/WardSection";
-import { FilterMiniDemo, FilterDemoAvatar } from "@/components/marketing/FilterMiniDemo";
-import { PublicRoadmap } from "@/components/marketing/PublicRoadmap";
+import { ScanLocations } from "@/components/marketing/ScanLocations";
+import { ToolsBusiness } from "@/components/marketing/ToolsBusiness";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Reveal } from "@/components/motion/Reveal";
 import { galleryFromRow } from "@/lib/sample-galleries";
+import { getSedi } from "@/lib/scan";
 
 // A4 — social. Handle Instagram UFFICIALE (confermato da Morelz, 2026-06-10).
 // URL pulito senza parametri di condivisione/tracking. Un solo punto di verità.
@@ -58,12 +57,8 @@ export default async function Home() {
       gallery_urls: (a.gallery_urls as string[] | null) ?? null,
     }));
 
-  // Review C2 — persone per la mini-demo del filtro: le prime 4 attive +
-  // le revocate (vedere il BLOCK della revoca È la tesi del prodotto).
-  const demoAvatars: FilterDemoAvatar[] = [
-    ...featured.slice(0, 4).map((a) => ({ handle: a.handle, alias: a.alias, revoked: false })),
-    ...approved.filter((a) => a.revoked_at).map((a) => ({ handle: a.handle, alias: a.alias, revoked: true })),
-  ];
+  // Sedi di scansione per la mappa in home (riuso della mappa reale di /scansione).
+  const sedi = await getSedi();
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
@@ -72,17 +67,15 @@ export default async function Home() {
       <div className="relative z-[2]">
         <SiteNav />
         <Hero count={approved.length} blockedMonth={blockedMonth} protectedFaces={protectedFaces} />
-        <Reveal><Tension /></Reveal>
-        <Reveal><Manifesto /></Reveal>
+        <Reveal><Impact /></Reveal>
         {/* Niente <Reveal>: la sezione è PINNATA da ScrollTrigger e un antenato
             con transform romperebbe il position:fixed del pin. Si anima da sola. */}
         <HowItWorks />
-        <Reveal><FilterMiniDemo avatars={demoAvatars} /></Reveal>
-        <Reveal><Audiences /></Reveal>
         <Reveal><Registry avatars={featured} total={approved.length} /></Reveal>
-        <Reveal><WardSection /></Reveal>
         <Reveal><Trust /></Reveal>
-        <Reveal><PublicRoadmap /></Reveal>
+        <Reveal><WardSection /></Reveal>
+        <Reveal><ScanLocations sedi={sedi.map((s) => ({ slug: s.slug, name: s.name, city: s.city, lat: s.lat, lng: s.lng, status: s.status }))} /></Reveal>
+        <Reveal><ToolsBusiness /></Reveal>
         <Reveal><ClosingCTA /></Reveal>
 
         <footer className="relative mt-8 overflow-hidden">
@@ -131,7 +124,7 @@ export default async function Home() {
                     <Link href="/match" className="text-sm text-faint transition-colors hover:text-foreground">Registro</Link>
                     <Link href="/scansione" className="text-sm text-faint transition-colors hover:text-foreground">La scansione</Link>
                     <Link href="/prezzi" className="text-sm text-faint transition-colors hover:text-foreground">Prezzi</Link>
-                    <Link href="/verify" className="text-sm text-faint transition-colors hover:text-foreground">Verifica</Link>
+                    <Link href="/verify" className="text-sm text-faint transition-colors hover:text-foreground">Sigil</Link>
                     <Link href="/partner" className="text-sm text-faint transition-colors hover:text-foreground">Diventa partner</Link>
                     <Link href="/academy" className="text-sm text-faint transition-colors hover:text-foreground">Academy</Link>
                     <Link href="/studio" className="text-sm text-faint transition-colors hover:text-foreground">Studio</Link>

@@ -51,8 +51,8 @@ export function Hero({ count, blockedMonth, protectedFaces }: { count: number; b
           </motion.h1>
 
           <motion.p variants={item} className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed tracking-[0.025em] text-[rgba(242,233,216,0.70)] sm:mx-0">
-            Il filtro che impedisce all&apos;AI di generare un essere umano senza il permesso
-            di una persona reale: <span className="text-foreground">riconosciuta, protetta e pagata</span>, ogni volta.
+            Nessuna AI genera un essere umano senza il permesso di una persona reale:{" "}
+            <span className="text-foreground">riconosciuta, protetta e pagata</span>, ogni volta.
           </motion.p>
 
           <motion.div variants={item} className="mt-9 flex flex-wrap justify-center gap-3 sm:justify-start">

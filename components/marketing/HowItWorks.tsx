@@ -28,7 +28,7 @@ const STEPS = [
   {
     n: "02",
     t: "Una richiesta arriva.",
-    d: "Chi crea descrive ciò che gli serve. Il sistema cerca una persona reale che abbia acconsentito. Se non la trova, non genera. Punto.",
+    d: "Il sistema cerca una persona reale che ha acconsentito. Se non la trova, non genera. Punto.",
     Icon: Search,
     color: "text-crimson",
     ring: "border-crimson/40 bg-crimson/10",
@@ -36,7 +36,7 @@ const STEPS = [
   {
     n: "03",
     t: "Il valore torna alla persona.",
-    d: "A ogni utilizzo, una royalty matura nel portafoglio di chi ha messo il proprio volto. Il valore generato dall'AI torna all'essere umano da cui nasce.",
+    d: "A ogni utilizzo, chi ha messo il volto guadagna. Il valore creato dall'AI torna all'essere umano da cui nasce.",
     Icon: Coins,
     color: "text-teal",
     ring: "border-teal/40 bg-teal/10",

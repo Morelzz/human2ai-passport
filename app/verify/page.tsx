@@ -7,7 +7,7 @@ import VerifyClient from "./VerifyClient";
 // tab del browser); la card social e' quella di default del sito
 // (app/opengraph-image.tsx), ereditata dal layout senza override di openGraph.
 export const metadata = {
-  title: "Verifica un contenuto",
+  title: "Sigil · Verifica un contenuto",
   description:
     "Carica un'immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e mostriamo chi l'ha autorizzato e con quale consenso, a tutela della persona.",
 };
@@ -28,12 +28,13 @@ export default async function VerifyPage({
 
         <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
           <div className="mb-8">
-            <span className="text-xs font-bold tracking-[0.14em] text-teal">VERIFICA</span>
+            <span className="text-xs font-bold tracking-[0.14em] text-teal">SIGIL</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Verifica un contenuto</h1>
             <p className="mt-3 leading-relaxed text-muted">
-              Carica un&apos;immagine: se è un contenuto <span className="text-foreground">Semblic</span> leggiamo
-              la filigrana invisibile e ti mostriamo chi l&apos;ha autorizzato e con quale consenso. Se non lo è,
-              possiamo confrontare il volto col registro, <span className="text-foreground">a tutela della persona</span>.
+              <span className="text-foreground">Sigil</span> è il verificatore pubblico di Semblic.
+              Carica un&apos;immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e ti mostriamo
+              chi l&apos;ha autorizzato e con quale consenso. Se non lo è, possiamo confrontare il volto col
+              registro, <span className="text-foreground">a tutela della persona</span>.
             </p>
           </div>
           <VerifyClient initialToken={token ?? ""} />

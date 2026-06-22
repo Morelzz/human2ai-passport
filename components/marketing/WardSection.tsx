@@ -17,7 +17,7 @@ export function WardSection() {
         </div>
         {/* Desktop: il messaggio a destra */}
         <div className="order-2">
-          <span className="label-mono text-violet-light">Real humans. Real rights.</span>
+          <span className="label-mono text-violet-light">Ward · la protezione</span>
           <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             La tua faccia, sorvegliata su tutto il web.
           </h2>

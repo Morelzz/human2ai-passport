@@ -138,7 +138,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
           )}
           <ThemeToggle />
           <Button asChild variant="outline" size="sm">
-            <Link href="/verify">Verifica</Link>
+            <Link href="/verify">Sigil</Link>
           </Button>
           <Button asChild size="sm">
             <Link href="/signup/avatar">Proteggiti</Link>
@@ -221,7 +221,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                   <Link href="/signup/avatar" onClick={() => setOpen(false)}>Proteggiti</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="w-full">
-                  <Link href="/verify" onClick={() => setOpen(false)}>Verifica un contenuto</Link>
+                  <Link href="/verify" onClick={() => setOpen(false)}>Verifica con Sigil</Link>
                 </Button>
               </div>
             </motion.aside>
