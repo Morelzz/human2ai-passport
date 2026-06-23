@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WardDemo } from "./WardDemo";
+import { GradientFlowText } from "@/components/marketing/GradientFlowText";
+import { SectionTitle } from "@/components/marketing/SectionTitle";
 
 // Sezione Ward in homepage (#ward): presentazionale, introduce Ward e mostra la
 // demo simulata. NON tocca mai dati utente. Va dopo il blocco "Avatars" cosi'
@@ -10,6 +12,9 @@ import { WardDemo } from "./WardDemo";
 export function WardSection() {
   return (
     <section id="ward" className="w-full py-16 lg:py-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <SectionTitle subtitle="La sentinella del tuo volto, su tutto il web.">Ward</SectionTitle>
+      </div>
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-2">
         {/* Desktop: la demo a sinistra */}
         <div className="order-1 lg:order-none">
@@ -19,7 +24,7 @@ export function WardSection() {
         <div className="order-2">
           <span className="label-mono text-violet-light">Ward · la protezione</span>
           <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            La tua faccia, sorvegliata su tutto il web.
+            La tua faccia, sorvegliata <GradientFlowText>su tutto il web</GradientFlowText>.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">
             Ward dà la caccia agli usi non autorizzati del tuo volto, conferma ogni ritrovamento e lo rimuove. Protezione per le persone che scelgono di stare su Semblic.

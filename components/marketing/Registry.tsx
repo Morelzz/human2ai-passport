@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TIER_CONFIG, Tier } from "@/lib/types";
 import { portraitFor } from "@/lib/sample-galleries";
+import { GradientFlowText } from "@/components/marketing/GradientFlowText";
+import { SectionTitle } from "@/components/marketing/SectionTitle";
 
 export interface FeaturedAvatar {
   handle: string;
@@ -25,10 +27,11 @@ function imageFor(a: FeaturedAvatar): string {
 export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total: number }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+      <SectionTitle subtitle="Volti veri, scelti e pagati.">Il registro</SectionTitle>
       <div className="mb-8 flex items-end justify-between gap-4">
         <div>
           <span className="label-mono text-violet-light">Volti in evidenza</span>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">Persone, non <span className="text-gradient">prompt</span>.</h2>
+          <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-4xl"><GradientFlowText>Persone</GradientFlowText>, non prompt.</h2>
           <p className="mt-1 text-sm text-muted">Ogni volto qui è una persona vera, consenziente e pagata.</p>
         </div>
         <Link href="/match" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-violet-light hover:underline sm:inline-flex">

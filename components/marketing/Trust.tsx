@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { BadgeCheck, Fingerprint, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GradientFlowText } from "@/components/marketing/GradientFlowText";
+import { SectionTitle } from "@/components/marketing/SectionTitle";
 
 // [SIGIL — il verificatore] — Il verificatore pubblico ha un nome: Sigil.
 // La sezione spiega cos'e (incolli un contenuto, sai se dietro c'e una persona
@@ -46,6 +48,7 @@ export function Trust() {
 
   return (
     <section ref={ref} className="mx-auto max-w-5xl px-5 py-14 sm:px-8 sm:py-20">
+      <SectionTitle subtitle="Verifica chi c'è dietro a un contenuto.">Sigil</SectionTitle>
       <motion.div
         initial={{ opacity: 0, y: 26 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -62,7 +65,7 @@ export function Trust() {
         <div className="relative max-w-2xl">
           <span className="label-mono text-teal">Sigil · il verificatore</span>
           <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-            La prova è parte del prodotto.
+            <GradientFlowText>La prova</GradientFlowText> è parte del prodotto.
           </h2>
           <p className="mt-4 leading-relaxed text-muted">
             Sigil è il verificatore pubblico di SEMBLIC: incolli un contenuto e in un clic sai se

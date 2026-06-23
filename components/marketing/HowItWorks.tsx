@@ -4,9 +4,13 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShieldCheck, Search, Coins } from "lucide-react";
-import { KineticText } from "@/components/motion/KineticText";
+import { motion, useReducedMotion } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// Gradiente tramonto periodico (amber ai due estremi) per un loop senza scatti,
+// usato animato sul titolo. Inline nel componente: niente dipendenze CSS globali.
+const FLOW_BG = "linear-gradient(110deg,#F2A93B,#EE7A70,#F2A93B)";
 
 // [COME FUNZIONA] — Tre passi, dopo il manifesto. Copy verbatim da
 // docs/SITE_COPY.md. I motori (Higgsfield/HeyGen) restano invisibili.
@@ -45,6 +49,7 @@ const STEPS = [
 
 export function HowItWorks() {
   const sectionRef = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -101,9 +106,27 @@ export function HowItWorks() {
       id="come-funziona"
       className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-8 sm:py-24 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-0"
     >
-      <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">
-        <KineticText text="Come funziona" />
-      </h2>
+      <div className="text-center">
+        <span className="label-mono text-violet-light">In tre passi</span>
+        <h2 className="mt-3 text-4xl font-bold uppercase tracking-[-0.02em] sm:text-6xl">
+          <motion.span
+            className="inline-block"
+            style={{
+              backgroundImage: FLOW_BG,
+              backgroundSize: "200% auto",
+              backgroundPosition: "0% center",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              color: "transparent",
+            }}
+            animate={reduce ? undefined : { backgroundPosition: ["0% center", "-200% center"] }}
+            transition={reduce ? undefined : { duration: 5, repeat: Infinity, ease: "linear" }}
+          >
+            Come funziona
+          </motion.span>
+        </h2>
+      </div>
 
       {/* Linea di progresso: i colori dei tre passi (semantica, non decorazione) */}
       <div className="mx-auto mt-8 hidden h-px w-full max-w-3xl overflow-hidden rounded-full bg-white/8 lg:block">

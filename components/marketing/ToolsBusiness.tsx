@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Clapperboard, Building2, Code2 } from "lucide-react";
+import { GradientFlowText } from "@/components/marketing/GradientFlowText";
+import { SectionTitle } from "@/components/marketing/SectionTitle";
 
 // [STRUMENTI E AZIENDE] — Sezione nuova, ultima prima della chiusura: vetrina
 // B2B con i tool gia attivi PIU slot per quelli in arrivo (lo spazio dove
@@ -14,10 +16,11 @@ const ACTIVE = [
 export function ToolsBusiness() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+      <SectionTitle subtitle="Crea con volti veri, senza rischi legali.">Le aziende</SectionTitle>
       <div className="max-w-2xl">
         <span className="label-mono text-violet-light">Strumenti e aziende</span>
         <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-          La piattaforma per i brand che creano con l&apos;AI.
+          La piattaforma <GradientFlowText>per i brand</GradientFlowText> che creano con l&apos;AI.
         </h2>
         <p className="mt-4 leading-relaxed text-muted">
           Generare con volti veri e consenzienti, senza rischi legali. Lo spazio crescera.
