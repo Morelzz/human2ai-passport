@@ -23,6 +23,7 @@ const NAV: NavEntry[] = [
     { href: "/studio/edit", label: "Semblic Editor" },
   ] },
   { label: "Il tuo volto", items: [
+    { href: "/tutela", label: "Tutela" },
     { href: "/scansione", label: "Scansione" },
     { href: "/signup/avatar", label: "Proteggi" },
     { href: "/ward", label: "Ward" },
