@@ -12,6 +12,22 @@ const nextConfig: NextConfig = {
     "sharp",
     "playwright",
   ],
+  // Gate identità (anti-impersonazione): le route che confrontano il volto
+  // caricato col volto verificato (KYC Didit) embeddano i volti SERVER-side con
+  // face-api (WASM). Su Vercel la funzione serverless NON vede public/ ne i .wasm
+  // (caricati da path su disco), quindi senza questi include i modelli mancano,
+  // embed() lancia e il gate va in fail-open SILENZIOSO. Forziamo l'inclusione
+  // dei modelli e del backend WASM nelle SOLE lambda che ne hanno bisogno.
+  outputFileTracingIncludes: {
+    "/api/avatar/create": [
+      "./public/models/**",
+      "./node_modules/@tensorflow/tfjs-backend-wasm/dist/*.wasm",
+    ],
+    "/api/veto/register": [
+      "./public/models/**",
+      "./node_modules/@tensorflow/tfjs-backend-wasm/dist/*.wasm",
+    ],
+  },
   images: {
     // Copertine del blog generate con Higgsfield (CDN della libreria utente).
     // Next/Image le ottimizza e le serve in locale: il client non parla mai col CDN.

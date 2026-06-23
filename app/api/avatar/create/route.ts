@@ -10,6 +10,9 @@ import { classifyIdentityMatch } from "@/lib/identity-match";
 import type { FaceMatchResult } from "@/lib/face-match";
 
 export const runtime = "nodejs";
+// Il gate identità embedda il portrait verificato + fino a 5 foto con face-api
+// (WASM) a freddo: diamo margine per evitare un timeout che maschererebbe il gate.
+export const maxDuration = 60;
 
 const REFERENCES_BUCKET = "references";
 // Documento e selfie della verifica identità: bucket PRIVATO 'documents' (come VETO).

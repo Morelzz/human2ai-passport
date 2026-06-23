@@ -6,6 +6,9 @@ import { appendProtectedFaces } from "@/lib/protected-index";
 import { isValidDescriptor } from "@/lib/face-index";
 
 export const runtime = "nodejs";
+// Il gate identità embedda il portrait verificato + le foto con face-api (WASM)
+// a freddo: diamo margine per evitare un timeout che maschererebbe il gate.
+export const maxDuration = 60;
 
 // Fase 2.4 / 2.6 (modulo VETO): registrazione INVERSA. Una persona verificata
 // chiede di NON essere generata ("Diritto all'Oblio Generativo"). Creiamo un
