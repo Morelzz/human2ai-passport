@@ -91,7 +91,10 @@ export default async function PassportPage({ params }: Props) {
   // is_public_figure resta dormiente per il pricing (in attesa del parere legale):
   // qui lo usiamo SOLO come badge display.
   const isPublicFigure = (a.is_public_figure as boolean) ?? false;
-  const isRealPerson = !((a.is_demo as boolean) ?? false);
+  // Provenienza della scansione (badge): 'studio' (centro di conversione Semblic)
+  // oppure 'self' (auto-scansione da remoto). Default 'studio' finche' il campo
+  // non esiste: gli avatar attuali sono tutti scansioni di studio.
+  const scanSource = (a.scan_source as string) ?? "studio";
   const ownership = {
     owner: av.alias,
     ownerVerified,
@@ -116,7 +119,7 @@ export default async function PassportPage({ params }: Props) {
           tier={tier}
           tokenShort={tokenShort}
           isPublicFigure={isPublicFigure}
-          isRealPerson={isRealPerson}
+          scanSource={scanSource}
           availableForBooking={(a.available_for_booking as boolean) ?? false}
           galleryCount={galleryFromRow(handle, (avatar as Record<string, unknown>).gallery_urls).length}
           ownership={ownership}

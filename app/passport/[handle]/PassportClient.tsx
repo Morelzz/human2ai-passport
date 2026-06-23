@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Link2, Handshake } from "lucide-react";
+import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Link2, Handshake, Smartphone } from "lucide-react";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { avatarArt } from "@/lib/avatar-art";
 
@@ -14,7 +14,7 @@ interface Props {
   tier: { label: string; color: string; bg: string; description: string };
   tokenShort: string;
   isPublicFigure?: boolean;
-  isRealPerson?: boolean;
+  scanSource?: string;
   availableForBooking?: boolean;
   galleryCount?: number;
   ownership: {
@@ -82,7 +82,7 @@ function SocialPill({ kind, value }: { kind: "instagram" | "facebook"; value: st
   );
 }
 
-export default function PassportClient({ avatar, events, status, tier, tokenShort, isPublicFigure, isRealPerson = true, availableForBooking = false, galleryCount = 0, ownership }: Props) {
+export default function PassportClient({ avatar, events, status, tier, tokenShort, isPublicFigure, scanSource = "studio", availableForBooking = false, galleryCount = 0, ownership }: Props) {
   const [copied, setCopied] = useState(false);
 
   function copyToken() {
@@ -134,9 +134,13 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
 
         {/* Badge sopra la foto: pillole su vetro scuro, leggibili su ogni scatto */}
         <div className="absolute inset-x-4 top-4 flex flex-wrap gap-2">
-          {isRealPerson && (
+          {scanSource === "studio" ? (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-teal/40 bg-[rgba(12,15,23,0.55)] px-3 py-1 text-[0.7rem] font-bold tracking-wide text-teal backdrop-blur-md">
-              <BadgeCheck className="h-3.5 w-3.5" /> PERSONA REALE VERIFICATA
+              <BadgeCheck className="h-3.5 w-3.5" /> SCANSIONE UFFICIALE
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-[rgba(12,15,23,0.55)] px-3 py-1 text-[0.7rem] font-bold tracking-wide text-foreground/80 backdrop-blur-md">
+              <Smartphone className="h-3.5 w-3.5" /> AUTO-SCANSIONE
             </span>
           )}
           {isPublicFigure && (
@@ -200,9 +204,6 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             <span className="shrink-0 text-2xl font-extralight leading-none tracking-[-0.04em] text-foreground/35 sm:text-[1.7rem]">01</span>
             <span aria-hidden className="h-6 w-px shrink-0 bg-border" />
             <p className="text-xs tracking-[0.08em] text-muted sm:tracking-[0.16em]">ATTO DI PROPRIETÀ</p>
-            {ownership.soulbound && (
-              <span className="ml-auto shrink-0 rounded-full border border-violet/30 bg-violet/10 px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-violet-light">SOULBOUND</span>
-            )}
           </div>
           <div className="mb-5 mt-3 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.55), var(--hairline) 38%, transparent 80%)" }} />
 
@@ -218,10 +219,6 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             <p className="mb-0.5 text-[0.7rem] text-muted">Registrato il</p>
             <p className="text-sm font-semibold">{formatDate(ownership.issued)}</p>
           </div>
-          <div className="col-span-2">
-            <p className="mb-0.5 text-[0.7rem] text-muted">Token di proprietà</p>
-            <code className="rounded bg-violet/10 px-2 py-1 font-mono text-sm text-violet-light">{ownership.tokenShort}</code>
-          </div>
         </div>
 
         {/* Stato ancoraggio on-chain */}
@@ -234,7 +231,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             </p>
           ) : (
             <p className="text-xs text-muted">
-              <span className="font-semibold text-foreground">Pronto per l&apos;ancoraggio on-chain</span>, la proprietà verrà ancorata su Base (identità soulbound).
+              <span className="font-semibold text-foreground">Pronto per l&apos;ancoraggio on-chain</span>, la proprietà verrà ancorata su Base.
             </p>
           )}
         </div>
