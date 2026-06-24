@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { appendAudit } from "@/lib/ward/audit";
+import { isProdLike, reportDegradation } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,15 @@ export async function POST() {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return NextResponse.json({ error: "Devi accedere" }, { status: 401 });
+
+  // CRIT-4 (fail-closed): lo stub approva senza verificare NULLA. Deve esistere
+  // solo in sviluppo. In produzione (o su Vercel) non risponde: il KYC reale
+  // (Didit) e l'unica via. Senza questa guardia, un deploy senza env Didit
+  // farebbe fail-open verso "approved", il campo che sblocca soldi e generazione.
+  if (isProdLike()) {
+    return NextResponse.json({ error: "Verifica di sviluppo non disponibile in produzione" }, { status: 410 });
+  }
+  reportDegradation("kyc.stub_used", { user: user.id });
 
   const admin = createServerClient();
   const { error } = await admin.from("profiles").update({ kyc_status: "approved" }).eq("id", user.id);
