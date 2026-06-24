@@ -119,4 +119,19 @@ describe("extractDobFromDecision", () => {
     expect(extractDobFromDecision(null)).toBeNull();
     expect(extractDobFromDecision("x")).toBeNull();
   });
+  it("legge la data da un oggetto kyc (path alternativo Didit)", () => {
+    const data = { decision: { kyc: { status: "Approved", date_of_birth: "1985-03-22" } } };
+    expect(extractDobFromDecision(data)).toBe("1985-03-22");
+  });
+  it("legge la data da id_verification singolare", () => {
+    const data = { id_verification: { date_of_birth: "1992-07-07", portrait_image: "x" } };
+    expect(extractDobFromDecision(data)).toBe("1992-07-07");
+  });
+  it("accetta anche dateOfBirth camelCase", () => {
+    expect(extractDobFromDecision({ kyc: { dateOfBirth: "1988-11-11" } })).toBe("1988-11-11");
+  });
+  it("trova la data a qualunque profondita'", () => {
+    const data = { a: { b: [{ c: { date_of_birth: "1979-01-02" } }] } };
+    expect(extractDobFromDecision(data)).toBe("1979-01-02");
+  });
 });

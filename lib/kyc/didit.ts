@@ -92,21 +92,40 @@ export async function getDiditPortraitUrl(sessionId: string): Promise<string | n
   return null;
 }
 
-// Estrae la data di nascita (YYYY-MM-DD) dalla decisione Didit, dallo stesso
-// array id_verifications[] da cui leggiamo il portrait. PURA e testabile.
-// null se assente o malformata: il chiamante (webhook) la tratta fail-closed.
+// Una data valida YYYY-MM-DD (solo forma; la validita' del calendario la verifica
+// poi lib/age.ts, fail-closed).
+function isDobString(v: unknown): v is string {
+  return typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v);
+}
+
+// Estrae la data di nascita (YYYY-MM-DD) dalla decisione Didit. La POSIZIONE
+// esatta del campo varia tra prodotti/versioni Didit (puo' stare in
+// id_verifications[], in un oggetto kyc, in id_verification singolare, ecc.), ma
+// il NOME del campo no: quindi facciamo una scansione ricorsiva e prendiamo la
+// prima date_of_birth (o dateOfBirth) ben formata, a qualunque profondita'. PURA
+// e testabile. null se assente o malformata -> il webhook la tratta fail-closed.
 export function extractDobFromDecision(data: unknown): string | null {
-  if (!data || typeof data !== "object") return null;
-  const root = data as Record<string, unknown>;
-  const decision = (root.decision as Record<string, unknown> | undefined) ?? root;
-  const idv = Array.isArray(decision.id_verifications)
-    ? (decision.id_verifications as Record<string, unknown>[])
-    : [];
-  for (const v of idv) {
-    const dob = v.date_of_birth;
-    if (typeof dob === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dob)) return dob;
-  }
-  return null;
+  const seen = new Set<unknown>();
+  const walk = (node: unknown): string | null => {
+    if (!node || typeof node !== "object" || seen.has(node)) return null;
+    seen.add(node);
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        const found = walk(item);
+        if (found) return found;
+      }
+      return null;
+    }
+    const obj = node as Record<string, unknown>;
+    if (isDobString(obj.date_of_birth)) return obj.date_of_birth;
+    if (isDobString(obj.dateOfBirth)) return obj.dateOfBirth;
+    for (const key of Object.keys(obj)) {
+      const found = walk(obj[key]);
+      if (found) return found;
+    }
+    return null;
+  };
+  return walk(data);
 }
 
 // Recupera la data di nascita verificata dal documento per una sessione. null se
