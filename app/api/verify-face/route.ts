@@ -30,6 +30,12 @@ export const runtime = "nodejs";
 // ZERO-RETENTION: né descrittore né filtri vengono persistiti. MAI persistere
 // descriptor/filters: il descrittore del volto è dato biometrico (GDPR Art.9).
 
+// CRIT-9: un match biometrico e un INDIZIO, mai una prova. Ogni risposta che
+// nomina o segnala un volto deve dirlo a chiare lettere, per non trasformare una
+// somiglianza in un'accusa.
+const MATCH_DISCLAIMER =
+  "Questo è un indizio biometrico, non una prova: la conferma certa resta la filigrana certificata. Un volto somigliante non è una colpa.";
+
 const FILTER_WHITELIST: Record<string, string[] | null> = {
   gender: ["uomo", "donna"],
   // L'etnia del registro è nazionalità O gruppo IDENTITY_KIT a seconda della
@@ -117,6 +123,7 @@ export async function POST(request: Request) {
         scanned: true,
         avatars_checked: pranked.length,
         filtered: filtersActive,
+        disclaimer: MATCH_DISCLAIMER,
         // NESSUNA identita': niente handle/alias/passport. Mai.
       });
     }
@@ -181,6 +188,7 @@ export async function POST(request: Request) {
     scanned: true,
     avatars_checked: checked,
     filtered: filtersActive,
+    disclaimer: MATCH_DISCLAIMER,
     candidates,
     // Campi del migliore in testa per retro-compatibilità col client esistente.
     handle: best.handle,
