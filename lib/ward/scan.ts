@@ -49,7 +49,8 @@ export interface ScanDeps {
   match?: (refs: number[][], bytes: Uint8Array) => Promise<MatchResult>;
   phash?: (bytes: Uint8Array) => Promise<string | null>;
   audit?: AuditFn;
-  referenceImageUrl?: string; // per i provider reali (Google Vision); lo stub lo ignora
+  referenceImageBytes?: Uint8Array; // FOTO REALE della persona (reference) per la discovery: query migliore del portrait generato
+  referenceImageUrl?: string; // fallback: per i provider reali (Google Vision); lo stub lo ignora
   limit?: number;
 }
 
@@ -116,8 +117,14 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
     return { ok: false, status: "error", reason: "Nessun descrittore di riferimento per l'avatar", jobId, candidates: 0, matches: 0, discarded: 0 };
   }
 
-  // 3. Discovery (similarita' di CONTENUTO, non biometria).
-  const query: DiscoveryQuery = deps.referenceImageUrl ? { imageUrl: deps.referenceImageUrl } : {};
+  // 3. Discovery (similarita' di CONTENUTO, non biometria). Si interroga con la
+  //    FOTO REALE della persona (reference) se disponibile: il portrait generato
+  //    depista la ricerca (Vision non trova la persona reale). Fallback al portrait.
+  const query: DiscoveryQuery = deps.referenceImageBytes
+    ? { imageBytes: deps.referenceImageBytes }
+    : deps.referenceImageUrl
+    ? { imageUrl: deps.referenceImageUrl }
+    : {};
   let candidates: Candidate[];
   try {
     candidates = await provider.find(query, limit);

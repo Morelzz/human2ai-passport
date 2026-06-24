@@ -130,3 +130,40 @@ describe("runScan: pipeline + data-minimization (A2.3)", () => {
     expect(m.finished.at(-1)).toMatchObject({ status: "done", stats: { candidates: 5, matches: 2, discarded: 3 } });
   });
 });
+
+describe("runScan: immagine-query della discovery", () => {
+  function capturingProvider() {
+    let lastQuery: unknown;
+    const p: DiscoveryProvider = {
+      name: "cap",
+      enabled: true,
+      async find(q) {
+        lastQuery = q;
+        return [];
+      },
+    };
+    return { p, getQuery: () => lastQuery };
+  }
+
+  it("preferisce i BYTE reali (reference) al portrait generato", async () => {
+    const m = memRepo([[0, 0]]);
+    const cap = capturingProvider();
+    const bytes = new Uint8Array([1, 2, 3]);
+    await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: cap.p,
+      referenceImageBytes: bytes,
+      referenceImageUrl: "https://portrait.test/p.png",
+    });
+    expect(cap.getQuery()).toEqual({ imageBytes: bytes });
+  });
+
+  it("usa l'URL (portrait) come fallback se non ci sono byte reali", async () => {
+    const m = memRepo([[0, 0]]);
+    const cap = capturingProvider();
+    await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: cap.p,
+      referenceImageUrl: "https://portrait.test/p.png",
+    });
+    expect(cap.getQuery()).toEqual({ imageUrl: "https://portrait.test/p.png" });
+  });
+});

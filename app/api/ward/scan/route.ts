@@ -4,6 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { allowRequest } from "@/lib/rate-limit";
 import { runScan } from "@/lib/ward/scan";
 import { SupabaseScanRepository } from "@/lib/ward/scan-repo";
+import { downloadFirstImage } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,17 +33,21 @@ export async function POST(request: Request) {
   const admin = createServerClient();
   const { data: av } = await admin
     .from("avatars")
-    .select("id, owner_id, portrait_url")
+    .select("id, owner_id, handle, portrait_url")
     .eq("id", avatarId)
     .maybeSingle();
   if (!av || av.owner_id !== user.id) {
     return NextResponse.json({ error: "Avatar non trovato" }, { status: 404 });
   }
 
+  // Discovery efficace: si interroga Vision con una FOTO REALE della persona (la
+  // prima reference), non col portrait generato che depista la ricerca. Fallback
+  // al portrait se l'avatar non ha reference (es. seed).
+  const refPhoto = await downloadFirstImage("references", av.handle as string);
   const result = await runScan(avatarId, {
     repo: new SupabaseScanRepository(),
-    // Riferimento pubblico per la discovery reale (Google Vision); lo stub lo ignora.
-    referenceImageUrl: (av.portrait_url as string | null) ?? undefined,
+    referenceImageBytes: refPhoto ? new Uint8Array(refPhoto) : undefined,
+    referenceImageUrl: refPhoto ? undefined : (av.portrait_url as string | null) ?? undefined,
   });
 
   // Gate negato non e' un errore HTTP: e' un esito di consenso (403).
