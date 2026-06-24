@@ -77,9 +77,13 @@ export async function POST(request: Request) {
 
   const admin = createServerClient();
   const status = action === "approve" ? "approved" : "rejected";
+  // CRIT-4: traccia il provider della verifica. L'approvazione manuale operatori
+  // e 'manual' (verifica reale -> bonus VOLT consentito).
+  const update: Record<string, string> = { kyc_status: status };
+  if (action === "approve") update.kyc_provider = "manual";
   const { data: changed, error } = await admin
     .from("profiles")
-    .update({ kyc_status: status })
+    .update(update)
     .eq("id", userId)
     .eq("kyc_status", "pending") // si decide solo ciò che è in attesa
     .select("id");

@@ -25,7 +25,8 @@ export async function POST() {
   reportDegradation("kyc.stub_used", { user: user.id });
 
   const admin = createServerClient();
-  const { error } = await admin.from("profiles").update({ kyc_status: "approved" }).eq("id", user.id);
+  // CRIT-4: marca la verifica come 'stub' (di sviluppo) -> niente bonus VOLT.
+  const { error } = await admin.from("profiles").update({ kyc_status: "approved", kyc_provider: "stub" }).eq("id", user.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   await appendAudit({ actor: user.id, action: "kyc.stub_approved", target: user.id, meta: { provider: "stub" } });

@@ -113,6 +113,11 @@ export async function voltTransactions(userId: string, limit = 5): Promise<VoltT
 // con doppio click admin o retry non si accredita due volte.
 export async function grantWelcomeVoltOnce(userId: string): Promise<boolean> {
   const admin = createServerClient();
+  // CRIT-4: niente bonus di benvenuto per una verifica STUB (di sviluppo, non
+  // reale). Difesa in profondita: anche se un giorno il bonus venisse chiamato
+  // da un percorso diverso, lo stub non emette mai valore.
+  const { data: prof } = await admin.from("profiles").select("kyc_provider").eq("id", userId).maybeSingle();
+  if (prof?.kyc_provider === "stub") return false;
   const { count, error } = await admin
     .from("volt_transactions")
     .select("id", { head: true, count: "exact" })

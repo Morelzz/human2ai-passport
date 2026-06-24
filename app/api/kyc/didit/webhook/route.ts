@@ -43,7 +43,8 @@ export async function POST(request: Request) {
     const admin = createServerClient();
     await admin
       .from("profiles")
-      .update({ kyc_status: kyc, identity_session_id: payload.session_id })
+      // CRIT-4: la verifica e avvenuta via Didit (reale).
+      .update({ kyc_status: kyc, kyc_provider: "didit", identity_session_id: payload.session_id })
       .eq("id", userId);
     await appendAudit({
       actor: userId,
