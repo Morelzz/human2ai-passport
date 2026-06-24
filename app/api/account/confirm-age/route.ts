@@ -21,10 +21,11 @@ export async function POST(request: Request) {
   }
 
   const admin = createServerClient();
-  await admin
+  const { error } = await admin
     .from("profiles")
     .update({ date_of_birth: dob, adult_verified_at: new Date().toISOString(), adult_verified_method: "self" })
     .eq("id", user.id);
+  if (error) return NextResponse.json({ error: "Errore salvataggio, riprova." }, { status: 500 });
 
   return NextResponse.json({ ok: true });
 }
