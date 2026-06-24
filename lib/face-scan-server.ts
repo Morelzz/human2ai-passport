@@ -1,52 +1,39 @@
 import { loadProtectedIndex } from "@/lib/protected-index";
 import { FACE_MATCH_MAX_DISTANCE, rankFaceMatches } from "@/lib/face-index";
 import { reportDegradation } from "@/lib/observability";
+import { loadFaceApi } from "@/lib/ward/matching/embed";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Fase 2.3 (modulo VETO): scan dei volti GENERATI contro l'indice dei protetti,
 // lato SERVER (worker). E' la difesa in PROFONDITA' dopo il gate input (2.2):
 // se un contenuto generato somiglia troppo a un volto protetto, va scartato.
 //
-// Richiede face-detection server-side (@tensorflow/tfjs-node + @vladmandic/face-api).
-// Import DINAMICO con specifier a variabile: se la dipendenza o i modelli non ci
-// sono, tsc non la risolve e a runtime lo scan resta DORMIENTE (available:false)
-// → la generazione viene rilasciata, nessun crash. Dove tfjs-node e' installato
-// (worker Railway), lo scan e' ATTIVO. I modelli sono gia' in public/models.
+// CRIT-7: usa lo STESSO stack WASM del KYC (lib/ward/matching/embed: face-api
+// node-wasm + backend wasm prebuilt, nessun binario nativo) -> gira sul worker
+// Railway senza tfjs-node ne' build-deps native; i modelli sono in public/models.
 //
-// Fail-open in caso di errore dello scan: il gate input (2.2) + l'esclusione dal
-// match restano la difesa primaria; lo scan output non deve bloccare il prodotto
-// se il rilevatore va in errore.
+// FAIL-CLOSED: se ci sono volti protetti da controllare ma lo scanner non puo'
+// girare (modelli/wasm assenti o errore di scan), NON rilasciamo l'immagine:
+// torniamo available:false e il chiamante (lib/echo-job) annulla la generazione.
+// Su un prodotto di tutela un controllo che non puo' girare deve bloccare, non
+// passare in silenzio.
 // ──────────────────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let loaded: { faceapi: any; ok: boolean } | null = null;
-
-async function ensureServerFace(): Promise<{ faceapi: unknown; ok: boolean }> {
-  if (loaded) return loaded;
-  try {
-    // Specifier a VARIABILE: tsc non prova a risolvere il modulo (dormiente-safe
-    // finche' non e' installato). tfjs-node registra il backend nativo in Node.
-    const tfjsNode = "@tensorflow/tfjs-node";
-    await import(/* webpackIgnore: true */ tfjsNode);
-    const faceApiSpec = "@vladmandic/face-api";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const faceapi: any = await import(/* webpackIgnore: true */ faceApiSpec);
-    const modelsDir = `${process.cwd()}/public/models`;
-    await faceapi.nets.ssdMobilenetv1.loadFromDisk(modelsDir);
-    await faceapi.nets.faceLandmark68Net.loadFromDisk(modelsDir);
-    await faceapi.nets.faceRecognitionNet.loadFromDisk(modelsDir);
-    loaded = { faceapi, ok: true };
-  } catch {
-    loaded = { faceapi: null, ok: false };
-  }
-  return loaded;
-}
-
 export interface OutputScanResult {
-  available: boolean; // false = scan dormiente (dep/modelli assenti o errore)
+  available: boolean; // false = scan non eseguibile (modelli/wasm assenti o errore) -> il chiamante FAIL-CLOSED
   blocked: boolean; // true = un volto generato somiglia a un protetto
   distance?: number;
   handle?: string;
+}
+
+// Decisione PURA sull'esito dello scan, testabile senza face-api:
+//  - "unavailable": lo scan non ha potuto verificare -> fail-closed (annulla).
+//  - "regenerate": un volto somiglia a un protetto -> rigenera (o annulla al limite).
+//  - "release": nessun match (o nessun protetto da controllare) -> consegna.
+export function outputScanVerdict(scan: OutputScanResult): "unavailable" | "regenerate" | "release" {
+  if (!scan.available) return "unavailable";
+  if (scan.blocked) return "regenerate";
+  return "release";
 }
 
 // Confronta TUTTI i volti dell'immagine generata con l'indice protetti.
@@ -55,32 +42,43 @@ export async function scanGeneratedImageForProtected(png: Buffer): Promise<Outpu
   const index = await loadProtectedIndex();
   if (!index || index.entries.length === 0) return { available: true, blocked: false };
 
-  const { faceapi, ok } = await ensureServerFace();
-  if (!ok) {
-    // Ci sono protetti da controllare ma lo scanner non e disponibile
-    // (tfjs-node/modelli assenti): DEGRADO da rendere visibile (audit A12, CRIT-7).
-    reportDegradation("veto.scan_unavailable", { protectedEntries: index.entries.length });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let faceapi: any;
+  try {
+    faceapi = await loadFaceApi();
+  } catch {
+    // Ci sono protetti da controllare ma lo scanner non e' disponibile: DEGRADO
+    // visibile (audit A12) + fail-closed (available:false) -> il chiamante annulla.
+    reportDegradation("veto.scan_unavailable", { protectedEntries: index.entries.length, phase: "load" });
     return { available: false, blocked: false };
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const f = faceapi as any;
-    const tensor = f.tf.node.decodeImage(png, 3);
-    const dets = await f
-      .detectAllFaces(tensor, new f.SsdMobilenetv1Options({ minConfidence: 0.4 }))
-      .withFaceLandmarks()
-      .withFaceDescriptors();
-    f.tf.dispose(tensor);
-    for (const d of dets) {
-      const ranked = rankFaceMatches(Array.from(d.descriptor as Float32Array), index);
-      const best = ranked[0];
-      if (best && best.distance <= FACE_MATCH_MAX_DISTANCE) {
-        return { available: true, blocked: true, distance: best.distance, handle: best.handle };
+    const sharpMod = await import("sharp");
+    const sharp = sharpMod.default ?? sharpMod;
+    const tf = faceapi.tf;
+    // Decodifica come nel KYC (sharp -> raw RGB -> tensor): niente tf.node nativo.
+    const { data, info } = await sharp(png).rotate().removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    const tensor = tf.tensor3d(new Uint8Array(data), [info.height, info.width, 3]);
+    try {
+      const dets: { descriptor: Float32Array }[] = await faceapi
+        .detectAllFaces(tensor, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.4 }))
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+      for (const d of dets) {
+        const ranked = rankFaceMatches(Array.from(d.descriptor), index);
+        const best = ranked[0];
+        if (best && best.distance <= FACE_MATCH_MAX_DISTANCE) {
+          return { available: true, blocked: true, distance: best.distance, handle: best.handle };
+        }
       }
+      return { available: true, blocked: false };
+    } finally {
+      tensor.dispose();
     }
-    return { available: true, blocked: false };
   } catch {
-    return { available: false, blocked: false }; // fail-open (vedi nota in testa)
+    // Errore durante lo scan: non possiamo garantire la verifica -> fail-closed.
+    reportDegradation("veto.scan_unavailable", { protectedEntries: index.entries.length, phase: "scan" });
+    return { available: false, blocked: false };
   }
 }

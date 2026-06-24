@@ -18,7 +18,7 @@ import { getReferenceSet } from "@/lib/references";
 import { generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/echo";
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
-import { scanGeneratedImageForProtected } from "@/lib/face-scan-server";
+import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 
@@ -256,7 +256,8 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     // La chiamata lunga (può durare minuti): qui NON c'è cap di durata.
     // Fase 2.3 (VETO): dopo ogni generazione, scan dei volti generati contro
     // l'indice protetti; se somiglia a un protetto, scarta e rigenera (limite
-    // tentativi). Lo scan e' dormiente finche' tfjs-node non e' installato.
+    // tentativi). Lo scan gira su WASM (worker) ed e' fail-closed: se non puo'
+    // verificare i volti protetti, la generazione viene annullata (CRIT-7).
     const MAX_ATTEMPTS = 2;
     let result!: Awaited<ReturnType<typeof generateEcho>>;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
@@ -267,7 +268,14 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
         quality: p.echoQuality,
       });
       const scan = await scanGeneratedImageForProtected(result.png);
-      if (!scan.blocked) break;
+      const verdict = outputScanVerdict(scan);
+      if (verdict === "unavailable") {
+        // CRIT-7 fail-closed: lo scanner di tutela non ha potuto verificare i volti
+        // protetti -> non rilasciamo l'immagine (riprovare non aiuta, e' una indisponibilita').
+        throw new Error("Verifica di tutela non disponibile ora: generazione annullata, riprova tra poco, nessun costo a tuo carico.");
+      }
+      if (verdict === "release") break;
+      // verdict === "regenerate": un volto somiglia a un protetto -> nuovo tentativo.
       console.warn(`[ECHO job ${job.id}] output somiglia a un volto protetto (dist ${scan.distance?.toFixed(3)}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
       if (attempt === MAX_ATTEMPTS) {
         throw new Error("Il risultato somigliava a un volto registrato come protetto: generazione annullata per tutela, nessun costo a tuo carico.");

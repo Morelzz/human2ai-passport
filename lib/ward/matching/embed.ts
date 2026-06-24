@@ -20,7 +20,9 @@ function modelsDir(): string {
 }
 
 // Carica face-api (node-wasm) + backend wasm + i 3 modelli, UNA volta sola.
-async function loadFaceApi(): Promise<any> {
+// Esportata per riuso dal VETO scan (lib/face-scan-server): stesso stack WASM,
+// nessun binario nativo, gira sul worker come il KYC.
+export async function loadFaceApi(): Promise<any> {
   if (faceApiPromise) return faceApiPromise;
   faceApiPromise = (async () => {
     const ns: any = await import("@vladmandic/face-api/dist/face-api.node-wasm.js");
