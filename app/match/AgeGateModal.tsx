@@ -57,7 +57,7 @@ export function AgeGateModal({ onClose, onConfirmed }: { onClose: () => void; on
           {loading ? "Verifica…" : "Conferma e continua"}
         </button>
         <p style={{ color: "var(--text-muted)", fontSize: "0.7rem", margin: "0.7rem 0 0", lineHeight: 1.5 }}>
-          Serve solo a verificare l'eta. Resta privata, non viene mostrata nel tuo profilo.
+          Serve solo a verificare l'età. Resta privata, non viene mostrata nel tuo profilo.
         </p>
         <button onClick={onClose} style={{ marginTop: "0.6rem", width: "100%", background: "transparent", color: "var(--text-muted)", border: "none", fontSize: "0.78rem", cursor: "pointer" }}>
           Annulla

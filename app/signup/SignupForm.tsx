@@ -87,10 +87,10 @@ export default function SignupForm() {
       {blockedUnderage ? (
         <div style={{ textAlign: "center" }}>
           <p style={{ color: "var(--blocked-c)", fontWeight: 700, fontSize: "1rem", margin: "0 0 0.6rem" }}>
-            SEMBLIC e' riservato ai maggiorenni
+            SEMBLIC è riservato ai maggiorenni
           </p>
           <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: 1.6, margin: 0 }}>
-            In base alla data di nascita inserita non possiamo creare il tuo account. SEMBLIC custodisce volti di persone reali e l'accesso e' consentito solo dai 18 anni.
+            In base alla data di nascita inserita non possiamo creare il tuo account. SEMBLIC custodisce volti di persone reali e l'accesso è consentito solo dai 18 anni.
           </p>
         </div>
       ) : done ? (
