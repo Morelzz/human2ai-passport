@@ -92,6 +92,36 @@ export async function getDiditPortraitUrl(sessionId: string): Promise<string | n
   return null;
 }
 
+// Estrae la data di nascita (YYYY-MM-DD) dalla decisione Didit, dallo stesso
+// array id_verifications[] da cui leggiamo il portrait. PURA e testabile.
+// null se assente o malformata: il chiamante (webhook) la tratta fail-closed.
+export function extractDobFromDecision(data: unknown): string | null {
+  if (!data || typeof data !== "object") return null;
+  const root = data as Record<string, unknown>;
+  const decision = (root.decision as Record<string, unknown> | undefined) ?? root;
+  const idv = Array.isArray(decision.id_verifications)
+    ? (decision.id_verifications as Record<string, unknown>[])
+    : [];
+  for (const v of idv) {
+    const dob = v.date_of_birth;
+    if (typeof dob === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dob)) return dob;
+  }
+  return null;
+}
+
+// Recupera la data di nascita verificata dal documento per una sessione. null se
+// non disponibile (sessione non trovata, decisione senza data, ecc.).
+export async function getDiditDob(sessionId: string): Promise<string | null> {
+  const apiKey = process.env.DIDIT_API_KEY;
+  if (!apiKey || !sessionId) return null;
+  const res = await fetch(`${DIDIT_BASE_URL}/v3/session/${encodeURIComponent(sessionId)}/decision/`, {
+    headers: { "X-API-Key": apiKey },
+  });
+  if (!res.ok) return null;
+  const data = (await res.json().catch(() => null)) as unknown;
+  return extractDobFromDecision(data);
+}
+
 // Verifica un webhook Didit. Imponiamo la freschezza (X-Timestamp entro 300s,
 // anti-replay) e accettiamo UNA firma valida (timing-safe) tra le tre che Didit
 // invia, in ordine di robustezza: V2 (JSON canonico, raccomandata), raw (body

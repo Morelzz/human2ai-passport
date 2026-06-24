@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import crypto from "crypto";
-import { verifyDiditWebhook, diditStatusToKyc } from "./didit";
+import { verifyDiditWebhook, diditStatusToKyc, extractDobFromDecision } from "./didit";
 
 const SECRET = "test_webhook_secret_123";
 
@@ -97,5 +97,26 @@ describe("diditStatusToKyc", () => {
     expect(diditStatusToKyc("In Progress")).toBe("pending");
     expect(diditStatusToKyc("Abandoned")).toBe(null);
     expect(diditStatusToKyc("Expired")).toBe(null);
+  });
+});
+
+describe("extractDobFromDecision", () => {
+  it("legge la data dal primo id_verification (radice)", () => {
+    const data = { id_verifications: [{ date_of_birth: "1990-05-10", portrait_image: "x" }] };
+    expect(extractDobFromDecision(data)).toBe("1990-05-10");
+  });
+  it("legge la data quando id_verifications e' annidato sotto decision", () => {
+    const data = { decision: { id_verifications: [{ date_of_birth: "2001-12-01" }] } };
+    expect(extractDobFromDecision(data)).toBe("2001-12-01");
+  });
+  it("null se manca la data", () => {
+    expect(extractDobFromDecision({ id_verifications: [{ portrait_image: "x" }] })).toBeNull();
+  });
+  it("null se il formato e' sbagliato", () => {
+    expect(extractDobFromDecision({ id_verifications: [{ date_of_birth: "10/05/1990" }] })).toBeNull();
+  });
+  it("null su payload vuoto o non-oggetto", () => {
+    expect(extractDobFromDecision(null)).toBeNull();
+    expect(extractDobFromDecision("x")).toBeNull();
   });
 });
