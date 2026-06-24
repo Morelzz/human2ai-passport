@@ -9,6 +9,7 @@ import { KineticText } from "@/components/motion/KineticText";
 // Motore Higgsfield/Soul rimosso dalla UI: ECHO (gpt-image-2) e' l'unico motore.
 import { voltStr, VOLT_STRINGS, voltLoadingLine, voltSuccessMission } from "@/lib/strings/volt";
 import { StudioPanel } from "@/app/match/studio/StudioPanel";
+import { AgeGateModal } from "./AgeGateModal";
 import type { FramingVal, ExpressionVal, LightVal, ColorStyleVal, LensVal, CameraVal } from "@/lib/studio-options";
 // Token-helper per dare all'enhancer le scelte gia fatte coi controlli (le tiene
 // coerenti nella scena, senza ripeterle come direttive: quelle le aggiunge il server).
@@ -171,6 +172,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   // di saldo insufficiente (4.7) e riga di loading "elettrica" (4.5).
   const [voltBalance, setVoltBalance] = useState<number | null>(null);
   const [voltGate, setVoltGate] = useState<{ needed: number; missing: number; balance: number } | null>(null);
+  const [ageGate, setAgeGate] = useState(false);
   const [loadingLine, setLoadingLine] = useState("Generazione…");
 
   useEffect(() => {
@@ -401,6 +403,11 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
     if (res.status === 402 && json.volt) {
       setGeneratingHandle(null);
       setVoltGate(json.volt);
+      return;
+    }
+    if (res.status === 403 && json.code === "age_unverified") {
+      setGeneratingHandle(null);
+      setAgeGate(true);
       return;
     }
     if (!res.ok) {
@@ -808,6 +815,12 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
             </div>
           )}
         </div>
+      )}
+      {ageGate && (
+        <AgeGateModal
+          onClose={() => setAgeGate(false)}
+          onConfirmed={() => setAgeGate(false)}
+        />
       )}
     </main>
   );
