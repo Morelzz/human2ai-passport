@@ -1,5 +1,6 @@
 import { loadProtectedIndex } from "@/lib/protected-index";
 import { FACE_MATCH_MAX_DISTANCE, rankFaceMatches } from "@/lib/face-index";
+import { reportDegradation } from "@/lib/observability";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Fase 2.3 (modulo VETO): scan dei volti GENERATI contro l'indice dei protetti,
@@ -55,7 +56,12 @@ export async function scanGeneratedImageForProtected(png: Buffer): Promise<Outpu
   if (!index || index.entries.length === 0) return { available: true, blocked: false };
 
   const { faceapi, ok } = await ensureServerFace();
-  if (!ok) return { available: false, blocked: false };
+  if (!ok) {
+    // Ci sono protetti da controllare ma lo scanner non e disponibile
+    // (tfjs-node/modelli assenti): DEGRADO da rendere visibile (audit A12, CRIT-7).
+    reportDegradation("veto.scan_unavailable", { protectedEntries: index.entries.length });
+    return { available: false, blocked: false };
+  }
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
