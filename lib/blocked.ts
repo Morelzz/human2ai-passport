@@ -10,7 +10,7 @@ type Admin = ReturnType<typeof createServerClient>;
 
 export interface BlockedEvent {
   source: "match" | "generate";
-  reason: "no_match" | "category_excluded" | "category_not_approved" | "no_commercial_consent" | "revoked" | "protected_face";
+  reason: "no_match" | "category_excluded" | "category_not_approved" | "no_commercial_consent" | "revoked" | "protected_face" | "age_no_dob" | "age_under_18";
   category?: string | null;
   attrs?: Record<string, unknown> | null;
 }

@@ -17,6 +17,7 @@ import { fetchPosePrompt } from "@/lib/poses";
 import { photographicSegment, poseToken, validEnum, CAMERAS, LENSES, LIGHTS, COLOR_STYLES, FRAMINGS, EXPRESSIONS } from "@/lib/studio-options";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { logBlockedRequest } from "@/lib/blocked";
+import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
 import { spendVolt, grantVolt } from "@/lib/volt";
 import sharp from "sharp";
 
@@ -67,6 +68,23 @@ export async function POST(request: Request) {
   if (!handle) return NextResponse.json({ error: "Avatar mancante" }, { status: 400 });
 
   const admin = createServerClient();
+
+  // Age-gate 18+ (CRIT-10): chi genera deve essere adulto verificato. Gli account
+  // nati prima del gate non hanno la data: 403 dedicato -> il client chiede la DOB
+  // una volta sola. I minorenni (difesa) ricevono un blocco secco.
+  const { data: callerProfile } = await admin
+    .from("profiles")
+    .select("date_of_birth, adult_verified_at")
+    .eq("id", user.id)
+    .maybeSingle();
+  const ageReason = adultGateReason(callerProfile as AdultGateState | null, new Date());
+  if (ageReason) {
+    logBlockedRequest(admin, { source: "generate", reason: ageReason === "no_dob" ? "age_no_dob" : "age_under_18", category });
+    if (ageReason === "no_dob") {
+      return NextResponse.json({ error: "Conferma la tua data di nascita per continuare.", code: "age_unverified" }, { status: 403 });
+    }
+    return NextResponse.json({ error: "SEMBLIC e' riservato ai maggiorenni." }, { status: 403 });
+  }
 
   // Rivalida: l'avatar esiste, è SOUL, ha consenso attivo e copre la categoria d'uso.
   const { data: avatar } = await admin
