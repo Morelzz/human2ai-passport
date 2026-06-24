@@ -1,6 +1,7 @@
 import type { GateResult } from "./gate";
 import type { DiscoveryProvider, DiscoveryQuery, Candidate } from "./discovery";
 import type { MatchResult } from "./matching";
+import { classifySensitivity, type Sensitivity } from "./sensitivity";
 
 // ORCHESTRATORE di scan (Job B), Module 1. Cablaggio esplicito con dependency
 // injection: in test si iniettano fake (niente DB, niente rete, niente face-api),
@@ -15,7 +16,7 @@ import type { MatchResult } from "./matching";
 //   dei terzi, candidato transitorio cancellato sempre, sui non-match zero
 //   ritenzione, sui match solo URL + (in futuro) phash.
 
-export type Sensitivity = "standard" | "sensitive" | "minor";
+export type { Sensitivity }; // fonte unica: ./sensitivity
 
 export interface ScanMatchRow {
   avatarId: string;
@@ -163,9 +164,9 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
           host: cand.host || null,
           score: m.score,
           band: m.band,
-          // Module 1: la classificazione sensibilita' (standard/sensitive/minor,
-          // child-safety) e' una slice separata; il default DB e' 'standard'.
-          sensitivity: "standard",
+          // Sensibilita' classificata sull'host (slice host-based, lib/ward/sensitivity):
+          // un volto su un sito adult -> 'sensitive'. 'minor' resta a valle (contenuto/eta').
+          sensitivity: classifySensitivity(cand.host),
           phash,
         });
         matches++;
