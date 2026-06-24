@@ -3,6 +3,31 @@ import { getDiditPortraitUrl } from "@/lib/kyc/didit";
 import { embed } from "@/lib/ward/matching/embed";
 import { bandFromDistance, type MatchBand } from "@/lib/identity-match";
 import { similarityFromDistance } from "@/lib/face-similarity";
+import { reportDegradation } from "@/lib/observability";
+
+// CRIT-6: il gate anti-impersonazione NON deve cedere in silenzio se i modelli
+// face-api/wasm non caricano. Distinguiamo "modelli non disponibili" (errore di
+// infrastruttura -> il chiamante BLOCCA, fail-closed) da "nessun volto / nessun
+// riferimento" (esito legittimo -> revisione manuale). Questo errore segnala il
+// primo caso.
+export class IdentityModelsUnavailableError extends Error {
+  constructor() {
+    super("identity_models_unavailable");
+    this.name = "IdentityModelsUnavailableError";
+  }
+}
+
+// Embedda "fail-closed": se embed lancia (modelli giu) lo segnaliamo e rilanciamo
+// un errore tipato; se semplicemente non c'e un volto, descriptor resta null.
+async function embedOrThrow(bytes: Uint8Array, stage: string, userId: string): Promise<number[] | null> {
+  try {
+    const { descriptor } = await embed(bytes);
+    return descriptor;
+  } catch {
+    reportDegradation("identity_gate.models_unavailable", { stage, userId });
+    throw new IdentityModelsUnavailableError();
+  }
+}
 
 // ──────────────────────────────────────────────────────────────────────────
 // Lega l'IDENTITA' VERIFICATA (KYC Didit) alle foto che la persona carica
@@ -43,17 +68,21 @@ export async function getIdentityDescriptor(userId: string): Promise<number[] | 
 
   const url = await getDiditPortraitUrl(sessionId);
   if (!url) return null;
+  // Scarico del portrait: errori di rete = nessun riferimento (best-effort).
+  let bytes: Uint8Array;
   try {
     const res = await fetch(url);
     if (!res.ok) return null;
-    const bytes = new Uint8Array(await res.arrayBuffer());
-    const { descriptor } = await embed(bytes);
-    if (!descriptor || descriptor.length !== 128) return null;
-    await admin.from("profiles").update({ identity_face_descriptor: descriptor }).eq("id", userId);
-    return descriptor;
+    bytes = new Uint8Array(await res.arrayBuffer());
   } catch {
     return null;
   }
+  // Embedding del volto verificato: un fallimento dei MODELLI non va mascherato
+  // (CRIT-6), lo rilancia embedOrThrow. "Nessun volto nel portrait" resta null.
+  const descriptor = await embedOrThrow(bytes, "reference", userId);
+  if (!descriptor || descriptor.length !== 128) return null;
+  await admin.from("profiles").update({ identity_face_descriptor: descriptor }).eq("id", userId);
+  return descriptor;
 }
 
 export interface IdentityFaceCheck {
@@ -72,7 +101,7 @@ export async function checkFaceAgainstIdentity(
 ): Promise<IdentityFaceCheck | null> {
   const ref = await getIdentityDescriptor(userId);
   if (!ref) return null;
-  const { descriptor } = await embed(imageBytes);
+  const descriptor = await embedOrThrow(imageBytes, "photo", userId);
   if (!descriptor) return null;
   const distance = euclid(ref, descriptor);
   return { band: bandFromDistance(distance), distance, similarity: similarityFromDistance(distance) };
@@ -91,7 +120,7 @@ export async function checkBestFaceAgainstIdentity(
   if (!ref) return null;
   let best: IdentityFaceCheck | null = null;
   for (const bytes of images) {
-    const { descriptor } = await embed(bytes);
+    const descriptor = await embedOrThrow(bytes, "photo", userId);
     if (!descriptor) continue;
     const distance = euclid(ref, descriptor);
     if (!best || distance < best.distance) {

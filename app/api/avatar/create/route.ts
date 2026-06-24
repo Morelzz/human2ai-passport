@@ -186,13 +186,27 @@ export async function POST(request: Request) {
   // blocca. Se non c'è riferimento (link Didit scaduto, nessun volto leggibile)
   // niente blocco cieco: l'avatar resta in revisione manuale, come già previsto.
   if (!isEnterprise) {
-    const { checkBestFaceAgainstIdentity } = await import("@/lib/kyc/identity-face");
+    const { checkBestFaceAgainstIdentity, IdentityModelsUnavailableError } = await import("@/lib/kyc/identity-face");
     const refImgs: Uint8Array[] = [];
     for (const r of (Array.isArray(body.references) ? body.references.slice(0, 5) : [])) {
       const buf = await refFromDataUrl(r?.data);
       if (buf) refImgs.push(buf);
     }
-    const idCheck = refImgs.length ? await checkBestFaceAgainstIdentity(user.id, refImgs) : null;
+    let idCheck = null;
+    try {
+      idCheck = refImgs.length ? await checkBestFaceAgainstIdentity(user.id, refImgs) : null;
+    } catch (e) {
+      // CRIT-6 (fail-closed): se il gate anti-impersonazione non puo girare
+      // (modelli face-api non caricati) NON creiamo un avatar non verificato:
+      // meglio chiedere di riprovare. L'allarme e gia stato emesso a monte.
+      if (e instanceof IdentityModelsUnavailableError) {
+        return NextResponse.json(
+          { error: "Verifica del volto temporaneamente non disponibile, riprova tra poco." },
+          { status: 503 },
+        );
+      }
+      throw e;
+    }
     if (idCheck && idCheck.band === "weak") {
       return NextResponse.json(
         { error: "Il volto delle foto non corrisponde al documento con cui ti sei verificato. Carica foto del tuo volto, lo stesso del KYC." },
