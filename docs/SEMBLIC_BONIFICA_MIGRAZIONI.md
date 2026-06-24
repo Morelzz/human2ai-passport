@@ -7,17 +7,18 @@
 ## Applicate
 
 - **A13** e **CRIT-2** applicate e VERIFICATE il 2026-06-24: rate-limit ora attivo (fail-open chiuso, anche sul live perche il DB e condiviso), default `commercial_consent` = false. Righe esistenti e founder intatti (11 commerciali + 1 protetto, identico a prima).
+- **M12, A9, CRIT-4, A5** applicate e VERIFICATE il 2026-06-24: colonna scadenza token; vincolo di coerenza (0 righe violanti); colonna `kyc_provider` (10 profili approvati backfillati a 'manual'); stato `dead_letter`. **Tutte e 6 le migrazioni applicate.** Restano i CODICI-dopo: CRIT-4 (bonus solo non-stub + set provider), M12 (valorizza+verifica scadenza), A5 (worker cap-retry + backoff).
 
 ## Riepilogo
 
 | File | ID | Cosa fa | Impatto righe esistenti | Codice dopo? |
 |---|---|---|---|---|
 | `bonifica_crit2_consent_default.sql` | CRIT-2 **APPLICATA** | Default `commercial_consent` -> false (verificato) | **Nessuno** (default solo sui nuovi) | No |
-| `bonifica_crit4_kyc_provider.sql` | CRIT-4 | Colonna `profiles.kyc_provider` + backfill 'manual' | Backfill su profili approved (founder -> 'manual', corretto) | Si (bonus solo non-stub) |
+| `bonifica_crit4_kyc_provider.sql` | CRIT-4 **APPLICATA** | Colonna `profiles.kyc_provider` + backfill 'manual' (10 profili) | Fatto | Si (bonus solo non-stub) |
 | `bonifica_a13_rate_limit.sql` | A13 **APPLICATA** | RPC `check_rate_limit` (ora ATTIVA, fail-open chiuso) | Nessuno (solo funzione) | No (gia cablato in `allowRequest`) |
-| `bonifica_m12_consent_token_expiry.sql` | M12 | Colonna `consent_token_expires_at` | Nessuno | Si (valorizza+verifica scadenza) |
-| `bonifica_a5_dead_letter.sql` | A5 | Stato `dead_letter` su `generation_jobs` | Nessuno (solo enum) | Si (cap retry + backoff nel worker) |
-| `bonifica_a9_coherence_check.sql` | A9 (opz.) | CHECK: protezione => non commerciale | Nessuno SE le righe gia rispettano | No |
+| `bonifica_m12_consent_token_expiry.sql` | M12 **APPLICATA** | Colonna `consent_token_expires_at` | Nessuno | Si (valorizza+verifica scadenza) |
+| `bonifica_a5_dead_letter.sql` | A5 **APPLICATA** | Stato `dead_letter` su `generation_jobs` | Nessuno (solo enum) | Si (cap retry + backoff nel worker) |
+| `bonifica_a9_coherence_check.sql` | A9 **APPLICATA** | CHECK: protezione => non commerciale | Nessuno (0 righe violanti) | No |
 
 ## Ordine consigliato
 
