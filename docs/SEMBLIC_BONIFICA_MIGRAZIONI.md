@@ -4,13 +4,17 @@
 >
 > Quando vuoi: dimmi "applica la X" (o "applica tutte tranne…") e le applico io via connettore, mostrando l'SQL e verificando lo schema dopo. I founder non vengono mai toccati.
 
+## Applicate
+
+- **A13** e **CRIT-2** applicate e VERIFICATE il 2026-06-24: rate-limit ora attivo (fail-open chiuso, anche sul live perche il DB e condiviso), default `commercial_consent` = false. Righe esistenti e founder intatti (11 commerciali + 1 protetto, identico a prima).
+
 ## Riepilogo
 
 | File | ID | Cosa fa | Impatto righe esistenti | Codice dopo? |
 |---|---|---|---|---|
-| `bonifica_crit2_consent_default.sql` | CRIT-2 | Default `commercial_consent` -> false | **Nessuno** (default solo sui nuovi) | No |
+| `bonifica_crit2_consent_default.sql` | CRIT-2 **APPLICATA** | Default `commercial_consent` -> false (verificato) | **Nessuno** (default solo sui nuovi) | No |
 | `bonifica_crit4_kyc_provider.sql` | CRIT-4 | Colonna `profiles.kyc_provider` + backfill 'manual' | Backfill su profili approved (founder -> 'manual', corretto) | Si (bonus solo non-stub) |
-| `bonifica_a13_rate_limit.sql` | A13 | RPC `check_rate_limit` (oggi assente) | Nessuno (solo funzione) | No (gia cablato in `allowRequest`) |
+| `bonifica_a13_rate_limit.sql` | A13 **APPLICATA** | RPC `check_rate_limit` (ora ATTIVA, fail-open chiuso) | Nessuno (solo funzione) | No (gia cablato in `allowRequest`) |
 | `bonifica_m12_consent_token_expiry.sql` | M12 | Colonna `consent_token_expires_at` | Nessuno | Si (valorizza+verifica scadenza) |
 | `bonifica_a5_dead_letter.sql` | A5 | Stato `dead_letter` su `generation_jobs` | Nessuno (solo enum) | Si (cap retry + backoff nel worker) |
 | `bonifica_a9_coherence_check.sql` | A9 (opz.) | CHECK: protezione => non commerciale | Nessuno SE le righe gia rispettano | No |
