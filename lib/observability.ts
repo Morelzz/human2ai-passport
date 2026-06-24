@@ -10,6 +10,7 @@
 export type DegradationArea =
   | "kyc.stub_used"
   | "kyc.didit_unconfigured"
+  | "kyc.dob_missing"
   | "identity_gate.models_unavailable"
   | "veto.scan_unavailable"
   | "ward.discovery_stub"

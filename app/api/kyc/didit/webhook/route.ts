@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
-import { verifyDiditWebhook, diditStatusToKyc } from "@/lib/kyc/didit";
+import { verifyDiditWebhook, diditStatusToKyc, getDiditDob } from "@/lib/kyc/didit";
+import { kycAdultOutcome } from "@/lib/age";
+import { reportDegradation } from "@/lib/observability";
 import { appendAudit } from "@/lib/ward/audit";
 
 export const runtime = "nodejs";
@@ -36,24 +38,45 @@ export async function POST(request: Request) {
   const userId = payload.vendor_data;
   const kyc = diditStatusToKyc(payload.status);
   if (userId && kyc) {
-    // Idempotente: scrivere lo stesso kyc_status e' un no-op, quindi i retry di
-    // Didit (stesso event_id) non causano effetti collaterali. Salviamo anche la
-    // session: serve a ricavare il volto verificato (decisione Didit) quando la
-    // persona carica le foto avatar/Ward, per il confronto identita'.
     const admin = createServerClient();
+
+    // Strato forte 18+: all'approvazione, leggiamo la data di nascita dal
+    // documento e decidiamo. Non salviamo MAI la DOB documentale: solo l'esito.
+    let finalKyc: "approved" | "rejected" | "pending" = kyc;
+    const adultPatch: Record<string, unknown> = {};
+    let underageBlocked = false;
+
+    if (kyc === "approved") {
+      const dob = await getDiditDob(payload.session_id);
+      const outcome = kycAdultOutcome(dob, new Date());
+      if (outcome === "under_18") {
+        // Minore col documento: nessun volto di minore entra nel registro.
+        finalKyc = "rejected";
+        underageBlocked = true;
+        console.error(`[SEMBLIC:SICUREZZA] kyc.underage_blocked user=${userId} session=${payload.session_id}`);
+      } else if (outcome === "ok") {
+        adultPatch.adult_verified_at = new Date().toISOString();
+        adultPatch.adult_verified_method = "document";
+      } else {
+        // DOB illeggibile: niente stato document-adult, revisione manuale.
+        reportDegradation("kyc.dob_missing", { user: userId, session: payload.session_id });
+      }
+    }
+
     await admin
       .from("profiles")
-      // CRIT-4: la verifica e avvenuta via Didit (reale).
-      .update({ kyc_status: kyc, kyc_provider: "didit", identity_session_id: payload.session_id })
+      .update({ kyc_status: finalKyc, kyc_provider: "didit", identity_session_id: payload.session_id, ...adultPatch })
       .eq("id", userId);
+
     await appendAudit({
       actor: userId,
-      action: "kyc.didit_webhook",
+      action: underageBlocked ? "kyc.underage_blocked" : "kyc.didit_webhook",
       target: userId,
       meta: {
         provider: "didit",
         status: payload.status,
-        kyc,
+        kyc: finalKyc,
+        adult_method: adultPatch.adult_verified_method ?? null,
         session_id: payload.session_id,
         event_id: payload.event_id ?? null,
         environment: payload.environment ?? null,
