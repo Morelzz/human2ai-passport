@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { deletePrefix } from "@/lib/storage";
+import { removeHandleFromFaceIndex } from "@/lib/face-index";
 
 export const runtime = "nodejs";
 
@@ -48,13 +49,16 @@ export async function POST(request: Request) {
     // consenso non si genera comunque.
     await admin.from("avatars").update({ revoked_at: today }).eq("id", avatar.id);
     const purged = await deletePrefix("references", avatar.handle);
+    // M11: togli subito il volto dall'indice di ricerca, cosi Sigil non puo piu
+    // nominarlo dopo la revoca (oblio: nessuna finestra fino al rebuild manuale).
+    const deindexed = await removeHandleFromFaceIndex(avatar.handle).catch(() => 0);
     await admin.from("consent_events").insert({
       avatar_id: avatar.id,
       event_type: "REVOKED",
       detail: `Revoca totale (kill-switch creatore)${purged > 0 ? ` · ${purged} foto-reference cancellate` : ""}`,
       occurred_at: today,
     });
-    return NextResponse.json({ ok: true, references_deleted: purged });
+    return NextResponse.json({ ok: true, references_deleted: purged, deindexed });
   }
 
   if (action.type === "reactivate") {

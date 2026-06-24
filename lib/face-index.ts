@@ -76,6 +76,25 @@ export async function saveFaceIndex(index: FaceIndex): Promise<void> {
   );
 }
 
+// ── M11: aggiornamento event-driven su revoca ───────────────────────────────
+// Toglie dall'indice tutte le voci di un handle. PURA (niente IO, niente rete
+// neurale): la rimozione e solo un filtro sui dati. Testabile.
+export function faceIndexWithout(index: FaceIndex, handle: string): { index: FaceIndex; removed: number } {
+  const kept = index.entries.filter((e) => e.handle !== handle);
+  return { index: { built_at: index.built_at, entries: kept }, removed: index.entries.length - kept.length };
+}
+
+// Rimuove un handle dall'indice e risalva. Best-effort: un indice mai costruito
+// non ha nulla da togliere. Da chiamare alla REVOCA, cosi il volto smette subito
+// di essere nominabile da Sigil (oblio: niente finestra fino al rebuild manuale).
+export async function removeHandleFromFaceIndex(handle: string): Promise<number> {
+  const index = await loadFaceIndex();
+  if (!index) return 0;
+  const { index: next, removed } = faceIndexWithout(index, handle);
+  if (removed > 0) await saveFaceIndex(next);
+  return removed;
+}
+
 function euclidean(a: number[], b: number[]): number {
   let sum = 0;
   for (let i = 0; i < a.length; i++) {
