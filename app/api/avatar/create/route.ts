@@ -79,7 +79,7 @@ export async function POST(request: Request) {
   // 2. Autorizzazione: deve essere un creatore verificato
   const { data: profile } = await auth
     .from("profiles")
-    .select("role, kyc_status, full_name")
+    .select("role, kyc_status, full_name, adult_verified_method")
     .eq("id", user.id)
     .single();
 
@@ -213,6 +213,16 @@ export async function POST(request: Request) {
         { status: 403 },
       );
     }
+  }
+
+  // Age-gate 18+ (strato forte): un volto entra nel registro solo se l'utente e'
+  // adulto provato dal documento. Chi non ha l'esito documentale (under-18
+  // rifiutato, o DOB illeggibile in revisione) non passa.
+  if (profile?.adult_verified_method !== "document") {
+    return NextResponse.json(
+      { error: "Per registrare il tuo volto devi completare la verifica d'identita (18+)." },
+      { status: 403 },
+    );
   }
 
   // 5. Handle univoco
