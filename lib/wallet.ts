@@ -17,6 +17,14 @@ export const PLATFORM_FEE_BPS = 2000;
 // Soglia minima per richiedere il payout (50 €).
 export const PAYOUT_THRESHOLD_CENTS = 5000;
 
+// A1 (fail-closed): esiste un provider di payout REALE? Finche no, il payout e
+// un no-op che NON tocca il saldo: azzerare royalty senza pagare distruggerebbe
+// un credito dovuto alla persona. Si accende solo con un provider vero (Stripe
+// Connect), segnalato da una env esplicita: nessun default permissivo.
+export function payoutProviderConfigured(): boolean {
+  return process.env.PAYOUT_PROVIDER === "stripe";
+}
+
 // Bande di prezzo (LORDO pagato dal buyer, in centesimi).
 export type PriceBand = "premium" | "standard" | "base";
 
