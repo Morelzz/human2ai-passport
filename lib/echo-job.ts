@@ -20,6 +20,7 @@ import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected } from "@/lib/face-scan-server";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
+import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 
 type Admin = ReturnType<typeof createServerClient>;
 
@@ -232,6 +233,17 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
 
   try {
     const p = job.params;
+
+    // A2: rileggi lo stato VIVO del consenso subito prima di spendere il motore.
+    // Se l'avatar e stato revocato (o l'uso commerciale tolto, o e diventato
+    // sola-protezione) mentre il job era in coda, annulla. Il catch storna i VOLT.
+    const { data: live } = await admin
+      .from("avatars")
+      .select("revoked_at, commercial_consent, protection_only")
+      .eq("id", job.avatar_id)
+      .maybeSingle();
+    const block = consentBlockReason(live as LiveConsentState | null);
+    if (block) throw new Error(block);
 
     // Identity-lock: reference reali e consensuali dell'avatar.
     const identity = await getReferenceSet(job.handle);
