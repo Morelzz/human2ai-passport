@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import { Field, Shell, labelStyle, submitStyle, passwordIssue } from "../auth-ui";
+import { isAdult } from "@/lib/age";
 
 // Accetta solo path interni (niente open redirect).
 function safeNext(raw: string | null): string | null {
@@ -20,11 +21,29 @@ export default function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dobDay, setDobDay] = useState("");
+  const [dobMonth, setDobMonth] = useState("");
+  const [dobYear, setDobYear] = useState("");
+  const [blockedUnderage, setBlockedUnderage] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    // Data di nascita autodichiarata: la componiamo come YYYY-MM-DD.
+    if (!dobDay || !dobMonth || !dobYear) {
+      setError("Inserisci la tua data di nascita");
+      setLoading(false);
+      return;
+    }
+    const dob = `${dobYear}-${dobMonth.padStart(2, "0")}-${dobDay.padStart(2, "0")}`;
+    if (!isAdult(dob, new Date())) {
+      // Strato 1 (UX): schermata di blocco. Il trigger e' la garanzia dietro.
+      setBlockedUnderage(true);
+      setLoading(false);
+      return;
+    }
 
     // Validazione robustezza password lato UX (coerente con la policy Auth server).
     const pwErr = passwordIssue(password);
@@ -39,7 +58,7 @@ export default function SignupForm() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName, role, ...(isEnterprise ? { account_intent: "enterprise" } : {}) } },
+      options: { data: { full_name: fullName, role, date_of_birth: dob, ...(isEnterprise ? { account_intent: "enterprise" } : {}) } },
     });
 
     if (error) {
@@ -65,7 +84,16 @@ export default function SignupForm() {
 
   return (
     <Shell title="Crea il tuo account">
-      {done ? (
+      {blockedUnderage ? (
+        <div style={{ textAlign: "center" }}>
+          <p style={{ color: "var(--blocked-c)", fontWeight: 700, fontSize: "1rem", margin: "0 0 0.6rem" }}>
+            SEMBLIC e' riservato ai maggiorenni
+          </p>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: 1.6, margin: 0 }}>
+            In base alla data di nascita inserita non possiamo creare il tuo account. SEMBLIC custodisce volti di persone reali e l'accesso e' consentito solo dai 18 anni.
+          </p>
+        </div>
+      ) : done ? (
         <p style={{ color: "var(--verified-c)", fontSize: "0.9rem", lineHeight: 1.6 }}>
           Account creato. Controlla la tua email per confermare, poi{" "}
           <Link href="/login" style={{ color: "#F2A93B" }}>accedi</Link>
@@ -76,6 +104,30 @@ export default function SignupForm() {
           <Field label="Nome completo" value={fullName} onChange={setFullName} type="text" />
           <Field label="Email" value={email} onChange={setEmail} type="email" />
           <Field label="Password" value={password} onChange={setPassword} type="password" />
+
+          <div>
+            <label style={labelStyle}>Data di nascita</label>
+            <div style={{ display: "flex", gap: "0.4rem" }}>
+              <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} required
+                style={{ flex: "0 0 64px", padding: "0.7rem 0.5rem", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--hairline-soft)", color: "var(--text)", fontSize: "0.85rem" }}>
+                <option value="">GG</option>
+                {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => <option key={d} value={String(d)}>{d}</option>)}
+              </select>
+              <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} required
+                style={{ flex: 1, padding: "0.7rem 0.5rem", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--hairline-soft)", color: "var(--text)", fontSize: "0.85rem" }}>
+                <option value="">Mese</option>
+                {["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"].map((name, i) => <option key={name} value={String(i + 1)}>{name}</option>)}
+              </select>
+              <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} required
+                style={{ flex: "0 0 90px", padding: "0.7rem 0.5rem", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--hairline-soft)", color: "var(--text)", fontSize: "0.85rem" }}>
+                <option value="">AAAA</option>
+                {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map((y) => <option key={y} value={String(y)}>{y}</option>)}
+              </select>
+            </div>
+            <p style={{ color: "var(--verified-c)", fontSize: "0.72rem", margin: "0.45rem 0 0", lineHeight: 1.5 }}>
+              Devi avere almeno 18 anni per usare SEMBLIC.
+            </p>
+          </div>
 
           <div>
             <label style={labelStyle}>Tipo di account</label>
