@@ -15,3 +15,19 @@ export function computeTokenHash(id: string, consentStart: string): string {
 export function truncateToken(hash: string): string {
   return hash.slice(0, 16) + "…";
 }
+
+// ── M12: scadenza del token di consenso (link "persona nel loop") ────────────
+// Un token di conferma valido all'infinito e un vettore: chi intercetta il link
+// puo confermare al posto della persona. Gli diamo una finestra breve. Funzioni
+// PURE (il tempo arriva come parametro): testabili e senza IO.
+export const CONSENT_TOKEN_TTL_DAYS = 14;
+
+export function consentTokenExpiry(fromIso: string): string {
+  return new Date(new Date(fromIso).getTime() + CONSENT_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000).toISOString();
+}
+
+// true = scaduto. Un token SENZA scadenza viene trattato come da ri-emettere.
+export function isConsentTokenExpired(expiresAtIso: string | null, nowIso: string): boolean {
+  if (!expiresAtIso) return true;
+  return new Date(nowIso).getTime() >= new Date(expiresAtIso).getTime();
+}

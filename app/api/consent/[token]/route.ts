@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { isConsentTokenExpired } from "@/lib/token";
 
 // La PERSONA conferma il proprio consenso aprendo il link tokenizzato.
 // Pubblico (il token è il segreto). Registra person_consented_at + evento.
@@ -17,13 +18,18 @@ export async function POST(
   const admin = createServerClient();
   const { data: avatar } = await admin
     .from("avatars")
-    .select("id, person_consented_at")
+    .select("id, person_consented_at, consent_token_expires_at")
     .eq("consent_token", token)
     .maybeSingle();
 
   if (!avatar) return NextResponse.json({ error: "Link non valido o scaduto" }, { status: 404 });
   if (avatar.person_consented_at) {
     return NextResponse.json({ error: "Consenso già confermato" }, { status: 409 });
+  }
+  // M12: il link scade. Un token vecchio (o senza scadenza) non puo piu
+  // confermare: e un vettore. Si rigenera dall'area Enterprise.
+  if (isConsentTokenExpired(avatar.consent_token_expires_at as string | null, new Date().toISOString())) {
+    return NextResponse.json({ error: "Questo link di consenso è scaduto, chiedi di rigenerarlo." }, { status: 410 });
   }
 
   const now = new Date().toISOString();

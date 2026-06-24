@@ -4,7 +4,7 @@ import sharp from "sharp";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { uploadPrivate } from "@/lib/storage";
-import { computeTokenHash } from "@/lib/token";
+import { computeTokenHash, consentTokenExpiry } from "@/lib/token";
 import { IDENTITY_KIT, Tier } from "@/lib/types";
 import { classifyIdentityMatch } from "@/lib/identity-match";
 import type { FaceMatchResult } from "@/lib/face-match";
@@ -263,6 +263,8 @@ export async function POST(request: Request) {
     // diventare pubblico. Coda in /api/admin/review (UI /account/review).
     verification_status: "pending_review",
     consent_token: consentToken,
+    // M12: il link di consenso (Enterprise) scade, non vive in eterno.
+    consent_token_expires_at: consentToken ? consentTokenExpiry(new Date().toISOString()) : null,
     identity_match: identityMatch,
   });
 
