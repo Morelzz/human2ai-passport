@@ -67,7 +67,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
   // spezzava su due righe) e underline AMBRA che cresce da sinistra all'hover,
   // firma cinematica in linea col sistema (accento Amber + easing del brand).
   const topLinkBase =
-    "relative whitespace-nowrap text-[0.8rem] tracking-[0.01em] text-muted transition-colors duration-300 hover:text-foreground after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)]";
+    "relative whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.11em] text-muted transition-colors duration-300 hover:text-foreground after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)]";
 
   return (
     <>
