@@ -13,7 +13,7 @@ export function WardSection() {
   return (
     <section id="ward" className="w-full py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionTitle subtitle="La sentinella del tuo volto, su tutto il web.">Ward</SectionTitle>
+        <SectionTitle subtitle="La sentinella del tuo volto.">Ward</SectionTitle>
       </div>
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-2">
         {/* Desktop: la demo a sinistra */}
