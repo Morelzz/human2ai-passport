@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { diditConfigured } from "@/lib/kyc/didit";
 import { AvatarFlow } from "./AvatarFlow";
 
 export const metadata = { title: "Proteggiti, Ward" };
@@ -37,7 +38,6 @@ export default async function AvatarSignupPage({
   }
 
   const { data: prof } = await admin.from("profiles").select("kyc_status").eq("id", user.id).maybeSingle();
-  const kycDone = prof?.kyc_status === "approved";
 
-  return <AvatarFlow existing={existing} kycDone={kycDone} />;
+  return <AvatarFlow existing={existing} kycStatus={prof?.kyc_status ?? "none"} diditEnabled={diditConfigured()} />;
 }

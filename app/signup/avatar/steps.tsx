@@ -7,17 +7,37 @@ const SHIELD = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 2.5l7.5 3.2v5.1c0 4.8-3.2 8.3-7.5 9.7-4.3-1.4-7.5-4.9-7.5-9.7V5.7L12 2.5z" /><path d="M9 12l2 2 4-4.2" /></svg>
 );
 
-// Passo 1: KYC (STUB, decisione 2026-06-20). UI di verifica identita; in attesa
-// di Didit reale segna solo lo stato verificato sul profilo (POST /api/kyc/stub).
-export function KycStep({ onVerified }: { onVerified: () => void }) {
+// Passo 1: KYC. In produzione (Didit configurato) apre la verifica reale Didit
+// (documento + liveness + face match) e redireziona; al rientro
+// (?didit=done) il funnel riprende. In sviluppo (Didit non configurato) usa lo
+// stub che segna solo lo stato verificato (POST /api/kyc/stub), 410 in prod.
+export function KycStep({ onVerified, diditEnabled, returnTo }: { onVerified: () => void; diditEnabled: boolean; returnTo: string }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   async function verify() {
     setBusy(true); setErr(null);
-    const res = await fetch("/api/kyc/stub", { method: "POST" });
-    const j = await res.json().catch(() => ({}));
-    if (!res.ok) { setErr(j.error ?? "Verifica non riuscita."); setBusy(false); return; }
-    onVerified();
+    try {
+      if (diditEnabled) {
+        // KYC reale: apri la sessione Didit e fatti riportare nel punto giusto del
+        // funnel (returnTo dipende dal flusso: entry vs protetto).
+        const res = await fetch("/api/kyc/didit/start", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ returnTo }),
+        });
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || !j.url) { setErr(j.error ?? "Avvio verifica non riuscito."); setBusy(false); return; }
+        window.location.href = j.url;
+        return;
+      }
+      // Sviluppo: stub (in prod risponde 410, mai fail-open verso "approved").
+      const res = await fetch("/api/kyc/stub", { method: "POST" });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) { setErr(j.error ?? "Verifica non riuscita."); setBusy(false); return; }
+      onVerified();
+    } catch {
+      setErr("Errore di rete."); setBusy(false);
+    }
   }
   return (
     <div className="wf-card">
@@ -27,7 +47,23 @@ export function KycStep({ onVerified }: { onVerified: () => void }) {
       <p className="wf-lede">Una verifica veloce (liveness e documento) prova che sei una persona reale e che questo volto e&apos; il tuo. Tiene fuori bot e impostori. Gratis.</p>
       <div className="wf-feats"><span>Liveness</span><span>Documento</span><span>Face match</span></div>
       {err && <p className="wf-err">{err}</p>}
-      <button type="button" className="wf-btn" disabled={busy} onClick={verify}>{busy ? "Verifica in corso..." : "Verificami gratis"}</button>
+      <button type="button" className="wf-btn" disabled={busy} onClick={verify}>{busy ? (diditEnabled ? "Apro la verifica..." : "Verifica in corso...") : "Verificami gratis"}</button>
+    </div>
+  );
+}
+
+// Passo 1 in attesa: Didit e' asincrono (lo stato vero arriva dal webhook). Al
+// rientro dal redirect l'identita' puo' essere ancora "in verifica": mostriamo
+// l'attesa invece di rifare il KYC. Appena il webhook approva, il reload riparte
+// dal Passo 2.
+export function KycPending() {
+  return (
+    <div className="wf-card">
+      <div className="wf-live" aria-hidden><div className="wf-live-ring" /><div className="wf-live-face" /></div>
+      <span className="wf-eyebrow">Passo 1, verifica</span>
+      <h2 className="wf-title">Verifica in corso</h2>
+      <p className="wf-lede">Stiamo confermando la tua identita&apos;. Di solito e&apos; questione di un minuto. Appena e&apos; fatta puoi aggiungere le foto del volto e attivare Ward.</p>
+      <button type="button" className="wf-btn" onClick={() => window.location.reload()}>Ho completato, ricarica</button>
     </div>
   );
 }

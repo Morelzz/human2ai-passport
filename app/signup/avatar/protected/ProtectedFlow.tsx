@@ -1,18 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { KycStep, WardConsentStep, WardActive } from "../steps";
+import { KycStep, KycPending, WardConsentStep, WardActive } from "../steps";
 import { FaceCapture } from "../face-capture";
+
+// Stato iniziale dal KYC del profilo: approvato -> salta al Passo 2; in verifica
+// (Didit asincrono, rientro dal redirect) -> attesa; altrimenti -> Passo 1.
+function initialStep(kycStatus: string): "kyc" | "pending" | "photo" {
+  if (kycStatus === "approved") return "photo";
+  if (kycStatus === "pending") return "pending";
+  return "kyc";
+}
 
 // Flusso "Identita protetta" (spec E/F3): KYC (Passo 1) -> foto del volto
 // (Passo 3b, crea l'avatar protection_only + faceprint) -> consenso Ward
 // (monitoring_consents) -> Ward attivo. Riusa FaceCapture e gli step condivisi.
-export function ProtectedFlow({ kycDone }: { kycDone: boolean }) {
-  const [step, setStep] = useState<"kyc" | "photo" | "consent" | "done">(kycDone ? "photo" : "kyc");
+export function ProtectedFlow({ kycStatus, diditEnabled }: { kycStatus: string; diditEnabled: boolean }) {
+  const [step, setStep] = useState<"kyc" | "pending" | "photo" | "consent" | "done">(initialStep(kycStatus));
 
   return (
     <div className="wf">
-      {step === "kyc" && <KycStep onVerified={() => setStep("photo")} />}
+      {step === "kyc" && <KycStep diditEnabled={diditEnabled} returnTo="/signup/avatar/protected?didit=done" onVerified={() => setStep("photo")} />}
+      {step === "pending" && <KycPending />}
 
       {step === "photo" && (
         <div className="wf-card">

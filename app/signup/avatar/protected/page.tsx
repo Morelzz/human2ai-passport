@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { diditConfigured } from "@/lib/kyc/didit";
 import { ProtectedFlow } from "./ProtectedFlow";
 
 export const metadata = { title: "Identita protetta, Ward" };
@@ -14,7 +15,6 @@ export default async function ProtectedSignupPage() {
 
   const admin = createServerClient();
   const { data: prof } = await admin.from("profiles").select("kyc_status").eq("id", user.id).maybeSingle();
-  const kycDone = prof?.kyc_status === "approved";
 
-  return <ProtectedFlow kycDone={kycDone} />;
+  return <ProtectedFlow kycStatus={prof?.kyc_status ?? "none"} diditEnabled={diditConfigured()} />;
 }

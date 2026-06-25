@@ -19,6 +19,18 @@ export function diditConfigured(): boolean {
   return Boolean(process.env.DIDIT_API_KEY && process.env.DIDIT_WORKFLOW_ID);
 }
 
+// Path interno sicuro per il rientro post Didit. Deve essere un path assoluto
+// dello STESSO sito ("/..."), mai un URL esterno o protocol relative ("//..",
+// "/\\.."): il callback viene costruito come siteUrl()+path e poi Didit ci
+// redireziona il browser, quindi un valore non controllato sarebbe un open
+// redirect. PURA e testabile; fuori forma -> fallback.
+export function safeInternalPath(input: unknown, fallback: string): string {
+  if (typeof input !== "string" || input.length === 0) return fallback;
+  if (!input.startsWith("/")) return fallback;
+  if (input.startsWith("//") || input.startsWith("/\\")) return fallback;
+  return input;
+}
+
 export interface DiditWebhookPayload {
   event_id?: string;
   session_id: string;
@@ -46,8 +58,13 @@ function canonicalize(value: unknown): unknown {
   return value;
 }
 
-// Crea una sessione di verifica e ritorna l'URL ospitato da Didit.
-export async function createDiditSession(vendorData: string): Promise<{ url: string; sessionId: string }> {
+// Crea una sessione di verifica e ritorna l'URL ospitato da Didit. `returnTo` e'
+// il path interno dove Didit riporta l'utente dopo la verifica (default:
+// /account/verify; il funnel protetto passa il proprio path per riprendere li').
+export async function createDiditSession(
+  vendorData: string,
+  returnTo: string = "/account/verify?didit=done",
+): Promise<{ url: string; sessionId: string }> {
   const apiKey = process.env.DIDIT_API_KEY;
   const workflowId = process.env.DIDIT_WORKFLOW_ID;
   if (!apiKey || !workflowId) throw new Error("Didit non configurato (DIDIT_API_KEY / DIDIT_WORKFLOW_ID)");
@@ -59,7 +76,7 @@ export async function createDiditSession(vendorData: string): Promise<{ url: str
       workflow_id: workflowId,
       vendor_data: vendorData,
       // Dopo la verifica Didit riporta l'utente qui; lo stato vero arriva dal webhook.
-      callback: `${siteUrl()}/account/verify?didit=done`,
+      callback: `${siteUrl()}${safeInternalPath(returnTo, "/account/verify?didit=done")}`,
     }),
   });
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;

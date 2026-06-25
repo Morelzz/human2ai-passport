@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import crypto from "crypto";
-import { verifyDiditWebhook, diditStatusToKyc, extractDobFromDecision } from "./didit";
+import { verifyDiditWebhook, diditStatusToKyc, extractDobFromDecision, safeInternalPath } from "./didit";
 
 const SECRET = "test_webhook_secret_123";
 
@@ -133,5 +133,27 @@ describe("extractDobFromDecision", () => {
   it("trova la data a qualunque profondita'", () => {
     const data = { a: { b: [{ c: { date_of_birth: "1979-01-02" } }] } };
     expect(extractDobFromDecision(data)).toBe("1979-01-02");
+  });
+});
+
+describe("safeInternalPath (anti open-redirect del callback Didit)", () => {
+  const FB = "/account/verify?didit=done";
+  it("accetta un path interno con query", () => {
+    expect(safeInternalPath("/signup/avatar/protected?didit=done", FB)).toBe("/signup/avatar/protected?didit=done");
+  });
+  it("respinge URL esterni -> fallback", () => {
+    expect(safeInternalPath("https://evil.com/phish", FB)).toBe(FB);
+  });
+  it("respinge protocol-relative // -> fallback", () => {
+    expect(safeInternalPath("//evil.com", FB)).toBe(FB);
+  });
+  it("respinge la variante backslash /\\ -> fallback", () => {
+    expect(safeInternalPath("/\\evil.com", FB)).toBe(FB);
+  });
+  it("respinge valori non stringa o vuoti -> fallback", () => {
+    expect(safeInternalPath(undefined, FB)).toBe(FB);
+    expect(safeInternalPath(123, FB)).toBe(FB);
+    expect(safeInternalPath("", FB)).toBe(FB);
+    expect(safeInternalPath("relative/path", FB)).toBe(FB);
   });
 });
