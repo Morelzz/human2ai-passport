@@ -45,6 +45,13 @@
 .ward-app .id-chip span{ font-family:var(--font-ward-mono); font-size:10px; color:var(--text); }
 .ward-app .id-chip .cdot{ width:7px; height:7px; border-radius:50%; flex:none;
   background:var(--verified-c); box-shadow:0 0 8px var(--verified-c); }
+/* Uscita dalla WardApp piena (full): ghost amber hairline, riporta al sito. La
+   demo ha gia' la sua CTA d'uscita in basso, qui solo full mode. */
+.ward-app .ward-exit{ display:inline-flex; align-items:center; gap:4px; flex:none; text-decoration:none;
+  font-family:var(--font-ward-mono); font-size:10px; line-height:1; color:var(--amber-c);
+  background:transparent; border:1px solid rgba(242,169,59,.4); border-radius:20px; padding:6px 11px 6px 9px; }
+.ward-app .ward-exit .chev{ font-size:13px; line-height:1; margin-top:-1px; }
+.ward-app .ward-exit:hover{ background:rgba(242,169,59,.1); }
 
 /* ── Body + screens ─────────────────────────────────────────────────────── */
 .ward-app .body{ position:relative; z-index:1; flex:1; overflow-y:auto; overflow-x:hidden; }

@@ -113,6 +113,11 @@ export function WardApp({
         </div>
       )}
       <header className="topbar">
+        {!demo && (
+          <Link className="ward-exit" href="/account" aria-label="Esci da Ward e torna all'account">
+            <span className="chev" aria-hidden>‹</span>Esci
+          </Link>
+        )}
         <div className="tmark">S</div>
         <div className="twrap"><div className="eb">SEMBLIC</div><div className="nm">Ward</div></div>
         {demo
