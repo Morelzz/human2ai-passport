@@ -34,8 +34,10 @@ export type PublicAvatar = RegistryRow & {
 } & Record<string, unknown>;
 
 export function isPublicAvatar(a: RegistryRow): boolean {
-  // protection_only = registrazione inversa (VETO): mai pubblico, mai matchabile.
-  return (a.verification_status ?? "approved") === "approved" && !a.protection_only;
+  // DEFAULT-DENY: solo uno status ESPLICITAMENTE "approved" rende pubblico. Uno
+  // status assente/NULL non significa "pubblico" (prima il default era "approved",
+  // default-open). protection_only = registrazione inversa (VETO): mai pubblico.
+  return a.verification_status === "approved" && !a.protection_only;
 }
 
 // Tutti gli avatar del registro pubblico, ordinati per ingresso (consent_start).

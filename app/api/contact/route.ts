@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { CONTACT_SUBJECTS } from "@/lib/contact";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 // F2 — riceve i messaggi del form /contatti (pubblico, niente account).
 // Honeypot anti-bot come negli altri form; salvataggio su contact_messages.
@@ -14,6 +15,11 @@ export async function POST(request: Request) {
   // Honeypot: i bot compilano il campo invisibile → fingiamo successo.
   if (typeof body.website === "string" && body.website.trim() !== "") {
     return NextResponse.json({ ok: true });
+  }
+
+  // Rate-limit per IP: form pubblico, senza tetto e' un vettore di flood del DB.
+  if (!(await allowRequest(`contact:${ipFrom(request)}`, 5, 600))) {
+    return NextResponse.json({ error: "Troppe richieste, riprova tra qualche minuto" }, { status: 429 });
   }
 
   const name = String(body.name ?? "").trim();

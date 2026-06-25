@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { SCAN_PRICE_CENTS } from "@/lib/scan";
 import { isStripeConfigured, createScanCheckoutSession } from "@/lib/stripe";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 // H2 — riceve la prenotazione della scansione in studio (form pubblico).
 // Stati dal brief: nasce "richiesta"; la conferma di slot è manuale (admin)
@@ -14,6 +15,12 @@ export async function POST(request: Request) {
   // Honeypot anti-bot: fingiamo successo.
   if (typeof body.website === "string" && body.website.trim() !== "") {
     return NextResponse.json({ ok: true });
+  }
+
+  // Rate-limit per IP: endpoint pubblico che inserisce e (con Stripe) conia una
+  // sessione di checkout a richiesta. Senza tetto sarebbe un vettore di spam/costo.
+  if (!(await allowRequest(`scanbook:${ipFrom(request)}`, 5, 600))) {
+    return NextResponse.json({ error: "Troppe richieste, riprova tra qualche minuto" }, { status: 429 });
   }
 
   const sedeSlug = String(body.sede ?? "").trim();
