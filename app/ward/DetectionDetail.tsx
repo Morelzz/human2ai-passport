@@ -17,10 +17,17 @@ const ATOM = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeW
 const CHK = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>);
 const HASHLOCK = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></svg>);
 
-export function DetectionDetail({ detection: d, onBack }: { detection: WardDetection; onBack: () => void }) {
+const isHttpUrl = (s: string) => /^https?:\/\//.test(s);
+
+export function DetectionDetail({ detection: d, onBack, real }: { detection: WardDetection; onBack: () => void; real: boolean }) {
   const [revealed, setRevealed] = useState(false);
+  const [imgOk, setImgOk] = useState(true);
   const isMinor = d.sensitivity === "minor";
   const isSensitive = d.sensitivity === "sensitive";
+  // L'immagine reale (dal vivo via proxy): solo coi dati reali, standard subito,
+  // sensibile solo dopo il reveal (cosi' i byte sensibili non arrivano prima del
+  // consenso), minore mai. In demo resta il segnaposto.
+  const showImg = real && !isMinor && (!isSensitive || revealed) && imgOk;
   const previewCls = "preview"
     + (isMinor ? " locked" : isSensitive && !revealed ? " blurred" : "")
     + (revealed ? " revealed" : "");
@@ -29,10 +36,11 @@ export function DetectionDetail({ detection: d, onBack }: { detection: WardDetec
     <section className="screen on" id="s-detail">
       <button type="button" className="det-back" onClick={onBack}>{BACK} Detections</button>
 
-      {/* preview: per il MINORE niente glyph/scan e nessun reveal, mai */}
+      {/* preview: per il MINORE niente immagine/glyph e nessun reveal, mai */}
       <div className={previewCls}>
+        {showImg && <img className="preview-img" src={`/api/ward/preview/${d.id}`} alt="" onError={() => setImgOk(false)} />}
         <div className="chrome"><i /><i /><i /><span className="u">{isMinor ? "[host riservato]" : d.url}</span></div>
-        {!isMinor && <><span className="glyph" /><span className="scan" /></>}
+        {!isMinor && !showImg && <><span className="glyph" /><span className="scan" /></>}
         {isSensitive && (
           <div className="veil blur">
             <div className="vic">{EYE_OFF}</div>
@@ -93,7 +101,16 @@ export function DetectionDetail({ detection: d, onBack }: { detection: WardDetec
 
           <div className="sec">Sorgente</div>
           <div className="info">
-            <div className="li"><span className="k">URL completo</span><span className="v mono">{d.url}</span></div>
+            <div className="li"><span className="k">Immagine</span>
+              {isHttpUrl(d.url)
+                ? <a className="v mono lnk" href={d.url} target="_blank" rel="noopener noreferrer nofollow">{d.url}</a>
+                : <span className="v mono">{d.url}</span>}
+            </div>
+            {d.pageUrl && (
+              <div className="li"><span className="k">Pagina</span>
+                <a className="v lnk" href={d.pageUrl} target="_blank" rel="noopener noreferrer nofollow">{d.pageUrl}</a>
+              </div>
+            )}
             <div className="li"><span className="k">Host</span><span className="v">{d.host}</span></div>
             <div className="li"><span className="k">Trovato via</span><span className="v">Google Vision, web detection</span></div>
           </div>

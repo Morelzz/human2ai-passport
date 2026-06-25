@@ -1,17 +1,34 @@
+import { useState } from "react";
 import type { WardData, WardDetection } from "./demo";
 
 const CHECK = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6L9 17l-5-5" /></svg>);
 const LOCK = (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></svg>);
 
+// Miniatura della detection: per le STANDARD mostra l'immagine reale (dal vivo via
+// proxy, niente salvato); per sensibili/minori resta il segnaposto (niente byte in
+// lista, l'anteprima sensibile si rivela nel dettaglio). Se l'immagine fallisce,
+// fallback al segnaposto.
+function Shot({ d, real }: { d: WardDetection; real: boolean }) {
+  const [ok, setOk] = useState(true);
+  const showImg = real && d.sensitivity === "standard" && ok;
+  return (
+    <div className="shot">
+      {showImg && <img className="shot-img" src={`/api/ward/preview/${d.id}`} alt="" onError={() => setOk(false)} />}
+      {!showImg && <><span className="glyph" /><span className="scan" /></>}
+    </div>
+  );
+}
+
 // Lista delle detection. Confermate = selezionabili (selbox) per il colpo
 // Nemesis; review = "Conferma match"; minore = notice BLOCCATO non selezionabile;
 // colpita = stato "Takedown inviato". Tap sul corpo apre il dettaglio.
-export function Detections({ data, selected, struck, onToggle, onOpen }: {
+export function Detections({ data, selected, struck, onToggle, onOpen, real }: {
   data: WardData;
   selected: Set<string>;
   struck: Set<string>;
   onToggle: (id: string) => void;
   onOpen: (id: string) => void;
+  real: boolean;
 }) {
   const confirmed = data.detections.filter((d) => d.band === "confirmed" && d.sensitivity !== "minor").length;
   return (
@@ -23,14 +40,14 @@ export function Detections({ data, selected, struck, onToggle, onOpen }: {
         <span className="chip"><span className="d a" />Da rivedere</span>
       </div>
       {data.detections.map((d) => (
-        <DetectionCard key={d.id} d={d} sel={selected.has(d.id)} isStruck={struck.has(d.id)} onToggle={onToggle} onOpen={onOpen} />
+        <DetectionCard key={d.id} d={d} sel={selected.has(d.id)} isStruck={struck.has(d.id)} onToggle={onToggle} onOpen={onOpen} real={real} />
       ))}
     </section>
   );
 }
 
-function DetectionCard({ d, sel, isStruck, onToggle, onOpen }: {
-  d: WardDetection; sel: boolean; isStruck: boolean; onToggle: (id: string) => void; onOpen: (id: string) => void;
+function DetectionCard({ d, sel, isStruck, onToggle, onOpen, real }: {
+  d: WardDetection; sel: boolean; isStruck: boolean; onToggle: (id: string) => void; onOpen: (id: string) => void; real: boolean;
 }) {
   const open = () => onOpen(d.id);
   const keyOpen = (e: React.KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } };
@@ -55,7 +72,7 @@ function DetectionCard({ d, sel, isStruck, onToggle, onOpen }: {
     return (
       <div className="card sent" role="button" tabIndex={0} onClick={open} onKeyDown={keyOpen}>
         <div className="card-row">
-          <div className="shot"><span className="glyph" /><span className="scan" /></div>
+          <Shot d={d} real={real} />
           <div className="card-main">
             <div className="card-top"><span className="dom">{d.dom}</span><span className="score c">{(d.score / 100).toFixed(2)}</span></div>
             <span className="threat sent">Takedown inviato</span>
@@ -78,7 +95,7 @@ function DetectionCard({ d, sel, isStruck, onToggle, onOpen }: {
           onClick={(e) => { e.stopPropagation(); onToggle(d.id); }}>{CHECK}</button>
       )}
       <div className="card-row">
-        <div className="shot"><span className="glyph" /><span className="scan" /></div>
+        <Shot d={d} real={real} />
         <div className="card-main">
           <div className="card-top">
             <span className="dom">{d.dom}</span>

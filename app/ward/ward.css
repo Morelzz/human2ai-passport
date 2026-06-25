@@ -156,6 +156,13 @@
 .ward-app .shot .glyph{ position:absolute; left:50%; top:50%; width:40px; height:40px; border-radius:50%;
   transform:translate(-50%,-50%); background:var(--ward-grad-depth); opacity:.5; }
 .ward-app .shot .scan{ position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent 0 6px,rgba(180,196,224,.04) 6px 7px); }
+/* Anteprima reale dell'immagine trovata (proxy /api/ward/preview, niente salvato).
+   Copre il segnaposto .glyph; onError torna al segnaposto. Sensibili: blur dal
+   .veil; minori: l'immagine non viene mai montata. */
+.ward-app .shot .shot-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
+.ward-app .preview .preview-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.ward-app .info .li .v.lnk{ color:var(--amber-c); text-decoration:underline; }
+.ward-app .info .li .v.lnk:hover{ color:#E29A2E; }
 .ward-app .card-main{ flex:1; min-width:0; padding:12px 13px; }
 .ward-app .card-top{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
 .ward-app .card .dom{ font-family:var(--font-ward-display); font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }

@@ -125,8 +125,8 @@ export function WardApp({
         {tab === "radar" && <Radar data={data} onScan={demo ? runDemoScan : (scanAvatarId ? handleScan : undefined)} scanning={scanning} scanMsg={scanMsg} />}
         {tab === "detections" && (
           openDetection
-            ? <DetectionDetail detection={openDetection} onBack={() => setOpenId(null)} />
-            : <Detections data={data} selected={sel} struck={struck} onToggle={toggle} onOpen={setOpenId} />
+            ? <DetectionDetail detection={openDetection} onBack={() => setOpenId(null)} real={!demo} />
+            : <Detections data={data} selected={sel} struck={struck} onToggle={toggle} onOpen={setOpenId} real={!demo} />
         )}
         {tab === "nemesis" && <NemesisOps nemesis={{ ...data.nemesis, inProgress }} ops={[...extraOps, ...data.ops]} />}
         {tab === "vault" && <Vault data={data} />}
