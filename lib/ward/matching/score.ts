@@ -12,11 +12,14 @@ export interface Bands {
   reviewMaxDist: number;    // distanza <= => review; oltre => discard.
 }
 
-// Default: confirmed <= 0.5 (alta confidenza, come il brief). reviewMaxDist alzato
-// a 0.68 (era 0.6) per pescare i LOOKALIKE AI simili ma non identici: finiscono in
-// "Da rivedere" (conferma a mano), non scartati. confirmed resta stretto: nessun
-// falso "confermato". Le soglie si tarano a terra via env (bandsFromEnv).
-export const DEFAULT_BANDS: Bands = { confirmedMaxDist: 0.5, reviewMaxDist: 0.68 };
+// Default: confirmed <= 0.5 (alta confidenza, come il brief). reviewMaxDist = 0.6,
+// la soglia "stessa persona" standard per FaceNet 128-d. Era stato alzato a 0.68
+// per pescare i lookalike AI, ma la verifica a terra (test Luca Agnelli) ha mostrato
+// che la fascia 0.6-0.68 ammette PERSONE DIVERSE (il suo stesso profilo vs frontale
+// era gia' a 0.62-0.71): il match sui profili e' poco discriminante e 0.68 produceva
+// falsi positivi. Riportato a 0.6. confirmed resta stretto: nessun falso "confermato".
+// Le soglie si tarano a terra via env (bandsFromEnv).
+export const DEFAULT_BANDS: Bands = { confirmedMaxDist: 0.5, reviewMaxDist: 0.6 };
 
 export interface Classification {
   band: Band;
