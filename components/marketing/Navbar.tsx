@@ -63,8 +63,11 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
   // Chiudendo il drawer si richiude anche la sezione eventualmente aperta.
   useEffect(() => { if (!open) setOpenSection(null); }, [open]);
 
-  // Stile condiviso delle voci di primo livello (desktop).
-  const topLinkCls = "text-sm tracking-[0.021em] text-muted transition-colors hover:text-foreground";
+  // Voce di primo livello (desktop): niente a-capo (prima "Il tuo volto" si
+  // spezzava su due righe) e underline AMBRA che cresce da sinistra all'hover,
+  // firma cinematica in linea col sistema (accento Amber + easing del brand).
+  const topLinkBase =
+    "relative whitespace-nowrap text-[0.8rem] tracking-[0.01em] text-muted transition-colors duration-300 hover:text-foreground after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)]";
 
   return (
     <>
@@ -76,7 +79,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
       }`}
     >
       <ScrollProgress />
-      <nav className={`mx-auto flex max-w-6xl items-center justify-between px-5 transition-all duration-500 sm:px-8 ${scrolled ? "h-[3.4rem]" : "h-16"}`}>
+      <nav className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 sm:px-8 ${scrolled ? "h-[3.4rem]" : "h-16"}`}>
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-shield.png" alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
@@ -88,7 +91,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
             si chiude appena esci. Il click col mouse fa blur del bottone (e.detail
             > 0) cosi' NON resta "incollata"; il focus da tastiera (e.detail = 0)
             resta accessibile via group-focus-within. */}
-        <div className="hidden items-center gap-6 lg:flex">
+        <div className="hidden items-center gap-5 xl:flex">
           {NAV.map((entry) =>
             "items" in entry ? (
               <div key={entry.label} className="group relative">
@@ -96,12 +99,12 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                   type="button"
                   aria-haspopup="true"
                   onClick={(e) => { if (e.detail) e.currentTarget.blur(); }}
-                  className={`flex items-center gap-1 ${topLinkCls} group-focus-within:text-foreground`}
+                  className={`flex items-center gap-1 ${topLinkBase} group-hover:text-foreground group-hover:after:scale-x-100 group-focus-within:text-foreground group-focus-within:after:scale-x-100`}
                 >
                   {entry.label}
                   <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
                 </button>
-                <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                   <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[var(--elevated)] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
                     {entry.items.map((it) => (
                       <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
@@ -110,44 +113,51 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 </div>
               </div>
             ) : (
-              <Link key={entry.href} href={entry.href} className={topLinkCls}>{entry.label}</Link>
+              <Link key={entry.href} href={entry.href} className={`${topLinkBase} hover:after:scale-x-100`}>{entry.label}</Link>
             )
           )}
-          {firstName && volt !== null && <VoltBadge initial={volt} threshold={voltThreshold} />}
-          {firstName ? (
-            <Link
-              href="/account"
-              title="Il tuo account"
-              aria-label={`Il tuo account: ${firstName}`}
-              className="relative inline-flex items-center gap-2.5 rounded-full border border-violet/30 bg-violet/10 py-1 pl-1 pr-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-violet/20"
-            >
-              <span className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-amber text-[0.7rem] font-extrabold uppercase leading-none text-on-amber">
-                {firstName.charAt(0)}
-              </span>
-              <span className="flex flex-col items-start leading-none">
-                <span className="text-[0.52rem] font-bold uppercase tracking-[0.16em] text-violet-light">Account</span>
-                <span className="mt-[3px] max-w-[9rem] truncate">{firstName}</span>
-              </span>
-              {badge && (
-                <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-crimson px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_rgba(12,15,23,1)]">
-                  {badge}
+
+          {/* Divisore hairline: separa la NAVIGAZIONE dalle AZIONI (declutter) */}
+          <span aria-hidden className="mx-1 h-5 w-px bg-[var(--hairline)]" />
+
+          {/* Cluster azioni: VOLT, account, tema, Sigil, Proteggiti */}
+          <div className="flex items-center gap-3">
+            {firstName && volt !== null && <VoltBadge initial={volt} threshold={voltThreshold} />}
+            {firstName ? (
+              <Link
+                href="/account"
+                title="Il tuo account"
+                aria-label={`Il tuo account: ${firstName}`}
+                className="relative inline-flex items-center gap-2.5 rounded-full border border-violet/30 bg-violet/10 py-1 pl-1 pr-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-violet/20"
+              >
+                <span className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-amber text-[0.7rem] font-extrabold uppercase leading-none text-on-amber">
+                  {firstName.charAt(0)}
                 </span>
-              )}
-            </Link>
-          ) : (
-            <Link href="/login" className="text-sm text-muted transition-colors hover:text-foreground">Accedi</Link>
-          )}
-          <ThemeToggle />
-          <Button asChild variant="outline" size="sm">
-            <Link href="/verify">Sigil</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link href="/signup/avatar">Proteggiti</Link>
-          </Button>
+                <span className="flex flex-col items-start leading-none">
+                  <span className="text-[0.52rem] font-bold uppercase tracking-[0.16em] text-violet-light">Account</span>
+                  <span className="mt-[3px] max-w-[9rem] truncate">{firstName}</span>
+                </span>
+                {badge && (
+                  <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-crimson px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_rgba(12,15,23,1)]">
+                    {badge}
+                  </span>
+                )}
+              </Link>
+            ) : (
+              <Link href="/login" className={`${topLinkBase} hover:after:scale-x-100`}>Accedi</Link>
+            )}
+            <ThemeToggle />
+            <Button asChild variant="outline" size="sm">
+              <Link href="/verify">Sigil</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/signup/avatar">Proteggiti</Link>
+            </Button>
+          </div>
         </div>
 
         {/* Sotto lg (mobile, tablet touch): VOLT compatto + hamburger */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-2 xl:hidden">
           {firstName && volt !== null && <VoltBadge initial={volt} threshold={voltThreshold} />}
           <ThemeToggle />
           <button
@@ -169,12 +179,12 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm xl:hidden"
             />
             <motion.aside
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[var(--elevated)] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] lg:hidden"
+              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[var(--elevated)] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] xl:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
                 <span className="text-sm font-bold tracking-[0.15em]">MENU</span>
