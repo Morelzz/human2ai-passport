@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isSafeRemoteImageUrl } from "./preview-guard";
+import { isSafeRemoteImageUrl, isPrivateIp } from "./preview-guard";
 
 // Il proxy anteprima scarica un URL salvato in scan_matches (origine Vision) e lo
 // rilancia. Difesa SSRF: solo http/https verso host PUBBLICI; mai loopback, IP
@@ -49,5 +49,35 @@ describe("isSafeRemoteImageUrl", () => {
   it("rifiuta IPv6 unique-local e link-local", () => {
     expect(isSafeRemoteImageUrl("http://[fc00::1]/x.jpg")).toBe(false);
     expect(isSafeRemoteImageUrl("http://[fe80::1]/x.jpg")).toBe(false);
+  });
+
+  it("rifiuta IPv4-mapped IPv6 verso il metadata endpoint (no bypass)", () => {
+    expect(isSafeRemoteImageUrl("http://[::ffff:169.254.169.254]/latest/meta-data")).toBe(false);
+    expect(isSafeRemoteImageUrl("http://[::ffff:127.0.0.1]/x.jpg")).toBe(false);
+  });
+});
+
+describe("isPrivateIp", () => {
+  it("IPv4 privati/loopback/link-local/CGNAT -> true", () => {
+    for (const ip of ["0.0.0.0", "10.0.0.1", "127.0.0.1", "169.254.169.254", "172.16.0.1", "172.31.255.255", "192.168.1.1", "100.64.0.1"])
+      expect(isPrivateIp(ip)).toBe(true);
+  });
+  it("IPv4 pubblici -> false", () => {
+    for (const ip of ["8.8.8.8", "1.1.1.1", "93.184.216.34"]) expect(isPrivateIp(ip)).toBe(false);
+  });
+  it("IPv6 loopback/ULA/link-local -> true", () => {
+    for (const ip of ["::1", "fc00::1", "fd12:3456::1", "fe80::1"]) expect(isPrivateIp(ip)).toBe(true);
+  });
+  it("IPv6 pubblico -> false", () => {
+    expect(isPrivateIp("2606:4700:4700::1111")).toBe(false);
+  });
+  it("IPv4-mapped IPv6 verso privati -> true", () => {
+    expect(isPrivateIp("::ffff:127.0.0.1")).toBe(true);
+    expect(isPrivateIp("::ffff:169.254.169.254")).toBe(true);
+  });
+  it("non-IP (hostname) -> false", () => {
+    expect(isPrivateIp("example.com")).toBe(false);
+    expect(isPrivateIp("fcbarcelona.com")).toBe(false);
+    expect(isPrivateIp("")).toBe(false);
   });
 });

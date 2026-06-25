@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
-import { isSafeRemoteImageUrl } from "@/lib/ward/preview-guard";
+import { isSafeRemoteImageUrl, fetchImageSafely } from "@/lib/ward/preview-guard";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,7 +46,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ matchId
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url, { redirect: "follow", signal: ctrl.signal });
+    const res = await fetchImageSafely(url, { signal: ctrl.signal });
     if (!res.ok) return new NextResponse(null, { status: 502 });
     const ct = res.headers.get("content-type") || "";
     if (!ct.startsWith("image/")) return new NextResponse(null, { status: 415 });
