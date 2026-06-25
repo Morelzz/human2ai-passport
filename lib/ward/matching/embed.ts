@@ -1,5 +1,6 @@
 import path from "node:path";
 import { createRequire } from "node:module";
+import { frontalityFromLandmarks } from "./frontality";
 
 // Embedding server-side dei CANDIDATI con face-api (build node-wasm + backend WASM
 // prebuilt: nessun binario nativo). LAZY: face-api/tfjs/sharp si caricano al primo
@@ -11,6 +12,7 @@ import { createRequire } from "node:module";
 export interface EmbedResult {
   descriptor: number[] | null; // 128-d FaceNet, o null se nessun volto
   faceCount: number;           // volti rilevati nell'immagine
+  frontality: number | null;   // [0,1] del volto piu' grande (1=frontale), null se nessun volto
 }
 
 let faceApiPromise: Promise<any> | null = null;
@@ -85,12 +87,14 @@ export async function embed(imageBytes: Uint8Array): Promise<EmbedResult> {
   try {
     const dets: any[] = await faceapi.detectAllFaces(t).withFaceLandmarks().withFaceDescriptors();
     const faceCount = dets.length;
-    if (faceCount === 0) return { descriptor: null, faceCount };
+    if (faceCount === 0) return { descriptor: null, faceCount, frontality: null };
     let best = dets[0];
     for (const d of dets) {
       if (d.detection.box.area > best.detection.box.area) best = d;
     }
-    return { descriptor: Array.from(best.descriptor as Float32Array), faceCount };
+    const positions = (best.landmarks?.positions ?? []).map((p: { x: number; y: number }) => ({ x: p.x, y: p.y }));
+    const frontality = positions.length ? frontalityFromLandmarks(positions) : null;
+    return { descriptor: Array.from(best.descriptor as Float32Array), faceCount, frontality };
   } finally {
     t.dispose();
   }

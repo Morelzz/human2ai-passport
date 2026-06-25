@@ -25,6 +25,12 @@ function memRepo(refs: number[][]) {
 
 const audit = async () => {};
 
+// embedRef fake: ogni reference e' frontale (ammessa al match). I test che passano
+// referenceImageBytesList lo iniettano per non caricare face-api reale. noDegrade
+// silenzia l'allarme di degrado sui test che passano dal fallback indice.
+const frontalRef = async () => ({ descriptor: [0, 0] as number[], faceCount: 1, frontality: 1 });
+const noDegrade = () => {};
+
 function provider(urls: string[]) {
   let findCalled = false;
   const p: DiscoveryProvider = {
@@ -124,6 +130,7 @@ describe("runScan: pipeline + data-minimization (A2.3)", () => {
     const d = provider(urls);
     const res = await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: d.p, fetchImage, match,
+      degrade: noDegrade, // fallback indice (niente immagini reference nel test)
       phash: async () => "ph_test", // A2.3: il match conserva URL + phash
     });
 
@@ -171,6 +178,7 @@ describe("runScan: immagine-query della discovery", () => {
       repo: m.repo, audit, gate: okGate, discovery: cap.p,
       referenceImageBytesList: [bytes],
       referenceImageUrl: "https://portrait.test/p.png",
+      embedRef: frontalRef,
     });
     expect(cap.getQuery()).toEqual({ imageBytes: bytes });
   });
@@ -181,6 +189,7 @@ describe("runScan: immagine-query della discovery", () => {
     await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: cap.p,
       referenceImageUrl: "https://portrait.test/p.png",
+      degrade: noDegrade, // fallback indice
     });
     expect(cap.getQuery()).toEqual({ imageUrl: "https://portrait.test/p.png" });
   });
@@ -194,6 +203,7 @@ describe("runScan: immagine-query della discovery", () => {
     await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: cap.p,
       referenceImageBytesList: [a, b, c],
+      embedRef: frontalRef,
     });
     expect(cap.getQueries()).toEqual([{ imageBytes: a }, { imageBytes: b }, { imageBytes: c }]);
   });
@@ -210,6 +220,7 @@ describe("runScan: discovery multi-angolo (union)", () => {
     const res = await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: a.p,
       referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])],
+      embedRef: frontalRef,
       fetchImage: async () => null, // scarta tutti: ci basta contare i candidati dell'unione
     });
     expect(a.calls.sort()).toEqual([1, 2, 3]); // tutti e 3 gli angoli interrogati
@@ -229,6 +240,7 @@ describe("runScan: discovery multi-angolo (union)", () => {
     const res = await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: a.p,
       referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])],
+      embedRef: frontalRef,
       fetchImage: async () => null,
       limit: 6,
     });
@@ -254,6 +266,7 @@ describe("runScan: discovery multi-angolo (union)", () => {
     const res = await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: p,
       referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])],
+      embedRef: frontalRef,
       fetchImage: async () => null,
       degrade: (area) => { degraded.push(area); },
     });
@@ -272,6 +285,7 @@ describe("runScan: discovery multi-angolo (union)", () => {
     const res = await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: p,
       referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2])],
+      embedRef: frontalRef,
       degrade: () => {},
     });
     expect(res.ok).toBe(false);
@@ -279,5 +293,65 @@ describe("runScan: discovery multi-angolo (union)", () => {
     expect(res.reason).toMatch(/Discovery fallita/);
     expect(m.finished.at(-1)?.status).toBe("error");
     expect(m.candidates.size).toBe(0); // nessun candidato (data-minimization)
+  });
+});
+
+describe("runScan: match solo sui FRONTALI (B)", () => {
+  it("il match riceve SOLO i descrittori frontali (i profili non votano)", async () => {
+    const m = memRepo([]); // i refs vengono dalle IMMAGINI, non dall'indice
+    const byByte: Record<number, { descriptor: number[]; frontality: number }> = {
+      1: { descriptor: [1, 1], frontality: 0.9 }, // frontale
+      2: { descriptor: [2, 2], frontality: 0.3 }, // profilo
+      3: { descriptor: [3, 3], frontality: 0.2 }, // profilo
+    };
+    const embedRef = async (b: Uint8Array) => ({ ...byByte[b[0]], faceCount: 1 });
+    let seenRefs: number[][] | null = null;
+    const match = async (refs: number[][]): Promise<MatchResult> => {
+      seenRefs = refs;
+      return { score: 10, band: "discard", distance: 0.9, faceCount: 1 };
+    };
+    const d = provider(["https://a.test/1.jpg"]);
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: d.p,
+      referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])],
+      embedRef, match,
+      fetchImage: async () => new Uint8Array([9]),
+    });
+    expect(res.ok).toBe(true);
+    expect(seenRefs).toEqual([[1, 1]]); // solo il frontale (0.9 >= 0.75)
+  });
+
+  it("nessuna reference frontale: done a 0, degrado, discovery NON chiamata", async () => {
+    const m = memRepo([]);
+    const embedRef = async () => ({ descriptor: [0, 0], faceCount: 1, frontality: 0.3 }); // tutti profili
+    const degraded: string[] = [];
+    const d = provider(["https://a.test/1.jpg"]);
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: d.p,
+      referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2])],
+      embedRef, degrade: (a) => degraded.push(a),
+    });
+    expect(res.ok).toBe(true);
+    expect(res.status).toBe("done");
+    expect(res.matches).toBe(0);
+    expect(res.candidates).toBe(0);
+    expect(d.findCalled()).toBe(false); // niente match possibile -> discovery saltata
+    expect(degraded).toContain("ward.no_frontal_reference");
+  });
+
+  it("nessuna immagine reference: fallback ai descrittori dell'indice (con degrado)", async () => {
+    const m = memRepo([[0, 0]]); // l'indice ha un descrittore
+    const degraded: string[] = [];
+    const d = provider(["https://a.test/1.jpg"]);
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: d.p,
+      // niente referenceImageBytesList -> fallback indice
+      fetchImage: async () => null,
+      match: async () => ({ score: 0, band: "discard", distance: 1, faceCount: 0 }),
+      degrade: (a) => degraded.push(a),
+    });
+    expect(res.ok).toBe(true);
+    expect(d.findCalled()).toBe(true); // ha proceduto con l'indice
+    expect(degraded).toContain("ward.frontal_from_index_unfiltered");
   });
 });

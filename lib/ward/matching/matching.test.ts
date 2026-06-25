@@ -11,7 +11,7 @@ const mockEmbed = vi.mocked(embed);
 
 describe("match (glue embed + classify)", () => {
   it("discard se il candidato non ha volti (descriptor null)", async () => {
-    mockEmbed.mockResolvedValue({ descriptor: null, faceCount: 0 });
+    mockEmbed.mockResolvedValue({ descriptor: null, faceCount: 0, frontality: null });
     const r = await match([[0, 0]], new Uint8Array([1]));
     expect(r.band).toBe("discard");
     expect(r.faceCount).toBe(0);
@@ -20,7 +20,7 @@ describe("match (glue embed + classify)", () => {
   });
 
   it("classifica per distanza minima ai riferimenti (confirmed)", async () => {
-    mockEmbed.mockResolvedValue({ descriptor: [0, 0], faceCount: 1 });
+    mockEmbed.mockResolvedValue({ descriptor: [0, 0], faceCount: 1, frontality: 1 });
     const refs = [
       [0, 0.2],
       [10, 10],
@@ -32,7 +32,7 @@ describe("match (glue embed + classify)", () => {
   });
 
   it("non ritorna MAI il descrittore del candidato (A2.2)", async () => {
-    mockEmbed.mockResolvedValue({ descriptor: [1, 2, 3], faceCount: 1 });
+    mockEmbed.mockResolvedValue({ descriptor: [1, 2, 3], faceCount: 1, frontality: 1 });
     const r = await match([[1, 2, 3]], new Uint8Array([1]));
     expect(r).not.toHaveProperty("descriptor");
     expect(r.band).toBe("confirmed");

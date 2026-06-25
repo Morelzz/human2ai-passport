@@ -57,6 +57,10 @@ export interface ScanDeps {
   // trova foto che il frontale manca). Query migliore del portrait generato.
   referenceImageBytesList?: Uint8Array[];
   referenceImageUrl?: string; // fallback: per i provider reali (Google Vision); lo stub lo ignora
+  // Embedder iniettabile (default: embed reale face-api). Ricava dai bytes
+  // reference il descrittore e la FRONTALITA': il match biometrico gira SOLO sui
+  // frontali (i profili non sono discriminanti -> falsi positivi via bestDistance).
+  embedRef?: (bytes: Uint8Array) => Promise<{ descriptor: number[] | null; frontality: number | null; faceCount: number }>;
   // Allarme su degrado, iniettabile (default: reportDegradation). Usato quando un
   // singolo angolo della discovery fallisce: si degrada e si prosegue sugli altri.
   degrade?: (area: DegradationArea, detail?: Record<string, unknown>) => void;
@@ -119,8 +123,39 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
   const jobId = await repo.createJob(avatarId, provider.name);
   await audit({ actor: null, action: "scan.started", target: avatarId, meta: { jobId, provider: provider.name } });
 
-  // 2. Riferimenti dell'avatar: descrittori GIA' registrati (nessun re-embedding).
-  const refs = await repo.loadReferenceDescriptors(avatarId);
+  // 2. Riferimenti per il MATCH biometrico: SOLO volti FRONTALI. I descrittori di
+  //    profilo non sono discriminanti (verificato a terra: lo stesso volto frontale
+  //    vs profilo gia' a 0.62-0.71) e via bestDistance (minima) fabbricherebbero
+  //    falsi positivi. Si embeddano le immagini reference (gia' scaricate per la
+  //    discovery) e si tengono solo le frontali (frontality >= soglia). Senza
+  //    immagini (es. seed col solo portrait): fallback ai descrittori dell'indice.
+  const fmEnv = Number(process.env.WARD_FRONTAL_MIN);
+  const frontalMin = Number.isFinite(fmEnv) && fmEnv > 0 ? fmEnv : 0.75;
+  const refImages = deps.referenceImageBytesList ?? [];
+  let refs: number[][];
+  if (refImages.length > 0) {
+    const embedRef = deps.embedRef ?? (await import("./matching/embed")).embed;
+    const embedded = await Promise.all(
+      refImages.map((b) => embedRef(b).catch(() => ({ descriptor: null, frontality: null, faceCount: 0 }))),
+    );
+    refs = embedded
+      .filter((e) => e.descriptor && (e.frontality ?? 0) >= frontalMin)
+      .map((e) => e.descriptor as number[]);
+    if (refs.length === 0) {
+      // Fail-safe: nessuna reference frontale leggibile. Niente match (meglio
+      // niente che falsi positivi dai profili). Job chiuso done a 0, degrado
+      // segnalato cosi' l'operatore aggiunge una frontale.
+      degrade("ward.no_frontal_reference", { jobId, references: refImages.length });
+      await repo.finishJob(jobId, "done", { candidates: 0, matches: 0, discarded: 0, reason: "no_frontal_reference" });
+      await audit({ actor: null, action: "scan.finished", target: avatarId, meta: { jobId, candidates: 0, matches: 0, discarded: 0, reason: "no_frontal_reference" } });
+      return { ok: true, status: "done", jobId, candidates: 0, matches: 0, discarded: 0, reason: "no_frontal_reference" };
+    }
+  } else {
+    // Nessuna immagine reference: non posso calcolare la frontalita', fallback ai
+    // descrittori dell'indice (non filtrati per posa).
+    refs = await repo.loadReferenceDescriptors(avatarId);
+    if (refs.length > 0) degrade("ward.frontal_from_index_unfiltered", { jobId });
+  }
   if (!refs.length) {
     await repo.finishJob(jobId, "error", { reason: "no_reference_descriptors" }, "no_reference_descriptors");
     await audit({ actor: null, action: "scan.error", target: avatarId, meta: { jobId, reason: "no_reference_descriptors" } });

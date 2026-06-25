@@ -15,6 +15,8 @@ export type DegradationArea =
   | "veto.scan_unavailable"
   | "ward.discovery_stub"
   | "ward.discovery_angle_failed"
+  | "ward.no_frontal_reference"
+  | "ward.frontal_from_index_unfiltered"
   | "ratelimit.unavailable";
 
 // Ambiente "tipo produzione": Vercel (qualunque env) o NODE_ENV=production.
