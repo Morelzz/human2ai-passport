@@ -65,6 +65,7 @@ describe.skipIf(!ready)("SupabaseScanRepository (schema reale, con cleanup)", ()
       avatarId,
       scanJobId: jobId,
       sourceUrl: "https://example.test/smoke.jpg",
+      pageUrl: "https://example.test/post/smoke",
       host: "example.test",
       score: 95,
       band: "confirmed",

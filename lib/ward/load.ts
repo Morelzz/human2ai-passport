@@ -10,6 +10,7 @@ import type { ConsentStatus } from "./consent";
 export interface WardLoadMatch {
   id: string;
   source_url: string;
+  page_url?: string | null;
   host: string | null;
   score: number | null;
   band: "confirmed" | "review";
@@ -122,6 +123,10 @@ export function buildWardData(input: WardLoadInput): WardData {
       meta: m.band === "confirmed" ? "non autorizzato" : "possibile, da rivedere",
       sensitivity: m.sensitivity,
       url: sensitive ? "[nascosto fino al reveal]" : m.source_url,
+      // pageUrl: link alla pagina ospitante. Nascosto per i sensibili (come l'url):
+      // si rivela col reveal lato UI; l'anteprima immagine passa comunque dal proxy
+      // per id, quindi non dipende da questo campo.
+      pageUrl: sensitive ? undefined : (m.page_url ?? undefined),
       host: m.host ?? "",
       registrar: ev?.whois?.registrar ?? "",
       country: "",

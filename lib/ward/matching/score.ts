@@ -9,13 +9,14 @@ export type Band = "confirmed" | "review" | "discard";
 
 export interface Bands {
   confirmedMaxDist: number; // distanza <= => confirmed (alta confidenza)
-  reviewMaxDist: number;    // distanza <= => review; oltre => discard. Soglia brief = 0.6.
+  reviewMaxDist: number;    // distanza <= => review; oltre => discard.
 }
 
-// Default coerenti col brief (soglia 0.6) e con i dati demo della UI (86% =>
-// confirmed, 58% => review). Le soglie esatte si tarano a terra (spec 6):
-// override via env in bandsFromEnv().
-export const DEFAULT_BANDS: Bands = { confirmedMaxDist: 0.5, reviewMaxDist: 0.6 };
+// Default: confirmed <= 0.5 (alta confidenza, come il brief). reviewMaxDist alzato
+// a 0.68 (era 0.6) per pescare i LOOKALIKE AI simili ma non identici: finiscono in
+// "Da rivedere" (conferma a mano), non scartati. confirmed resta stretto: nessun
+// falso "confermato". Le soglie si tarano a terra via env (bandsFromEnv).
+export const DEFAULT_BANDS: Bands = { confirmedMaxDist: 0.5, reviewMaxDist: 0.68 };
 
 export interface Classification {
   band: Band;

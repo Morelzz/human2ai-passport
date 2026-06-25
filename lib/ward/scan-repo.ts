@@ -71,6 +71,7 @@ export class SupabaseScanRepository implements ScanRepository {
         avatar_id: row.avatarId,
         scan_job_id: row.scanJobId,
         source_url: row.sourceUrl,
+        page_url: row.pageUrl,
         host: row.host,
         score: row.score,
         band: row.band,

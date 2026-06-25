@@ -6,7 +6,52 @@ import { hostOf } from "./types";
 // chiave. NON invia i volti a un motore di ricerca-volti (rispetta A2.4).
 const ENDPOINT = "https://vision.googleapis.com/v1/images:annotate";
 
-interface VisionImageRef { url: string }
+interface VisionImageRef { url?: string }
+interface VisionPage {
+  url?: string;
+  fullMatchingImages?: VisionImageRef[];
+  partialMatchingImages?: VisionImageRef[];
+}
+export interface WebDetection {
+  fullMatchingImages?: VisionImageRef[];
+  partialMatchingImages?: VisionImageRef[];
+  visuallySimilarImages?: VisionImageRef[];
+  pagesWithMatchingImages?: VisionPage[];
+}
+
+// PURA: dal webDetection di Vision ai candidati. Sorgenti, in ordine di
+// confidenza: full + partial (copie/edit dell'immagine reale) + visuallySimilar
+// (immagini VISIVAMENTE simili: e' qui che entrano i lookalike AI non identici).
+// La pagina ospitante si ricava da pagesWithMatchingImages (immagine -> url pagina);
+// i visuallySimilar di norma non hanno pagina associata -> pageUrl undefined.
+// Dedup per url, taglio a `limit`. Il match biometrico 1:1 filtra DOPO.
+export function parseWebDetection(web: WebDetection, limit: number): Candidate[] {
+  const pageByImage = new Map<string, string>();
+  for (const p of web.pagesWithMatchingImages ?? []) {
+    const pageUrl = p?.url;
+    if (!pageUrl) continue;
+    for (const img of [...(p.fullMatchingImages ?? []), ...(p.partialMatchingImages ?? [])]) {
+      if (img?.url && !pageByImage.has(img.url)) pageByImage.set(img.url, pageUrl);
+    }
+  }
+
+  const refs: VisionImageRef[] = [
+    ...(web.fullMatchingImages ?? []),
+    ...(web.partialMatchingImages ?? []),
+    ...(web.visuallySimilarImages ?? []),
+  ];
+
+  const seen = new Set<string>();
+  const out: Candidate[] = [];
+  for (const r of refs) {
+    const url = r?.url;
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    out.push({ url, host: hostOf(url), pageUrl: pageByImage.get(url) });
+    if (out.length >= limit) break;
+  }
+  return out;
+}
 
 export class GoogleVisionDiscoveryProvider implements DiscoveryProvider {
   readonly name = "google-vision";
@@ -34,21 +79,7 @@ export class GoogleVisionDiscoveryProvider implements DiscoveryProvider {
     });
     if (!res.ok) throw new Error(`Google Vision ${res.status}`);
     const json = await res.json();
-    const web = json?.responses?.[0]?.webDetection ?? {};
-    const refs: VisionImageRef[] = [
-      ...(web.fullMatchingImages ?? []),
-      ...(web.partialMatchingImages ?? []),
-    ];
-
-    const seen = new Set<string>();
-    const out: Candidate[] = [];
-    for (const r of refs) {
-      const url = r?.url;
-      if (!url || seen.has(url)) continue;
-      seen.add(url);
-      out.push({ url, host: hostOf(url) });
-      if (out.length >= limit) break;
-    }
-    return out;
+    const web: WebDetection = json?.responses?.[0]?.webDetection ?? {};
+    return parseWebDetection(web, limit);
   }
 }

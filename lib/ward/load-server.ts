@@ -38,7 +38,7 @@ export async function loadWardData(userId: string): Promise<{ data: WardData; av
       .limit(20),
     admin
       .from("scan_matches")
-      .select("id, source_url, host, score, band, sensitivity, phash, ai_verdict, created_at")
+      .select("id, source_url, page_url, host, score, band, sensitivity, phash, ai_verdict, created_at")
       .eq("avatar_id", avatarId)
       .order("created_at", { ascending: false })
       .limit(50),

@@ -38,20 +38,24 @@ describe("classify", () => {
     expect(c.score).toBe(similarityFromDistance(0.2));
     expect(c.score).toBeGreaterThan(50);
   });
-  it("review nella fascia intermedia (0.5 < d <= 0.6)", () => {
+  it("review nella fascia intermedia (0.5 < d <= 0.68)", () => {
     expect(classify(0.55).band).toBe("review");
   });
-  it("discard sopra la soglia 0.6 del brief", () => {
-    const c = classify(0.7);
+  it("lookalike AI simile non identico (0.6 <= d <= 0.68) e' review, non scartato", () => {
+    expect(classify(0.62).band).toBe("review");
+    expect(classify(0.67).band).toBe("review");
+  });
+  it("discard sopra la soglia review allargata (0.68)", () => {
+    const c = classify(0.75);
     expect(c.band).toBe("discard");
     expect(c.score).toBeLessThan(50);
   });
   it("confine confirmed/review incluso a 0.5", () => {
     expect(classify(0.5).band).toBe("confirmed");
   });
-  it("confine review/discard incluso a 0.6", () => {
-    expect(classify(0.6).band).toBe("review");
-    expect(classify(0.6000001).band).toBe("discard");
+  it("confine review/discard incluso a 0.68", () => {
+    expect(classify(0.68).band).toBe("review");
+    expect(classify(0.6800001).band).toBe("discard");
   });
   it("Infinity (nessun volto / nessun ref) e' discard con score 0", () => {
     const c = classify(Infinity);
@@ -73,8 +77,9 @@ describe("classify", () => {
 });
 
 describe("DEFAULT_BANDS", () => {
-  it("riflette la soglia 0.6 del brief", () => {
-    expect(DEFAULT_BANDS.reviewMaxDist).toBe(0.6);
+  it("review allargata a 0.68 (lookalike AI), confirmed resta stretto", () => {
+    expect(DEFAULT_BANDS.reviewMaxDist).toBe(0.68);
+    expect(DEFAULT_BANDS.confirmedMaxDist).toBe(0.5);
     expect(DEFAULT_BANDS.confirmedMaxDist).toBeLessThan(DEFAULT_BANDS.reviewMaxDist);
   });
 });

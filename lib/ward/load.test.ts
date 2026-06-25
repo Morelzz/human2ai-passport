@@ -9,7 +9,7 @@ const base: WardLoadInput = {
     { finished_at: "2026-06-19T09:00:00Z", stats: { discarded: 9 } },
   ],
   matches: [
-    { id: "m1", source_url: "https://cdn.unknown-host.ru/a.jpg", host: "unknown-host.ru", score: 94, band: "confirmed", sensitivity: "standard", phash: "ph1", ai_verdict: "Probabile AI-generated", created_at: "2026-06-18T00:00:00Z" },
+    { id: "m1", source_url: "https://cdn.unknown-host.ru/a.jpg", page_url: "https://unknown-host.ru/post/1", host: "unknown-host.ru", score: 94, band: "confirmed", sensitivity: "standard", phash: "ph1", ai_verdict: "Probabile AI-generated", created_at: "2026-06-18T00:00:00Z" },
     { id: "m2", source_url: "https://ad-network.io/b.jpg", host: "ad-network.io", score: 58, band: "review", sensitivity: "standard", phash: "ph2", ai_verdict: null, created_at: "2026-06-17T00:00:00Z" },
     { id: "m3", source_url: "https://anon.xx/c.jpg", host: "anon.xx", score: 91, band: "confirmed", sensitivity: "sensitive", phash: "ph3", ai_verdict: null, created_at: "2026-06-16T00:00:00Z" },
     { id: "m4", source_url: "https://hidden.zz/d.jpg", host: "hidden.zz", score: 0, band: "confirmed", sensitivity: "minor", phash: null, ai_verdict: null, created_at: "2026-06-15T00:00:00Z" },
@@ -70,12 +70,14 @@ describe("buildWardData", () => {
     expect(m1.aiVerdict).toBe("Probabile AI-generated");
     expect(m1.evidence).toContain("screenshot");
     expect(m1.evidence).toContain("AI-flag"); // c'e' ai_verdict
+    expect(m1.pageUrl).toBe("https://unknown-host.ru/post/1");
   });
 
-  it("detection sensibile: url nascosto di default", () => {
+  it("detection sensibile: url e pagina nascosti fino al reveal", () => {
     const m3 = buildWardData(base).detections.find((x) => x.id === "m3")!;
     expect(m3.sensitivity).toBe("sensitive");
     expect(m3.url.toLowerCase()).toContain("nascosto");
+    expect(m3.pageUrl).toBeUndefined();
   });
 
   it("detection minore: LOCKED, niente host/url/dettagli", () => {

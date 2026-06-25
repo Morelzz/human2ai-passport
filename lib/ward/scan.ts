@@ -22,6 +22,7 @@ export interface ScanMatchRow {
   avatarId: string;
   scanJobId: string;
   sourceUrl: string;
+  pageUrl: string | null; // pagina che ospita l'immagine (per il link), se nota
   host: string | null;
   score: number;
   band: "confirmed" | "review";
@@ -161,6 +162,7 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
           avatarId,
           scanJobId: jobId,
           sourceUrl: cand.url,
+          pageUrl: cand.pageUrl ?? null,
           host: cand.host || null,
           score: m.score,
           band: m.band,

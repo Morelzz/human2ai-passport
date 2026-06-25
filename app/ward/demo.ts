@@ -14,6 +14,7 @@ export interface WardDetection {
   sensitivity: Sensitivity;
   // Dettaglio (per 'minor' NON va mai mostrato: vedi DetectionDetail).
   url: string;
+  pageUrl?: string; // pagina che ospita l'immagine (link cliccabile), se nota
   host: string;
   registrar: string;
   country: string;
