@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { isConsentTokenExpired } from "@/lib/token";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 // La PERSONA conferma il proprio consenso aprendo il link tokenizzato.
 // Pubblico (il token è il segreto). Registra person_consented_at + evento.
@@ -13,6 +14,11 @@ export async function POST(
   const signature = String(body?.signature ?? "").trim();
   if (signature.length < 2) {
     return NextResponse.json({ error: "Firma con il tuo nome per confermare" }, { status: 400 });
+  }
+
+  // Anti brute-force del token segreto: tetto per IP sui tentativi.
+  if (!(await allowRequest(`consent:${ipFrom(request)}`, 10, 600))) {
+    return NextResponse.json({ error: "Troppi tentativi, riprova tra qualche minuto" }, { status: 429 });
   }
 
   const admin = createServerClient();

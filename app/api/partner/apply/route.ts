@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,10 @@ export async function POST(request: Request) {
   // Honeypot: campo invisibile agli umani; se compilato è un bot → ok silenzioso.
   if (typeof body.website === "string" && body.website.trim() !== "") {
     return NextResponse.json({ ok: true });
+  }
+
+  if (!(await allowRequest(`partner:${ipFrom(request)}`, 5, 600))) {
+    return NextResponse.json({ error: "Troppe richieste, riprova tra qualche minuto" }, { status: 429 });
   }
 
   const name = String(body.name ?? "").trim().slice(0, 120);

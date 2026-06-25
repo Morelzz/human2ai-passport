@@ -10,7 +10,15 @@ import { createServerClient } from "@/lib/supabase";
 async function ensureBucket(name: string, isPublic: boolean): Promise<void> {
   const admin = createServerClient();
   const { data } = await admin.storage.getBucket(name);
-  if (data) return;
+  if (data) {
+    // Fail-closed: un bucket che DEVE essere privato ma risulta pubblico e' una
+    // fuga di dati sensibili (volti/documenti). Meglio rompere il flusso che
+    // scriverci dentro. (Privacy garantita da invariante, non solo da convenzione.)
+    if (!isPublic && data.public) {
+      throw new Error(`Storage: il bucket '${name}' deve essere PRIVATO ma risulta pubblico. Interrotto.`);
+    }
+    return;
+  }
   if (isPublic) {
     // Creare un bucket PUBBLICO e' una scelta consapevole: lasciane traccia.
     // I dati sensibili (volti sorgente, documenti, selfie) NON vanno mai qui.

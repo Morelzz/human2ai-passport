@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
+import { allowRequest, ipFrom } from "@/lib/rate-limit";
 
 // Endpoint pubblico: chiunque (anche senza account) può segnalare un abuso.
 // L'avatar viene risolto lato server da handle o da certificato del contenuto,
@@ -10,6 +11,10 @@ type Reason = (typeof REASONS)[number];
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Richiesta non valida" }, { status: 400 });
+
+  if (!(await allowRequest(`report:${ipFrom(request)}`, 10, 600))) {
+    return NextResponse.json({ error: "Troppe segnalazioni, riprova tra qualche minuto" }, { status: 429 });
+  }
 
   const reason = body.reason as Reason;
   if (!REASONS.includes(reason)) {
