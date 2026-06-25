@@ -19,6 +19,27 @@ function modelsDir(): string {
   return process.env.WARD_MODELS_DIR || path.join(process.cwd(), "public", "models");
 }
 
+// Cartella dei .wasm del backend tfjs. ATTENZIONE (verificato a terra sul build
+// di prod): Next 16 builda con Turbopack, che NON restituisce un path da
+// `require.resolve` di un pacchetto external (serverExternalPackages). Prima il
+// codice faceva `path.dirname(require.resolve(...))` e su Vercel serverless quel
+// resolve tornava un id numerico -> `path.dirname(<numero>)` esplodeva con
+// ERR_INVALID_ARG_TYPE = 500 dello scan Ward + gate KYC rotto. Ora: si TENTA il
+// resolve (utile in ambienti non bundlati: vitest, worker non-pruned) e si CADE
+// su un path stabile sotto cwd. Nel bundle Turbopack di prod il ramo resolve viene
+// eliminato e resta solo il fallback, che e' corretto: i .wasm sono copiati in
+// node_modules/@tensorflow/tfjs-backend-wasm/dist via outputFileTracingIncludes.
+function wasmDir(): string {
+  try {
+    const nodeRequire = createRequire(import.meta.url);
+    const pkg = nodeRequire.resolve("@tensorflow/tfjs-backend-wasm/package.json");
+    if (typeof pkg === "string") return path.join(path.dirname(pkg), "dist") + "/";
+  } catch {
+    // cade al fallback sotto
+  }
+  return path.join(process.cwd(), "node_modules", "@tensorflow", "tfjs-backend-wasm", "dist") + "/";
+}
+
 // Carica face-api (node-wasm) + backend wasm + i 3 modelli, UNA volta sola.
 // Esportata per riuso dal VETO scan (lib/face-scan-server): stesso stack WASM,
 // nessun binario nativo, gira sul worker come il KYC.
@@ -30,10 +51,7 @@ export async function loadFaceApi(): Promise<any> {
     const wasm: any = await import("@tensorflow/tfjs-backend-wasm");
     const setWasmPaths = wasm.setWasmPaths ?? wasm.default?.setWasmPaths;
 
-    const require = createRequire(import.meta.url);
-    const wasmDir =
-      path.join(path.dirname(require.resolve("@tensorflow/tfjs-backend-wasm/package.json")), "dist") + "/";
-    setWasmPaths(wasmDir);
+    setWasmPaths(wasmDir());
 
     const tf = faceapi.tf;
     await tf.setBackend("wasm");

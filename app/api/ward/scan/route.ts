@@ -8,6 +8,9 @@ import { downloadFirstImage } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Cold-start: carica i modelli + WASM ed embedda piu' candidati; alza il cap
+// serverless (default 10s) come per /api/avatar/create e /api/veto/register.
+export const maxDuration = 60;
 
 // POST /api/ward/scan { avatarId } — lancia uno scan di protezione per un avatar
 // POSSEDUTO dall'utente. Pensato per girare sull'host worker (Railway, next

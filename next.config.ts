@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
       "./public/models/**",
       "./node_modules/@tensorflow/tfjs-backend-wasm/dist/*.wasm",
     ],
+    // Scan Ward live (bottone /ward): embedda i candidati con face-api (WASM) sul
+    // serverless Vercel, quindi serve gli stessi modelli + i .wasm nella lambda.
+    "/api/ward/scan": [
+      "./public/models/**",
+      "./node_modules/@tensorflow/tfjs-backend-wasm/dist/*.wasm",
+    ],
   },
   images: {
     // Copertine del blog generate con Higgsfield (CDN della libreria utente).
