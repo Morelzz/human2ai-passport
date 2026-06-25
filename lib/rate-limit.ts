@@ -1,8 +1,11 @@
 import { createServerClient } from "@/lib/supabase";
+import { reportDegradation } from "@/lib/observability";
 
 // Ritorna true se la richiesta e' AMMESSA, false se ha superato la soglia.
 // Non lancia mai: in caso di errore DB "fail open" sul rate-limit (non blocca
-// gli utenti veri per un problema infrastrutturale), ma logga.
+// gli utenti veri per un problema infrastrutturale), ma rende VISIBILE il degrado
+// (reportDegradation): un rate-limit cieco lascia scoperti i costi a valle (es. lo
+// scan Ward consuma Google Vision), quindi un'interruzione non deve passare muta.
 export async function allowRequest(
   key: string,
   max: number,
@@ -16,12 +19,12 @@ export async function allowRequest(
       p_window_seconds: windowSeconds,
     });
     if (error) {
-      console.warn("[rate-limit] errore RPC, fail-open:", error.message);
+      reportDegradation("ratelimit.unavailable", { reason: "rpc_error", msg: error.message });
       return true;
     }
     return data === true;
   } catch (e) {
-    console.warn("[rate-limit] eccezione, fail-open:", (e as Error).message);
+    reportDegradation("ratelimit.unavailable", { reason: "exception", msg: (e as Error).message });
     return true;
   }
 }

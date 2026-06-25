@@ -39,6 +39,10 @@ describe("frontalityFromLandmarks", () => {
     expect(frontalityFromLandmarks(landmarks(50, 50, 50))).toBe(0);
   });
 
+  it("coordinata NaN -> 0 (contratto: nel dubbio non frontale, mai NaN)", () => {
+    expect(frontalityFromLandmarks(landmarks(NaN))).toBe(0);
+  });
+
   it("indipendente da scala e traslazione", () => {
     // stesso naso centrato, coordinate spostate e scalate
     const big = frontalityFromLandmarks(landmarks(550, 100, 1000));

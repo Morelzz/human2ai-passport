@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { runScan, type ScanRepository, type ScanMatchRow } from "./scan";
+import { runScan, resolveFrontalMin, type ScanRepository, type ScanMatchRow } from "./scan";
 import type { DiscoveryProvider } from "./discovery";
 import type { MatchResult } from "./matching";
 
@@ -353,5 +353,20 @@ describe("runScan: match solo sui FRONTALI (B)", () => {
     expect(res.ok).toBe(true);
     expect(d.findCalled()).toBe(true); // ha proceduto con l'indice
     expect(degraded).toContain("ward.frontal_from_index_unfiltered");
+  });
+});
+
+describe("resolveFrontalMin (clamp soglia a (0,1])", () => {
+  it("usa il valore valido in (0,1]", () => {
+    expect(resolveFrontalMin("0.8")).toBe(0.8);
+    expect(resolveFrontalMin("1")).toBe(1);
+  });
+  it("fuori range o non numerico -> default 0.75 (mai 'protegge nulla')", () => {
+    expect(resolveFrontalMin("2")).toBe(0.75); // typo classico
+    expect(resolveFrontalMin("7.5")).toBe(0.75);
+    expect(resolveFrontalMin("0")).toBe(0.75);
+    expect(resolveFrontalMin("-0.5")).toBe(0.75);
+    expect(resolveFrontalMin("abc")).toBe(0.75);
+    expect(resolveFrontalMin(undefined)).toBe(0.75);
   });
 });

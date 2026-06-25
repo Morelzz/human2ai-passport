@@ -79,6 +79,15 @@ export interface ScanResult {
 
 const DEFAULT_LIMIT = 12;
 
+// Soglia di frontalita' (tarata a terra: frontale ~0.97, profilo/tre-quarti <=0.65).
+// Accetta SOLO (0,1]: un valore fuori range (typo tipo "2" o "7.5") escluderebbe
+// ogni reference -> ogni scan tornerebbe done/0 in silenzio ("protegge nulla").
+// Fuori range o non numerico -> default 0.75. Pura, esportata per il test.
+export function resolveFrontalMin(raw: string | undefined): number {
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 && n <= 1 ? n : 0.75;
+}
+
 // Fetch di default di un'immagine candidata: accetta solo content-type image/*,
 // ritorna null su qualsiasi problema (la pipeline tratta null come "scarta").
 async function defaultFetchImage(url: string): Promise<Uint8Array | null> {
@@ -129,8 +138,7 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
   //    falsi positivi. Si embeddano le immagini reference (gia' scaricate per la
   //    discovery) e si tengono solo le frontali (frontality >= soglia). Senza
   //    immagini (es. seed col solo portrait): fallback ai descrittori dell'indice.
-  const fmEnv = Number(process.env.WARD_FRONTAL_MIN);
-  const frontalMin = Number.isFinite(fmEnv) && fmEnv > 0 ? fmEnv : 0.75;
+  const frontalMin = resolveFrontalMin(process.env.WARD_FRONTAL_MIN);
   const refImages = deps.referenceImageBytesList ?? [];
   let refs: number[][];
   if (refImages.length > 0) {

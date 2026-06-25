@@ -31,5 +31,7 @@ export function frontalityFromLandmarks(points: Point[]): number {
 
   const t = (nose.x - lo) / span; // 0.5 = centrato
   const frontality = 1 - 2 * Math.abs(t - 0.5);
-  return Math.max(0, Math.min(1, frontality));
+  // Guardia NaN: coordinate degeneri (NaN) non devono propagare NaN (Math.max non
+  // lo filtra). Contratto: nel dubbio 0 = NON frontale.
+  return Number.isFinite(frontality) ? Math.max(0, Math.min(1, frontality)) : 0;
 }
