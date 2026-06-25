@@ -84,17 +84,3 @@ export async function downloadAll(bucket: string, prefix: string): Promise<Buffe
   }
   return out;
 }
-
-/** Scarica SOLO la prima immagine sotto un prefisso (senza tirare giu' l'intero
- * set). Serve alla discovery Ward per interrogare Vision con una FOTO REALE
- * dell'avatar (reference) invece del portrait generato. null se nessuna. */
-export async function downloadFirstImage(bucket: string, prefix: string): Promise<Buffer | null> {
-  const admin = createServerClient();
-  const { data: list } = await admin.storage.from(bucket).list(prefix);
-  const file = (list ?? [])
-    .filter((f) => /\.(jpe?g|png|webp)$/i.test(f.name))
-    .sort((a, b) => a.name.localeCompare(b.name))[0];
-  if (!file) return null;
-  const { data } = await admin.storage.from(bucket).download(`${prefix}/${file.name}`);
-  return data ? Buffer.from(await data.arrayBuffer()) : null;
-}

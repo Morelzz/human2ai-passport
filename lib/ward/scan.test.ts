@@ -7,6 +7,7 @@ import type { MatchResult } from "./matching";
 // match salvati: cosi' verifichiamo la data-minimization senza toccare il DB.
 function memRepo(refs: number[][]) {
   const candidates = new Map<string, { jobId: string; url: string }>();
+  const insertedUrls: string[] = []; // log append-only nell'ordine di insert (per il round-robin)
   const matches: ScanMatchRow[] = [];
   const finished: { jobId: string; status: string; stats: Record<string, unknown>; error?: string }[] = [];
   let jobs = 0;
@@ -14,12 +15,12 @@ function memRepo(refs: number[][]) {
   const repo: ScanRepository = {
     async loadReferenceDescriptors() { return refs; },
     async createJob() { jobs++; return "job-1"; },
-    async insertCandidate(jobId, url) { const id = "c" + ++seq; candidates.set(id, { jobId, url }); return id; },
+    async insertCandidate(jobId, url) { const id = "c" + ++seq; candidates.set(id, { jobId, url }); insertedUrls.push(url); return id; },
     async deleteCandidate(id) { candidates.delete(id); },
     async insertMatch(row) { matches.push(row); return "m" + ++seq; },
     async finishJob(jobId, status, stats, error) { finished.push({ jobId, status, stats, error }); },
   };
-  return { repo, candidates, matches, finished, jobs: () => jobs };
+  return { repo, candidates, insertedUrls, matches, finished, jobs: () => jobs };
 }
 
 const audit = async () => {};
@@ -35,6 +36,23 @@ function provider(urls: string[]) {
     },
   };
   return { p, findCalled: () => findCalled };
+}
+
+// Provider che risponde DIVERSAMENTE per angolo: l'angolo e' il primo byte dei
+// bytes della query (cosi' i test simulano le 3 angolazioni reference). Traccia
+// gli angoli interrogati nell'ordine.
+function anglesProvider(byAngle: Record<number, string[]>) {
+  const calls: number[] = [];
+  const p: DiscoveryProvider = {
+    name: "angles",
+    enabled: true,
+    async find(q, limit) {
+      const angle = (q as { imageBytes?: Uint8Array }).imageBytes?.[0] ?? -1;
+      calls.push(angle);
+      return (byAngle[angle] ?? []).slice(0, limit).map((url) => ({ url, host: new URL(url).host }));
+    },
+  };
+  return { p, calls };
 }
 
 const okGate = async () => ({ ok: true as const, consentId: "k1", onMatch: "notify" as const });
@@ -133,16 +151,16 @@ describe("runScan: pipeline + data-minimization (A2.3)", () => {
 
 describe("runScan: immagine-query della discovery", () => {
   function capturingProvider() {
-    let lastQuery: unknown;
+    const queries: unknown[] = [];
     const p: DiscoveryProvider = {
       name: "cap",
       enabled: true,
       async find(q) {
-        lastQuery = q;
+        queries.push(q);
         return [];
       },
     };
-    return { p, getQuery: () => lastQuery };
+    return { p, getQuery: () => queries.at(-1), getQueries: () => queries };
   }
 
   it("preferisce i BYTE reali (reference) al portrait generato", async () => {
@@ -151,7 +169,7 @@ describe("runScan: immagine-query della discovery", () => {
     const bytes = new Uint8Array([1, 2, 3]);
     await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: cap.p,
-      referenceImageBytes: bytes,
+      referenceImageBytesList: [bytes],
       referenceImageUrl: "https://portrait.test/p.png",
     });
     expect(cap.getQuery()).toEqual({ imageBytes: bytes });
@@ -165,5 +183,101 @@ describe("runScan: immagine-query della discovery", () => {
       referenceImageUrl: "https://portrait.test/p.png",
     });
     expect(cap.getQuery()).toEqual({ imageUrl: "https://portrait.test/p.png" });
+  });
+
+  it("interroga la discovery una volta PER OGNI immagine reference (3 angoli)", async () => {
+    const m = memRepo([[0, 0]]);
+    const cap = capturingProvider();
+    const a = new Uint8Array([1]);
+    const b = new Uint8Array([2]);
+    const c = new Uint8Array([3]);
+    await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: cap.p,
+      referenceImageBytesList: [a, b, c],
+    });
+    expect(cap.getQueries()).toEqual([{ imageBytes: a }, { imageBytes: b }, { imageBytes: c }]);
+  });
+});
+
+describe("runScan: discovery multi-angolo (union)", () => {
+  it("interroga ogni angolo e UNISCE i candidati deduplicando per url", async () => {
+    const m = memRepo([[0, 0]]);
+    const a = anglesProvider({
+      1: ["https://x.test/a.jpg", "https://x.test/shared.jpg"],
+      2: ["https://x.test/b.jpg", "https://x.test/shared.jpg"], // shared duplicato tra angoli
+      3: ["https://x.test/c.jpg"],
+    });
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: a.p,
+      referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])],
+      fetchImage: async () => null, // scarta tutti: ci basta contare i candidati dell'unione
+    });
+    expect(a.calls.sort()).toEqual([1, 2, 3]); // tutti e 3 gli angoli interrogati
+    expect(res.candidates).toBe(4); // a, b, c, shared (shared una volta sola)
+    expect(new Set(m.insertedUrls)).toEqual(
+      new Set(["https://x.test/a.jpg", "https://x.test/b.jpg", "https://x.test/c.jpg", "https://x.test/shared.jpg"]),
+    );
+  });
+
+  it("round-robin: pesca a turno da ogni angolo e rispetta il cap (limit)", async () => {
+    const m = memRepo([[0, 0]]);
+    const a = anglesProvider({
+      1: ["https://x.test/1a.jpg", "https://x.test/1b.jpg", "https://x.test/1c.jpg"],
+      2: ["https://x.test/2a.jpg", "https://x.test/2b.jpg", "https://x.test/2c.jpg"],
+      3: ["https://x.test/3a.jpg", "https://x.test/3b.jpg", "https://x.test/3c.jpg"],
+    });
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: a.p,
+      referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])],
+      fetchImage: async () => null,
+      limit: 6,
+    });
+    expect(res.candidates).toBe(6);
+    expect(m.insertedUrls).toEqual([
+      "https://x.test/1a.jpg", "https://x.test/2a.jpg", "https://x.test/3a.jpg",
+      "https://x.test/1b.jpg", "https://x.test/2b.jpg", "https://x.test/3b.jpg",
+    ]);
+  });
+
+  it("un angolo che fallisce non interrompe lo scan (degrado, prosegue sugli altri)", async () => {
+    const m = memRepo([[0, 0]]);
+    const degraded: string[] = [];
+    const p: DiscoveryProvider = {
+      name: "partial",
+      enabled: true,
+      async find(q) {
+        const angle = (q as { imageBytes?: Uint8Array }).imageBytes?.[0];
+        if (angle === 2) throw new Error("angolo 2 down");
+        return [{ url: `https://x.test/${angle}.jpg`, host: "x.test" }];
+      },
+    };
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: p,
+      referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])],
+      fetchImage: async () => null,
+      degrade: (area) => { degraded.push(area); },
+    });
+    expect(res.ok).toBe(true);
+    expect(res.candidates).toBe(2); // angoli 1 e 3, il 2 e' caduto
+    expect(degraded).toContain("ward.discovery_angle_failed");
+  });
+
+  it("se TUTTI gli angoli falliscono lo scan e' un errore (discovery_failed)", async () => {
+    const m = memRepo([[0, 0]]);
+    const p: DiscoveryProvider = {
+      name: "alldown",
+      enabled: true,
+      async find() { throw new Error("vision giu'"); },
+    };
+    const res = await runScan("av1", {
+      repo: m.repo, audit, gate: okGate, discovery: p,
+      referenceImageBytesList: [new Uint8Array([1]), new Uint8Array([2])],
+      degrade: () => {},
+    });
+    expect(res.ok).toBe(false);
+    expect(res.status).toBe("error");
+    expect(res.reason).toMatch(/Discovery fallita/);
+    expect(m.finished.at(-1)?.status).toBe("error");
+    expect(m.candidates.size).toBe(0); // nessun candidato (data-minimization)
   });
 });

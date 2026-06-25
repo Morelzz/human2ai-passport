@@ -2,6 +2,7 @@ import type { GateResult } from "./gate";
 import type { DiscoveryProvider, DiscoveryQuery, Candidate } from "./discovery";
 import type { MatchResult } from "./matching";
 import { classifySensitivity, type Sensitivity } from "./sensitivity";
+import type { DegradationArea } from "../observability";
 
 // ORCHESTRATORE di scan (Job B), Module 1. Cablaggio esplicito con dependency
 // injection: in test si iniettano fake (niente DB, niente rete, niente face-api),
@@ -51,8 +52,14 @@ export interface ScanDeps {
   match?: (refs: number[][], bytes: Uint8Array) => Promise<MatchResult>;
   phash?: (bytes: Uint8Array) => Promise<string | null>;
   audit?: AuditFn;
-  referenceImageBytes?: Uint8Array; // FOTO REALE della persona (reference) per la discovery: query migliore del portrait generato
+  // FOTO REALI della persona (reference, le 3 angolazioni) per la discovery: si
+  // interroga il provider con OGNI angolo e si UNISCONO i candidati (un profilo
+  // trova foto che il frontale manca). Query migliore del portrait generato.
+  referenceImageBytesList?: Uint8Array[];
   referenceImageUrl?: string; // fallback: per i provider reali (Google Vision); lo stub lo ignora
+  // Allarme su degrado, iniettabile (default: reportDegradation). Usato quando un
+  // singolo angolo della discovery fallisce: si degrada e si prosegue sugli altri.
+  degrade?: (area: DegradationArea, detail?: Record<string, unknown>) => void;
   limit?: number;
 }
 
@@ -86,6 +93,7 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
   const { repo } = deps;
   const gate = deps.gate ?? (await import("./gate")).assertMonitoringConsent;
   const audit: AuditFn = deps.audit ?? (await import("./audit")).appendAudit;
+  const degrade = deps.degrade ?? (await import("../observability")).reportDegradation;
   const fetchImage = deps.fetchImage ?? defaultFetchImage;
   const matchFn = deps.match ?? (await import("./matching")).match;
   let phashFn = deps.phash;
@@ -119,22 +127,59 @@ export async function runScan(avatarId: string, deps: ScanDeps): Promise<ScanRes
     return { ok: false, status: "error", reason: "Nessun descrittore di riferimento per l'avatar", jobId, candidates: 0, matches: 0, discarded: 0 };
   }
 
-  // 3. Discovery (similarita' di CONTENUTO, non biometria). Si interroga con la
-  //    FOTO REALE della persona (reference) se disponibile: il portrait generato
-  //    depista la ricerca (Vision non trova la persona reale). Fallback al portrait.
-  const query: DiscoveryQuery = deps.referenceImageBytes
-    ? { imageBytes: deps.referenceImageBytes }
-    : deps.referenceImageUrl
-    ? { imageUrl: deps.referenceImageUrl }
-    : {};
-  let candidates: Candidate[];
-  try {
-    candidates = await provider.find(query, limit);
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    await repo.finishJob(jobId, "error", { reason: "discovery_failed" }, msg);
-    await audit({ actor: null, action: "scan.error", target: avatarId, meta: { jobId, reason: "discovery_failed", msg } });
-    return { ok: false, status: "error", reason: `Discovery fallita: ${msg}`, jobId, candidates: 0, matches: 0, discarded: 0 };
+  // 3. Discovery (similarita' di CONTENUTO, non biometria). Si interroga con le
+  //    FOTO REALI della persona (reference, le 3 angolazioni): il portrait generato
+  //    depista la ricerca. Una query PER ANGOLO, poi si uniscono i candidati: un
+  //    profilo trova foto che il frontale manca. Fallback al portrait se non ci
+  //    sono reference (es. seed).
+  const queries: DiscoveryQuery[] =
+    deps.referenceImageBytesList && deps.referenceImageBytesList.length > 0
+      ? deps.referenceImageBytesList.map((bytes) => ({ imageBytes: bytes }))
+      : deps.referenceImageUrl
+      ? [{ imageUrl: deps.referenceImageUrl }]
+      : [{}];
+
+  // Fan-out PARALLELO e tollerante: gli angoli (anche 6-8 sui founder) si
+  // interrogano in concorrenza (allSettled preserva l'ordine -> il round-robin
+  // resta deterministico). Un angolo che fallisce NON interrompe lo scan (degrado,
+  // non abort: la completezza non e' un gate di sicurezza). Si fallisce solo se
+  // OGNI angolo fallisce, col comportamento di prima (status error/discovery_failed).
+  // Il costo pesante (embed+match) resta fisso al cap dell'unione: scala solo Vision.
+  const settled = await Promise.allSettled(queries.map((q) => provider.find(q, limit)));
+  const perAngle: Candidate[][] = [];
+  let anyOk = false;
+  let lastErr = "";
+  for (const r of settled) {
+    if (r.status === "fulfilled") {
+      perAngle.push(r.value);
+      anyOk = true;
+    } else {
+      const msg = r.reason instanceof Error ? r.reason.message : String(r.reason);
+      lastErr = msg;
+      perAngle.push([]);
+      degrade("ward.discovery_angle_failed", { jobId, msg });
+    }
+  }
+  if (!anyOk) {
+    await repo.finishJob(jobId, "error", { reason: "discovery_failed" }, lastErr);
+    await audit({ actor: null, action: "scan.error", target: avatarId, meta: { jobId, reason: "discovery_failed", msg: lastErr } });
+    return { ok: false, status: "error", reason: `Discovery fallita: ${lastErr}`, jobId, candidates: 0, matches: 0, discarded: 0 };
+  }
+
+  // Union ROUND-ROBIN: pesco a turno il candidato i-esimo di ogni angolo, dedup
+  // per url, mi fermo al budget `limit`. Cosi' ogni angolo contribuisce equamente
+  // e il costo (embed+match per candidato) resta quello di prima.
+  const candidates: Candidate[] = [];
+  const seen = new Set<string>();
+  const maxLen = Math.max(0, ...perAngle.map((a) => a.length));
+  outer: for (let i = 0; i < maxLen; i++) {
+    for (const angle of perAngle) {
+      const cand = angle[i];
+      if (!cand || seen.has(cand.url)) continue;
+      seen.add(cand.url);
+      candidates.push(cand);
+      if (candidates.length >= limit) break outer;
+    }
   }
 
   // 4. Per candidato: embed + match. Confirmed/review -> scan_matches. Sempre

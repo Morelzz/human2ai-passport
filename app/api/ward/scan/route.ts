@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { allowRequest } from "@/lib/rate-limit";
 import { runScan } from "@/lib/ward/scan";
 import { SupabaseScanRepository } from "@/lib/ward/scan-repo";
-import { downloadFirstImage } from "@/lib/storage";
+import { downloadAll } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,14 +43,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Avatar non trovato" }, { status: 404 });
   }
 
-  // Discovery efficace: si interroga Vision con una FOTO REALE della persona (la
-  // prima reference), non col portrait generato che depista la ricerca. Fallback
-  // al portrait se l'avatar non ha reference (es. seed).
-  const refPhoto = await downloadFirstImage("references", av.handle as string);
+  // Discovery efficace dai 3 angoli: si interroga Vision con TUTTE le foto reali
+  // (reference), non col portrait generato che depista la ricerca, e si uniscono
+  // i candidati. Fallback al portrait se l'avatar non ha reference (es. seed).
+  const refPhotos = await downloadAll("references", av.handle as string);
   const result = await runScan(avatarId, {
     repo: new SupabaseScanRepository(),
-    referenceImageBytes: refPhoto ? new Uint8Array(refPhoto) : undefined,
-    referenceImageUrl: refPhoto ? undefined : (av.portrait_url as string | null) ?? undefined,
+    referenceImageBytesList: refPhotos.map((b) => new Uint8Array(b)),
+    referenceImageUrl: refPhotos.length ? undefined : (av.portrait_url as string | null) ?? undefined,
   });
 
   // Gate negato non e' un errore HTTP: e' un esito di consenso (403).
