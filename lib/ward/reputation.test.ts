@@ -24,4 +24,20 @@ describe("domainReputation", () => {
     expect(KNOWN_PLATFORMS.length).toBeGreaterThan(10);
     expect(KNOWN_PLATFORMS.every((d) => d === d.toLowerCase())).toBe(true);
   });
+
+  // I CDN delle piattaforme (dove vivono davvero le immagini) hanno un dominio
+  // diverso dalla vetrina: media.licdn.com NON finisce con linkedin.com. Vanno
+  // riconosciuti 'exposed' lo stesso (host reali usciti da uno scan vero).
+  it("i CDN delle piattaforme note sono 'exposed'", () => {
+    expect(domainReputation("media.licdn.com")).toBe("exposed");   // LinkedIn
+    expect(domainReputation("pbs.twimg.com")).toBe("exposed");     // Twitter/X
+    expect(domainReputation("i.scdn.co")).toBe("exposed");         // Spotify
+    expect(domainReputation("scontent.fmxp1-1.fna.fbcdn.net")).toBe("exposed"); // Facebook/IG
+    expect(domainReputation("i.ytimg.com")).toBe("exposed");       // YouTube
+    expect(domainReputation("i.pinimg.com")).toBe("exposed");      // Pinterest
+  });
+  it("i CDN non si fanno ingannare dallo spoofing del suffisso", () => {
+    expect(domainReputation("licdn.com.evil.ru")).toBe("obscure");
+    expect(domainReputation("nottwimg.com")).toBe("obscure");
+  });
 });
