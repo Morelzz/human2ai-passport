@@ -23,6 +23,8 @@ import { voltStr } from "@/lib/strings/volt";
 import { GOALS, FRAMINGS, EXPRESSIONS } from "@/lib/studio-options";
 import type { FramingVal, ExpressionVal, LightVal, ColorStyleVal, LensVal, CameraVal, GoalPreset } from "@/lib/studio-options";
 import { GoalStart } from "./GoalStart";
+import { DictateButton } from "@/components/voice/DictateButton";
+import { joinScene } from "@/lib/voice/dictation";
 import { AvatarHero } from "./AvatarHero";
 import { PosePicker } from "./PosePicker";
 import { IconPicker } from "./IconPicker";
@@ -274,6 +276,14 @@ export function StudioPanel(props: StudioPanelProps) {
               placeholder="Es. che balla in spiaggia al tramonto, luce dorata, look estivo, 35mm"
               rows={2}
               className="w-full resize-y rounded-xl border border-border bg-obsidian-2 px-3 py-3 text-sm leading-relaxed text-foreground outline-none focus:border-amber/40"
+            />
+
+            {/* Dettatura vocale (push-to-talk): appende il parlato alla scena
+                con joinScene. Su browser senza Web Speech non rende nulla. */}
+            <DictateButton
+              onText={(chunk) =>
+                setSceneByHandle((m) => ({ ...m, [avatar.handle]: joinScene(m[avatar.handle] ?? "", chunk) }))
+              }
             />
 
             <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
