@@ -86,6 +86,13 @@ export interface StudioPanelProps {
   enhancedByHandle: Record<string, string | null>;
   setEnhancedByHandle: React.Dispatch<React.SetStateAction<Record<string, string | null>>>;
 
+  // Regia vocale: applica la descrizione (parlata o scritta) ai controlli in un
+  // colpo. composedByHandle porta le etichette impostate; undoCompose ripristina.
+  composeFromVoice: (handle: string) => void;
+  composingHandle: string | null;
+  composedByHandle: Record<string, { labels: string[] } | null>;
+  undoCompose: (handle: string) => void;
+
   // Guardia fotorealismo: termini non-reali rilevati nella scena corrente.
   styleRisk: string[];
 
@@ -154,6 +161,10 @@ export function StudioPanel(props: StudioPanelProps) {
     enhancingHandle,
     enhancedByHandle,
     setEnhancedByHandle,
+    composeFromVoice,
+    composingHandle,
+    composedByHandle,
+    undoCompose,
     styleRisk,
     engine,
     echoFormat,
@@ -285,6 +296,33 @@ export function StudioPanel(props: StudioPanelProps) {
                 setSceneByHandle((m) => ({ ...m, [avatar.handle]: joinScene(m[avatar.handle] ?? "", chunk) }))
               }
             />
+
+            {/* Regia: dalla descrizione (parlata o scritta) imposta posa,
+                inquadratura, espressione, stile, macchina, ottica e luce in un
+                colpo. I controlli restano modificabili a mano sotto; la scena
+                resta come l'ha scritta l'utente. */}
+            <button
+              type="button"
+              onClick={() => composeFromVoice(avatar.handle)}
+              disabled={composingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
+              className="mt-2.5 w-full rounded-xl border border-amber/30 bg-amber/[0.07] px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber/15 disabled:opacity-40"
+            >
+              {composingHandle === avatar.handle ? "✦ Compongo lo Studio…" : "✦ Imposta lo Studio dalla descrizione"}
+            </button>
+            {composedByHandle[avatar.handle] && (
+              <div className="mt-2 flex items-start justify-between gap-3 rounded-xl border border-teal/30 bg-teal/[0.07] p-3">
+                <p className="text-[0.75rem] leading-relaxed text-foreground">
+                  <span className="font-semibold text-teal">Regia impostata:</span> {composedByHandle[avatar.handle]!.labels.join(" · ")}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => undoCompose(avatar.handle)}
+                  className="focus-ring shrink-0 text-[0.72rem] font-semibold text-muted underline transition-colors hover:text-foreground"
+                >
+                  Annulla
+                </button>
+              </div>
+            )}
 
             <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
               Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, identità bloccata dalle sue foto reali.

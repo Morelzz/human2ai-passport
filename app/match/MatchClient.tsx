@@ -14,6 +14,7 @@ import type { FramingVal, ExpressionVal, LightVal, ColorStyleVal, LensVal, Camer
 // Token-helper per dare all'enhancer le scelte gia fatte coi controlli (le tiene
 // coerenti nella scena, senza ripeterle come direttive: quelle le aggiunge il server).
 import { poseToken, framingToken, expressionToken, colorStyleToken, cameraToken, lensToken, lightToken } from "@/lib/studio-options";
+import { describeDirection, type StudioDirection } from "@/lib/voice/studio-interpret";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -167,6 +168,13 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   // A1 Prompt Enhancer: proposta di scena migliorata per avatar (mai automatica).
   const [enhancingHandle, setEnhancingHandle] = useState<string | null>(null);
   const [enhancedByHandle, setEnhancedByHandle] = useState<Record<string, string | null>>({});
+  // Regia vocale: la descrizione (parlata o scritta) imposta i controlli dello
+  // Studio in un colpo. composedByHandle tiene l'esito (etichette mostrate +
+  // snapshot dei controlli PRIMA della regia, per l'Annulla). I controlli sono
+  // globali (un avatar per volta): lo snapshot e' uno solo, sull'handle attivo.
+  type ControlsSnap = { pose: string; framing: string; expression: string; colorStyle: string; camera: string; lens: string; light: string };
+  const [composingHandle, setComposingHandle] = useState<string | null>(null);
+  const [composedByHandle, setComposedByHandle] = useState<Record<string, { labels: string[]; snap: ControlsSnap } | null>>({});
   const [genByHandle, setGenByHandle] = useState<Record<string, GenResult>>({});
   // VOLT: saldo per il preview costo (null = sistema non configurato), gate
   // di saldo insufficiente (4.7) e riga di loading "elettrica" (4.5).
@@ -471,6 +479,61 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
     setEnhancingHandle(null);
   }
 
+  // Regia vocale: manda la descrizione (parlata o scritta) a /api/studio/interpret
+  // e applica le scelte ai controlli in un colpo. Salva uno snapshot dei controlli
+  // PRIMA, cosi' l'Annulla li ripristina. La scena resta come l'ha scritta l'utente.
+  async function composeFromVoice(handle: string) {
+    const text = (sceneByHandle[handle] ?? "").trim();
+    if (text.length < 3) return;
+    setComposingHandle(handle);
+    setError(null);
+    try {
+      const res = await fetch("/api/studio/interpret", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const dir = (await res.json()) as StudioDirection & { error?: string };
+      if (!res.ok) {
+        setError(dir.error ?? "Regia non riuscita");
+      } else {
+        const labels = describeDirection(dir);
+        if (labels.length === 0) {
+          setError("Non ho trovato indicazioni da impostare, prova a essere piu' specifico");
+        } else {
+          // Snapshot dei controlli correnti, poi applico solo i token presenti.
+          const snap: ControlsSnap = { pose, framing, expression, colorStyle, camera, lens, light };
+          if (dir.pose) setPose(dir.pose);
+          if (dir.framing) setFraming(dir.framing as FramingVal);
+          if (dir.expression) setExpression(dir.expression as ExpressionVal);
+          if (dir.colorStyle) setColorStyle(dir.colorStyle as ColorStyleVal);
+          if (dir.camera) setCamera(dir.camera as CameraVal);
+          if (dir.lens) setLens(dir.lens as LensVal);
+          if (dir.light) setLight(dir.light as LightVal);
+          setComposedByHandle((m) => ({ ...m, [handle]: { labels, snap } }));
+        }
+      }
+    } catch {
+      setError("Regia non riuscita, riprova");
+    }
+    setComposingHandle(null);
+  }
+
+  // Annulla l'ultima regia: ripristina i controlli allo snapshot pre-regia.
+  function undoCompose(handle: string) {
+    const c = composedByHandle[handle];
+    if (!c) return;
+    const s = c.snap;
+    setPose(s.pose);
+    setFraming(s.framing as FramingVal);
+    setExpression(s.expression as ExpressionVal);
+    setColorStyle(s.colorStyle as ColorStyleVal);
+    setCamera(s.camera as CameraVal);
+    setLens(s.lens as LensVal);
+    setLight(s.light as LightVal);
+    setComposedByHandle((m) => ({ ...m, [handle]: null }));
+  }
+
   // Interroga /api/generate/job/[id] finché il job non è done/error (cap ~20 min,
   // poi rimanda a «I miei contenuti»: il job prosegue comunque lato server).
   async function pollJob(handle: string, jobId: string, alias: string, volt?: GenResult["volt"]) {
@@ -738,6 +801,10 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                       enhancingHandle={enhancingHandle}
                       enhancedByHandle={enhancedByHandle}
                       setEnhancedByHandle={setEnhancedByHandle}
+                      composeFromVoice={composeFromVoice}
+                      composingHandle={composingHandle}
+                      composedByHandle={composedByHandle}
+                      undoCompose={undoCompose}
                       styleRisk={styleRisk}
                       engine={engine}
                       echoFormat={echoFormat}
