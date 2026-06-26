@@ -15,6 +15,8 @@ import type { FramingVal, ExpressionVal, LightVal, ColorStyleVal, LensVal, Camer
 // coerenti nella scena, senza ripeterle come direttive: quelle le aggiunge il server).
 import { poseToken, framingToken, expressionToken, colorStyleToken, cameraToken, lensToken, lightToken } from "@/lib/studio-options";
 import { describeDirection, type StudioDirection } from "@/lib/voice/studio-interpret";
+import { DictateButton } from "@/components/voice/DictateButton";
+import { joinScene } from "@/lib/voice/dictation";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
@@ -642,6 +644,10 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
               className="relative w-full resize-y border-none bg-transparent px-4 py-3.5 text-base text-foreground outline-none"
             />
           </div>
+          {/* Dettatura del brief: parli chi cerchi invece di scriverlo. Stesso
+              microfono push-to-talk dello Studio; su browser senza Web Speech
+              non rende nulla, il brief resta scrivibile a mano. */}
+          <DictateButton idleHint="Detta il tuo brief a voce" onText={(chunk) => setBrief((b) => joinScene(b, chunk))} />
           {/* Review D4 — principio vincolante, dichiarato dove serve */}
           <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
             Qui si <span className="text-muted">descrive</span>, non si carica: nessuna ricerca per
