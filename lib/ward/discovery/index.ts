@@ -17,4 +17,4 @@ export function getDiscoveryProvider(): DiscoveryProvider {
   return new StubDiscoveryProvider();
 }
 
-export type { DiscoveryProvider, DiscoveryQuery, Candidate } from "./types";
+export type { DiscoveryProvider, DiscoveryQuery, Candidate, MatchKind } from "./types";
