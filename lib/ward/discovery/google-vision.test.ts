@@ -59,4 +59,26 @@ describe("parseWebDetection", () => {
     expect(parseWebDetection({}, 10)).toEqual([]);
     expect(parseWebDetection({ fullMatchingImages: [{}, { url: "" }] }, 10)).toEqual([]);
   });
+
+  it("tagga il matchKind per sorgente (full/partial/similar) per il verdetto Ward v2", () => {
+    const web = {
+      fullMatchingImages: [{ url: "https://a.com/1.jpg" }],
+      partialMatchingImages: [{ url: "https://b.com/2.jpg" }],
+      visuallySimilarImages: [{ url: "https://c.com/3.jpg" }],
+    };
+    const out = parseWebDetection(web, 10);
+    expect(out.find((c) => c.url === "https://a.com/1.jpg")?.matchKind).toBe("full");
+    expect(out.find((c) => c.url === "https://b.com/2.jpg")?.matchKind).toBe("partial");
+    expect(out.find((c) => c.url === "https://c.com/3.jpg")?.matchKind).toBe("similar");
+  });
+
+  it("il primo matchKind vince in caso di duplicato tra categorie (full > similar)", () => {
+    const web = {
+      fullMatchingImages: [{ url: "https://a.com/1.jpg" }],
+      visuallySimilarImages: [{ url: "https://a.com/1.jpg" }],
+    };
+    const out = parseWebDetection(web, 10);
+    expect(out).toHaveLength(1);
+    expect(out[0].matchKind).toBe("full");
+  });
 });

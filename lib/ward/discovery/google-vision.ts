@@ -1,4 +1,4 @@
-import type { DiscoveryProvider, DiscoveryQuery, Candidate } from "./types";
+import type { DiscoveryProvider, DiscoveryQuery, Candidate, MatchKind } from "./types";
 import { hostOf } from "./types";
 
 // Google Cloud Vision WEB_DETECTION: similarita' di CONTENUTO (non biometrica).
@@ -35,19 +35,22 @@ export function parseWebDetection(web: WebDetection, limit: number): Candidate[]
     }
   }
 
-  const refs: VisionImageRef[] = [
-    ...(web.fullMatchingImages ?? []),
-    ...(web.partialMatchingImages ?? []),
-    ...(web.visuallySimilarImages ?? []),
+  // Ordine = confidenza decrescente: full prima di partial prima di similar. Il
+  // dedup per url tiene la PRIMA occorrenza, quindi un'immagine sia full che
+  // similar resta taggata 'full' (la confidenza piu' alta vince).
+  const refs: Array<{ url?: string; kind: MatchKind }> = [
+    ...(web.fullMatchingImages ?? []).map((r) => ({ url: r?.url, kind: "full" as const })),
+    ...(web.partialMatchingImages ?? []).map((r) => ({ url: r?.url, kind: "partial" as const })),
+    ...(web.visuallySimilarImages ?? []).map((r) => ({ url: r?.url, kind: "similar" as const })),
   ];
 
   const seen = new Set<string>();
   const out: Candidate[] = [];
   for (const r of refs) {
-    const url = r?.url;
+    const url = r.url;
     if (!url || seen.has(url)) continue;
     seen.add(url);
-    out.push({ url, host: hostOf(url), pageUrl: pageByImage.get(url) });
+    out.push({ url, host: hostOf(url), pageUrl: pageByImage.get(url), matchKind: r.kind });
     if (out.length >= limit) break;
   }
   return out;
