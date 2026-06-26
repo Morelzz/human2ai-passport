@@ -73,5 +73,7 @@ export async function POST(request: Request) {
     .eq("scan_job_id", result.jobId)
     .order("created_at", { ascending: true });
 
-  return NextResponse.json({ ...result, matches: matches ?? [] }, { status: 200 });
+  // `result.matches` resta il CONTEGGIO; le righe vanno sotto `results` (la UI le
+  // ricarica via refresh, ma le rendiamo comode anche qui per gli altri client).
+  return NextResponse.json({ ...result, results: matches ?? [] }, { status: 200 });
 }
