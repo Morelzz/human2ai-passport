@@ -122,6 +122,13 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                       <a href={`/receipt/${g.certificate}`} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-center text-[0.66rem] text-faint underline-offset-2 transition-colors hover:text-muted hover:underline">
                         Ricevuta di conformità
                       </a>
+                      {/* Ward v2: cerca le copie di QUESTA immagine sul web (solo
+                          per il buyer, e' il suo asset). */}
+                      {shareVariant === "buyer" && (
+                        <a href={`/ward/content/${g.id}`} className="mt-1 block text-center text-[0.66rem] text-faint underline-offset-2 transition-colors hover:text-[#F2A93B] hover:underline">
+                          Cerca copie sul web
+                        </a>
+                      )}
                     </>
                   )}
                 </div>
