@@ -8,7 +8,8 @@ import { useReducedMotion } from "framer-motion";
 // per LCP istantaneo + variante per viewport: 720p (~0,8MB) su mobile,
 // 1080p (~2,2MB) su desktop. Scelta al mount, così si scarica UN solo file.
 const BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/assets`;
-const POSTER = `${BASE}/hero-poster.jpg`;
+const POSTER = `${BASE}/hero-v2-poster.jpg`;
+const VIDEO = `${BASE}/hero-v2.mp4`; // verticale 3:4, ottimizzato (muto), un solo file
 
 // Video di sfondo dell'hero: autoplay muto in loop (regole mobile rispettate:
 // muted + playsInline). Sul punto di loop facciamo una piccola transizione
@@ -23,8 +24,7 @@ export function HeroVideo({ className }: { className?: string }) {
   useEffect(() => {
     // Con reduced-motion niente video: il poster è l'immagine dell'hero.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const mobile = window.matchMedia("(max-width: 768px)").matches;
-    setSrc(`${BASE}/hero-${mobile ? "720" : "1080"}.mp4`);
+    setSrc(VIDEO);
   }, []);
 
   // La src arriva DOPO il mount: l'attributo autoplay da solo può non
