@@ -5,11 +5,12 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/motion/Magnetic";
-import { HeroVideo } from "./HeroVideo";
+import HeroField from "@/components/three/HeroField";
 
-// HERO — video di brand a tutto schermo (scelta di Morelz) + tipografia
-// "Dala": display peso 200 a dimensione estrema, tracking -0.04em ("inciso
-// nella luce"), CTA a pillola. Scrim multi-livello per la leggibilità.
+// HERO — sfondo DIGITALE: campo di particelle WebGL (orizzonte di luce che
+// respira su obsidian) + bagliore ambra, al posto del vecchio video di brand.
+// Tipografia "Dala": display peso 200 a dimensione estrema, tracking -0.04em
+// ("inciso nella luce"), CTA a pillola. Scrim leggeri per la leggibilità.
 
 const container = {
   hidden: {},
@@ -37,14 +38,21 @@ const rule = {
 export function Hero({ count, blockedMonth, protectedFaces }: { count: number; blockedMonth: number; protectedFaces: number }) {
   return (
     <section data-theme="dark" className="relative flex min-h-[92vh] items-center overflow-hidden">
-      {/* Video di sfondo a tutto schermo (loop con dip-to-dark) */}
-      <HeroVideo className="absolute inset-0 z-0" />
+      {/* Sfondo DIGITALE: obsidian + campo di particelle WebGL + bagliore ambra
+          all'orizzonte (sotto reduced-motion resta l'obsidian + il bagliore). */}
+      <div aria-hidden className="absolute inset-0 z-0 bg-obsidian" />
+      <HeroField className="absolute inset-0 z-0" />
+      <div
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 z-0 h-[58%]"
+        style={{ background: "radial-gradient(120% 100% at 50% 118%, rgba(242,169,59,0.20), rgba(238,122,112,0.09) 38%, transparent 70%)" }}
+      />
 
-      {/* Scrim per leggibilità del testo */}
-      <div aria-hidden className="absolute inset-0 z-[1] bg-black/45" />
-      <div aria-hidden className="absolute inset-0 z-[1] hidden bg-gradient-to-r from-black via-black/70 to-transparent sm:block" />
-      <div aria-hidden className="absolute inset-x-0 top-0 z-[1] h-28 bg-gradient-to-b from-black to-transparent" />
-      <div aria-hidden className="absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-black to-transparent" />
+      {/* Scrim leggeri per la leggibilità del testo (il campo è scuro, basta poco) */}
+      <div aria-hidden className="absolute inset-0 z-[1] bg-black/20" />
+      <div aria-hidden className="absolute inset-0 z-[1] hidden bg-gradient-to-r from-black/80 via-black/35 to-transparent sm:block" />
+      <div aria-hidden className="absolute inset-x-0 top-0 z-[1] h-28 bg-gradient-to-b from-obsidian to-transparent" />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-obsidian to-transparent" />
 
       {/* Contenuto */}
       <div className="relative z-[2] mx-auto w-full max-w-6xl px-5 py-20 sm:px-8">
