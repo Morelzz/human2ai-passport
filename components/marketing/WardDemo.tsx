@@ -69,7 +69,7 @@ export function WardDemo() {
       </div>
 
       <p className="mx-2 mt-3 text-center font-mono text-[9px] leading-relaxed text-muted">
-        Dati simulati a scopo illustrativo. Ward non ti sta scansionando. Analizza solo il volto di chi si iscrive e dà il consenso.
+        Dati simulati a scopo illustrativo. Ward cerca le copie delle immagini che generi su Semblic, non scansiona il tuo volto.
       </p>
     </div>
   );

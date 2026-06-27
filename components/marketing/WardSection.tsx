@@ -13,7 +13,7 @@ export function WardSection() {
   return (
     <section id="ward" className="w-full py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionTitle subtitle="La sentinella del tuo volto.">Ward</SectionTitle>
+        <SectionTitle subtitle="Trova le copie delle tue immagini, sul web.">Ward</SectionTitle>
       </div>
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 sm:px-8 lg:grid-cols-2">
         {/* Desktop: la demo a sinistra */}
@@ -22,12 +22,12 @@ export function WardSection() {
         </div>
         {/* Desktop: il messaggio a destra */}
         <div className="order-2">
-          <span className="label-mono text-violet-light">Ward · la protezione</span>
+          <span className="label-mono text-violet-light">Ward · il finder</span>
           <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            La tua faccia, sorvegliata <GradientFlowText>su tutto il web</GradientFlowText>.
+            Le tue immagini, trovate <GradientFlowText>su tutto il web</GradientFlowText>.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">
-            Ward dà la caccia agli usi non autorizzati del tuo volto, conferma ogni ritrovamento e lo rimuove. Protezione per le persone che scelgono di stare su Semblic.
+            Ward cerca le copie delle immagini che generi su Semblic, le tagga con un semaforo e la filigrana invisibile, e decidi tu cosa fare. Niente foto da caricare: lavora sulle immagini che già possiedi.
           </p>
           <div className="mt-7">
             <Button asChild size="lg">
