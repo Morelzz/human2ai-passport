@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { diditConfigured } from "@/lib/kyc/didit";
 import { ProtectedFlow } from "./ProtectedFlow";
 
-export const metadata = { title: "Identita protetta, Ward" };
+export const metadata = { title: "Identita protetta" };
 
 // /signup/avatar/protected (spec C2 pannello 3 + E/F3): flusso protetto vero.
 // KYC gratis -> foto del volto -> consenso -> Ward attivo. Richiede l'accesso.

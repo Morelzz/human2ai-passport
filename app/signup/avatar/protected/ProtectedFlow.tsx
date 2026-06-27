@@ -27,7 +27,7 @@ export function ProtectedFlow({ kycStatus, diditEnabled }: { kycStatus: string; 
         <div className="wf-card">
           <span className="wf-eyebrow">Passo 2, il tuo riferimento</span>
           <h2 className="wf-title">Aggiungi le foto del volto</h2>
-          <p className="wf-lede">Diventano il tuo riferimento protetto, il volto che Ward riconosce. Solo il viso, non servono pose del corpo.</p>
+          <p className="wf-lede">Diventano il tuo riferimento protetto, il volto che la protezione riconosce. Solo il viso, non servono pose del corpo.</p>
           <FaceCapture onDone={() => setStep("consent")} />
         </div>
       )}

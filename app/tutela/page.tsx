@@ -103,9 +103,9 @@ export default function TutelaPage() {
                 {
                   Icon: History,
                   t: "Consenso e revoca",
-                  d: "Vale da quando autorizzi, finché vuoi: la revoca blocca il futuro, non cancella il passato. Oppure scegli Ward e non sei generabile affatto.",
-                  href: "/ward",
-                  cta: "Scopri Ward",
+                  d: "Vale da quando autorizzi, finché vuoi: la revoca blocca il futuro, non cancella il passato. Oppure registri il volto e non sei generabile affatto.",
+                  href: "/signup/avatar/protected",
+                  cta: "Proteggi il tuo volto",
                 },
               ].map(({ Icon, t, d, href, cta }) => (
                 <div key={t} className="glass glass-hover rounded-2xl p-6">

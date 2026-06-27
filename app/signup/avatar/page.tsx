@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { diditConfigured } from "@/lib/kyc/didit";
 import { AvatarFlow } from "./AvatarFlow";
 
-export const metadata = { title: "Proteggiti, Ward" };
+export const metadata = { title: "Proteggiti, protezione identita" };
 
 // /signup/avatar (spec B2): la porta "Avatar". Richiede l'accesso (l'identita va
 // legata a un account). ?existing=1 = "Hai gia un avatar" -> solo consenso.

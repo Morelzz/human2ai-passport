@@ -38,7 +38,7 @@ export function AvatarFlow({ existing, kycStatus, diditEnabled }: { existing: bo
             </button>
             <button type="button" className="wf-fork-card protect" onClick={() => router.push("/signup/avatar/protected")}>
               <h3>Identita protetta</h3>
-              <p>Mai generata da nessuna AI, bloccata ovunque. Ward da&apos; la caccia alle copie sul web.</p>
+              <p>Mai generata da nessuna AI, bloccata ovunque, fuori dal generativo.</p>
             </button>
           </div>
         </div>

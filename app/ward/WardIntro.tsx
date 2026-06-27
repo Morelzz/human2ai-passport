@@ -39,9 +39,6 @@ export function WardIntro() {
         <Button asChild size="lg">
           <Link href="/account">Vai alle tue creazioni</Link>
         </Button>
-        <Button asChild size="lg" variant="secondary">
-          <Link href="/ward/demo">Guarda la demo</Link>
-        </Button>
       </div>
       <p className="mt-4 text-sm text-faint">
         Apri una tua immagine generata e premi <span className="text-muted">&ldquo;Cerca copie sul web&rdquo;</span>.
