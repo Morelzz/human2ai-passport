@@ -70,9 +70,11 @@ describe("contentVerdict (verdetto per immagine, non biometrico)", () => {
   it("phash vicino all'originale = confirmed anche se solo 'similar'", () => {
     expect(contentVerdict("similar", "0000000000000001", ORIG, 8)).toBe("confirmed");
   });
-  it("partial o similar lontani = review", () => {
+  it("partial lontano = review (un ritaglio o edit resta significativo)", () => {
     expect(contentVerdict("partial", "ffffffffffffffff", ORIG, 8)).toBe("review");
-    expect(contentVerdict("similar", "ffffffffffffffff", ORIG, 8)).toBe("review");
+  });
+  it("solo-simile (visuallySimilar) col phash lontano = discard: e' rumore, sosia a caso", () => {
+    expect(contentVerdict("similar", "ffffffffffffffff", ORIG, 8)).toBe("discard");
   });
   it("nessun match-kind e phash lontano = discard", () => {
     expect(contentVerdict(undefined, "ffffffffffffffff", ORIG, 8)).toBe("discard");
@@ -142,10 +144,10 @@ describe("runContentScan: pipeline + tag + whitelist", () => {
     expect(res.status).toBe("done");
     expect(res.candidates).toBe(6);    // i 7 meno il whitelisted (mai processato)
     expect(res.whitelisted).toBe(1);
-    expect(res.matches).toBe(4);       // full + close (confirmed), partial + similar (review)
-    expect(res.discarded).toBe(2);     // far + fail
+    expect(res.matches).toBe(3);       // full + close (confirmed), partial (review). il solo-simile ora e' scartato.
+    expect(res.discarded).toBe(3);     // far + fail + similar (rumore)
 
-    expect(m.matches.map((x) => x.band)).toEqual(["confirmed", "confirmed", "review", "review"]);
+    expect(m.matches.map((x) => x.band)).toEqual(["confirmed", "confirmed", "review"]);
 
     const full = m.matches[0];
     expect(full.generationId).toBe("gen-1");
@@ -169,7 +171,7 @@ describe("runContentScan: pipeline + tag + whitelist", () => {
     expect(m.insertedUrls).not.toContain("https://safe.com/wl.jpg");
     expect(m.insertedUrls.length).toBe(6);
 
-    expect(m.finished.at(-1)).toMatchObject({ status: "done", stats: { candidates: 6, matches: 4, discarded: 2, whitelisted: 1 } });
+    expect(m.finished.at(-1)).toMatchObject({ status: "done", stats: { candidates: 6, matches: 3, discarded: 3, whitelisted: 1 } });
   });
 });
 

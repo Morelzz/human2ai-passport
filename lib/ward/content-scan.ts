@@ -104,7 +104,11 @@ export function contentVerdict(
 ): "confirmed" | "review" | "discard" {
   if (matchKind === "full") return "confirmed";
   if (candPhash && originalPhash && hammingHex(candPhash, originalPhash) <= maxDist) return "confirmed";
-  if (matchKind === "partial" || matchKind === "similar") return "review";
+  // 'partial' = ritaglio/edit della NOSTRA immagine: significativo, va rivisto.
+  // 'similar' (visuallySimilar di Vision) col phash lontano = RUMORE: per un
+  // ritratto generato sono sosia/scene a caso, NON copie. Non si mostra: se fosse
+  // una copia ricompressa, il phash vicino sopra l'avrebbe gia' presa.
+  if (matchKind === "partial") return "review";
   return "discard";
 }
 
