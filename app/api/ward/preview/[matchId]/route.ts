@@ -24,18 +24,28 @@ export async function GET(_req: Request, { params }: { params: Promise<{ matchId
   const admin = createServerClient();
   const { data: m } = await admin
     .from("scan_matches")
-    .select("source_url, sensitivity, avatar_id")
+    .select("source_url, sensitivity, avatar_id, scan_job_id")
     .eq("id", matchId)
     .maybeSingle();
   if (!m) return new NextResponse(null, { status: 404 });
 
-  // Ownership: il match deve appartenere a un avatar dell'utente.
+  // Ownership: o l'utente possiede l'avatar (person-scan), o e' il buyer della
+  // generazione da cui nasce il match (content-scan Ward v2). Senza nessuno dei
+  // due -> 404 (non riveliamo nulla).
   const { data: av } = await admin
     .from("avatars")
     .select("owner_id")
     .eq("id", m.avatar_id as string)
     .maybeSingle();
-  if (!av || av.owner_id !== user.id) return new NextResponse(null, { status: 404 });
+  let owns = !!av && av.owner_id === user.id;
+  if (!owns && m.scan_job_id) {
+    const { data: job } = await admin.from("scan_jobs").select("generation_id").eq("id", m.scan_job_id as string).maybeSingle();
+    if (job?.generation_id) {
+      const { data: gen } = await admin.from("generations").select("buyer_id").eq("id", job.generation_id as string).maybeSingle();
+      owns = gen?.buyer_id === user.id;
+    }
+  }
+  if (!owns) return new NextResponse(null, { status: 404 });
 
   // Child-safety: l'anteprima di un 'minor' non si serve MAI.
   if (m.sensitivity === "minor") return new NextResponse(null, { status: 403 });
