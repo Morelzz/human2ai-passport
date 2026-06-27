@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ScanSearch } from "lucide-react";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 
 // Griglia "I miei contenuti" con FILTRI (categoria, motore, avatar) e regola
@@ -105,6 +106,13 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                       <a href={`/studio/edit/${g.certificate}`} className="mb-1.5 block w-full rounded-lg bg-[#F2A93B] px-2 py-2 text-center text-[0.74rem] font-bold text-[#412402] transition-[filter] hover:brightness-110">
                         ✦ Modifica
                       </a>
+                      {/* Ward: cerca le copie di QUESTA immagine sul web. Tasto vero
+                          e prominente (solo buyer, e' il suo asset). */}
+                      {shareVariant === "buyer" && (
+                        <a href={`/ward/content/${g.id}`} className="mb-1.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-violet/45 bg-violet/15 px-2 py-2 text-[0.74rem] font-bold text-violet-light transition-colors hover:bg-violet/25">
+                          <ScanSearch className="h-3.5 w-3.5" aria-hidden /> Ward
+                        </a>
+                      )}
                       <div className="flex gap-1.5">
                         <a href={`/api/content/${g.certificate}`} className="flex-1 rounded-lg border border-violet/30 bg-violet/10 px-2 py-1.5 text-center text-[0.72rem] font-semibold text-violet-light transition-colors hover:bg-violet/20">
                           Scarica
@@ -122,13 +130,6 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                       <a href={`/receipt/${g.certificate}`} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-center text-[0.66rem] text-faint underline-offset-2 transition-colors hover:text-muted hover:underline">
                         Ricevuta di conformità
                       </a>
-                      {/* Ward v2: cerca le copie di QUESTA immagine sul web (solo
-                          per il buyer, e' il suo asset). */}
-                      {shareVariant === "buyer" && (
-                        <a href={`/ward/content/${g.id}`} className="mt-1 block text-center text-[0.66rem] text-faint underline-offset-2 transition-colors hover:text-[#F2A93B] hover:underline">
-                          Cerca copie sul web
-                        </a>
-                      )}
                     </>
                   )}
                 </div>
