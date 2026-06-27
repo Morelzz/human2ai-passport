@@ -86,7 +86,7 @@ export default async function Home() {
               <div className="max-w-xs">
                 <div className="flex items-center gap-2.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/logo-shield.png" alt="" aria-hidden className="h-9 w-9 object-contain opacity-90 [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
+                  <img src="/semblic-mark.png" alt="" aria-hidden className="h-9 w-9 object-contain opacity-90 [mask-image:radial-gradient(circle,#000_62%,transparent_84%)] [-webkit-mask-image:radial-gradient(circle,#000_62%,transparent_84%)]" />
                   <span className="text-sm font-bold tracking-[0.18em]">SEMBLIC</span>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-faint">

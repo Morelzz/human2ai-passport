@@ -82,7 +82,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
       <nav className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 sm:px-8 ${scrolled ? "h-[3.4rem]" : "h-16"}`}>
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-shield.png" alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain [mask-image:radial-gradient(circle,#000_56%,transparent_80%)] [-webkit-mask-image:radial-gradient(circle,#000_56%,transparent_80%)]" />
+          <img src="/semblic-mark.png" alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain [mask-image:radial-gradient(circle,#000_62%,transparent_84%)] [-webkit-mask-image:radial-gradient(circle,#000_62%,transparent_84%)]" />
           <span className="text-sm font-bold tracking-[0.2em]">SEMBLIC</span>
         </Link>
 

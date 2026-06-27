@@ -9,7 +9,7 @@ export function Logo({ size = 28 }: { size?: number }) {
   return (
     <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/logo-shield.png" alt="" aria-hidden style={{ width: size, height: size, objectFit: "contain", maskImage: mask, WebkitMaskImage: mask, flexShrink: 0 }} />
+      <img src="/semblic-mark.png" alt="" aria-hidden style={{ width: size, height: size, objectFit: "contain", maskImage: mask, WebkitMaskImage: mask, flexShrink: 0 }} />
       <span style={{ color: colors.text, fontSize: "0.85rem", letterSpacing: "0.2em", fontWeight: 700 }}>SEMBLIC</span>
     </Link>
   );
