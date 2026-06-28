@@ -1,8 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { X, FileDown, Send, RefreshCw, ShieldCheck, AlertTriangle, Loader2 } from "lucide-react";
+import { X, FileDown, Send, RefreshCw, AlertTriangle, Loader2 } from "lucide-react";
 import type { DmcaNotice } from "@/lib/ward/takedown";
 import { downloadDmcaPdf } from "./dmca-pdf";
+import { NemesisMark } from "./NemesisMark";
+
+// Gradiente "tramonto" (amber->coral): l'identita' di Nemesis, lo strike.
+const TRAMONTO = "linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%)";
+const wordmark = { background: TRAMONTO, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
 // Pannello Nemesis (rimozione DMCA assistita) per UNA copia confermata. A gradini:
 // profilo (una volta) -> documento (anteprima + PDF) -> tracking (inviata ->
@@ -71,10 +76,14 @@ export function Takedown({ matchId, host, onClose }: { matchId: string; host: st
         className="flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-border bg-obsidian-2 sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex items-center gap-2 border-b border-border px-5 py-4">
-          <ShieldCheck className="h-4 w-4" style={{ color: "#F2A93B" }} />
-          <span className="text-sm font-semibold tracking-[0.04em]">Avvia rimozione</span>
-          {host && <span className="truncate text-xs text-muted">· {host}</span>}
+        <header className="flex items-center gap-2.5 border-b border-border px-5 py-4">
+          <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] text-[#2a1404]" style={{ background: TRAMONTO }}>
+            <NemesisMark className="h-[18px] w-[18px]" />
+          </span>
+          <div className="min-w-0">
+            <div className="text-[13px] font-bold leading-none tracking-[0.18em]" style={wordmark}>NEMESIS</div>
+            {host && <div className="mt-1 truncate text-xs text-muted">{host}</div>}
+          </div>
           <button type="button" onClick={onClose} className="ml-auto text-muted transition-colors hover:text-foreground"><X className="h-4 w-4" /></button>
         </header>
 

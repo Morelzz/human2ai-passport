@@ -2,9 +2,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ScanSearch, ShieldCheck, ExternalLink, BadgeCheck, Eye, Gavel } from "lucide-react";
+import { ScanSearch, ShieldCheck, ExternalLink, BadgeCheck, Eye } from "lucide-react";
 import { isWhitelisted, type AllowEntry } from "@/lib/ward/whitelist";
 import { Takedown } from "./Takedown";
+import { NemesisMark } from "./NemesisMark";
+
+// Gradiente "tramonto" (amber->coral) = identita' di Nemesis, lo strike.
+const TRAMONTO = "linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%)";
+const wordmark = { background: TRAMONTO, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
 // Schermata Ward v2 (content leak finder): per una NOSTRA immagine generata,
 // mostra le copie trovate sul web. Immagine GRANDE (a lato su desktop, in cima su
@@ -46,6 +51,7 @@ export function ContentFinder({
   const asUrls = (m: FinderMatch) => ({ sourceUrl: m.sourceUrl, pageUrl: m.pageUrl, host: m.host });
   const visible = matches.filter((m) => !isWhitelisted(asUrls(m), allow));
   const review = visible.filter((m) => m.band === "review");
+  const confirmedVisible = visible.filter((m) => m.band === "confirmed");
   const shown = tab === "review" ? review : visible;
 
   const runScan = async () => {
@@ -97,13 +103,14 @@ export function ContentFinder({
 
           {/* Immagine GRANDE (a lato su desktop, in cima su mobile) */}
           <div className="sm:sticky sm:top-4 sm:self-start">
-            <div className="relative w-full overflow-hidden rounded-2xl border border-border bg-obsidian-2" style={{ aspectRatio: "4 / 5" }}>
+            <div className={`relative w-full overflow-hidden rounded-2xl border border-border bg-obsidian-2 transition-shadow duration-300 ${busy ? "ward-scanglow" : ""}`} style={{ aspectRatio: "4 / 5" }}>
               {imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={imageUrl} alt={alias} className="h-full w-full object-cover" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-faint"><Eye className="h-8 w-8" /></div>
               )}
+              {busy && <div className="ward-scanline" aria-hidden />}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian/95 to-transparent p-3.5">
                 <div className="text-[10px] font-medium tracking-[0.16em] text-muted">LA TUA IMMAGINE GENERATA</div>
                 <div className="mt-0.5 text-lg font-semibold leading-tight">{alias}</div>
@@ -125,6 +132,28 @@ export function ContentFinder({
 
           {/* Colonna risultati */}
           <div>
+            {/* Fascia NEMESIS: compare appena c'e' una copia confermata da colpire. */}
+            {tab !== "whitelist" && confirmedVisible.length > 0 && (
+              <div
+                className="mb-3.5 flex items-center gap-3 rounded-2xl border px-3.5 py-3"
+                style={{ borderColor: "rgba(238,122,112,0.30)", background: "linear-gradient(120deg,rgba(242,169,59,0.12),rgba(238,122,112,0.10))" }}
+              >
+                <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl text-[#2a1404]" style={{ background: TRAMONTO }}>
+                  <NemesisMark className="h-[19px] w-[19px]" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[13px] font-bold tracking-[0.18em]" style={wordmark}>NEMESIS</div>
+                  <div className="mt-0.5 text-[11.5px] text-muted">
+                    <b className="font-semibold text-foreground">{confirmedVisible.length} {confirmedVisible.length === 1 ? "copia confermata" : "copie confermate"}</b>, pronte da rimuovere.
+                  </div>
+                </div>
+                <button
+                  type="button" onClick={() => setTakedown(confirmedVisible[0])}
+                  className="ml-auto flex-none rounded-full bg-[#F2A93B] px-4 py-2 text-xs font-bold text-[#412402] transition-[filter] hover:brightness-110"
+                >Apri</button>
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-2 pb-3">
               <Tab on={tab === "all"} onClick={() => setTab("all")}>Tutte {visible.length}</Tab>
               <Tab on={tab === "review"} onClick={() => setTab("review")}>Da rivedere {review.length}</Tab>
@@ -171,7 +200,7 @@ function Card({ m, onSafe, onTakedown }: { m: FinderMatch; onSafe: () => void; o
   const confirmed = m.band === "confirmed";
   const exposed = m.reputation === "exposed";
   return (
-    <div className="flex gap-3 rounded-2xl border border-border bg-obsidian-2 p-2.5">
+    <div className="flex gap-3 rounded-2xl border border-border bg-obsidian-2 p-2.5 transition-[transform,border-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[rgba(242,169,59,0.35)] hover:shadow-[0_12px_30px_-16px_rgba(0,0,0,0.7)]">
       <div className="relative h-[58px] w-[58px] flex-none overflow-hidden rounded-xl border border-border bg-obsidian-3">
         {imgOk ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -206,9 +235,9 @@ function Card({ m, onSafe, onTakedown }: { m: FinderMatch; onSafe: () => void; o
           {confirmed && (
             <button
               type="button" onClick={onTakedown}
-              className="inline-flex items-center gap-1 rounded-full bg-[#F2A93B] px-2.5 py-1 text-[11px] font-bold text-[#412402] transition-[filter] hover:brightness-110"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#F2A93B] px-2.5 py-1 text-[11px] font-bold text-[#412402] transition-[filter] hover:brightness-110"
             >
-              <Gavel className="h-3 w-3" /> Avvia rimozione
+              <NemesisMark className="h-3 w-3" /> Nemesis
             </button>
           )}
         </div>
