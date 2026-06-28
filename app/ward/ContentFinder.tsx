@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ScanSearch, ShieldCheck, ExternalLink, BadgeCheck, Eye } from "lucide-react";
+import { ScanSearch, ShieldCheck, ExternalLink, BadgeCheck, Eye, Gavel } from "lucide-react";
 import { isWhitelisted, type AllowEntry } from "@/lib/ward/whitelist";
+import { Takedown } from "./Takedown";
 
 // Schermata Ward v2 (content leak finder): per una NOSTRA immagine generata,
 // mostra le copie trovate sul web. Immagine GRANDE (a lato su desktop, in cima su
@@ -40,6 +41,7 @@ export function ContentFinder({
   const [tab, setTab] = useState<"all" | "review" | "whitelist">("all");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [takedown, setTakedown] = useState<FinderMatch | null>(null);
 
   const asUrls = (m: FinderMatch) => ({ sourceUrl: m.sourceUrl, pageUrl: m.pageUrl, host: m.host });
   const visible = matches.filter((m) => !isWhitelisted(asUrls(m), allow));
@@ -135,7 +137,7 @@ export function ContentFinder({
               <EmptyState scanned={!!lastScanAt} />
             ) : (
               <div className="flex flex-col gap-2.5">
-                {shown.map((m) => <Card key={m.id} m={m} onSafe={() => markSafe(m)} />)}
+                {shown.map((m) => <Card key={m.id} m={m} onSafe={() => markSafe(m)} onTakedown={() => setTakedown(m)} />)}
               </div>
             )}
 
@@ -145,6 +147,10 @@ export function ContentFinder({
           </div>
         </div>
       </div>
+
+      {takedown && (
+        <Takedown matchId={takedown.id} host={takedown.host} onClose={() => setTakedown(null)} />
+      )}
     </div>
   );
 }
@@ -160,7 +166,7 @@ function Tab({ on, onClick, children }: { on: boolean; onClick: () => void; chil
   );
 }
 
-function Card({ m, onSafe }: { m: FinderMatch; onSafe: () => void }) {
+function Card({ m, onSafe, onTakedown }: { m: FinderMatch; onSafe: () => void; onTakedown: () => void }) {
   const [imgOk, setImgOk] = useState(true);
   const confirmed = m.band === "confirmed";
   const exposed = m.reputation === "exposed";
@@ -197,6 +203,14 @@ function Card({ m, onSafe }: { m: FinderMatch; onSafe: () => void }) {
           <button type="button" onClick={onSafe} className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors hover:bg-obsidian-3">
             <ShieldCheck className="h-3 w-3" /> Segna sicuro
           </button>
+          {confirmed && (
+            <button
+              type="button" onClick={onTakedown}
+              className="inline-flex items-center gap-1 rounded-full bg-[#F2A93B] px-2.5 py-1 text-[11px] font-bold text-[#412402] transition-[filter] hover:brightness-110"
+            >
+              <Gavel className="h-3 w-3" /> Avvia rimozione
+            </button>
+          )}
         </div>
       </div>
     </div>
