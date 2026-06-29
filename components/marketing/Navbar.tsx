@@ -9,34 +9,38 @@ import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { VoltBadge } from "@/components/volt/VoltBadge";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-// Menu (QA device): Avatar e Genera sono il CORE del sistema -> voci DIRETTE
-// sempre visibili; il resto raggruppato in 3 tendine. UNA struttura per desktop
-// (dropdown hover) e hamburger (sezioni accordion).
+// Menu per INTENTO: Avatar (il registro) resta voce DIRETTA, il cuore del
+// prodotto; tutto il resto in 3 macro -> Genera (creare, anche aziende),
+// Proteggi (il tuo volto + Sigil), Fiducia (capire, valutare, contattare).
+// Le tendine possono avere mini sotto-titoli ({ heading }). UNA struttura per
+// desktop (dropdown hover) e hamburger (accordion).
+type NavItem = { href: string; label: string } | { heading: string };
 type NavEntry =
   | { label: string; href: string }
-  | { label: string; items: { href: string; label: string }[] };
+  | { label: string; items: NavItem[] };
 
 const NAV: NavEntry[] = [
   { label: "Avatar", href: "/catalogo" },
   { label: "Genera", items: [
     { href: "/match", label: "Genera" },
     { href: "/studio/edit", label: "Semblic Editor" },
-  ] },
-  { label: "Il tuo volto", items: [
-    { href: "/tutela", label: "Tutela" },
-    { href: "/scansione", label: "Scansione" },
-    { href: "/signup/avatar", label: "Proteggi" },
-    { href: "/ward", label: "Ward" },
-  ] },
-  { label: "Aziende", items: [
+    { heading: "Per le aziende" },
     { href: "/studio", label: "Studio" },
     { href: "/enterprise", label: "Enterprise" },
   ] },
-  { label: "Risorse", items: [
+  { label: "Proteggi", items: [
+    { href: "/tutela", label: "Tutela" },
+    { href: "/scansione", label: "Scansione" },
+    { href: "/signup/avatar", label: "Entra nel registro" },
+    { href: "/ward", label: "Ward e Nemesis" },
+    { href: "/verify", label: "Sigil" },
+  ] },
+  { label: "Fiducia", items: [
     { href: "/academy", label: "Academy" },
     { href: "/blog", label: "Blog" },
     { href: "/prezzi", label: "Prezzi" },
     { href: "/trasparenza", label: "Trasparenza" },
+    { href: "/contatti", label: "Contatti" },
   ] },
 ];
 
@@ -106,9 +110,13 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 </button>
                 <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                   <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[var(--elevated)] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
-                    {entry.items.map((it) => (
-                      <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
-                    ))}
+                    {entry.items.map((it) =>
+                      "heading" in it ? (
+                        <div key={it.heading} className="mt-1.5 px-3 pb-1 pt-1 text-[0.58rem] font-bold uppercase tracking-[0.16em] text-faint">{it.heading}</div>
+                      ) : (
+                        <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -147,9 +155,6 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               <Link href="/login" className={`${topLinkBase} hover:after:scale-x-100`}>Accedi</Link>
             )}
             <ThemeToggle />
-            <Button asChild variant="outline" size="sm">
-              <Link href="/verify">Sigil</Link>
-            </Button>
             <Button asChild size="sm">
               <Link href="/signup/avatar">Proteggiti</Link>
             </Button>
@@ -208,9 +213,13 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                       </button>
                       {openSection === entry.label && (
                         <div className="flex flex-col gap-0.5 pb-1.5 pl-3">
-                          {entry.items.map((it) => (
-                            <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
-                          ))}
+                          {entry.items.map((it) =>
+                            "heading" in it ? (
+                              <div key={it.heading} className="px-3 pb-0.5 pt-2 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-faint">{it.heading}</div>
+                            ) : (
+                              <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
+                            )
+                          )}
                         </div>
                       )}
                     </div>
@@ -230,9 +239,6 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               <div className="mt-4 flex flex-col gap-2">
                 <Button asChild variant="primary" size="lg" className="w-full">
                   <Link href="/signup/avatar" onClick={() => setOpen(false)}>Proteggiti</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="w-full">
-                  <Link href="/verify" onClick={() => setOpen(false)}>Verifica con Sigil</Link>
                 </Button>
               </div>
             </motion.aside>
