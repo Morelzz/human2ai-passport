@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
 import "./globals.css";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { CookieBanner } from "@/components/legal/CookieBanner";
+import { PwaManager } from "@/components/pwa/PwaManager";
 import { siteUrl } from "@/lib/site";
 
 const geistSans = Geist({
@@ -63,6 +64,22 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
   },
+  // PWA: su iOS l'app installata si apre a tutto schermo e usa lo scudo come
+  // icona Home. La barra di stato scura si fonde col void Obsidian.
+  appleWebApp: {
+    capable: true,
+    title: "Semblic",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    icon: "/icon.png",
+    apple: "/logo-shield.png",
+  },
+};
+
+// theme-color: la chrome del browser/PWA prende il colore Obsidian.
+export const viewport: Viewport = {
+  themeColor: "#0C0F17",
 };
 
 export default function RootLayout({
@@ -99,6 +116,8 @@ export default function RootLayout({
           {children}
           {/* F1 — banner cookie globale: default solo essenziali, scelta granulare */}
           <CookieBanner />
+          {/* PWA: install prompt + opt-in avvisi + mini-tutorial, solo nell'area Ward */}
+          <PwaManager />
         </body>
       </html>
     </ViewTransitions>

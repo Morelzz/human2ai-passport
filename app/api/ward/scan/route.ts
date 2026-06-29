@@ -5,6 +5,8 @@ import { allowRequest } from "@/lib/rate-limit";
 import { runScan } from "@/lib/ward/scan";
 import { SupabaseScanRepository } from "@/lib/ward/scan-repo";
 import { downloadAll } from "@/lib/storage";
+import { sendPushToUser } from "@/lib/push/send";
+import { buildDetectionPush } from "@/lib/push/payload";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -52,6 +54,16 @@ export async function POST(request: Request) {
     referenceImageBytesList: refPhotos.map((b) => new Uint8Array(b)),
     referenceImageUrl: refPhotos.length ? undefined : (av.portrait_url as string | null) ?? undefined,
   });
+
+  // Avviso push: se la scansione ha trovato copie, avvisa il proprietario sui
+  // suoi dispositivi. Best-effort: un push fallito non deve influire sull'esito.
+  if (result.ok && result.matches > 0) {
+    try {
+      await sendPushToUser(user.id, buildDetectionPush(result.matches, av.handle as string));
+    } catch {
+      /* push non disponibile: la scansione resta valida */
+    }
+  }
 
   // Gate negato non e' un errore HTTP: e' un esito di consenso (403).
   const status = result.ok ? 200 : result.status === "error" ? 500 : 403;
