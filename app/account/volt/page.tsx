@@ -4,6 +4,8 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import { VOLT_PACKS, voltBalance, voltTransactions, type VoltTransaction } from "@/lib/volt";
 import { VOLT_STRINGS, voltStr } from "@/lib/strings/volt";
+import { isStripeConfigured } from "@/lib/stripe";
+import { VoltPackButton } from "@/components/volt/VoltPackButton";
 
 export const metadata = { title: "Ricarica VOLT" };
 
@@ -16,7 +18,8 @@ function txLabel(t: VoltTransaction): string {
     case "generation":
       return voltStr("history.row.gen", { tier: t.ref?.split(":")[0] ?? "", n });
     case "recharge":
-      return voltStr("history.row.recharge", { pacchetto: t.ref ?? "", n });
+      // ref = id sessione Stripe (chiave d'idempotenza), non da mostrare a video.
+      return voltStr("history.row.recharge", { n });
     case "bonus":
       return voltStr("history.row.bonus", { n });
     case "refund":
@@ -29,7 +32,12 @@ function txLabel(t: VoltTransaction): string {
 // Pagina ricarica + storico (VOLT_SYSTEM §3 e §4.9). FASE A: il pagamento
 // online non è ancora attivo (arriva con Stripe): i pacchetti si vedono, la
 // CTA spiega come farsi accreditare. Lo storico mostra gli ultimi movimenti.
-export default async function VoltPage() {
+export default async function VoltPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ esito?: string }>;
+}) {
+  const { esito } = await searchParams;
   const auth = await createAuthClient();
   const {
     data: { user },
@@ -38,6 +46,7 @@ export default async function VoltPage() {
 
   const balance = await voltBalance(user.id);
   const txs = balance === null ? [] : await voltTransactions(user.id, 30);
+  const stripeReady = isStripeConfigured();
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
@@ -51,6 +60,17 @@ export default async function VoltPage() {
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">{VOLT_STRINGS["recharge.title"]}</h1>
             <p className="mt-3 leading-relaxed text-muted">{VOLT_STRINGS["recharge.subtitle"]}</p>
           </div>
+
+          {esito === "ok" && (
+            <div className="mb-6 rounded-2xl border border-teal/40 bg-teal/[0.08] p-4 text-sm leading-relaxed text-foreground">
+              Pagamento ricevuto. I VOLT compaiono nel saldo appena Stripe ce lo conferma, di solito pochi secondi.
+            </div>
+          )}
+          {esito === "annullato" && (
+            <div className="mb-6 rounded-2xl border border-border bg-white/[0.04] p-4 text-sm leading-relaxed text-muted">
+              Pagamento annullato, nessun addebito. Quando vuoi riprovi da qui sotto.
+            </div>
+          )}
 
           {balance === null ? (
             <div className="glass rounded-2xl p-6 text-sm leading-relaxed text-muted">
@@ -81,19 +101,32 @@ export default async function VoltPage() {
                       {p.bonus > 0 && <span className="ml-1 text-sm font-bold text-teal">+{FMT.format(p.bonus)}</span>}
                     </p>
                     {p.note && <p className="mt-1 text-[0.7rem] text-faint">{p.note}</p>}
-                    <button
-                      disabled
-                      title={VOLT_STRINGS["recharge.soon"]}
-                      className="mt-4 w-full cursor-not-allowed rounded-xl border border-border bg-white/[0.04] px-4 py-2.5 text-sm font-bold text-muted"
-                    >
-                      {voltStr("recharge.cta", { n: FMT.format(p.volt + p.bonus), prezzo: (p.priceCents / 100).toLocaleString("it-IT", { minimumFractionDigits: 2 }) })}
-                    </button>
+                    {stripeReady ? (
+                      <VoltPackButton
+                        packId={p.id}
+                        popular={p.popular}
+                        label={voltStr("recharge.cta", {
+                          n: FMT.format(p.volt + p.bonus),
+                          prezzo: (p.priceCents / 100).toLocaleString("it-IT", { minimumFractionDigits: 2 }),
+                        })}
+                      />
+                    ) : (
+                      <button
+                        disabled
+                        title={VOLT_STRINGS["recharge.soon"]}
+                        className="mt-4 w-full cursor-not-allowed rounded-xl border border-border bg-white/[0.04] px-4 py-2.5 text-sm font-bold text-muted"
+                      >
+                        {voltStr("recharge.cta", { n: FMT.format(p.volt + p.bonus), prezzo: (p.priceCents / 100).toLocaleString("it-IT", { minimumFractionDigits: 2 }) })}
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
-              <p className="mt-3 text-xs leading-relaxed text-muted">{VOLT_STRINGS["recharge.soon"]}{" "}
-                <a href="/contatti" className="text-violet-light hover:underline">Contattaci →</a>
-              </p>
+              {!stripeReady && (
+                <p className="mt-3 text-xs leading-relaxed text-muted">{VOLT_STRINGS["recharge.soon"]}{" "}
+                  <a href="/contatti" className="text-violet-light hover:underline">Contattaci →</a>
+                </p>
+              )}
               <p className="mt-2 text-[0.68rem] text-faint">{VOLT_STRINGS["recharge.legal.microline"]}</p>
 
               {/* Storico */}

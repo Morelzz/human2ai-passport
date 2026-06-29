@@ -62,7 +62,7 @@ export const VOLT_STRINGS = {
   "history.title": "Movimenti VOLT",
   "history.empty": "Ancora nessuna scintilla. La tua prima generazione ti aspetta.",
   "history.row.gen": "Generazione {tier} · −{n} ⚡",
-  "history.row.recharge": "Ricarica {pacchetto} · +{n} ⚡",
+  "history.row.recharge": "Ricarica · +{n} ⚡",
   "history.row.bonus": "Bonus di benvenuto · +{n} ⚡",
   "history.row.refund": "Storno generazione · +{n} ⚡",
   "history.row.admin_grant": "Accredito SEMBLIC · +{n} ⚡",
