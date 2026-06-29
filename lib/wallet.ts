@@ -9,9 +9,10 @@
 // Tutti i valori sono in centesimi di euro. Sono costanti: ritoccale qui.
 
 import type { Category } from "@/lib/types";
-import { echoSurchargeCents } from "@/lib/engines/echo-cost";
+import { estEchoCostCents } from "@/lib/engines/echo-cost";
 
-// Fee di piattaforma in basis points (20% = 2000 bp).
+// Fee di piattaforma in basis points (20% = 2000 bp). Usata solo dal vecchio
+// split classico (ramo Higgsfield dormiente); il modello ECHO vivo e' cost-plus.
 export const PLATFORM_FEE_BPS = 2000;
 
 // Soglia minima per richiedere il payout (50 €).
@@ -65,49 +66,77 @@ export function grossForCategory(category: string | null): number {
   return BAND_PRICE_CENTS[bandForCategory(category)];
 }
 
-// ── ECHO: modello "compute a parte" (deciso 2026-06-08) ────────────────────
-// Il prezzo ECHO = VALORE-categoria (su cui matura la royalty 80/20 alla
-// persona) + SUPPLEMENTO-compute (= costo OpenAI × markup, tutto alla
-// piattaforma per coprire il conto del motore). Così la royalty resta legata
-// al valore d'uso del volto, non al costo di calcolo, e la piattaforma non va
-// mai sotto costo. Le tariffe del compute vivono in lib/engines/echo-cost.ts.
-
-// Lordo (centesimi) per ECHO = valore-categoria + supplemento-compute.
-export function grossForEcho(category: string | null, size?: string | null, quality?: string | null): number {
-  return grossForCategory(category) + echoSurchargeCents(size, quality);
-}
-
 export interface RoyaltySplit {
   gross_cents: number; // pagato dal buyer
   fee_cents: number;   // trattenuto dalla piattaforma
   net_cents: number;   // royalty netta accreditata all'avatar
 }
 
-// Divide il lordo in fee piattaforma + netto avatar (arrotondamento a favore dell'avatar).
+// Divide il lordo in fee piattaforma + netto avatar (arrotondamento a favore
+// dell'avatar). Usato dallo split classico (ramo Higgsfield dormiente).
 export function splitRoyalty(grossCents: number): RoyaltySplit {
   const fee = Math.floor((grossCents * PLATFORM_FEE_BPS) / 10000);
   return { gross_cents: grossCents, fee_cents: fee, net_cents: grossCents - fee };
 }
 
-// Breakdown ECHO con compute separato. La royalty 80/20 si applica SOLO al
-// valore-categoria; il supplemento-compute va per intero alla piattaforma.
-export interface EchoSplit extends RoyaltySplit {
-  value_cents: number;     // valore-categoria (base della royalty)
-  surcharge_cents: number; // supplemento-compute (interamente alla piattaforma)
+// ── ECHO: prezzo COST-PLUS (deciso 2026-06-29) ─────────────────────────────
+// OpenAI (gpt-image-2) e' il FORNITORE: il suo costo e' il nostro costo vivo.
+//   prezzo buyer = costo OpenAI + RICARICO
+// Il ricarico si divide tra piattaforma (55%) e avatar (45%): guadagniamo
+// entrambi, in modo equilibrato, e il costo del motore e' puro pass-through
+// (la piattaforma non va mai sotto fornitore). Tetto massimo €2 a generazione.
+// Il ricarico in % OSCILLA: alto sulle modalita' economiche (dove in centesimi
+// e' poco), basso sul 4K (dove l'assoluto e' gia' alto). Il costo reale vive in
+// lib/engines/echo-cost.ts (stima pre-call + verifica dai token loggati).
+
+export const PRICE_CAP_CENTS = 200;     // tetto €2 a generazione
+export const AVATAR_MARKUP_BPS = 4500;  // 45% del ricarico va all'avatar
+
+// Ricarico a scaglioni sul costo OpenAI (centesimi).
+export function echoMarkupMultiplier(costCents: number): number {
+  if (costCents <= 10) return 3;   // fino a €0,10 -> ×3
+  if (costCents <= 50) return 2;   // fino a €0,50 -> ×2
+  return 1.5;                       // oltre        -> ×1,5
 }
 
-export function splitEcho(category: string | null, size?: string | null, quality?: string | null): EchoSplit {
-  const value = grossForCategory(category);
-  const surcharge = echoSurchargeCents(size, quality);
-  // Netto avatar = 80% del SOLO valore-categoria (stesso arrotondamento di splitRoyalty).
-  const net = value - Math.floor((value * PLATFORM_FEE_BPS) / 10000);
-  const gross = value + surcharge;
+// Prezzo buyer (centesimi) per una modalita' (size/quality), col tetto €2.
+export function priceForEcho(size?: string | null, quality?: string | null): number {
+  const cost = Math.round(estEchoCostCents(size, quality));
+  const raw = Math.ceil(cost * echoMarkupMultiplier(cost));
+  return Math.min(raw, PRICE_CAP_CENTS);
+}
+
+// Compat: il prezzo ECHO ora NON dipende dalla categoria (cost-plus puro). La
+// firma resta per i chiamanti (MatchClient/route); `category` e' ignorata.
+export function grossForEcho(_category: string | null, size?: string | null, quality?: string | null): number {
+  return priceForEcho(size, quality);
+}
+
+export interface EchoSplit extends RoyaltySplit {
+  cost_cents: number;      // costo OpenAI (compute), pass-through
+  markup_cents: number;    // ricarico = prezzo - costo
+  // Alias retro-compatibili coi chiamanti esistenti (route.ts):
+  value_cents: number;     // = ricarico (la base che si divide 55/45)
+  surcharge_cents: number; // = costo OpenAI (compute)
+}
+
+// Split ECHO cost-plus. fee_cents = quanto trattiene la piattaforma (55% del
+// ricarico + il costo OpenAI, da cui paga il fornitore); net_cents = royalty
+// all'avatar (45% del ricarico). Invarianti: gross = fee + net = costo + ricarico.
+export function splitEcho(_category: string | null, size?: string | null, quality?: string | null): EchoSplit {
+  const cost = Math.round(estEchoCostCents(size, quality));
+  const gross = priceForEcho(size, quality);
+  const markup = Math.max(0, gross - cost);
+  const net = Math.round((markup * AVATAR_MARKUP_BPS) / 10000); // 45% all'avatar
+  const fee = gross - net;
   return {
     gross_cents: gross,
-    fee_cents: gross - net, // 20% del valore + tutto il supplemento → piattaforma
+    fee_cents: fee,
     net_cents: net,
-    value_cents: value,
-    surcharge_cents: surcharge,
+    cost_cents: cost,
+    markup_cents: markup,
+    value_cents: markup,
+    surcharge_cents: cost,
   };
 }
 

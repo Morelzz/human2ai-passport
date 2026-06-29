@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Check, ArrowRight } from "lucide-react";
-import { BAND_PRICE_CENTS, PLATFORM_FEE_BPS, splitRoyalty, formatEur } from "@/lib/wallet";
+import { splitEcho, formatEur } from "@/lib/wallet";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
@@ -13,17 +13,16 @@ export const metadata = {
     "Chi mette il volto non paga mai. Chi genera paga solo l'uso commerciale, e la persona reale riceve l'80% di ogni generazione.",
 };
 
-const feePct = PLATFORM_FEE_BPS / 100;
-
-// Review C1 — pagina /prezzi ricostruita attorno al PRINCIPIO (chi mette il
-// volto non paga mai), non ai piani. Prezzi reali da lib/wallet (fonte unica);
-// le categorie elencate sono allineate a CATEGORY_BAND in lib/wallet.ts.
-// Pacchetti crediti buyer: IN DEFINIZIONE (placeholder deciso con Morelz) —
-// oggi si paga a consumo.
-const BANDS = [
-  { key: "premium", label: "Premium", cats: "Luxury · Fashion · Beauty", cents: BAND_PRICE_CENTS.premium },
-  { key: "standard", label: "Standard", cats: "Business · Travel · Entertainment · Sport · Alcohol", cents: BAND_PRICE_CENTS.standard },
-  { key: "base", label: "Base", cats: "Food · Lifestyle · Healthcare", cents: BAND_PRICE_CENTS.base },
+// Pagina /prezzi: modello COST-PLUS (deciso 2026-06-29). Il prezzo parte dal
+// costo reale del motore (gpt-image-2) + un piccolo ricarico equo, diviso tra
+// noi e la persona. I numeri sono LIVE da lib/wallet (splitEcho), fonte unica:
+// se cambiano le tariffe, la pagina cambia da sola. Le modalità (risoluzione/
+// qualità) corrispondono a quelle generabili nello Studio.
+const MODES = [
+  { label: "Standard", detail: "1024 px, qualità media", size: "1024x1024", quality: "medium" },
+  { label: "Alta", detail: "1024 px, alta qualità", size: "1024x1024", quality: "high" },
+  { label: "2K", detail: "2048 px", size: "2048x2048", quality: "high" },
+  { label: "4K", detail: "fino a 3840 px", size: "3840x2160", quality: "high" },
 ] as const;
 
 export default function PrezziPage() {
@@ -43,7 +42,7 @@ export default function PrezziPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
             Il valore qui dentro sono le persone. Per questo entrare nel registro è gratis, per sempre.
-            Paga solo chi genera contenuti commerciali, e di ogni generazione, l&apos;{100 - feePct}% va
+            Paga solo chi genera contenuti commerciali, a un prezzo onesto, e una parte va sempre
             alla persona reale.
           </p>
         </section>
@@ -65,7 +64,7 @@ export default function PrezziPage() {
                   {[
                     "Verifica dell'identità a carico nostro",
                     "Avatar creato e mantenuto da noi",
-                    `Royalty dell'${100 - feePct}% su ogni utilizzo del tuo volto`,
+                    "Royalty su ogni utilizzo del tuo volto, senza muovere un dito",
                     "Wallet, storico utilizzi e payout a soglia",
                     "Consenso revocabile in ogni momento, il sistema obbedisce",
                   ].map((f) => (
@@ -120,25 +119,24 @@ export default function PrezziPage() {
             <div className="text-center">
               <span className="label-mono text-crimson-light">Quanto costa generare</span>
               <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                Il prezzo dipende dall&apos;uso, non dal volto.
+                Paghi quanto costa, più un piccolo ricarico equo.
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
-                Ogni categoria d&apos;uso ha la sua banda. Su ogni generazione la persona reale riceve
-                l&apos;{100 - feePct}%, la piattaforma il {feePct}%.
+                Il prezzo parte dal costo reale del motore. Sopra, un ricarico onesto: una parte a noi,
+                una parte sempre alla persona. Più la risoluzione è alta più costa, mai oltre 2 €.
               </p>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {BANDS.map((b) => {
-                const split = splitRoyalty(b.cents);
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {MODES.map((m) => {
+                const s = splitEcho(null, m.size, m.quality);
                 return (
-                  <div key={b.key} className="glass glass-hover rounded-2xl p-6">
-                    <p className="label-mono text-muted">{b.label}</p>
-                    <div className="mt-2 text-3xl font-extrabold">{formatEur(b.cents)}</div>
-                    <p className="mt-1 text-xs text-faint">per immagine generata</p>
-                    <p className="mt-3 text-sm leading-relaxed text-faint">{b.cats}</p>
+                  <div key={m.label} className="glass glass-hover rounded-2xl p-6">
+                    <p className="label-mono text-muted">{m.label}</p>
+                    <div className="mt-2 text-3xl font-extrabold">{formatEur(s.gross_cents)}</div>
+                    <p className="mt-1 text-xs text-faint">{m.detail}</p>
                     <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
                       <span className="text-sm font-bold text-teal">Alla persona</span>
-                      <span className="text-sm font-extrabold text-teal">{formatEur(split.net_cents)}</span>
+                      <span className="text-sm font-extrabold text-teal">{formatEur(s.net_cents)}</span>
                     </div>
                   </div>
                 );
@@ -146,9 +144,8 @@ export default function PrezziPage() {
             </div>
             <div className="mx-auto mt-6 max-w-2xl text-center">
               <p className="text-xs leading-relaxed text-faint">
-                I formati ad alta risoluzione del motore fotoreale aggiungono un supplemento di calcolo,
-                mostrato in chiaro prima di generare. Pacchetti di crediti in definizione, oggi paghi
-                a consumo, senza abbonamento.
+                Il prezzo è mostrato in chiaro prima di generare. Si paga con crediti prepagati, una
+                sola ricarica per tante generazioni: nessun abbonamento obbligatorio.
               </p>
             </div>
           </section>

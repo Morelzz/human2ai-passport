@@ -4,7 +4,6 @@ import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { Tier, CATEGORIES } from "@/lib/types";
 import { formatEur, grossForCategory, grossForEcho } from "@/lib/wallet";
-import { echoSurchargeCents } from "@/lib/engines/echo-cost";
 import { KineticText } from "@/components/motion/KineticText";
 // Motore Higgsfield/Soul rimosso dalla UI: ECHO (gpt-image-2) e' l'unico motore.
 import { voltStr, VOLT_STRINGS, voltLoadingLine, voltSuccessMission } from "@/lib/strings/volt";
@@ -576,8 +575,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   }
 
   const baseGross = grossForCategory(category || null);
-  // ECHO: valore-categoria + supplemento-compute (modello "compute a parte").
-  const echoSurcharge = echoSurchargeCents(echoSize, echoQuality);
+  // ECHO: prezzo cost-plus (costo OpenAI + ricarico), dipende da size/quality.
   const priceCents = engine === "echo" ? grossForEcho(category || null, echoSize, echoQuality) : baseGross;
   const priceLabel = formatEur(priceCents);
   // Etichetta del bottone Genera: il costo vive DENTRO il bottone (VOLT_SYSTEM
@@ -820,7 +818,6 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                       echoQuality={echoQuality}
                       setEchoQuality={setEchoQuality}
                       echoSize={echoSize}
-                      echoSurcharge={echoSurcharge}
                       echoFormats={ECHO_FORMATS}
                       echoReses={ECHO_RESES}
                       echoQuals={ECHO_QUALS}

@@ -107,7 +107,6 @@ export interface StudioPanelProps {
   echoQuality: string;
   setEchoQuality: (v: string) => void;
   echoSize: string;
-  echoSurcharge: number;
   echoFormats: { v: string; l: string }[];
   echoReses: { v: string; l: string }[];
   echoQuals: { v: string; l: string }[];
@@ -174,7 +173,6 @@ export function StudioPanel(props: StudioPanelProps) {
     echoQuality,
     setEchoQuality,
     echoSize,
-    echoSurcharge,
     echoFormats,
     echoReses,
     echoQuals,
@@ -402,7 +400,7 @@ export function StudioPanel(props: StudioPanelProps) {
                 </div>
               </div>
               <p className="text-[0.66rem] leading-relaxed text-faint">
-                {echoSize.replace("x", "×")} px · supplemento compute {formatEur(echoSurcharge)}{echoRes !== "standard" ? " · più lento (anche qualche minuto)" : ""}
+                {echoSize.replace("x", "×")} px{echoRes !== "standard" ? " · più lento (anche qualche minuto)" : ""}
               </p>
             </div>
           )}
@@ -598,10 +596,6 @@ export function StudioPanel(props: StudioPanelProps) {
           )}
           <div className="mb-4 rounded-lg bg-obsidian-2 p-4">
             <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
-            <EuroRow label="Fee piattaforma" value={`− ${formatEur((gen.fee_cents ?? 0) - (gen.surcharge_cents ?? 0))}`} dim />
-            {(gen.surcharge_cents ?? 0) > 0 && (
-              <EuroRow label="Supplemento compute" value={`− ${formatEur(gen.surcharge_cents ?? 0)}`} dim />
-            )}
             <div className="my-2 h-px bg-white/6" />
             <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents ?? 0)} highlight />
           </div>
