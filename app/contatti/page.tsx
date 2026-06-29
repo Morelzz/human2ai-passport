@@ -2,6 +2,9 @@ import { Mail, MapPin } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
+import { SediMap } from "@/components/marketing/SediMap";
+import { TeamSection } from "@/components/marketing/TeamSection";
+import { getSedi } from "@/lib/scan";
 import { ContactForm } from "./ContactForm";
 
 export const metadata = {
@@ -16,6 +19,8 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
   const prefill = ingaggio
     ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Semblic.` }
     : undefined;
+  // Sedi per la mappa (riuso della stessa fonte di /scansione; fallback Studio Void).
+  const sedi = await getSedi();
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
       <CineBackground />
@@ -77,6 +82,31 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
                 </a>
               </aside>
             </div>
+          </Reveal>
+
+          {/* Dove siamo: la mappa dello studio (stessa di /scansione) */}
+          <Reveal>
+            <section className="mt-16">
+              <div className="text-center">
+                <span className="label-mono text-teal">Dove siamo</span>
+                <h2 className="mt-3 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">Lo studio, e la rete</h2>
+                <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">
+                  Lo studio Void a Rimini e ogni sede certificata sul protocollo SEMBLIC-SCAN.
+                </p>
+              </div>
+              <div className="mt-8">
+                <SediMap sedi={sedi.map((s) => ({ slug: s.slug, name: s.name, city: s.city, lat: s.lat, lng: s.lng, status: s.status }))} />
+              </div>
+            </section>
+          </Reveal>
+
+          {/* Chi siamo: le persone (stessi 3 slot dell'Academy) */}
+          <Reveal>
+            <TeamSection
+              eyebrow="Chi siamo"
+              title="Le persone dietro il registro"
+              subtitle="Volti veri anche dietro Semblic, non solo nel registro."
+            />
           </Reveal>
         </main>
       </div>

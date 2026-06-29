@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { NemesisMark } from "./NemesisMark";
+
+// Gradiente "tramonto" (amber->coral) = identita di Nemesis, lo strike.
+const TRAMONTO = "linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%)";
+const wordmark = { background: TRAMONTO, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
 // /ward (Ward v2) — pagina di SPIEGAZIONE del finder, pubblica. Ward v2 trova le
 // COPIE delle immagini che generi su Semblic: niente foto da caricare, niente
@@ -17,14 +22,18 @@ const STEPS = [
   },
   {
     k: "Decidi tu",
-    d: "Segna sicuro le copie che vanno bene (spariscono dai risultati) e avvia la rimozione su quelle che contano. Il comando resta sempre tuo.",
+    d: "Segna sicuro le copie che vanno bene (spariscono dai risultati) e, sulle copie confermate, avvii Nemesis. Il comando resta sempre tuo.",
   },
 ];
 
 export function WardIntro() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
-      <span className="label-mono text-violet-light">Ward</span>
+    <div className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-12">
+      <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted transition-colors hover:text-foreground">
+        <span aria-hidden className="text-lg leading-none">&lsaquo;</span> Indietro
+      </Link>
+
+      <span className="mt-8 block label-mono text-violet-light">Ward</span>
       <h1 className="mt-4 text-balance text-4xl font-extralight leading-[1.02] tracking-[-0.03em] text-foreground sm:text-6xl">
         Le tue immagini,
         <br />
@@ -52,6 +61,23 @@ export function WardIntro() {
             <p className="mt-2 text-sm leading-relaxed text-muted">{s.d}</p>
           </div>
         ))}
+      </div>
+
+      {/* NEMESIS: lo strike. Ward trova, Nemesis colpisce. */}
+      <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-obsidian-2 p-6 sm:p-8" style={{ borderColor: "rgba(238,122,112,0.25)" }}>
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl text-[#2a1404]" style={{ background: TRAMONTO }}>
+            <NemesisMark className="h-5 w-5" />
+          </span>
+          <div>
+            <div className="text-sm font-bold tracking-[0.18em]" style={wordmark}>NEMESIS</div>
+            <div className="text-xs text-muted">Ward trova, Nemesis colpisce.</div>
+          </div>
+        </div>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
+          Quando una copia e&apos; <span className="text-foreground">confermata tua</span>, Nemesis prepara una richiesta di rimozione (DMCA) gia&apos; pronta, con l&apos;indirizzo a cui inviarla e le prove allegate.{" "}
+          <span className="text-foreground">Semblic prepara, tu invii:</span> nessun invio automatico, nessuna accusa. Poi segui lo stato, dalla bozza alla copia rimossa. Solo sulle copie confermate, il comando resta tuo.
+        </p>
       </div>
 
       <p className="mt-10 max-w-xl text-sm leading-relaxed text-faint">

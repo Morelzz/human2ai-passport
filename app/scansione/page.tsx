@@ -44,9 +44,8 @@ export default async function ScansionePage() {
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            La scansione è l&apos;ingresso nel registro: una sessione fotografica professionale
-            che cattura il tuo volto com&apos;è davvero, e lo trasforma in un avatar che lavora
-            per te, alle tue condizioni.
+            L&apos;ingresso nel registro: una sessione fotografica che cattura il tuo volto com&apos;è
+            davvero e lo trasforma in un avatar che lavora per te, alle tue condizioni.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg"><Link href={BOOKING_HREF}>Prenota la tua scansione</Link></Button>
@@ -108,9 +107,8 @@ export default async function ScansionePage() {
               Lo standard SEMBLIC-SCAN
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
-              Lo standard è pubblico, perché gli standard vivono alla luce. Questi sono i
-              requisiti che ogni scansione deve rispettare per entrare nel registro,
-              chiunque la esegua.
+              Pubblico, perché gli standard vivono alla luce. I requisiti che ogni
+              scansione deve rispettare per entrare nel registro, chiunque la esegua.
             </p>
 
             {/* Il set — scheda tecnica */}
@@ -187,17 +185,15 @@ export default async function ScansionePage() {
               Prima della tua sessione
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
-              La scansione dura meno di quanto pensi e non richiede di saper &laquo;posare&raquo;.
-              Bastano poche attenzioni, e il resto lo facciamo noi.
+              Dura meno di quanto pensi e non serve saper &laquo;posare&raquo;. Poche attenzioni,
+              il resto lo facciamo noi.
             </p>
             <div className="mt-8 flex flex-col gap-3">
               {[
-                { t: "Vieni come sei, davvero.", d: "Trucco leggero o assente: l'avatar deve partire dal tuo volto, non da una versione di scena. Le occhiaie le togliamo noi; la tua faccia no." },
-                { t: "Capelli in ordine, non in posa.", d: "Come li porti normalmente. Niente acconciature che non rifaresti mai." },
-                { t: "Abiti semplici, tinta unita.", d: "Niente loghi, niente fantasie fitte: in scansione conta il volto, il resto è rumore." },
-                { t: "Riposa la sera prima.", d: "Sembra un consiglio della nonna; è un consiglio tecnico. Un volto riposato dà più informazione pulita ai motori." },
-                { t: "Cosa succede in sessione:", d: "sali su una piastra che ruota da sola, la camera resta ferma, scattiamo circa cento fotografie in pochi minuti. Non devi fare niente, è il punto: devi solo essere te." },
-                { t: "E dopo:", d: "selezioniamo le immagini migliori, le lavoriamo secondo lo standard, e costruiamo il tuo avatar. Quando entra nel registro, ricevi il tuo passaporto pubblico: da quel momento il tuo volto lavora solo se tu dici sì." },
+                { t: "Vieni come sei.", d: "Trucco leggero o assente: l'avatar parte dal tuo volto, non da una versione di scena. Le occhiaie le togliamo noi." },
+                { t: "Capelli e abiti normali.", d: "Come li porti di solito, tinta unita, niente loghi o fantasie: conta il volto, il resto è rumore." },
+                { t: "Riposa la sera prima.", d: "Non è un consiglio della nonna ma tecnico: un volto riposato dà più informazione pulita ai motori." },
+                { t: "In sessione, e dopo.", d: "Sali su una piastra che ruota, la camera resta ferma, circa cento scatti in pochi minuti. Poi scegliamo le migliori, costruiamo l'avatar e ricevi il tuo passaporto pubblico: da lì il volto lavora solo se dici sì." },
               ].map((x) => (
                 <div key={x.t} className="glass flex gap-4 rounded-2xl p-5">
                   <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-teal" />

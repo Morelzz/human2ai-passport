@@ -4,6 +4,7 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
+import { TeamSection } from "@/components/marketing/TeamSection";
 import { getCorsi, CorsoLivello } from "@/lib/academy";
 
 export const metadata = {
@@ -83,6 +84,14 @@ export default async function AcademyPage() {
                 );
               })}
             </div>
+          </Reveal>
+
+          <Reveal>
+            <TeamSection
+              eyebrow="I docenti"
+              title="Scopri chi insegna"
+              subtitle="Le persone che tengono i percorsi: chi ha costruito lo standard e chi lo trasmette."
+            />
           </Reveal>
 
           <Reveal>
