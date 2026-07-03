@@ -9,11 +9,12 @@ import { ScrollProgress } from "@/components/motion/ScrollProgress";
 import { VoltBadge } from "@/components/volt/VoltBadge";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-// Menu per INTENTO: Avatar (il registro) resta voce DIRETTA, il cuore del
-// prodotto; tutto il resto in 3 macro -> Genera (creare, anche aziende),
-// Proteggi (il tuo volto + Sigil), Fiducia (capire, valutare, contattare).
-// Le tendine possono avere mini sotto-titoli ({ heading }). UNA struttura per
-// desktop (dropdown hover) e hamburger (accordion).
+// Menu per INTENTO: Avatar (il registro) e Academy sono voci DIRETTE (il cuore
+// del prodotto e la scuola, in vista per scelta di Morelz); il resto in 3
+// macro -> Genera (creare, anche aziende), Proteggi (il tuo volto + Sigil),
+// Fiducia (capire, valutare, contattare). Le tendine possono avere mini
+// sotto-titoli ({ heading }). UNA struttura per desktop (dropdown hover) e
+// hamburger (accordion).
 type NavItem = { href: string; label: string } | { heading: string };
 type NavEntry =
   | { label: string; href: string }
@@ -35,8 +36,8 @@ const NAV: NavEntry[] = [
     { href: "/ward", label: "Ward e Nemesis" },
     { href: "/verify", label: "Sigil" },
   ] },
+  { label: "Academy", href: "/academy" },
   { label: "Fiducia", items: [
-    { href: "/academy", label: "Academy" },
     { href: "/blog", label: "Blog" },
     { href: "/prezzi", label: "Prezzi" },
     { href: "/trasparenza", label: "Trasparenza" },
