@@ -54,7 +54,7 @@ export function Audiences() {
               Volti che puoi usare senza paura.
             </h3>
             <p className="mt-4 max-w-md leading-relaxed text-muted">
-              Ogni volto del catalogo è verificato e consenziente, per categorie d&apos;uso dichiarate.
+              Ogni volto del catalogo è verificato e consenziente, con un consenso esplicito e revocabile.
               Niente cause, niente volti rubati: solo persone vere, con la prova di provenienza
               in ogni contenuto che generi.
             </p>

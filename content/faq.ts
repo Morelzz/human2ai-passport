@@ -15,7 +15,7 @@ export interface FaqItem {
 export const FAQ_ITEMS: FaqItem[] = [
   {
     q: "Cos'è Semblic, in una frase?",
-    a: "È il registro dei diritti d'immagine: il filtro che impedisce all'AI di generare un essere umano senza il consenso — verificato e pagato — della persona reale.",
+    a: "È il registro dei diritti d'immagine: il filtro che impedisce all'AI di generare un essere umano senza il consenso, verificato e pagato, della persona reale.",
   },
   {
     q: "Il mio volto è al sicuro? Chi vede i miei dati?",
@@ -31,11 +31,11 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Quanto guadagno quando il mio volto viene usato?",
-    a: "L'80% di ogni generazione commerciale. Le royalty si accumulano nel tuo wallet e le incassi al raggiungimento della soglia. Ogni utilizzo è tracciato e lo vedi nel tuo storico.",
+    a: "Una quota di ogni generazione commerciale: il prezzo copre il costo del motore piu' un ricarico, e il 45% di quel ricarico e' tuo. Le royalty si accumulano nel tuo wallet e le incassi al raggiungimento della soglia. Ogni utilizzo è tracciato e lo vedi nel tuo storico.",
   },
   {
     q: "Chi può usare il mio volto, e per cosa?",
-    a: "Solo chi passa dal filtro, e solo nelle categorie che TU hai approvato. Se una richiesta cade in una categoria che non concedi, viene bloccata — e il blocco viene contato pubblicamente nel nostro Transparency Report.",
+    a: "Solo chi passa dal filtro, e solo se TU hai dato il consenso all'uso commerciale. È un sì o no che controlli tu e puoi revocare quando vuoi: senza il tuo consenso la generazione viene bloccata, e ogni blocco viene contato pubblicamente nel nostro Transparency Report.",
   },
   {
     q: "Come faccio a sapere se un contenuto è stato fatto col consenso?",
@@ -43,7 +43,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Cosa succede se qualcuno usa il mio volto senza permesso?",
-    a: "Lo segnali — tu o chiunque altro — dal passaporto o da /report. Ogni segnalazione apre un flusso di verifica tracciato che può portare alla rimozione e alla sospensione. Un contenuto senza certificato non è un contenuto Semblic.",
+    a: "Lo segnali, tu o chiunque altro, dal passaporto o da /report. Ogni segnalazione apre un flusso di verifica tracciato che può portare alla rimozione e alla sospensione. Un contenuto senza certificato non è un contenuto Semblic.",
   },
   {
     q: "Le immagini generate sono riconoscibili come AI?",

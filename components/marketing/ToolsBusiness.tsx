@@ -23,7 +23,7 @@ export function ToolsBusiness() {
           La piattaforma <GradientFlowText>per i brand</GradientFlowText> che creano con l&apos;AI.
         </h2>
         <p className="mt-4 leading-relaxed text-muted">
-          Generare con persone vere e consenzienti, per categorie d&apos;uso dichiarate. Lo spazio crescerà.
+          Generare con persone vere e consenzienti, con la prova del consenso in ogni contenuto. Lo spazio crescerà.
         </p>
       </div>
 
