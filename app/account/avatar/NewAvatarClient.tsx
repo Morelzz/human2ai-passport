@@ -350,7 +350,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             </p>
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
               <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid #F2A93B", color: "var(--text)", fontWeight: 700, fontSize: "0.8rem" }}>ECHO</span>
-              <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "var(--surface)", border: "1px dashed var(--hairline)", color: "var(--text-faint)", fontSize: "0.8rem" }}>HUMAN · coming soon</span>
+              <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "var(--surface)", border: "1px dashed var(--hairline)", color: "var(--text-faint)", fontSize: "0.8rem" }}>HUMAN · in arrivo</span>
             </div>
           </div>
 

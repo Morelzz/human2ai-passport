@@ -16,12 +16,12 @@ type Member = {
   soon?: boolean; // posto in arrivo
 };
 
-// Tre figure: il founder, un docente, e uno slot in arrivo. Nomi/foto da inserire.
+// Tre figure: il founder e due slot in arrivo (foto del founder da inserire).
 const MEMBERS: Member[] = [
-  { name: "Nome Cognome", role: "Founder", accent: "#F2A93B", todo: true,
+  { name: "Riccardo Tirincanti", role: "Founder", accent: "#F2A93B",
     bio: "Fondatore di Semblic e dello standard SEMBLIC-SCAN. Guida la visione del registro dei diritti d'immagine." },
-  { name: "Nome Cognome", role: "Docente", accent: "#7FAE96", todo: true,
-    bio: "Tiene i percorsi su consenso, provenienza e tutela dell'identita nell'era generativa." },
+  { name: "In arrivo", role: "Docente", accent: "#7FAE96", soon: true,
+    bio: "Terra' i percorsi su consenso, provenienza e tutela dell'identita nell'era generativa." },
   { name: "In arrivo", role: "Docente", accent: "#EE7A70", soon: true,
     bio: "Una nuova figura si unisce presto al team dei docenti." },
 ];

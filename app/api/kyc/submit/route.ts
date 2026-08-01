@@ -66,7 +66,7 @@ export async function POST(request: Request) {
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Errore upload";
     // Aiuto chiaro se manca il bucket.
-    const hint = /bucket/i.test(msg) ? " — crea il bucket privato 'documents' in Supabase → Storage." : "";
+    const hint = /bucket/i.test(msg) ? ", crea il bucket privato 'documents' in Supabase, sezione Storage." : "";
     return NextResponse.json({ error: `Upload fallito: ${msg}${hint}` }, { status: 502 });
   }
 
