@@ -2,6 +2,11 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import SignupForm from "./SignupForm";
 
+export const metadata = {
+  title: "Crea il tuo account",
+  description: "Entra in Semblic: genera con volti consenzienti o proteggi il tuo.",
+};
+
 // Guardia: un utente GIA' loggato non deve MAI vedere "Crea il tuo account".
 // Era la causa radice del loop "mi rifa fare l'account di continuo": /signup e'
 // raggiunto da piu' bottoni del sito (Audiences, ClosingCTA, Prezzi, ...) e

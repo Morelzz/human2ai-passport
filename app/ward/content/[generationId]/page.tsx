@@ -6,6 +6,11 @@ import type { AllowEntry } from "@/lib/ward/whitelist";
 
 export const dynamic = "force-dynamic";
 
+// Area privata del buyer: fuori dall'indice (il layout /ward ora e' pubblico).
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 // /ward/content/[generationId] — Ward v2 finder per UNA generazione. Server:
 // auth + ownership (l'utente e' il buyer) + carica l'ultimo scan content e i suoi
 // match (gia' senza i whitelisted, esclusi a scan-time) + le voci di whitelist.

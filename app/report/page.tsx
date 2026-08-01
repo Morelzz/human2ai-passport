@@ -6,6 +6,12 @@ interface Props {
   searchParams: Promise<{ handle?: string; cert?: string }>;
 }
 
+export const metadata = {
+  title: "Segnala un abuso",
+  description:
+    "Hai visto un volto usato senza consenso? Segnalalo a Semblic: verifichiamo e interveniamo.",
+};
+
 // Segnalazione pubblica di abuso — accessibile a chiunque, anche senza account.
 export default async function ReportPage({ searchParams }: Props) {
   const { handle, cert } = await searchParams;

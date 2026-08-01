@@ -6,6 +6,11 @@ interface Props {
   params: Promise<{ token: string }>;
 }
 
+// Link personale via token: mai nell'indice dei motori.
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 // Pagina pubblica: la persona apre il link e conferma il consenso in prima persona.
 export default async function ConsentPage({ params }: Props) {
   const { token } = await params;

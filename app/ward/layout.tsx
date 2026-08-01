@@ -17,9 +17,12 @@ const wardMono = JetBrains_Mono({
   display: "swap",
 });
 
+// /ward e' la pagina pubblica che spiega il finder: indicizzabile. La parte
+// privata (/ward/content/[generationId]) resta noindex nel suo page.tsx.
 export const metadata: Metadata = {
   title: "Ward",
-  robots: { index: false, follow: false }, // app privata, fuori dall'indice
+  description:
+    "Ward trova le copie delle immagini che generi su Semblic, in giro per il web, e ti aiuta a rimuoverle con Nemesis.",
 };
 
 export default function WardLayout({ children }: { children: React.ReactNode }) {
