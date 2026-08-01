@@ -10,6 +10,7 @@ export const metadata = {
   title: "Sigil · Verifica un contenuto",
   description:
     "Carica un'immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e mostriamo chi l'ha autorizzato e con quale consenso, a tutela della persona.",
+  alternates: { canonical: "/verify" },
 };
 
 export default async function VerifyPage({

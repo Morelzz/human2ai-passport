@@ -6,7 +6,8 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { SediMap } from "@/components/marketing/SediMap";
-import { getSedi } from "@/lib/scan";
+import { getSedi, SCAN_PRICE_CENTS } from "@/lib/scan";
+import { siteUrl } from "@/lib/site";
 
 export const metadata = {
   title: "La scansione umana",
@@ -27,8 +28,28 @@ export default async function ScansionePage() {
   // H4 — sedi per la mappa (tabella `sedi`; fallback Studio Void se assente).
   const sedi = await getSedi();
 
+  // Schema Service + Offer per i motori: il prezzo di lancio della scansione
+  // e' l'unico prezzo fisso del sito, dato solido per un rich result.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Scansione SEMBLIC-SCAN",
+    description:
+      "Sessione fotografica professionale certificata: il tuo volto entra nel registro Semblic come avatar verificato ad alta fedelta.",
+    provider: { "@id": `${siteUrl()}/#org` },
+    areaServed: "IT",
+    offers: {
+      "@type": "Offer",
+      price: (SCAN_PRICE_CENTS / 100).toFixed(2),
+      priceCurrency: "EUR",
+      url: `${siteUrl()}/scansione/prenota`,
+      availability: "https://schema.org/InStock",
+    },
+  };
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <CineBackground />
       <div className="relative z-[2]">
         <SiteNav />

@@ -3,7 +3,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import { LegalNotice } from "@/components/legal/LegalNotice";
 
 export const metadata = {
-  title: "Termini",
+  title: "Termini di servizio",
   description: "Termini di servizio di Semblic: registro dei volti consenzienti, licenze d'uso, royalty, revoca.",
 };
 

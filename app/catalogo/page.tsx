@@ -10,8 +10,9 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 export const metadata = {
   // Review B4: solo il nome pagina, il suffisso " | Semblic" lo aggiunge il
   // template di app/layout.tsx (prima usciva doppio).
-  title: "Avatar",
+  title: "Avatar, il catalogo dei volti verificati",
   description: "Il registro pubblico dei volti consenzienti: persone reali, verificate e pagate. Sfoglia gli avatar.",
+  alternates: { canonical: "/catalogo" },
 };
 
 type CatalogAvatar = {

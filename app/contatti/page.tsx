@@ -8,8 +8,9 @@ import { getSedi } from "@/lib/scan";
 import { ContactForm } from "./ContactForm";
 
 export const metadata = {
-  title: "Contatti",
-  description: "Scrivi a Semblic: brand, persone che vogliono entrare nel registro, stampa, partner.",
+  title: "Contatti e sedi",
+  description: "Scrivi a Semblic: brand, persone che vogliono entrare nel registro, stampa, partner. Trova le sedi di scansione certificate.",
+  alternates: { canonical: "/contatti" },
 };
 
 // F2 — pagina /contatti: form pubblico → contact_messages + recapiti.

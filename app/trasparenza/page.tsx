@@ -9,7 +9,7 @@ import { PublicRoadmapCompact } from "@/components/marketing/PublicRoadmap";
 
 export const metadata = {
   // Review B4: solo il nome pagina — il suffisso lo aggiunge il template layout.
-  title: "Trasparenza",
+  title: "Trasparenza, i numeri del registro",
   description: "I numeri reali del registro: persone consenzienti, generazioni certificate, royalty pagate.",
 };
 

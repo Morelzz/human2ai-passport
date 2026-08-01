@@ -8,7 +8,7 @@ import { TeamSection } from "@/components/marketing/TeamSection";
 import { getCorsi, CorsoLivello } from "@/lib/academy";
 
 export const metadata = {
-  title: "Academy",
+  title: "Academy, la scuola dei diritti d'immagine",
   description:
     "La SEMBLIC Academy: dal corso base gratuito sui diritti d'immagine al percorso avanzato che certifica i Capture Partner.",
 };

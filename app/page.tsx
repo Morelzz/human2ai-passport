@@ -18,10 +18,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { getSedi } from "@/lib/scan";
 
-// A4 — social. Handle Instagram UFFICIALE (confermato da Morelz, 2026-06-10).
-// URL pulito senza parametri di condivisione/tracking. Un solo punto di verità.
-const INSTAGRAM_HANDLE = "semblic";
-const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/site";
 
 export default async function Home() {
   // Fonte UNICA del registro pubblico (lib/registry): stessi volti e stessi

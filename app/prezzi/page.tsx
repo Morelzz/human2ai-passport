@@ -8,9 +8,9 @@ import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 
 export const metadata = {
-  title: "Prezzi",
+  title: "Prezzi, dal costo reale del motore",
   description:
-    "Chi mette il volto non paga mai. Chi genera paga solo l'uso commerciale, e la persona reale riceve l'80% di ogni generazione.",
+    "Chi mette il volto non paga mai. Chi genera paga il costo reale del motore piu' un piccolo ricarico equo, diviso con la persona reale.",
 };
 
 // Pagina /prezzi: modello COST-PLUS (deciso 2026-06-29). Il prezzo parte dal

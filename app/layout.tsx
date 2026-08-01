@@ -5,7 +5,7 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { CookieBanner } from "@/components/legal/CookieBanner";
 import { PwaManager } from "@/components/pwa/PwaManager";
-import { siteUrl } from "@/lib/site";
+import { siteUrl, INSTAGRAM_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +34,7 @@ const orgJsonLd = {
       url: SITE_URL,
       logo: `${SITE_URL}/semblic-mark.png`,
       description: DESCRIPTION,
+      sameAs: [INSTAGRAM_URL],
     },
     {
       "@type": "WebSite",
@@ -63,6 +64,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
+    // Esplicita: X fa gia' fallback su og:image, ma meglio non dipenderne.
+    images: [`${SITE_URL}/opengraph-image`],
+  },
+  // Il feed RSS del blog, dichiarato ai reader e ai motori.
+  alternates: {
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
   },
   // PWA: su iOS l'app installata si apre a tutto schermo e usa lo scudo come
   // icona Home. La barra di stato scura si fonde col void Obsidian.

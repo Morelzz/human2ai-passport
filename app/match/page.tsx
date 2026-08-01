@@ -10,7 +10,7 @@ import MatchClient from "./MatchClient";
 export const metadata = {
   title: "Genera con un volto verificato",
   description:
-    "Scegli un volto del registro, consenziente per la tua categoria, e genera contenuti che pagano la persona reale. Solo identita' verificate, mai volti inventati.",
+    "Scegli un volto del registro, con un consenso esplicito e verificabile, e genera contenuti che pagano la persona reale. Solo identita' verificate, mai volti inventati.",
 };
 
 export default async function MatchPage({ searchParams }: { searchParams: Promise<{ avatar?: string }> }) {

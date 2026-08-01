@@ -3,7 +3,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import { LegalNotice } from "@/components/legal/LegalNotice";
 
 export const metadata = {
-  title: "Privacy",
+  title: "Privacy policy",
   description: "Come Semblic tratta i dati: privacy by default, nessun dato biometrico esposto, nessuna vendita di dati.",
 };
 

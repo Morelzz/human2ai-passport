@@ -20,7 +20,7 @@ const wardMono = JetBrains_Mono({
 // /ward e' la pagina pubblica che spiega il finder: indicizzabile. La parte
 // privata (/ward/content/[generationId]) resta noindex nel suo page.tsx.
 export const metadata: Metadata = {
-  title: "Ward",
+  title: "Ward, il finder delle tue immagini",
   description:
     "Ward trova le copie delle immagini che generi su Semblic, in giro per il web, e ti aiuta a rimuoverle con Nemesis.",
 };

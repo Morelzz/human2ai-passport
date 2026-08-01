@@ -4,7 +4,7 @@ import { CineBackground } from "@/components/marketing/CineBackground";
 import { BlogList } from "./BlogList";
 
 export const metadata = {
-  title: "Blog",
+  title: "Blog: AI, consenso e diritto d'immagine",
   description:
     "AI, diritto d'immagine, consenso e provenienza: la voce di SEMBLIC sull'era dei volti generati.",
 };

@@ -14,3 +14,9 @@ export function siteUrl(): string {
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return CANONICAL_SITE_URL;
   return "http://localhost:3000";
 }
+
+// A4 — social. Handle Instagram UFFICIALE (confermato da Morelz, 2026-06-10).
+// URL pulito senza parametri di condivisione/tracking. Un solo punto di verità
+// (lo usano la home e il sameAs dell'Organization nel layout).
+export const INSTAGRAM_HANDLE = "semblic";
+export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;

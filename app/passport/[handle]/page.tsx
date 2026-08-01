@@ -4,6 +4,7 @@ import { isPublicAvatar } from "@/lib/registry";
 import { Avatar, ConsentEvent, TIER_CONFIG } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
 import { galleryFromRow } from "@/lib/sample-galleries";
+import { siteUrl } from "@/lib/site";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import PassportClient from "./PassportClient";
@@ -36,8 +37,15 @@ export async function generateMetadata({ params }: Props) {
   return {
     title,
     description,
+    // Canonical: la pagina accetta query (condivisioni), meglio un URL unico.
+    alternates: { canonical: `/passport/${handle}` },
     openGraph: { title, description, type: "profile", siteName: "Semblic", locale: "it_IT" },
-    twitter: { card: "summary_large_image", title, description },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${siteUrl()}/passport/${handle}/opengraph-image`],
+    },
   };
 }
 
@@ -107,8 +115,20 @@ export default async function PassportPage({ params }: Props) {
     ownerWallet: (a.owner_wallet as string) ?? null,
   };
 
+  // Schema Person per i motori: alias pubblico, ritratto e legame con
+  // l'Organization. Solo dati gia' pubblici sulla pagina, mai dati personali.
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: av.alias,
+    url: `${siteUrl()}/passport/${handle}`,
+    ...(av.portrait_url ? { image: av.portrait_url } : {}),
+    memberOf: { "@id": `${siteUrl()}/#org` },
+  };
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       <CineBackground />
       <div className="relative z-[2]">
         <SiteNav />

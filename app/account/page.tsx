@@ -319,7 +319,7 @@ export default async function AccountPage() {
                   </p>
                 )}
 
-                <Link href="/proteggi" style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "1.1rem" }}>
+                <Link href="/signup/avatar/protected" style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "1.1rem" }}>
                   Gestisci la tua protezione →
                 </Link>
               </>

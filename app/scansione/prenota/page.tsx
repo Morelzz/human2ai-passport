@@ -9,6 +9,7 @@ export const metadata = {
   title: "Prenota la tua scansione",
   description:
     "Prenota la sessione di scansione SEMBLIC-SCAN: una sessione fotografica professionale, il tuo passaporto pubblico, il tuo volto che lavora alle tue condizioni.",
+  alternates: { canonical: "/scansione/prenota" },
 };
 
 // H2 — booking della scansione. Sede preselezionabile via ?sede=<slug>
