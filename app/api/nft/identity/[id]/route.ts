@@ -30,7 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     description:
       "Identità SOULBOUND del volto di una persona reale e consenziente. Non trasferibile: non si vende la propria identità. Le licenze d'uso sono token separati con royalty alla persona.",
     external_url: `${origin}/passport/${av.handle}`,
-    image: `${origin}/logo-shield.png`,
+    image: `${origin}/semblic-mark.png`,
     attributes: [
       { trait_type: "Tier", value: av.tier },
       { trait_type: "Soulbound", value: "true" },

@@ -15,8 +15,7 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0C0F17",
     icons: [
       { src: "/semblic-mark.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/logo-shield.png", sizes: "1024x1024", type: "image/png", purpose: "any" },
-      { src: "/logo-shield.png", sizes: "1024x1024", type: "image/png", purpose: "maskable" },
+      { src: "/semblic-mark.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }

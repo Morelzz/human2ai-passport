@@ -25,7 +25,7 @@ self.addEventListener("push", (event) => {
   const title = data.title || "Semblic";
   const options = {
     body: data.body || "",
-    icon: "/logo-shield.png",
+    icon: "/semblic-mark.png",
     badge: "/semblic-mark.png",
     tag: data.tag || "semblic",
     // Riapre/raggruppa per tag: un nuovo avviso aggiorna il precedente.

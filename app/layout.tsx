@@ -32,7 +32,7 @@ const orgJsonLd = {
       "@id": `${SITE_URL}/#org`,
       name: "SEMBLIC",
       url: SITE_URL,
-      logo: `${SITE_URL}/logo-shield.png`,
+      logo: `${SITE_URL}/semblic-mark.png`,
       description: DESCRIPTION,
     },
     {
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/icon.png",
-    apple: "/logo-shield.png",
+    apple: "/semblic-mark.png",
   },
 };
 

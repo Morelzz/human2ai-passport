@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       "@type": "Organization",
       name: "SEMBLIC",
       url: siteUrl(),
-      logo: { "@type": "ImageObject", url: `${siteUrl()}/logo-shield.png` },
+      logo: { "@type": "ImageObject", url: `${siteUrl()}/semblic-mark.png` },
     },
   };
 

@@ -34,13 +34,13 @@ const C = {
   violet: "#F2A93B",
 };
 
-// Logo scudo: asset ufficiale in public/, recuperato una volta via URL statico
+// Logo a due volti: asset ufficiale in public/, recuperato una volta via URL statico
 // (funziona identico in dev e su Vercel, dove public/ è servito ma non bundlato).
 let logoCache: string | null = null;
 async function logoDataUri(): Promise<string | null> {
   if (logoCache) return logoCache;
   try {
-    const res = await fetch(`${siteUrl()}/logo-shield.png`);
+    const res = await fetch(`${siteUrl()}/semblic-mark.png`);
     if (!res.ok) return null;
     const buf = Buffer.from(await res.arrayBuffer());
     logoCache = `data:image/png;base64,${buf.toString("base64")}`;

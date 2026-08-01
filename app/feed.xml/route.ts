@@ -44,7 +44,7 @@ export async function GET() {
     <description>AI, diritto d'immagine, consenso e provenienza: la voce di SEMBLIC sull'era dei volti generati.</description>
     <language>it-IT</language>
     <image>
-      <url>${BASE}/logo-shield.png</url>
+      <url>${BASE}/semblic-mark.png</url>
       <title>SEMBLIC, il blog</title>
       <link>${BASE}/blog</link>
     </image>
