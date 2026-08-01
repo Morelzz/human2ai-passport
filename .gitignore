@@ -60,3 +60,6 @@ AVVIA-SITO.bat
 
 # brainstorming visual companion
 .superpowers/
+
+# Script e2e locali: leggono .env.local, mai sul repo pubblico
+*.e2e.ts
