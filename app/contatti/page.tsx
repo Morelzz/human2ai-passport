@@ -15,11 +15,14 @@ export const metadata = {
 
 // F2 — pagina /contatti: form pubblico → contact_messages + recapiti.
 // B3: ?ingaggio=<handle> pre-compila il form per una richiesta di ingaggio reale.
-export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string }> }) {
-  const { ingaggio } = await searchParams;
+// ?tema=formazione pre-compila la richiesta di formazione aziendale (da /academy#aziende).
+export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string; tema?: string }> }) {
+  const { ingaggio, tema } = await searchParams;
   const prefill = ingaggio
     ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Semblic.` }
-    : undefined;
+    : tema === "formazione"
+      ? { subject: "Formazione aziendale AI", message: "Vorrei portare la formazione della SEMBLIC Academy nella mia azienda. Ci interessa il percorso su: " }
+      : undefined;
   // Sedi per la mappa (riuso della stessa fonte di /scansione; fallback Studio Void).
   const sedi = await getSedi();
   return (

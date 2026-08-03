@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { GraduationCap, Sparkles, Award } from "lucide-react";
+import { GraduationCap, Sparkles, Award, Palette, Code2, Camera, Scale } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
@@ -23,6 +24,54 @@ const LIVELLO_UI: Record<CorsoLivello, { label: string; accesso: string; c: stri
   medio: { label: "Medio", accesso: "Con abbonamento", c: "#F2A93B", Icon: Sparkles },
   avanzato: { label: "Avanzato", accesso: "A pagamento · certificante", c: "#EE7A70", Icon: Award },
 };
+
+// Formazione in azienda: i percorsi che l'AI Act rende urgenti (personale
+// formato sugli strumenti AI in uso). Livelli come chip; contenuti erogati
+// su richiesta via /contatti (prefill ?tema=formazione).
+const LIVELLI_AZIENDE = [
+  { label: "Base", c: "#7FAE96" },
+  { label: "Operativo", c: "#F2A93B" },
+  { label: "Avanzato", c: "#EE7A70" },
+];
+
+const PERCORSI_AZIENDE = [
+  {
+    Icon: Palette,
+    c: "#F2A93B",
+    titolo: "Generazione visiva con metodo",
+    strumenti: "Semblic · Higgsfield",
+    descrizione:
+      "Generare immagini con un fine logico e una brand identity ben delineata: volti consenzienti su Semblic, scene e campagne su piattaforme come Higgsfield, senza perdere coerenza di marca.",
+    livelli: 3,
+  },
+  {
+    Icon: Code2,
+    c: "#9B8CFF",
+    titolo: "Costruire con Claude Code",
+    strumenti: "Siti · gestionali · automazioni",
+    descrizione:
+      "L'uso serio e professionale dell'AI che scrive software: creare siti, gestionali e strumenti interni con Claude Code, con un metodo di lavoro vero, non prompt a caso.",
+    livelli: 3,
+  },
+  {
+    Icon: Camera,
+    c: "#7FAE96",
+    titolo: "Fotografia aumentata",
+    strumenti: "Media team · content creator",
+    descrizione:
+      "Mescolare set reale e AI: i tuoi operatori fotografici potenziati dalla generazione, gli scatti veri come base di continuita' per le immagini generate. Il tuo stile, moltiplicato.",
+    livelli: 3,
+  },
+  {
+    Icon: Scale,
+    c: "#EE7A70",
+    titolo: "Conformita' nell'uso quotidiano",
+    strumenti: "AI Act in pratica",
+    descrizione:
+      "Cosa dichiarare, come marcare, cosa non fare: le regole del 2 agosto 2026 tradotte in procedure semplici per chi ogni giorno pubblica contenuti generati.",
+    livelli: 2,
+  },
+];
 
 export default async function AcademyPage() {
   const corsi = await getCorsi();
@@ -85,6 +134,57 @@ export default async function AcademyPage() {
               })}
             </div>
           </Reveal>
+
+          {/* ── FORMAZIONE PER LE AZIENDE ─────────────────────────────── */}
+          <section id="aziende" className="scroll-mt-24 pt-16 sm:pt-20">
+            <Reveal>
+              <div className="mx-auto max-w-2xl text-center">
+                <span className="label-mono" style={{ color: "#F2A93B" }}>Formazione per le aziende</span>
+                <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+                  L&apos;AI Act chiede anche <span className="text-gradient">competenza</span>.<br />
+                  Noi la insegniamo.
+                </h2>
+                <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">
+                  Il Regolamento europeo richiede alle aziende personale formato sugli strumenti AI
+                  che usa. La SEMBLIC Academy porta la formazione in azienda: percorsi a piu&apos;
+                  livelli, sul serio, dagli strumenti di frontiera al metodo.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal>
+              <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                {PERCORSI_AZIENDE.map((p) => (
+                  <div key={p.titolo} className="glass glass-hover relative flex flex-col overflow-hidden rounded-[2rem] p-6">
+                    <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${p.c}, transparent)` }} />
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${p.c}1a`, border: `1px solid ${p.c}55` }}>
+                        <p.Icon className="h-5 w-5" style={{ color: p.c }} />
+                      </span>
+                      <span className="label-mono text-faint">{p.strumenti}</span>
+                    </div>
+                    <h3 className="mt-4 text-lg font-extrabold leading-tight">{p.titolo}</h3>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">{p.descrizione}</p>
+                    <div className="mt-5 flex gap-2 border-t border-border pt-4">
+                      {LIVELLI_AZIENDE.slice(0, p.livelli).map((l) => (
+                        <span key={l.label} className="rounded-full px-2.5 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.12em]" style={{ background: `${l.c}1a`, color: l.c }}>
+                          {l.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+
+            <Reveal>
+              <div className="mt-8 text-center">
+                <Button asChild size="lg">
+                  <Link href="/contatti?tema=formazione">Richiedi la formazione per la tua azienda</Link>
+                </Button>
+              </div>
+            </Reveal>
+          </section>
 
           <Reveal>
             <TeamSection

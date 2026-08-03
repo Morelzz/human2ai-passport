@@ -11,6 +11,7 @@ import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
 import { WardSection } from "@/components/marketing/WardSection";
+import { AiActStrip } from "@/components/marketing/AiActStrip";
 import { ScanLocations } from "@/components/marketing/ScanLocations";
 import { ToolsBusiness } from "@/components/marketing/ToolsBusiness";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
@@ -70,6 +71,7 @@ export default async function Home() {
         <HowItWorks />
         <Reveal><Registry avatars={featured} total={approved.length} /></Reveal>
         <Reveal><Trust /></Reveal>
+        <Reveal><AiActStrip /></Reveal>
         <Reveal><WardSection /></Reveal>
         <Reveal><ScanLocations sedi={sedi.map((s) => ({ slug: s.slug, name: s.name, city: s.city, lat: s.lat, lng: s.lng, status: s.status }))} /></Reveal>
         <Reveal><ToolsBusiness /></Reveal>
@@ -132,6 +134,7 @@ export default async function Home() {
                   <span className="label-mono text-teal">Fiducia</span>
                   <div className="mt-3 flex flex-col gap-2.5">
                     <Link href="/trasparenza" className="text-sm text-faint transition-colors hover:text-foreground">Trasparenza</Link>
+                    <Link href="/ai-act" className="text-sm text-faint transition-colors hover:text-foreground">AI Act</Link>
                     <Link href="/sviluppatori" className="text-sm text-faint transition-colors hover:text-foreground">Sviluppatori</Link>
                     <Link href="/faq" className="text-sm text-faint transition-colors hover:text-foreground">FAQ</Link>
                     <Link href="/blog" className="text-sm text-faint transition-colors hover:text-foreground">Blog</Link>

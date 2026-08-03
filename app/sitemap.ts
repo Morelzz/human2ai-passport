@@ -12,7 +12,7 @@ const BASE = siteUrl();
 const YEARLY = new Set(["/privacy", "/termini", "/cookie"]);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = ["", "/match", "/catalogo", "/scansione", "/scansione/prenota", "/prezzi", "/trasparenza", "/verify", "/sviluppatori", "/faq", "/blog", "/academy", "/partner", "/studio", "/enterprise", "/enterprise/register", "/contatti", "/ward", "/tutela", "/report", "/badge", "/signup", "/privacy", "/termini", "/cookie"]
+  const staticRoutes = ["", "/match", "/catalogo", "/scansione", "/scansione/prenota", "/prezzi", "/trasparenza", "/verify", "/sviluppatori", "/faq", "/blog", "/academy", "/partner", "/studio", "/enterprise", "/enterprise/register", "/contatti", "/ai-act", "/ward", "/tutela", "/report", "/badge", "/signup", "/privacy", "/termini", "/cookie"]
     .map((p) => ({
       url: `${BASE}${p}`,
       changeFrequency: (YEARLY.has(p) ? "yearly" : "weekly") as "yearly" | "weekly",

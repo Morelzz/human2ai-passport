@@ -41,6 +41,7 @@ const NAV: NavEntry[] = [
     { href: "/blog", label: "Blog" },
     { href: "/prezzi", label: "Prezzi" },
     { href: "/trasparenza", label: "Trasparenza" },
+    { href: "/ai-act", label: "AI Act" },
     { href: "/contatti", label: "Contatti" },
   ] },
 ];
