@@ -1,54 +1,31 @@
 import Link from "next/link";
 import { Clapperboard, Building2, Code2 } from "lucide-react";
-import { GradientFlowText } from "@/components/marketing/GradientFlowText";
 import { SectionTitle } from "@/components/marketing/SectionTitle";
 
-// [STRUMENTI E AZIENDE] — Sezione nuova, ultima prima della chiusura: vetrina
-// B2B con i tool gia attivi PIU slot per quelli in arrivo (lo spazio dove
-// entreranno i prossimi strumenti). Regola copy: niente trattini lunghi.
-
-const ACTIVE = [
+// [STRUMENTI E AZIENDE], casa nuova: tre card chiare, solo gli strumenti che
+// esistono davvero. Niente segnaposto "in arrivo": lo spazio si aggiunge
+// quando c'e' qualcosa da metterci.
+const STRUMENTI = [
   { Icon: Clapperboard, t: "Studio", d: "Genera e post-produci con i volti del registro.", href: "/studio" },
   { Icon: Building2, t: "Enterprise", d: "Integrazione e volumi per i brand.", href: "/enterprise" },
-  { Icon: Code2, t: "API filtro", d: "Il consenso come endpoint, dentro i tuoi sistemi.", href: "/sviluppatori" },
+  { Icon: Code2, t: "API del consenso", d: "Il consenso come endpoint, dentro i tuoi sistemi.", href: "/sviluppatori" },
 ];
 
 export function ToolsBusiness() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-      <SectionTitle subtitle="Crea con volti veri, senza rischi legali.">Le aziende</SectionTitle>
-      <div className="max-w-2xl">
-        <span className="label-mono text-violet-light">Strumenti e aziende</span>
-        <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-          La piattaforma <GradientFlowText>per i brand</GradientFlowText> che creano con l&apos;AI.
-        </h2>
-        <p className="mt-4 leading-relaxed text-muted">
-          Generare con persone vere e consenzienti, con la prova del consenso in ogni contenuto. Lo spazio crescerà.
-        </p>
-      </div>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {ACTIVE.map(({ Icon, t, d, href }) => (
-          <Link key={t} href={href} className="glass glass-hover group rounded-2xl p-6">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-amber/40 bg-amber/10">
-              <Icon className="h-5 w-5 text-amber" />
-            </div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold">{t}</h3>
-              <span className="label-mono text-teal">Attivo</span>
-            </div>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted">{d}</p>
+    <section className="mx-auto max-w-7xl px-5 pt-20 sm:px-8 sm:pt-24">
+      <SectionTitle kicker="Strumenti e aziende" subtitle="Generare con persone vere e consenzienti, con la prova del consenso in ogni contenuto.">
+        Crea con volti veri, senza rischi legali.
+      </SectionTitle>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {STRUMENTI.map(({ Icon, t, d, href }) => (
+          <Link key={t} href={href} className="card group flex flex-col gap-3 p-6 transition-colors hover:border-amber/60 sm:p-7">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-soft text-amber-ink">
+              <Icon className="h-5 w-5" />
+            </span>
+            <h3 className="text-[1.25rem] font-bold tracking-[-0.02em]">{t}</h3>
+            <p className="text-[0.95rem] leading-relaxed text-muted">{d}</p>
           </Link>
-        ))}
-
-        {[0, 1, 2].map((i) => (
-          <div key={`soon-${i}`} className="rounded-2xl border border-dashed border-border/70 p-6 opacity-70">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-border">
-              <span className="h-2 w-2 rounded-full" style={{ background: "var(--edge)" }} />
-            </div>
-            <h3 className="text-lg font-bold text-muted">In arrivo</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-faint">Spazio riservato ai prossimi strumenti.</p>
-          </div>
         ))}
       </div>
     </section>
