@@ -207,7 +207,7 @@ export function PublicRoadmapCompact() {
       </ol>
       <p className="mt-6 text-center">
         <Link href="/#la-strada" className="text-sm font-semibold text-amber-ink transition-colors hover:text-foreground">
-          La roadmap completa, fase per fase →
+          La roadmap completa, fase per fase
         </Link>
       </p>
     </section>
@@ -267,7 +267,7 @@ function IconNode({ phase, reduce, delay }: { phase: Phase; reduce: boolean; del
   );
 }
 
-// Card di fase: accento di stato in alto, orizzonte → titolo → promessa → corpo.
+// Card di fase: accento di stato in alto, orizzonte titolo promessa corpo.
 function PhaseCard({ phase }: { phase: Phase }) {
   const c = COLOR[phase.status];
   const isCurrent = phase.status === "current";

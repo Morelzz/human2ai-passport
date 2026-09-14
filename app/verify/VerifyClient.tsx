@@ -5,9 +5,9 @@ import Link from "next/link";
 
 // ──────────────────────────────────────────────────────────────────────────
 // VERIFICATORE — il portale.
-// Un solo gesto: carichi un'immagine. (a) Filigrana invisibile presente →
+// Un solo gesto: carichi un'immagine. (a) Filigrana invisibile presente
 // "Generato da Semblic" con correlazione all'avatar e catena del consenso.
-// (b) Nessuna filigrana → gate di consenso, poi face-search col registro
+// (b) Nessuna filigrana gate di consenso, poi face-search col registro
 // (analisi sul dispositivo, al server solo un vettore) + filtri "restringi
 // il cerchio" sui metadati auto-dichiarati. ONESTÀ: indizio, mai prova.
 // Il percorso token resta SOLO come deep-link (?token= da feed/badge).
@@ -37,7 +37,7 @@ interface VerifyResult {
   source?: "image" | "token";
   // /verify: la filigrana e' stata DAVVERO letta dai pixel? false = non l'abbiamo
   // potuta leggere (JPEG/screenshot non la conservano, o immagine troppo grande
-  // per il server) → NON e' un verdetto, e l'analisi del volto va offerta lo stesso.
+  // per il server) NON e' un verdetto, e l'analisi del volto va offerta lo stesso.
   wm_checked?: boolean;
   certificate?: string;
   // Esteso (esito "autorità"): consenso commerciale corrente + catena del consenso.
@@ -159,7 +159,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
 
     // (1) Filigrana invisibile: vive nei LSB di un PNG lossless. Un JPEG o uno
     //     screenshot NON puo' contenerla. Vercel rifiuta i body oltre ~4,5MB
-    //     (le foto da fotocamera arrivano a 15-20MB → 413): per i PNG GRANDI
+    //     (le foto da fotocamera arrivano a 15-20MB 413): per i PNG GRANDI
     //     leggiamo la filigrana SUL DISPOSITIVO, a risoluzione nativa (mai
     //     ridimensionati: il resize la distruggerebbe), e al server mandiamo
     //     solo il certificato. wm_checked dice se i pixel sono stati letti davvero.
@@ -209,7 +209,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             setResult({ valid: false, source: "image", wm_checked: false });
           }
         } else {
-          // Pixel letti davvero: nessuna filigrana → wm_checked TRUE (esito onesto).
+          // Pixel letti davvero: nessuna filigrana wm_checked TRUE (esito onesto).
           setResult({ valid: false, source: "image", wm_checked: true });
         }
       } catch {
@@ -224,7 +224,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
     // (2) Se non e' un contenuto certificato SEMBLIC, offri SEMPRE l'analisi del
     //     volto: e' sul dispositivo, indipendente dall'upload, ed e' la tutela
     //     della persona. Non deve morire se la filigrana non si e' potuta leggere.
-    //     Il descrittore e' dato biometrico → parte solo dopo il consenso esplicito.
+    //     Il descrittore e' dato biometrico parte solo dopo il consenso esplicito.
     if (!certified) setPendingFace(file);
 
     setStage(null);
@@ -423,8 +423,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                       <p className="m-0 font-semibold text-foreground">{result.alias}</p>
                       <p className="m-0 text-[0.8rem] text-faint">@{result.handle}</p>
                       {result.status === "ATTIVO"
-                        ? <span className="text-[0.72rem] font-bold text-verified">● CONSENSO ATTIVO</span>
-                        : <span className="text-[0.72rem] font-bold text-blocked">✕ CONSENSO REVOCATO</span>}
+                        ? <span className="text-[0.72rem] font-bold text-verified">CONSENSO ATTIVO</span>
+                        : <span className="text-[0.72rem] font-bold text-blocked">CONSENSO REVOCATO</span>}
                     </div>
                   </div>
                 </div>
@@ -503,7 +503,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <Link href={`/passport/${result.handle}`} className="rounded-full border border-amber/50 px-4 py-1.5 text-[0.82rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft">
-                  Vai al Passport →
+                  Vai al Passport
                 </Link>
                 <Link
                   href={result.type === "content"
@@ -619,7 +619,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                     {i === 0 && (
                       <div className="mt-2.5 flex flex-wrap items-center gap-2">
                         <Link href={`/report?handle=${encodeURIComponent(c.handle)}`} className="rounded-full bg-blocked px-3.5 py-1.5 text-[0.75rem] font-bold text-white transition-opacity hover:opacity-90">
-                          Segnala questo contenuto →
+                          Segnala questo contenuto
                         </Link>
                         <Link href={`/passport/${c.handle}`} className="rounded-full border border-amber/50 px-3.5 py-1.5 text-[0.75rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft">
                           Passport

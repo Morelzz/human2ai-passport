@@ -6,7 +6,7 @@ import { useState } from "react";
 // dal server (/api/share-story) e la consegna al menu di condivisione nativo
 // (Web Share API livello 2, con file): su telefono l'utente sceglie Instagram
 // e la Storia parte già incorniciata. Dove i file non si possono condividere
-// (desktop, browser vecchi) → download diretto dello stesso PNG.
+// (desktop, browser vecchi) download diretto dello stesso PNG.
 // La cornice è l'UNICO formato che esce da questo flusso: condividere = condividere
 // col certificato. Mai l'immagine nuda.
 export function ShareStoryButton({

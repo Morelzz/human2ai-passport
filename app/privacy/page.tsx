@@ -14,7 +14,7 @@ export default function PrivacyPage() {
 <div className="relative z-[2]">
         <SiteNav />
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
-          <span className="text-xs font-bold tracking-[0.14em] text-amber-ink">PRIVACY</span>
+          <span className="kicker text-amber-ink">Privacy</span>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Informativa privacy</h1>
           <LegalNotice />
 

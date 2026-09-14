@@ -71,7 +71,7 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
         <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
           Il consenso è una timeline: ogni modifica viene registrata e vale solo per il
           futuro. Revocare non cancella ciò che è già avvenuto.{" "}
-          <Link href={`/passport/${handle}`} style={{ color: "#F2A93B" }}>Vedi il passport →</Link>
+          <Link href={`/passport/${handle}`} style={{ color: "#F2A93B" }}>Vedi il passport</Link>
         </p>
 
         {/* Identity kit — immutabile, fissato alla creazione */}
@@ -138,7 +138,7 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
                 </p>
                 <button disabled={busy} onClick={toggleBooking}
                   style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 0.9rem", borderRadius: 999, fontSize: "0.82rem", fontWeight: 700, cursor: busy ? "default" : "pointer", background: booking ? "rgba(127,174,150,0.12)" : "var(--surface)", color: booking ? "var(--verified-c)" : "var(--text-muted)", border: booking ? "1px solid rgba(127,174,150,0.3)" : "1px solid var(--hairline-soft)" }}>
-                  {booking ? "✓ Disponibile per ingaggi reali" : "Attiva: disponibile per ingaggi reali"}
+                  {booking ? "Disponibile per ingaggi reali" : "Attiva: disponibile per ingaggi reali"}
                 </button>
               </div>
             )}

@@ -79,7 +79,7 @@ export default function ReportsClient() {
           <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Caricamento…</p>
         ) : items.length === 0 ? (
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
-            <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessuna segnalazione aperta</p>
+            <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: "0 0 0.3rem" }}>Nessuna segnalazione aperta</p>
             <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
           </div>
         ) : (

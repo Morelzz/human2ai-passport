@@ -99,7 +99,7 @@ export default function RootLayout({
 }>) {
   return (
     // ONDATA MOBILE — View Transitions: le navigazioni coi Link di
-    // next-view-transitions usano document.startViewTransition (dove c'è) →
+    // next-view-transitions usano document.startViewTransition (dove c'è)
     // transizioni di pagina "da app" + shared element sui ritratti
     // (viewTransitionName vt-portrait-<handle>). Progressive enhancement:
     // dove l'API manca, navigazione normale.

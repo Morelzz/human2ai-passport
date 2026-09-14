@@ -66,7 +66,7 @@ export default async function PrenotaPage({ searchParams }: { searchParams: Prom
 
           <p className="mt-6 text-center text-xs leading-relaxed text-faint">
             Prima della sessione: <Link href="/scansione" className="text-amber-ink underline">come prepararti</Link> ·
-            cosa succede dopo: selezione foto → creazione avatar → ingresso nel registro → il tuo passaporto pubblico.
+            cosa succede dopo: selezione foto creazione avatar ingresso nel registro il tuo passaporto pubblico.
           </p>
         </main>
         <Footer />

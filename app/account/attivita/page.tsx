@@ -67,7 +67,7 @@ export default async function AttivitaPage() {
 
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="mb-8">
-            <span className="text-xs font-bold tracking-[0.14em] text-verified">IL TUO VOLTO</span>
+            <span className="kicker text-verified">Il tuo volto</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Attività del mio volto</h1>
             <p className="mt-3 leading-relaxed text-muted">
               Ogni volta che qualcuno genera con la tua identità, lo vedi qui, con la royalty che hai guadagnato.
@@ -133,7 +133,7 @@ export default async function AttivitaPage() {
                                 href={`/verify?token=${encodeURIComponent(g.certificate)}`}
                                 className="text-xs text-amber-ink hover:underline"
                               >
-                                Verifica →
+                                Verifica
                               </Link>
                             )}
                             {g.certificate && (

@@ -6,7 +6,7 @@ import { colors, gradient, tint, radius } from "@/lib/ui";
 
 // Dashboard multi-avatar per le organizzazioni (Enterprise).
 // Un account agenzia gestisce molti avatar; ognuno ha il suo ciclo:
-// pending_review → (consenso persona) → revisione operatori → approved (live) | rejected.
+// pending_review (consenso persona) revisione operatori approved (live) | rejected.
 export interface OrgAvatar {
   handle: string;
   alias: string;
@@ -25,13 +25,13 @@ function StatusBadge({ status, consented }: { status: string; consented: boolean
   // Stato leggibile: distingue "in attesa del consenso" da "in revisione".
   let label: string, fg: string, bg: string, border: string;
   if (status === "approved") {
-    label = "● Live nel registro"; fg = colors.teal; bg = tint.teal; border = tint.tealBorder;
+    label = "Live nel registro"; fg = colors.teal; bg = tint.teal; border = tint.tealBorder;
   } else if (status === "rejected") {
-    label = "✕ Sospeso / rifiutato"; fg = colors.crimson; bg = tint.crimson; border = tint.crimsonBorder;
+    label = "Sospeso / rifiutato"; fg = colors.crimson; bg = tint.crimson; border = tint.crimsonBorder;
   } else if (!consented) {
-    label = "○ In attesa del consenso"; fg = colors.violetLight; bg = tint.violet; border = tint.violetBorder;
+    label = "In attesa del consenso"; fg = colors.violetLight; bg = tint.violet; border = tint.violetBorder;
   } else {
-    label = "◐ In revisione operatori"; fg = colors.violetLight; bg = tint.violet; border = tint.violetBorder;
+    label = "In revisione operatori"; fg = colors.violetLight; bg = tint.violet; border = tint.violetBorder;
   }
   return (
     <span style={{ background: bg, border: `1px solid ${border}`, color: fg, borderRadius: radius.pill, padding: "0.2rem 0.7rem", fontSize: "0.72rem", fontWeight: 700 }}>
@@ -51,7 +51,7 @@ function ConsentLink({ token }: { token: string }) {
         onClick={() => { navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
         style={{ padding: "0.5rem 0.9rem", borderRadius: radius.sm, border: `1px solid ${tint.violetBorder}`, background: tint.violet, color: copied ? colors.teal : colors.violetLight, fontWeight: 700, fontSize: "0.78rem", cursor: "pointer" }}
       >
-        {copied ? "✓ Copiato" : "Copia link"}
+        {copied ? "Copiato" : "Copia link"}
       </button>
     </div>
   );
@@ -67,7 +67,7 @@ function KybBanner({ kyb }: { kyb: OrgKyb }) {
           Per onboardare il tuo roster dobbiamo prima verificare l&apos;azienda (KYB).
         </p>
         <Link href="/enterprise/register" style={{ display: "inline-block", background: gradient, color: "#412402", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none", borderRadius: radius.sm, padding: "0.5rem 0.9rem" }}>
-          Registra l&apos;azienda →
+          Registra l&apos;azienda
         </Link>
       </div>
     );
@@ -75,7 +75,7 @@ function KybBanner({ kyb }: { kyb: OrgKyb }) {
   if (kyb.kyb_status === "approved") {
     return (
       <div style={{ background: tint.teal, border: `1px solid ${tint.tealBorder}`, borderRadius: radius.md, padding: "0.7rem 0.9rem", marginBottom: "1rem" }}>
-        <span style={{ color: colors.teal, fontWeight: 700, fontSize: "0.82rem" }}>● {kyb.name} · azienda verificata</span>
+        <span style={{ color: colors.teal, fontWeight: 700, fontSize: "0.82rem" }}>{kyb.name} · azienda verificata</span>
       </div>
     );
   }
@@ -92,7 +92,7 @@ function KybBanner({ kyb }: { kyb: OrgKyb }) {
   // pending
   return (
     <div style={{ background: tint.violet, border: `1px solid ${tint.violetBorder}`, borderRadius: radius.md, padding: "1rem 1.1rem", marginBottom: "1rem" }}>
-      <p style={{ color: colors.violetLight, fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.3rem" }}>◐ {kyb.name} · azienda in verifica (KYB)</p>
+      <p style={{ color: colors.violetLight, fontWeight: 700, fontSize: "0.85rem", margin: "0 0 0.3rem" }}>{kyb.name} · azienda in verifica (KYB)</p>
       <p style={{ color: colors.muted, fontSize: "0.8rem", lineHeight: 1.6, margin: 0 }}>
         Stiamo verificando i dati. Potrai onboardare avatar appena approviamo, di solito entro 48 ore lavorative.
       </p>
@@ -142,7 +142,7 @@ export default function OrgAvatars({ avatars, kyb = null }: { avatars: OrgAvatar
                 </div>
 
                 <div style={{ display: "flex", gap: "1.2rem", marginTop: "0.6rem", flexWrap: "wrap" }}>
-                  {a.soul_ref && <span style={{ color: colors.teal, fontSize: "0.74rem", fontWeight: 700 }}>● Soul attivo</span>}
+                  {a.soul_ref && <span style={{ color: colors.teal, fontSize: "0.74rem", fontWeight: 700 }}>Soul attivo</span>}
                   <span style={{ color: colors.faint, fontSize: "0.74rem" }}>{a.usage_count.toLocaleString("it-IT")} utilizzi</span>
                   <span style={{ color: colors.faint, fontSize: "0.74rem" }}>€{(a.royalty_accrued_cents / 100).toFixed(2)} royalty</span>
                 </div>
@@ -151,7 +151,7 @@ export default function OrgAvatars({ avatars, kyb = null }: { avatars: OrgAvatar
 
                 {a.verification_status === "approved" && (
                   <Link href={`/passport/${a.handle}`} style={{ display: "inline-block", marginTop: "0.7rem", color: colors.violetLight, fontSize: "0.8rem", textDecoration: "none" }}>
-                    Vai al passport pubblico →
+                    Vai al passport pubblico
                   </Link>
                 )}
               </div>

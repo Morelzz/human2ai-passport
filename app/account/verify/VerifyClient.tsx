@@ -39,10 +39,10 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
         <div className="card rounded-2xl p-8 text-center">
-          <p className="text-lg font-extrabold text-verified">✓ Identità verificata</p>
+          <p className="text-lg font-extrabold text-verified">Identità verificata</p>
           <p className="mt-2 text-sm text-muted">Sei un creatore verificato. Ora puoi creare il tuo avatar nel registro.</p>
           <Link href="/account/avatar" className="mt-6 inline-block rounded-xl bg-[#F2A93B] px-6 py-3 text-sm font-bold text-[#412402] transition-all hover:brightness-110">
-            Crea il tuo avatar →
+            Crea il tuo avatar
           </Link>
         </div>
       </section>
@@ -53,7 +53,7 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
         <div className="card rounded-2xl p-8 text-center">
-          <p className="text-lg font-extrabold text-amber-ink">● In verifica</p>
+          <p className="text-lg font-extrabold text-amber-ink">In verifica</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Stiamo verificando la tua identità. Appena è confermata te lo diciamo e potrai creare il tuo avatar.
           </p>

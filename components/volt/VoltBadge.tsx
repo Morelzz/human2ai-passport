@@ -129,7 +129,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
       )}
       <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
         <Link href="/account/volt" className="text-xs text-muted transition-colors hover:text-foreground" onClick={() => { setOpen(false); setSheet(false); }}>
-          Storico completo →
+          Storico completo
         </Link>
         <Link href="/account/volt" onClick={() => { setOpen(false); setSheet(false); }}
           className="rounded-full bg-[#F2A93B] px-3.5 py-1.5 text-xs font-bold text-on-amber transition-all hover:brightness-110">

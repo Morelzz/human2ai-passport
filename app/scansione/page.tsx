@@ -15,8 +15,8 @@ export const metadata = {
 };
 
 // H1 — pagina /scansione. TESTI VERBATIM da docs/SITE_COPY_SCANSIONE.md
-// (adattato solo il markup, mai i testi). Ordine: Hero → Il percorso →
-// Lo standard → Prepararsi → La mappa → CTA finale.
+// (adattato solo il markup, mai i testi). Ordine: Hero Il percorso
+// Lo standard Prepararsi La mappa CTA finale.
 // - Lo slot mappa è un segnaposto: H4 lo sostituisce con Leaflet + tabella sedi.
 // - [Parametri minimi — DA MORELZ] è visibile SOLO in dev (nota del copy doc).
 
@@ -244,7 +244,7 @@ export default async function ScansionePage() {
 
             <p className="mt-6 text-center text-sm leading-relaxed text-muted">
               La tua città non c&apos;è? <strong className="text-foreground">Diventa tu il punto di scansione.</strong>{" "}
-              <Link href="/partner" className="font-semibold text-amber-ink underline-offset-2 hover:underline">Il programma Capture Partner →</Link>
+              <Link href="/partner" className="font-semibold text-amber-ink underline-offset-2 hover:underline">Il programma Capture Partner</Link>
             </p>
           </section>
         </Reveal>

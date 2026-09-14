@@ -37,7 +37,7 @@ export function ApplyForm() {
   if (done) {
     return (
       <div className="card rounded-2xl border-verified/50 p-8 text-center">
-        <p className="text-lg font-bold text-verified">✓ Candidatura ricevuta</p>
+        <p className="text-lg font-bold text-verified">Candidatura ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. I primi partner verranno contattati per il percorso
           di certificazione, ti scriviamo a {email}.

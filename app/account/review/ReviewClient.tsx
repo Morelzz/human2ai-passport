@@ -82,7 +82,7 @@ export default function ReviewClient() {
           <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Caricamento…</p>
         ) : items.length === 0 ? (
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
-            <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: "0 0 0.3rem" }}>✓ Nessun avatar in attesa</p>
+            <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: "0 0 0.3rem" }}>Nessun avatar in attesa</p>
             <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>La coda è vuota.</p>
           </div>
         ) : (
@@ -102,12 +102,12 @@ export default function ReviewClient() {
                     </div>
                     {isOrg ? (
                       a.person_consented_at ? (
-                        <span style={{ color: "var(--verified-c)", fontSize: "0.72rem", fontWeight: 700 }}>● consenso persona confermato</span>
+                        <span style={{ color: "var(--verified-c)", fontSize: "0.72rem", fontWeight: 700 }}>consenso persona confermato</span>
                       ) : (
-                        <span style={{ color: "var(--blocked-c)", fontSize: "0.72rem", fontWeight: 700 }}>● in attesa del consenso della persona</span>
+                        <span style={{ color: "var(--blocked-c)", fontSize: "0.72rem", fontWeight: 700 }}>in attesa del consenso della persona</span>
                       )
                     ) : (
-                      <span style={{ color: "var(--verified-c)", fontSize: "0.72rem", fontWeight: 700 }}>● creato e firmato dalla persona stessa</span>
+                      <span style={{ color: "var(--verified-c)", fontSize: "0.72rem", fontWeight: 700 }}>creato e firmato dalla persona stessa</span>
                     )}
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem", alignSelf: "flex-start" }}>

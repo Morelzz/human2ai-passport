@@ -21,7 +21,7 @@ export default function TutelaPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        {/* ── HERO: il cuore (verifica → faceprint → confronto) ───────────── */}
+        {/* ── HERO: il cuore (verifica faceprint confronto) ───────────── */}
         <section className="mx-auto max-w-3xl px-5 pb-12 pt-16 text-center sm:px-8 sm:pt-24">
           <span className="kicker text-verified">Tutela dell&apos;identità</span>
           <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-5xl">

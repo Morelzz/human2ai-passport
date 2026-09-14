@@ -241,7 +241,7 @@ export default async function AccountPage() {
             diventa enterprise e questo blocco sparisce). */}
         {role === "buyer" && (user.user_metadata as { account_intent?: string } | null)?.account_intent === "enterprise" && (
           <Link href="/enterprise/register" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
-            Completa la registrazione della tua azienda →
+            Completa la registrazione della tua azienda
           </Link>
         )}
 
@@ -318,7 +318,7 @@ export default async function AccountPage() {
                 )}
 
                 <Link href="/signup/avatar/protected" style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "1.1rem" }}>
-                  Gestisci la tua protezione →
+                  Gestisci la tua protezione
                 </Link>
               </>
             ) : (
@@ -336,19 +336,19 @@ export default async function AccountPage() {
         {role === "admin" && (
           <>
             <Link href="/account/kyc" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
-              Verifiche identità (KYC) →
+              Verifiche identità (KYC)
             </Link>
             <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Coda di revisione operatori →
+              Coda di revisione operatori
             </Link>
             <Link href="/account/kyb-review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Verifiche aziende (KYB) →
+              Verifiche aziende (KYB)
             </Link>
             <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Segnalazioni di abuso →
+              Segnalazioni di abuso
             </Link>
             <Link href="/account/face-index" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Indice volti del registro →
+              Indice volti del registro
             </Link>
             <AnchorPanel />
             <VoltGrantPanel />
@@ -359,7 +359,7 @@ export default async function AccountPage() {
           <>
             <OrgAvatars avatars={orgAvatars} kyb={orgKyb} />
             <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "var(--verified-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
-              Attività dei tuoi volti →
+              Attività dei tuoi volti
             </Link>
           </>
         )}
@@ -382,7 +382,7 @@ export default async function AccountPage() {
                   </div>
                 )}
                 <Link href={`/passport/${myAvatar}`} style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
-                  Vai al tuo passport pubblico →
+                  Vai al tuo passport pubblico
                 </Link>
                 <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "transparent", border: "1px solid var(--hairline)", color: "var(--text-muted)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                   Gestisci il consenso
@@ -433,7 +433,7 @@ export default async function AccountPage() {
             )}
 
             <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "var(--verified-c)", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginBottom: "1.2rem" }}>
-              Attività del mio volto →
+              Attività del mio volto
             </Link>
 
             {/* Barra verso la soglia di payout */}
@@ -490,7 +490,7 @@ export default async function AccountPage() {
                   </span>
                 </div>
                 <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "0.8rem" }}>
-                  Apri nuove categorie, decidi tu →
+                  Apri nuove categorie, decidi tu
                 </Link>
               </>
             )}
@@ -524,7 +524,7 @@ export default async function AccountPage() {
               consenso e farti guadagnare ogni volta che viene usato. Tu decidi tutto, sempre.
             </p>
             <Link href="/scansione" style={{ display: "inline-block", padding: "0.7rem 1.4rem", borderRadius: 999, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
-              Scopri come entrare →
+              Scopri come entrare
             </Link>
           </div>
         )}

@@ -49,7 +49,7 @@ export function InquiryForm({
   if (done) {
     return (
       <div className="card rounded-2xl border-verified/50 p-8 text-center">
-        <p className="text-lg font-bold text-verified">✓ Richiesta ricevuta</p>
+        <p className="text-lg font-bold text-verified">Richiesta ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. Ti rispondiamo a {email} entro 48 ore lavorative.
         </p>

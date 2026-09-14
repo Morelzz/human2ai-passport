@@ -564,12 +564,12 @@ export function StudioPanel(props: StudioPanelProps) {
           {inProgress}
           <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">Output pulito, full-res, con certificato e royalty a {avatar.alias}.</p>
           <Link href={`/passport/${avatar.handle}`} className="mt-3 block rounded-xl border border-amber/50 bg-amber-soft px-4 py-3 text-center text-sm font-semibold text-foreground transition-colors hover:bg-amber-soft">
-            Vedi il passport →
+            Vedi il passport
           </Link>
         </>
       ) : (
         <div className="mt-5 rounded-xl border border-verified/25 bg-obsidian p-5">
-          <p className="mb-1 text-sm font-bold text-verified">✓ Generazione certificata</p>
+          <p className="mb-1 text-sm font-bold text-verified">Generazione certificata</p>
           {gen.volt && (
             <p className="mb-1 text-[0.72rem] font-semibold text-foreground">
               {voltStr("gen.success.body", { n: FMT_VOLT.format(gen.volt.spent), saldo: gen.volt.balance !== null ? FMT_VOLT.format(gen.volt.balance) : "—" })}
@@ -603,7 +603,7 @@ export function StudioPanel(props: StudioPanelProps) {
           <code className="mb-4 block break-all font-mono text-[0.7rem] text-amber-ink">{gen.certificate}</code>
           {gen.certificate && (
             <a href={`/api/content/${gen.certificate}`} className="block rounded-xl border border-verified/50 bg-verified-soft px-4 py-3 text-center text-sm font-bold text-verified transition-colors hover:bg-verified-soft">
-              Scarica con provenienza →
+              Scarica con provenienza
             </a>
           )}
           {gen.certificate && (
@@ -627,7 +627,7 @@ export function StudioPanel(props: StudioPanelProps) {
             {inProgress}
             <button onClick={() => resetGeneration(avatar.handle)} disabled={generating}
               className="w-full rounded-xl border border-border bg-surface px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">
-              Nuova scena (cambia prompt e immagini) →
+              Nuova scena (cambia prompt e immagini)
             </button>
           </div>
         </div>

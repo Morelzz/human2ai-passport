@@ -7,10 +7,10 @@ import type { Sede } from "@/lib/scan";
 // H4 — la mappa delle sedi ("Dove scansionarti"): Leaflet + OpenStreetMap
 // (gratuito, nessuna chiave API da proteggere). I pin arrivano dalla tabella
 // `sedi`: aggiungere una sede = una riga, zero codice. Pin pieni = sedi
-// certificate (popup con "Prenota qui" → booking con sede preselezionata);
+// certificate (popup con "Prenota qui" booking con sede preselezionata);
 // pin attenuati = città "in arrivo" (partner in certificazione: solo la
 // città, MAI dati personali del partner prima della certificazione).
-// Leaflet tocca window → import dinamico dentro useEffect, niente SSR.
+// Leaflet tocca window import dinamico dentro useEffect, niente SSR.
 // Tiles OSM scuriti via CSS (.smbl-tiles in globals.css) per stare sul void.
 
 export type MapSede = Pick<Sede, "slug" | "name" | "city" | "lat" | "lng" | "status">;

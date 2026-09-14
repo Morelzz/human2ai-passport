@@ -126,7 +126,7 @@ export default function KycClient() {
       {loading && <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Carico la coda…</p>}
       {!loading && items.length === 0 && !error && (
         <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "2rem", textAlign: "center" }}>
-          <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: 0 }}>✓ Nessuna verifica in attesa</p>
+          <p style={{ color: "var(--verified-c)", fontWeight: 700, margin: 0 }}>Nessuna verifica in attesa</p>
         </div>
       )}
 

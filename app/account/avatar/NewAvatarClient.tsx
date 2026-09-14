@@ -153,7 +153,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
       <section style={{ maxWidth: 560, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
         {consentUrl ? (
           <div style={{ background: "var(--surface)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 18, padding: "2rem" }}>
-            <p style={{ color: "var(--verified-c)", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>✓ Avatar creato, in attesa del consenso</p>
+            <p style={{ color: "var(--verified-c)", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>Avatar creato, in attesa del consenso</p>
             <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.2rem" }}>
               Condividi questo link con la persona. Solo lei, aprendolo, conferma il consenso.
               Dopo la conferma, l&apos;avatar passa alla revisione dei nostri operatori.
@@ -162,14 +162,14 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
               <code style={{ flex: 1, minWidth: 200, background: "var(--bg)", border: "1px solid var(--hairline)", borderRadius: 8, padding: "0.6rem 0.8rem", color: "#F2A93B", fontSize: "0.78rem", wordBreak: "break-all" }}>{consentUrl}</code>
               <button type="button" onClick={() => { navigator.clipboard.writeText(consentUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
                 style={{ padding: "0.6rem 1rem", borderRadius: 8, border: "1px solid rgba(242,169,59,0.3)", background: "rgba(242,169,59,0.12)", color: copied ? "var(--verified-c)" : "#F2A93B", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
-                {copied ? "✓ Copiato" : "Copia"}
+                {copied ? "Copiato" : "Copia"}
               </button>
             </div>
             <Link href="/account" style={{ display: "inline-block", marginTop: "1.5rem", color: "var(--text-muted)", fontSize: "0.85rem", textDecoration: "none" }}>← Torna all&apos;account</Link>
           </div>
         ) : submittedPending ? (
           <div style={{ background: "var(--surface)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 18, padding: "2rem" }}>
-            <p style={{ color: "var(--verified-c)", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>✓ Avatar inviato per la certificazione</p>
+            <p style={{ color: "var(--verified-c)", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 0.5rem" }}>Avatar inviato per la certificazione</p>
             <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.2rem" }}>
               Prima di andare live certifichiamo a mano che il volto dell&apos;avatar sia la stessa persona della tua verifica d&apos;identità. Appena approvato il tuo avatar diventa pubblico e ti avvisiamo.
             </p>

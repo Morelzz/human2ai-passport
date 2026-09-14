@@ -67,7 +67,7 @@ export function GoalStart({ alias, onPick }: { alias: string; onPick: (goal: str
             onClick={() => onPick(libera.v)}
             className="focus-ring col-span-2 rounded-2xl border border-dashed border-border bg-transparent px-3 py-3 text-center transition-colors hover:border-amber/50 hover:text-foreground"
           >
-            <span className="text-sm font-medium text-muted">Scena libera, parto da zero →</span>
+            <span className="text-sm font-medium text-muted">Scena libera, parto da zero</span>
           </button>
         )}
       </div>

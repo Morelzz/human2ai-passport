@@ -432,7 +432,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         ) : avatar.commercial_consent === false ? (
           <span className="inline-block rounded-full border border-blocked/50 bg-blocked-soft px-3 py-1 text-sm font-semibold text-blocked">Uso commerciale non consentito</span>
         ) : (
-          <span className="inline-block rounded-full border border-verified/50 bg-verified-soft px-3 py-1 text-sm font-semibold text-verified">✓ Uso commerciale consentito</span>
+          <span className="inline-block rounded-full border border-verified/50 bg-verified-soft px-3 py-1 text-sm font-semibold text-verified">Uso commerciale consentito</span>
         )}
         <p className="mt-3 text-xs leading-relaxed text-faint">
           Il consenso è sì o no, non più per categoria: vale per ogni uso commerciale e si può revocare in qualsiasi momento. La revoca è prospettica.

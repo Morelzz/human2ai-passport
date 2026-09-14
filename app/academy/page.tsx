@@ -205,7 +205,7 @@ export default async function AcademyPage() {
               </p>
               <p className="mt-6">
                 <Link href="/partner" className="text-sm font-semibold text-amber-ink transition-colors hover:text-foreground">
-                  Il programma Capture Partner →
+                  Il programma Capture Partner
                 </Link>
               </p>
             </div>

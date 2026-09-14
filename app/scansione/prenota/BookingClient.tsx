@@ -6,7 +6,7 @@ import type { Sede } from "@/lib/scan";
 
 // H2 — form di prenotazione scansione. Slot semplici (data + ora piena,
 // 10–18): la conferma dello slot è manuale finché non c'è un'agenda reale
-// (stato "richiesta" → "confermata"). Honeypot anti-bot come gli altri form.
+// (stato "richiesta" "confermata"). Honeypot anti-bot come gli altri form.
 
 const HOURS = ["10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
 
@@ -57,7 +57,7 @@ export function BookingClient({
   if (done) {
     return (
       <div className="card rounded-2xl border-verified/50 p-8 text-center">
-        <p className="text-lg font-bold text-verified">✓ Richiesta ricevuta</p>
+        <p className="text-lg font-bold text-verified">Richiesta ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. Ti confermiamo data e ora a {email}, e ricorda:{" "}
           <span className="text-foreground">vieni come sei</span>.

@@ -42,7 +42,7 @@ export default function ConsentClient({ token, alias, identity, commercialConsen
 
         {done ? (
           <div style={{ background: "var(--surface)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 18, padding: "2rem", textAlign: "center" }}>
-            <p style={{ color: "var(--verified-c)", fontSize: "1.1rem", fontWeight: 800, margin: "0 0 0.5rem" }}>✓ Consenso confermato</p>
+            <p style={{ color: "var(--verified-c)", fontSize: "1.1rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Consenso confermato</p>
             <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: 0 }}>
               Grazie. Il tuo volto entrerà nel registro dopo la verifica dei nostri operatori.
               Potrai revocare il consenso in qualsiasi momento.

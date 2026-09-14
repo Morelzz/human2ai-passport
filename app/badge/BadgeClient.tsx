@@ -138,7 +138,7 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
               Apri il badge ↗
             </a>
             <a href={`/passport/${handle}`} className="text-amber-ink hover:underline">
-              Vai al passport →
+              Vai al passport
             </a>
           </div>
         )}

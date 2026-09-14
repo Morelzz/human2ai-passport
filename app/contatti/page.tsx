@@ -13,7 +13,7 @@ export const metadata = {
   alternates: { canonical: "/contatti" },
 };
 
-// F2 — pagina /contatti: form pubblico → contact_messages + recapiti.
+// F2 — pagina /contatti: form pubblico contact_messages + recapiti.
 // B3: ?ingaggio=<handle> pre-compila il form per una richiesta di ingaggio reale.
 // ?tema=formazione pre-compila la richiesta di formazione aziendale (da /academy#aziende).
 export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string; tema?: string }> }) {

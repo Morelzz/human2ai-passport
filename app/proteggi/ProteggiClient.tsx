@@ -94,7 +94,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
         <div className="card rounded-2xl p-8 text-center">
-          <p className="text-lg font-extrabold text-amber-ink">● Volto protetto</p>
+          <p className="text-lg font-extrabold text-amber-ink">Volto protetto</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Il tuo volto e&apos; registrato in sola protezione. Dentro Semblic non puo&apos; essere generato:
             e&apos; una garanzia, applicata dai nostri sistemi. Se qualcuno prova a usarlo, te lo segnaliamo.
@@ -126,7 +126,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
 
   return (
     <section className="mx-auto max-w-xl px-5 py-14 sm:px-8">
-      <span className="text-xs font-bold tracking-[0.14em] text-amber-ink">PROTEZIONE DEL VOLTO</span>
+      <span className="kicker text-amber-ink">Protezione del volto</span>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Registra il tuo volto perche&apos; non venga generato</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
         Confermiamo che il volto e&apos; il tuo (come per un documento), poi lo mettiamo in <span className="text-foreground">sola protezione</span>:

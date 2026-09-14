@@ -19,7 +19,7 @@ import { joinScene } from "@/lib/voice/dictation";
 
 const FMT_VOLT = new Intl.NumberFormat("it-IT");
 
-// ECHO (gpt-image-2): Formato × Risoluzione → dimensione in pixel valida per l'API.
+// ECHO (gpt-image-2): Formato × Risoluzione dimensione in pixel valida per l'API.
 // Il quadrato non ha 4K (supererebbe il limite di pixel del modello).
 const ECHO_SIZE_GRID: Record<string, Record<string, string>> = {
   quadrato:    { standard: "1024x1024", "2k": "2048x2048" },
@@ -159,7 +159,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MatchResponse | null>(null);
-  // Selezione: il compratore "blocca" UN volto tra i risultati → la vista si
+  // Selezione: il compratore "blocca" UN volto tra i risultati la vista si
   // concentra su di lui (gli altri spariscono finché non torna alla lista).
   const [selectedHandle, setSelectedHandle] = useState<string | null>(null);
 
@@ -566,7 +566,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         }
         return;
       }
-      // pending | running → continua a interrogare
+      // pending | running continua a interrogare
     }
     setGeneratingHandle(null);
     // Non è un fallimento: la coda può essere piena. Il job prosegue lato server e
@@ -868,13 +868,13 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                   disabled={alertState === "saving" || alertState === "saved"}
                   className="rounded-xl border border-violet/35 bg-amber-soft px-4 py-3 text-sm font-bold text-amber-ink transition-colors hover:bg-amber-soft disabled:opacity-60"
                 >
-                  {alertState === "saved" ? "✓ Avviso salvato" : alertState === "saving" ? "Salvo…" : "🔔 Avvisami quando entra un volto compatibile"}
+                  {alertState === "saved" ? "Avviso salvato" : alertState === "saving" ? "Salvo…" : "🔔 Avvisami quando entra un volto compatibile"}
                 </button>
                 <Link
                   href="/signup"
                   className="rounded-xl border border-verified/35 bg-verified-soft px-4 py-3 text-center text-sm font-bold text-verified transition-colors hover:bg-verified-soft"
                 >
-                  Sei tu questo volto? Candidati →
+                  Sei tu questo volto? Candidati
                 </Link>
               </div>
               {alertState === "saved" && (

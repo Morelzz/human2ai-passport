@@ -24,7 +24,7 @@ export default async function ReportPage({ searchParams }: Props) {
 
         <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
           <div className="mb-8">
-            <span className="text-xs font-bold tracking-[0.14em] text-blocked">ENFORCEMENT</span>
+            <span className="kicker text-blocked">Enforcement</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Segnala un abuso</h1>
             <p className="mt-3 leading-relaxed text-muted">
               Se un avatar non rappresenta una persona realmente consenziente, è un&apos;<span className="text-foreground">impersonazione</span>,

@@ -99,7 +99,7 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cert, editState: state }),
       });
-      flashToast(res.ok ? "✓ Modifiche salvate" : "Salvataggio non riuscito");
+      flashToast(res.ok ? "Modifiche salvate" : "Salvataggio non riuscito");
     } catch {
       flashToast("Salvataggio non riuscito");
     }
@@ -142,7 +142,7 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
         onClick={() => setExportOpen(true)}
         className="block w-full rounded-xl bg-[#F2A93B] px-4 py-3.5 text-center text-sm font-bold text-[#412402] shadow-[0_8px_28px_rgba(242,169,59,0.32)] transition-[filter] hover:brightness-110"
       >
-        Esporta e scarica →
+        Esporta e scarica
       </button>
       <p className="mt-1.5 text-center text-[0.62rem] leading-snug text-faint">
         Upscale, formato e download con le tue modifiche e la provenienza.

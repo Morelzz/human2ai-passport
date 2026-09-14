@@ -54,7 +54,7 @@ export default async function EditorLanding() {
             href="/match"
             className="mt-4 inline-block rounded-full bg-[#F2A93B] px-5 py-2.5 text-sm font-bold text-[#412402] transition-[filter] hover:brightness-110"
           >
-            Genera la tua prima foto →
+            Genera la tua prima foto
           </Link>
         </div>
       ) : (
@@ -74,7 +74,7 @@ export default async function EditorLanding() {
                 <div className="flex items-center justify-between gap-1 p-2.5">
                   <span className="truncate text-[0.78rem] font-medium text-foreground">{av?.alias ?? "—"}</span>
                   <span className="shrink-0 text-[0.62rem] font-semibold text-amber opacity-0 transition-opacity group-hover:opacity-100">
-                    Modifica →
+                    Modifica
                   </span>
                 </div>
               </Link>

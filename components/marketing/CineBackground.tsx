@@ -8,7 +8,7 @@ import { motion, useReducedMotion } from "framer-motion";
 // secondo figlio con `relative z-[2]`.
 //
 // Filosofia: profondità e respiro, non fuochi d'artificio. Movimento lentissimo
-// (30–46s per ciclo) → cinematico ma leggero per batteria/CPU. Chi preferisce
+// (30–46s per ciclo) cinematico ma leggero per batteria/CPU. Chi preferisce
 // meno movimento (`prefers-reduced-motion`) vede solo lo strato statico.
 export function CineBackground() {
   const reduce = useReducedMotion();

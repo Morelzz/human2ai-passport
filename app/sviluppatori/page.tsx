@@ -34,7 +34,7 @@ export default function SviluppatoriPage() {
 
         <main className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="mb-10">
-            <span className="text-xs font-bold tracking-[0.14em] text-verified">FASE 2 · IL FILTRO PER TUTTI</span>
+            <span className="kicker text-verified">Fase 2 · il filtro per tutti</span>
             <h1 className="mt-2 text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">
               Il filtro del consenso, via API.
             </h1>

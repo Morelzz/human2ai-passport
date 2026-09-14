@@ -120,9 +120,9 @@ export function FilterMiniDemo({ avatars }: { avatars: FilterDemoAvatar[] }) {
             )}
             {res.proof?.passport_url && (
               <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
-                <a href={res.proof.passport_url} className="text-sm font-semibold text-verified hover:underline">La prova: il passaporto →</a>
+                <a href={res.proof.passport_url} className="text-sm font-semibold text-verified hover:underline">La prova: il passaporto</a>
                 {res.proof.verify_url && (
-                  <a href={res.proof.verify_url} className="text-sm font-semibold text-verified hover:underline">Verifica il token →</a>
+                  <a href={res.proof.verify_url} className="text-sm font-semibold text-verified hover:underline">Verifica il token</a>
                 )}
               </div>
             )}

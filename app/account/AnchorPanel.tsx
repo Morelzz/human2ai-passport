@@ -46,7 +46,7 @@ export default function AnchorPanel() {
         </p>
       ) : (
         <>
-          <p style={{ color: "var(--verified-c)", fontSize: "0.78rem", fontWeight: 700, margin: "0 0 0.8rem" }}>● Attiva su {cfg.chain}</p>
+          <p style={{ color: "var(--verified-c)", fontSize: "0.78rem", fontWeight: 700, margin: "0 0 0.8rem" }}>Attiva su {cfg.chain}</p>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="handle avatar (es. random)"
               style={{ flex: 1, minWidth: 160, background: "var(--bg)", border: "1px solid var(--hairline)", borderRadius: 8, color: "var(--text)", fontSize: "0.85rem", padding: "0.55rem 0.7rem", outline: "none" }} />

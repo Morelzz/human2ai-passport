@@ -61,7 +61,7 @@ export function KineticText({
   // ── Variante normale: lettera per lettera ─────────────────────────────────
   if (reduce) return <span className={className}>{text}</span>;
 
-  // filter(Boolean): spazi ai bordi o doppi producevano "parole" vuote → span
+  // filter(Boolean): spazi ai bordi o doppi producevano "parole" vuote span
   // vuoti e buchi nel testo. La spaziatura tra segmenti si gestisce FUORI dal
   // componente (con {" "} nel JSX), mai dentro `text`.
   const words = text.split(" ").filter(Boolean);

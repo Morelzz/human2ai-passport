@@ -16,7 +16,7 @@ export default function CookiePage() {
 <div className="relative z-[2]">
         <SiteNav />
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
-          <span className="text-xs font-bold tracking-[0.14em] text-amber-ink">COOKIE</span>
+          <span className="kicker text-amber-ink">Cookie</span>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Cookie policy</h1>
           <LegalNotice />
 
