@@ -16,13 +16,17 @@ import { avatarArt } from "./avatar-art";
 // Higgsfield). File su Supabase Storage `generations/repertorio/random/`: [0]
 // è anche il ritratto. La chiave 'mario-r' resta come alias storico finché il
 // rename non è stabile e i vecchi link non scadono (pulizia successiva).
-const SUPA = "https://ktjebfavzherochwhtis.supabase.co/storage/v1/object/public/generations/repertorio";
+// Casa nuova (2026-09-14): repertori RIGENERATI con gpt-image-2.5-flare, 4 scene
+// uguali per tutti (studio su avorio, finestra, editoriale scura, citta' al
+// tramonto), in repertorio-v2/. La fonte vera resta avatars.gallery_urls: questa
+// mappa e' solo il ripiego storico.
+const SUPA = "https://ktjebfavzherochwhtis.supabase.co/storage/v1/object/public/generations/repertorio-v2";
 const SAMPLE_GALLERIES: Record<string, string[]> = {
   random: [
-    `${SUPA}/random/00.png`, // headshot studio (= ritratto)
-    `${SUPA}/random/01.png`, // outdoor golden hour, t-shirt bianca
-    `${SUPA}/random/02.png`, // nel suo studio d'arte (Random è un artista)
-    `${SUPA}/random/03.png`, // street style notturno, luci città
+    `${SUPA}/random/00.png`, // studio su avorio (= ritratto)
+    `${SUPA}/random/01.png`, // luce di finestra
+    `${SUPA}/random/02.png`, // editoriale scura
+    `${SUPA}/random/03.png`, // citta' al tramonto
   ],
   "mario-r": [
     `${SUPA}/mario-r/00.png`,
@@ -32,16 +36,16 @@ const SAMPLE_GALLERIES: Record<string, string[]> = {
   ],
   // Ambassador (2026-06-11): repertori ECHO con identity-lock.
   asia: [
-    `${SUPA}/asia/00.png`, // headshot studio (= ritratto, mandala sul collo)
-    `${SUPA}/asia/01.png`, // outdoor golden hour
-    `${SUPA}/asia/02.png`, // editoriale dark/alternative
-    `${SUPA}/asia/03.png`, // street style notturno
+    `${SUPA}/asia/00.png`, // studio su avorio (= ritratto)
+    `${SUPA}/asia/01.png`, // luce di finestra
+    `${SUPA}/asia/02.png`, // editoriale scura
+    `${SUPA}/asia/03.png`, // citta' al tramonto
   ],
   gabriella: [
-    `${SUPA}/gabriella/00.png`, // headshot studio (= ritratto)
-    `${SUPA}/gabriella/01.png`, // outdoor golden hour
-    `${SUPA}/gabriella/02.png`, // editoriale blazer nero
-    `${SUPA}/gabriella/03.png`, // street style notturno
+    `${SUPA}/gabriella/00.png`, // studio su avorio (= ritratto)
+    `${SUPA}/gabriella/01.png`, // luce di finestra
+    `${SUPA}/gabriella/02.png`, // editoriale scura
+    `${SUPA}/gabriella/03.png`, // citta' al tramonto
   ],
 };
 
