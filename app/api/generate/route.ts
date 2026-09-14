@@ -288,11 +288,11 @@ export async function POST(request: Request) {
       const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta, poseText, identityText, photographic), references, size: echoSize, quality: echoQuality });
       png = echoResult.png;
       echoUsage = echoResult.usage;
+      generationRef = `echo:${echoResult.model}`;
     } catch (e) {
       const refunded = await refundVolt();
       return NextResponse.json({ error: "Generazione ECHO non riuscita", detail: e instanceof Error ? e.message : undefined, volt_refunded: refunded !== null ? syncCost : undefined }, { status: 502 });
     }
-    generationRef = "echo:gpt-image-2";
     if (isPreview) {
       // L'immagine pulita NON viene esposta né caricata: solo l'anteprima watermarkata.
       previewData = await watermarkPreviewBuffer(png);

@@ -13,7 +13,7 @@ import { downloadAll, uploadPrivate } from "./storage";
 // ──────────────────────────────────────────────────────────────────────────
 
 const REFERENCES_BUCKET = "references";
-const MAX_REFS = 8; // gpt-image-2 ne accetta fino a 10; 8 = compromesso costo/identità
+const MAX_REFS = 8; // gpt-image-2 e 2.5 ne accettano fino a 10 (2.5-flare provato con 10); 8 = compromesso costo/identità
 const MAX_DIM = 1024; // lato lungo: riduce i ~17MB DSLR a poche centinaia di KB
 
 function envKeyFor(handle: string): string {

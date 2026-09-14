@@ -1,5 +1,5 @@
 // ──────────────────────────────────────────────────────────────────────────
-// ECHO — adapter del motore GPT Image 2 (OpenAI). Fa parte dell'architettura
+// ECHO — adapter del motore GPT Image (OpenAI; modello scelto in echo-model.ts). Fa parte dell'architettura
 // multi-motore (vedi docs/MULTI_ENGINE.md): i motori sono terze parti invisibili
 // sotto il filtro del consenso. SERVER-ONLY: la chiave si legge SOLO da
 // process.env.OPENAI_API_KEY, mai dal client. No-op safe se manca la chiave.
@@ -11,10 +11,10 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 import type { EchoUsage } from "./echo-cost";
+import { echoModel } from "./echo-model";
 
 const GEN_URL = "https://api.openai.com/v1/images/generations";
 const EDIT_URL = "https://api.openai.com/v1/images/edits";
-const MODEL = "gpt-image-2";
 
 // Timeout della chiamata a OpenAI: oltre, la consideriamo appesa e la abortiamo
 // (un fetch bloccato terrebbe occupata l'unica corsia del worker all'infinito).
@@ -36,7 +36,7 @@ async function fetchEcho(url: string, init: RequestInit): Promise<Response> {
   }
 }
 
-// Risoluzioni e qualità supportate da gpt-image-2 (lati multipli di 16, lato lungo
+// Risoluzioni e qualità supportate da gpt-image-2 e 2.5 (lati multipli di 16, lato lungo
 // ≤3840, rapporto ≤3:1, pixel 0,65M–8,29M). Quadrato/Verticale/Orizzontale a varie risoluzioni.
 export type EchoSize =
   | "1024x1024" | "2048x2048"               // quadrato (HD, 2K)
@@ -123,7 +123,7 @@ function echoApiError(endpoint: "edit" | "generation", status: number, body: str
   return new Error(`Il motore di generazione ha avuto un problema temporaneo. Riprova tra qualche istante.`);
 }
 
-/** Una generazione ECHO (gpt-image-2). In caso di fallimento lancia un Error con messaggio UMANO (dettagli nei log server). */
+/** Una generazione ECHO. In caso di fallimento lancia un Error con messaggio UMANO (dettagli nei log server). */
 export async function generateEcho(input: EchoInput): Promise<EchoResult> {
   const key = process.env.OPENAI_API_KEY;
   if (!key) throw new Error("ECHO non configurato: OPENAI_API_KEY mancante.");
@@ -131,11 +131,12 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
   const size = input.size ?? "1024x1024";
   const quality = input.quality ?? "high";
   const refs = input.references ?? [];
+  const model = echoModel();
 
   // ── Identity-lock: edit endpoint multi-immagine ──────────────────────────
   if (refs.length > 0) {
     const form = new FormData();
-    form.append("model", MODEL);
+    form.append("model", model);
     form.append("prompt", input.prompt);
     form.append("size", size);
     form.append("quality", quality);
@@ -152,17 +153,17 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
     const text = await res.text();
     if (!res.ok) throw echoApiError("edit", res.status, text);
     const { png, usage } = await parseEchoResponse(text);
-    return { png, model: MODEL, mode: "edit", refsUsed: refs.length, size, quality, usage };
+    return { png, model, mode: "edit", refsUsed: refs.length, size, quality, usage };
   }
 
   // ── Senza reference: text-to-image ───────────────────────────────────────
   const res = await fetchEcho(GEN_URL, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: MODEL, prompt: input.prompt, size, quality, n: 1 }),
+    body: JSON.stringify({ model, prompt: input.prompt, size, quality, n: 1 }),
   });
   const text = await res.text();
   if (!res.ok) throw echoApiError("generation", res.status, text);
   const { png, usage } = await parseEchoResponse(text);
-  return { png, model: MODEL, mode: "generation", refsUsed: 0, size, quality, usage };
+  return { png, model, mode: "generation", refsUsed: 0, size, quality, usage };
 }

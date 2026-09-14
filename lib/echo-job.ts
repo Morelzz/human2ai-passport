@@ -308,7 +308,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
       royalty_cents,
       certificate,
       image_url: cleanUrl,
-      engine_ref: "echo:gpt-image-2",
+      engine_ref: `echo:${result.model}`,
     });
     if (genErr) throw new Error(`registrazione generazione fallita: ${genErr.message}`);
 
