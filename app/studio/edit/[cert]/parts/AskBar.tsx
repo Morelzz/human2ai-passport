@@ -62,7 +62,7 @@ export function AskBar({
           {busy ? "…" : "➤"}
         </button>
       </div>
-      {hint && <p className="mt-1.5 text-[0.66rem] text-teal">{hint}</p>}
+      {hint && <p className="mt-1.5 text-[0.66rem] text-verified">{hint}</p>}
     </div>
   );
 }

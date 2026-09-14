@@ -42,7 +42,7 @@ export default function RegisterOrgClient({ defaultEmail }: { defaultEmail: stri
   }
 
   const inp =
-    "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50 focus-ring";
+    "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-amber/50 focus-ring";
 
   return (
     <form onSubmit={submit} className="card flex flex-col gap-4 rounded-[2rem] p-7 sm:p-8">

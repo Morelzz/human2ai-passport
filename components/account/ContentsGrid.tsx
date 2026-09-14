@@ -44,7 +44,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
   }, [items, cat, engine, avatar]);
 
   const shown = filtered.slice(0, visible);
-  const sel = "rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground focus:border-violet/50 focus:outline-none";
+  const sel = "rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground focus:border-amber/50 focus:outline-none";
 
   function resetPage<T>(setter: (v: T) => void) {
     return (v: T) => {
@@ -109,7 +109,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                       {/* Ward: cerca le copie di QUESTA immagine sul web. Tasto vero
                           e prominente (solo buyer, e' il suo asset). */}
                       {shareVariant === "buyer" && (
-                        <a href={`/ward/content/${g.id}`} className="mb-1.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-violet/45 bg-violet/15 px-2 py-2 text-[0.74rem] font-bold text-amber-ink transition-colors hover:bg-violet/25">
+                        <a href={`/ward/content/${g.id}`} className="mb-1.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-amber/50 bg-amber-soft px-2 py-2 text-[0.74rem] font-bold text-amber-ink transition-colors hover:bg-amber-soft">
                           <ScanSearch className="h-3.5 w-3.5" aria-hidden /> Ward
                         </a>
                       )}

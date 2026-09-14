@@ -631,7 +631,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
           {/* Palco del brief: il centro della pagina. Bordo amber tenue + glow
               d'angolo; al focus il bordo si accende. La textarea e' trasparente
               dentro al palco (il bordo lo da il contenitore). */}
-          <div className="relative rounded-2xl border border-violet/25 bg-obsidian transition-colors focus-within:border-violet/50">
+          <div className="relative rounded-2xl border border-amber/50 bg-obsidian transition-colors focus-within:border-amber/50">
             <div aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl" style={{ background: "radial-gradient(60% 80% at 100% 0%, rgba(242,169,59,0.10), transparent 60%)" }} />
             <textarea
               id="brief"
@@ -866,7 +866,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                   type="button"
                   onClick={saveAlert}
                   disabled={alertState === "saving" || alertState === "saved"}
-                  className="rounded-xl border border-violet/35 bg-amber-soft px-4 py-3 text-sm font-bold text-amber-ink transition-colors hover:bg-amber-soft disabled:opacity-60"
+                  className="rounded-xl border border-amber/50 bg-amber-soft px-4 py-3 text-sm font-bold text-amber-ink transition-colors hover:bg-amber-soft disabled:opacity-60"
                 >
                   {alertState === "saved" ? "Avviso salvato" : alertState === "saving" ? "Salvo…" : "🔔 Avvisami quando entra un volto compatibile"}
                 </button>
@@ -918,7 +918,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       onClick={onClick}
       aria-pressed={active}
       className={`focus-ring rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
-        active ? "border border-violet bg-amber-soft text-foreground" : "border border-border bg-surface text-muted hover:text-foreground"
+        active ? "border border-amber/50 bg-amber-soft text-foreground" : "border border-border bg-surface text-muted hover:text-foreground"
       }`}
     >
       {children}

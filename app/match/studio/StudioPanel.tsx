@@ -221,7 +221,7 @@ export function StudioPanel(props: StudioPanelProps) {
   // ECHO-aware: la generazione async puo' durare minuti).
   const inProgress = generating ? (
     <div className="mt-3 flex items-start gap-3 rounded-xl border border-amber/50 bg-amber-soft p-4">
-      <span className="mt-0.5 inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-violet-light border-t-transparent" aria-hidden />
+      <span className="mt-0.5 inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-amber border-t-transparent" aria-hidden />
       <div className="text-[0.8rem] leading-relaxed text-foreground">
         <span className="font-semibold">Generazione in corso…</span>
         {engine === "echo" ? " ECHO lavora alla massima fedeltà: può richiedere 1-3 minuti." : ""}

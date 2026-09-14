@@ -329,7 +329,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       >
         <label
           data-state={portalState}
-          className={`relative flex h-[clamp(15rem,40vw,18rem)] w-[clamp(15rem,40vw,18rem)] cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-surface shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
+          className={`relative flex h-[clamp(15rem,40vw,18rem)] w-[clamp(15rem,40vw,18rem)] cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-surface shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-amber/50-light focus-within:ring-offset-2 focus-within:ring-offset-black ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
         >
           {/* Aura di verifica (solo a riposo: su un'immagine caricata la toglie per non tingerla) */}
           {!preview && (
@@ -352,7 +352,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             </span>
           )}
           {busy && (
-            <span aria-hidden className="absolute inset-2 animate-spin rounded-full border-2 border-violet-light border-t-transparent opacity-80" />
+            <span aria-hidden className="absolute inset-2 animate-spin rounded-full border-2 border-amber border-t-transparent opacity-80" />
           )}
           <input
             type="file"
@@ -415,7 +415,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={`/api/sample/${result.handle}/0`} alt={result.alias ?? ""} className="h-16 w-16 rounded-xl object-cover" />
                     ) : (
-                      <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-violet/15 text-xl font-bold text-amber-ink">
+                      <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-amber-soft text-xl font-bold text-amber-ink">
                         {(result.alias ?? "?").charAt(0)}
                       </span>
                     )}
@@ -573,7 +573,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             /* ── VOLTO PROTETTO (VETO): non riveliamo MAI chi e' ── */
             <>
               <div className="mb-4 flex items-start gap-3">
-                <span aria-hidden className="mt-1 h-3 w-3 shrink-0 rounded-full bg-violet" />
+                <span aria-hidden className="mt-1 h-3 w-3 shrink-0 rounded-full bg-amber-soft" />
                 <div>
                   <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-amber-ink">VOLTO PROTETTO: GENERAZIONE VIETATA</h2>
                   <p className="m-0 text-[0.8rem] text-muted">Questa persona si &egrave; registrata per NON essere generata.</p>

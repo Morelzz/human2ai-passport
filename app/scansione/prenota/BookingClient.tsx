@@ -70,7 +70,7 @@ export function BookingClient({
     );
   }
 
-  const inp = "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
+  const inp = "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-amber/50";
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">

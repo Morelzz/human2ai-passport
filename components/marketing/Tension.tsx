@@ -33,7 +33,7 @@ export function Tension() {
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.9, delay: 0.2, ease: EASE }}
-        className="relative mx-auto my-12 h-px w-40 origin-center rounded-full bg-gradient-to-r from-transparent via-violet to-transparent shadow-[0_0_18px_rgba(242,169,59,0.6)]"
+        className="relative mx-auto my-12 h-px w-40 origin-center rounded-full bg-gradient-to-r from-transparent via-amber to-transparent shadow-[0_0_18px_rgba(242,169,59,0.6)]"
       />
 
       {/* La svolta — ancora più grande, viva. NB: spazi tra segmenti con {" "},

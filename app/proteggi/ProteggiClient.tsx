@@ -159,7 +159,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
           <div className="grid grid-cols-4 gap-2.5">
             {POSES.map((p, slot) => (
               <label key={p.key} title={p.tip}
-                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-amber-soft" : "border-border hover:border-amber/60"}`}>
+                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-amber/50 bg-amber-soft" : "border-border hover:border-amber/60"}`}>
                 {poseSlots[slot] ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={poseSlots[slot]!.url} alt={p.label} className="absolute inset-0 h-full w-full object-cover" />
@@ -205,7 +205,7 @@ function PickBox({ label, hint, slot, aspect, onPick }: {
 }) {
   return (
     <label
-      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-amber-soft" : "border-border hover:border-amber/60"}`}
+      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-amber/50 bg-amber-soft" : "border-border hover:border-amber/60"}`}
       style={{ aspectRatio: aspect === "3/2" ? "3 / 2" : "3 / 4" }}>
       {slot ? (
         // eslint-disable-next-line @next/next/no-img-element

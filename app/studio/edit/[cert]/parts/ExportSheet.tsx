@@ -99,7 +99,7 @@ export function ExportSheet({
               type="button"
               onClick={() => onDownload({ upscale, format })}
               disabled={downloading}
-              className="rounded-xl border border-teal/30 bg-teal/10 px-3 py-3 text-center text-[0.84rem] font-semibold text-teal transition-colors hover:bg-teal/20 disabled:opacity-50"
+              className="rounded-xl border border-verified/50 bg-verified-soft px-3 py-3 text-center text-[0.84rem] font-semibold text-verified transition-colors hover:bg-verified-soft disabled:opacity-50"
             >
               {downloading ? "Preparo l'immagine…" : "Scarica con provenienza →"}
             </button>

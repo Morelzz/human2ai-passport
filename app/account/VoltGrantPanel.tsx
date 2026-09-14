@@ -35,7 +35,7 @@ export default function VoltGrantPanel() {
   }
 
   const inputCls =
-    "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-faint focus:border-violet/50 focus:outline-none";
+    "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-faint focus:border-amber/50 focus:outline-none";
 
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>

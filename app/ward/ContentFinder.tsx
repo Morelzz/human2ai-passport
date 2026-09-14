@@ -189,7 +189,7 @@ function Tab({ on, onClick, children }: { on: boolean; onClick: () => void; chil
     <button
       type="button" onClick={onClick}
       className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
-        on ? "bg-violet text-white" : "border border-border text-muted hover:text-foreground"
+        on ? "bg-amber-soft text-white" : "border border-border text-muted hover:text-foreground"
       }`}
     >{children}</button>
   );
