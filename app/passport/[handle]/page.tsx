@@ -6,7 +6,7 @@ import { truncateToken } from "@/lib/token";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { siteUrl } from "@/lib/site";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import PassportClient from "./PassportClient";
 
 // Handle storici rinominati: redirect permanente (308) al nuovo handle, per i
@@ -127,10 +127,9 @@ export default async function PassportPage({ params }: Props) {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+    <div className="relative min-h-screen overflow-x-hidden">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
-      <CineBackground />
-      <div className="relative z-[2]">
+<div className="relative z-[2]">
         <SiteNav />
         <PassportClient
           avatar={av}
@@ -144,6 +143,7 @@ export default async function PassportPage({ params }: Props) {
           galleryCount={galleryFromRow(handle, (avatar as Record<string, unknown>).gallery_urls).length}
           ownership={ownership}
         />
+        <Footer />
       </div>
     </div>
   );
