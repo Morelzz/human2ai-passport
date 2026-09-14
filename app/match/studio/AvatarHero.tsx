@@ -39,7 +39,7 @@ export function AvatarHero(props: AvatarHeroProps) {
   return (
     <div className="rounded-2xl border border-border bg-surface p-4">
       <div className="flex items-center gap-3.5">
-        <ScannerFrame className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-obsidian-3">
+        <ScannerFrame className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-elevated">
           {portrait && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={portrait} alt={alias} className="h-full w-full object-cover" />
@@ -49,7 +49,7 @@ export function AvatarHero(props: AvatarHeroProps) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="truncate text-lg font-semibold tracking-[-0.01em] text-foreground">{alias}</span>
-            <span className="shrink-0 rounded-full border border-teal/30 bg-teal/10 px-2 py-0.5 text-[0.62rem] font-bold text-teal">
+            <span className="shrink-0 rounded-full border border-verified/50 bg-verified-soft px-2 py-0.5 text-[0.62rem] font-bold text-verified">
               {tierLabel}
             </span>
           </div>
@@ -68,7 +68,7 @@ export function AvatarHero(props: AvatarHeroProps) {
       {/* Goalpill: l'obiettivo scelto, con la x per tornare alla scelta */}
       {goalLabel && onClearGoal && (
         <div className="mt-2.5">
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-amber/10 px-3 py-1.5 text-xs font-medium text-amber">
+          <span className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-amber-soft px-3 py-1.5 text-xs font-medium text-amber">
             ✦ {goalLabel}
             <button
               type="button"

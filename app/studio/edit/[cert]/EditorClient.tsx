@@ -151,6 +151,7 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
   );
 
   return (
+    <div data-theme="dark" className="min-h-[100dvh] bg-obsidian text-foreground">
     <main className="mx-auto flex h-[100dvh] w-full max-w-6xl flex-col overflow-hidden lg:block lg:h-auto lg:min-h-screen lg:overflow-visible">
       {/* Appbar */}
       <header className="z-30 flex shrink-0 items-center justify-between gap-3 border-b border-border bg-obsidian/85 px-4 py-3 backdrop-blur-md lg:sticky lg:top-0">
@@ -235,5 +236,6 @@ export function EditorClient({ cert, imageUrl, alias, initialState }: EditorClie
         </div>
       )}
     </main>
+    </div>
   );
 }

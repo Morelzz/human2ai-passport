@@ -45,12 +45,12 @@ export function VoltPackButton({
         className={`mt-4 w-full rounded-xl px-4 py-2.5 text-sm font-bold transition disabled:opacity-60 ${
           popular
             ? "bg-[#F2A93B] text-[#412402] hover:bg-[#E29A2E]"
-            : "border border-border bg-white/[0.04] text-foreground hover:bg-white/[0.07]"
+            : "border border-border bg-surface text-foreground hover:bg-white/[0.07]"
         }`}
       >
         {loading ? "Apro il pagamento..." : label}
       </button>
-      {error && <p className="mt-2 text-[0.7rem] text-crimson">{error}</p>}
+      {error && <p className="mt-2 text-[0.7rem] text-blocked">{error}</p>}
     </>
   );
 }

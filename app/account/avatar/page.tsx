@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import NewAvatarClient from "./NewAvatarClient";
 
 export default async function NewAvatarPage() {
@@ -36,9 +35,8 @@ export default async function NewAvatarPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
         <NewAvatarClient defaultAlias={isEnterprise ? "" : (profile?.full_name ?? "")} isEnterprise={isEnterprise} />
       </div>

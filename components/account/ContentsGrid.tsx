@@ -44,7 +44,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
   }, [items, cat, engine, avatar]);
 
   const shown = filtered.slice(0, visible);
-  const sel = "rounded-lg border border-border bg-white/[0.03] px-3 py-1.5 text-xs text-foreground focus:border-violet/50 focus:outline-none";
+  const sel = "rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground focus:border-violet/50 focus:outline-none";
 
   function resetPage<T>(setter: (v: T) => void) {
     return (v: T) => {
@@ -85,16 +85,16 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {shown.map((g) => (
-              <div key={g.id} className="overflow-hidden rounded-xl border border-border bg-obsidian-2">
+              <div key={g.id} className="overflow-hidden rounded-xl border border-border bg-surface">
                 {g.image_url && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={g.image_url} alt="contenuto" className="block aspect-[3/4] w-full bg-obsidian-3 object-cover" />
+                  <img src={g.image_url} alt="contenuto" className="block aspect-[3/4] w-full bg-elevated object-cover" />
                 )}
                 <div className="p-3">
                   <div className="mb-0.5 flex items-center justify-between gap-1.5">
                     <p className="truncate text-sm font-semibold text-foreground">{g.alias}</p>
                     {g.tier && (
-                      <span className="shrink-0 rounded-full border border-violet/30 bg-violet/10 px-1.5 py-0.5 text-[0.55rem] font-bold uppercase text-violet-light">{g.tier}</span>
+                      <span className="shrink-0 rounded-full border border-amber/50 bg-amber-soft px-1.5 py-0.5 text-[0.55rem] font-bold uppercase text-amber-ink">{g.tier}</span>
                     )}
                   </div>
                   <p className="mb-2 text-[0.7rem] text-faint">
@@ -109,19 +109,19 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                       {/* Ward: cerca le copie di QUESTA immagine sul web. Tasto vero
                           e prominente (solo buyer, e' il suo asset). */}
                       {shareVariant === "buyer" && (
-                        <a href={`/ward/content/${g.id}`} className="mb-1.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-violet/45 bg-violet/15 px-2 py-2 text-[0.74rem] font-bold text-violet-light transition-colors hover:bg-violet/25">
+                        <a href={`/ward/content/${g.id}`} className="mb-1.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-violet/45 bg-violet/15 px-2 py-2 text-[0.74rem] font-bold text-amber-ink transition-colors hover:bg-violet/25">
                           <ScanSearch className="h-3.5 w-3.5" aria-hidden /> Ward
                         </a>
                       )}
                       <div className="flex gap-1.5">
-                        <a href={`/api/content/${g.certificate}`} className="flex-1 rounded-lg border border-violet/30 bg-violet/10 px-2 py-1.5 text-center text-[0.72rem] font-semibold text-violet-light transition-colors hover:bg-violet/20">
+                        <a href={`/api/content/${g.certificate}`} className="flex-1 rounded-lg border border-amber/50 bg-amber-soft px-2 py-1.5 text-center text-[0.72rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft">
                           Scarica
                         </a>
                         <ShareStoryButton
                           query={`cert=${encodeURIComponent(g.certificate)}&v=${shareVariant}`}
                           filename={`semblic-story-${g.certificate.slice(0, 8)}.png`}
                           label="Condividi"
-                          className="flex-1 rounded-lg border border-teal/30 bg-teal/10 px-2 py-1.5 text-center text-[0.72rem] font-semibold text-teal transition-colors hover:bg-teal/20 disabled:opacity-50"
+                          className="flex-1 rounded-lg border border-verified/50 bg-verified-soft px-2 py-1.5 text-center text-[0.72rem] font-semibold text-verified transition-colors hover:bg-verified-soft disabled:opacity-50"
                         />
                       </div>
                       {/* Fase 3.3: ricevuta di conformita' come pagina stampabile
@@ -140,7 +140,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
           {visible < filtered.length && (
             <button
               onClick={() => setVisible((v) => v + PAGE)}
-              className="mt-4 w-full rounded-xl border border-border bg-white/[0.03] px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground"
+              className="mt-4 w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground"
             >
               Carica altri ({filtered.length - visible} rimasti)
             </button>

@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const runtime = "nodejs";
 export const metadata = { title: "Semblic Editor", robots: { index: false, follow: false } };
@@ -34,12 +33,15 @@ export default async function EditorLanding() {
   const items = (gens ?? []).filter((g) => g.certificate && g.image_url);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
+    <div
+      data-theme="dark"
+      className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground"
+      style={{ background: "radial-gradient(60% 40% at 20% 0%, rgba(226,154,46,0.14), transparent 60%), #0C0F17" }}
+    >
       <div className="relative z-[2]">
         <SiteNav />
         <main className="mx-auto w-full max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
-      <h1 className="text-3xl font-extralight tracking-[-0.03em] sm:text-4xl">Semblic Editor</h1>
+      <h1 className="text-3xl font-bold tracking-[-0.03em] sm:text-4xl">Semblic Editor</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
         Scegli una tua generazione da rifinire: preset, luce, colore e altri controlli, in modo non distruttivo.
       </p>
@@ -63,11 +65,11 @@ export default async function EditorLanding() {
               <Link
                 key={g.id}
                 href={`/studio/edit/${g.certificate}`}
-                className="group overflow-hidden rounded-xl border border-border bg-obsidian-2 transition-colors hover:border-amber/40"
+                className="group overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-amber/40"
               >
                 {g.image_url && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={g.image_url} alt="" className="block aspect-[3/4] w-full bg-obsidian-3 object-cover" />
+                  <img src={g.image_url} alt="" className="block aspect-[3/4] w-full bg-elevated object-cover" />
                 )}
                 <div className="flex items-center justify-between gap-1 p-2.5">
                   <span className="truncate text-[0.78rem] font-medium text-foreground">{av?.alias ?? "—"}</span>

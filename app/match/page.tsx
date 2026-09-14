@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import MatchClient from "./MatchClient";
 
 // SEO: title/description propri (prima generici dal template del layout). La
@@ -22,8 +21,11 @@ export default async function MatchPage({ searchParams }: { searchParams: Promis
   const { avatar } = await searchParams;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
+    <div
+      data-theme="dark"
+      className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground"
+      style={{ background: "radial-gradient(60% 40% at 20% 0%, rgba(226,154,46,0.14), transparent 60%), #0C0F17" }}
+    >
       <div className="relative z-[2]">
         <SiteNav />
         <MatchClient initialHandle={avatar ?? null} />

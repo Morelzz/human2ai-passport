@@ -605,14 +605,14 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       {/* Kicker in stile HUD: stato del registro + passo corrente */}
       <div className="flex items-center gap-2.5 font-mono text-[0.68rem] font-bold tracking-[0.14em]">
         <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal opacity-60" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-teal" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-verified opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-verified" />
         </span>
-        <span className="text-teal">REGISTRO ATTIVO</span>
+        <span className="text-verified">REGISTRO ATTIVO</span>
         <span className="text-faint">/</span>
-        <span className="text-violet-light">PASSO 1: CHI</span>
+        <span className="text-amber-ink">PASSO 1: CHI</span>
       </div>
-      <h1 className="mt-2 text-4xl font-extralight tracking-[-0.04em] sm:text-5xl">
+      <h1 className="mt-2 text-4xl font-bold tracking-[-0.04em] sm:text-5xl">
         <KineticText text="Descrivi chi cerchi" />
       </h1>
       <p className="mt-2 mb-6 text-sm leading-relaxed text-muted sm:text-base">
@@ -627,7 +627,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       <form onSubmit={search} className="flex flex-col gap-6">
         {/* Review D1 — il brief in linguaggio naturale al centro */}
         <div>
-          <label htmlFor="brief" className="mb-2 block text-xs font-bold tracking-[0.1em] text-violet-light">IL TUO BRIEF</label>
+          <label htmlFor="brief" className="mb-2 block text-xs font-bold tracking-[0.1em] text-amber-ink">IL TUO BRIEF</label>
           {/* Palco del brief: il centro della pagina. Bordo amber tenue + glow
               d'angolo; al focus il bordo si accende. La textarea e' trasparente
               dentro al palco (il bordo lo da il contenitore). */}
@@ -660,7 +660,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         </ChipGroup>
 
         {/* Filtri avanzati: raffinamento opzionale, in alternativa al brief */}
-        <details className="group rounded-2xl border border-border bg-obsidian-2">
+        <details className="group rounded-2xl border border-border bg-surface">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-sm font-semibold text-muted transition-colors hover:text-foreground [&::-webkit-details-marker]:hidden">
             <span>Filtri avanzati <span className="font-normal text-faint">· in alternativa alla descrizione</span></span>
             <span aria-hidden className="text-faint transition-transform duration-300 group-open:rotate-180">⌄</span>
@@ -739,7 +739,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       </form>
 
       {error && (
-        <div className="mt-6 flex items-start gap-2 rounded-xl border border-crimson/40 bg-crimson/10 p-4 text-sm font-medium text-crimson">
+        <div className="mt-6 flex items-start gap-2 rounded-xl border border-blocked/50 bg-blocked-soft p-4 text-sm font-medium text-blocked">
           <span aria-hidden>⚠️</span>
           <span>{error}</span>
         </div>
@@ -749,7 +749,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
         <div className="mt-8" id="risultati">
           {result.matched && result.results && result.results.length > 0 ? (
             <>
-              <p className="mb-1.5 font-mono text-sm font-bold tracking-wide text-teal">
+              <p className="mb-1.5 font-mono text-sm font-bold tracking-wide text-verified">
                 <span className="text-faint">&gt;</span>{" "}
                 {selectedHandle
                   ? <>VOLTO SELEZIONATO · {result.results?.find((a) => a.handle === selectedHandle)?.alias?.toUpperCase()}</>
@@ -759,7 +759,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                 <button
                   type="button"
                   onClick={() => setSelectedHandle(null)}
-                  className="mb-3 rounded-full border border-border px-3 py-1 text-[0.7rem] font-semibold text-muted transition-colors hover:border-teal/40 hover:text-teal"
+                  className="mb-3 rounded-full border border-border px-3 py-1 text-[0.7rem] font-semibold text-muted transition-colors hover:border-verified/50 hover:text-verified"
                 >
                   ← Tutti i risultati ({result.results.length})
                 </button>
@@ -853,8 +853,8 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
               </div>
             </>
           ) : (
-            <div className="rounded-2xl border border-crimson/30 bg-crimson/5 p-6">
-              <p className="mb-2 text-base font-bold text-crimson">⛔ Richiesta bloccata</p>
+            <div className="rounded-2xl border border-blocked/50 bg-blocked/5 p-6">
+              <p className="mb-2 text-base font-bold text-blocked">⛔ Richiesta bloccata</p>
               <p className="text-sm font-semibold leading-relaxed text-foreground">
                 Nessuna persona reale ha acconsentito a questa richiesta, e questo è il punto.
               </p>
@@ -866,13 +866,13 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
                   type="button"
                   onClick={saveAlert}
                   disabled={alertState === "saving" || alertState === "saved"}
-                  className="rounded-xl border border-violet/35 bg-violet/10 px-4 py-3 text-sm font-bold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-60"
+                  className="rounded-xl border border-violet/35 bg-amber-soft px-4 py-3 text-sm font-bold text-amber-ink transition-colors hover:bg-amber-soft disabled:opacity-60"
                 >
                   {alertState === "saved" ? "✓ Avviso salvato" : alertState === "saving" ? "Salvo…" : "🔔 Avvisami quando entra un volto compatibile"}
                 </button>
                 <Link
                   href="/signup"
-                  className="rounded-xl border border-teal/35 bg-teal/10 px-4 py-3 text-center text-sm font-bold text-teal transition-colors hover:bg-teal/20"
+                  className="rounded-xl border border-verified/35 bg-verified-soft px-4 py-3 text-center text-sm font-bold text-verified transition-colors hover:bg-verified-soft"
                 >
                   Sei tu questo volto? Candidati →
                 </Link>
@@ -918,7 +918,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       onClick={onClick}
       aria-pressed={active}
       className={`focus-ring rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
-        active ? "border border-violet bg-violet/20 text-foreground" : "border border-border bg-obsidian-2 text-muted hover:text-foreground"
+        active ? "border border-violet bg-amber-soft text-foreground" : "border border-border bg-surface text-muted hover:text-foreground"
       }`}
     >
       {children}

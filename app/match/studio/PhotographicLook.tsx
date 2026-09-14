@@ -111,7 +111,7 @@ export function PhotographicLook({
               onClick={() => onCamera(c.v)}
               aria-pressed={active}
               className={`flex items-center gap-2.5 rounded-xl border px-2.5 py-2.5 text-left transition-colors ${
-                active ? "border-amber bg-amber/10" : "border-border bg-elevated hover:border-amber/40"
+                active ? "border-amber bg-amber-soft" : "border-border bg-elevated hover:border-amber/40"
               }`}
             >
               <span

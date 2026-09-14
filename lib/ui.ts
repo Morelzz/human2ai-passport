@@ -1,73 +1,73 @@
 import type { CSSProperties } from "react";
 
 // ──────────────────────────────────────────────────────────────────────────
-// Design tokens SEMBLIC (sistema a 8 token + 3 gradienti, vedi
-// SEMBLIC_COLORI_MIGRAZIONE.md). Tutto deriva da Obsidian/Lumen/Amber.
-// Stati: salvia (verificato) e coral (bloccato). Il testo usa Lumen a opacita,
-// MAI grigi. I nomi storici (violet/crimson/teal/green) restano come alias coi
-// nuovi valori per non riscrivere ogni riferimento. Vedi CLAUDE.md.
+// Design tokens SEMBLIC per gli stili inline (le pagine piu' vecchie e i
+// pannelli che usano `style={{...}}`). Casa nuova (2026-09-14): ogni valore e'
+// una VARIABILE CSS di tema (vedi app/globals.css), cosi' lo stesso stile
+// segue il corpo chiaro e le isole scure senza riscrivere i riferimenti.
+// I nomi storici (violet/crimson/teal/green) restano come alias.
 // ──────────────────────────────────────────────────────────────────────────
 
 export const colors = {
-  // Identita + superfici (scala da Obsidian)
-  bg: "#0C0F17",        // sfondo pagina (Obsidian)
-  panel: "#141A24",     // pannelli/card (surface)
-  card: "#141A24",      // card (surface)
-  surface: "#141A24",
-  raised: "#1E2530",    // input, modali (elevated)
-  elevated: "#1E2530",
-  edge: "#2C3440",      // linee, divisori
+  // Superfici
+  bg: "var(--bg)",
+  panel: "var(--surface)",
+  card: "var(--surface)",
+  surface: "var(--surface)",
+  raised: "var(--elevated)",
+  elevated: "var(--elevated)",
+  edge: "var(--edge)",
 
-  // Testo: Lumen a tre intensita (niente grigi)
-  text: "#F2E9D8",                      // primario (Lumen)
-  muted: "rgba(242,233,216,0.70)",      // secondario
-  faint: "rgba(242,233,216,0.45)",      // terziario
+  // Testo a tre intensita'
+  text: "var(--text)",
+  muted: "var(--text-muted)",
+  faint: "var(--text-faint)",
 
   // Azione
-  amber: "#F2A93B",
-  amberHover: "#E29A2E",
+  amber: "var(--amber-c)",
+  amberHover: "var(--amber-hover-c)",
 
   // Stati funzionali
-  verified: "#7FAE96",  // salvia: consenso OK, match trovato
-  blocked: "#EE7A70",   // coral: nessun match, stop
+  verified: "var(--verified-c)",
+  blocked: "var(--blocked-c)",
 
   // Testo su fondi pieni colorati
-  onAmber: "#412402",
-  onVerified: "#16352A",
-  onBlocked: "#5A201B",
+  onAmber: "var(--on-amber-c)",
+  onVerified: "var(--on-verified-c)",
+  onBlocked: "var(--on-blocked-c)",
 
-  // Alias storici -> nuovi valori
-  violet: "#F2A93B",        // = amber (azione)
-  violetLight: "#E29A2E",   // = amber-hover
-  amberLight: "#E29A2E",
-  crimson: "#EE7A70",       // = blocked
-  teal: "#7FAE96",          // = verified
-  green: "#7FAE96",         // stato "ATTIVO" -> verified
+  // Alias storici
+  violet: "var(--amber-ink)",
+  violetLight: "var(--amber-ink)",
+  amberLight: "var(--amber-hover-c)",
+  crimson: "var(--blocked-c)",
+  teal: "var(--verified-c)",
+  green: "var(--verified-c)",
 
-  // Bordi (Lumen a opacita crescente, niente grigi)
-  border: "rgba(242,233,216,0.06)",
-  border2: "rgba(242,233,216,0.10)",
-  border3: "rgba(242,233,216,0.12)",
+  // Bordi
+  border: "var(--hairline-soft)",
+  border2: "var(--hairline)",
+  border3: "var(--edge)",
 } as const;
 
 // Gradienti: SOLO sfondi e sezioni, MAI sui bottoni.
-export const gradTramonto = "linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%)";
-export const gradAurora = "linear-gradient(135deg,#F2A93B 0%,#C25C3A 42%,#0C0F17 100%)";
-export const gradFiducia = "linear-gradient(135deg,#7FAE96 0%,#2E8B7E 100%)";
+export const gradTramonto = "var(--grad-tramonto)";
+export const gradAurora = "var(--grad-aurora)";
+export const gradFiducia = "var(--grad-fiducia)";
 // Alias storico: ora punta al gradiente sezione tramonto (mai usarlo sui bottoni).
 export const gradient = gradTramonto;
 
-// Raggi ricorrenti
-export const radius = { sm: 8, md: 10, lg: 16, xl: 20, pill: 999 } as const;
+// Raggi ricorrenti (casa nuova: angoli piu' morbidi)
+export const radius = { sm: 10, md: 12, lg: 18, xl: 22, pill: 999 } as const;
 
-// Tinte semitrasparenti (per sfondi pill/badge). Derivate dai token.
+// Tinte per sfondi di pill/badge: i token "soft" del tema.
 export const tint = {
-  violet: "rgba(242,169,59,0.12)",
-  violetBorder: "rgba(242,169,59,0.3)",
-  crimson: "rgba(238,122,112,0.12)",
-  crimsonBorder: "rgba(238,122,112,0.3)",
-  teal: "rgba(127,174,150,0.12)",
-  tealBorder: "rgba(127,174,150,0.3)",
+  violet: "var(--amber-soft)",
+  violetBorder: "color-mix(in srgb, var(--amber-c) 45%, transparent)",
+  crimson: "var(--blocked-soft)",
+  crimsonBorder: "color-mix(in srgb, var(--blocked-c) 45%, transparent)",
+  teal: "var(--verified-soft)",
+  tealBorder: "color-mix(in srgb, var(--verified-c) 45%, transparent)",
 } as const;
 
 // ── Frammenti di stile riusabili ──────────────────────────────────────────
@@ -87,7 +87,7 @@ export const card: CSSProperties = {
   padding: "1.5rem",
 };
 
-// Pannello interno (stessa superficie della card, bordo piu tenue).
+// Pannello interno (stessa superficie della card, bordo piu' tenue).
 export const panel: CSSProperties = {
   background: colors.panel,
   border: `1px solid ${colors.border}`,
@@ -95,14 +95,14 @@ export const panel: CSSProperties = {
   padding: "1.5rem",
 };
 
-// Pulsante primario: Amber PIENO, testo on-amber. Mai gradienti sui bottoni.
+// Pulsante primario: Amber PIENO, testo on-amber, pillola. Mai gradienti sui bottoni.
 export const buttonPrimary: CSSProperties = {
   border: "none",
   background: colors.amber,
   color: colors.onAmber,
-  fontWeight: 800,
-  fontSize: "0.9rem",
-  borderRadius: radius.md,
+  fontWeight: 600,
+  fontSize: "0.92rem",
+  borderRadius: radius.pill,
   padding: "0.8rem 1.5rem",
   cursor: "pointer",
   textDecoration: "none",
@@ -110,14 +110,14 @@ export const buttonPrimary: CSSProperties = {
   textAlign: "center",
 };
 
-// Pulsante secondario (ghost: trasparente, bordo hairline).
+// Pulsante secondario (trasparente, bordo).
 export const buttonSecondary: CSSProperties = {
   background: "transparent",
   border: `1px solid ${colors.border3}`,
   color: colors.text,
-  fontWeight: 700,
-  fontSize: "0.9rem",
-  borderRadius: radius.md,
+  fontWeight: 600,
+  fontSize: "0.92rem",
+  borderRadius: radius.pill,
   padding: "0.8rem 1.5rem",
   cursor: "pointer",
   textDecoration: "none",
@@ -125,11 +125,14 @@ export const buttonSecondary: CSSProperties = {
   textAlign: "center",
 };
 
-// Etichetta sezione (maiuscoletto spaziato, testo muted).
+// Etichetta sezione (maiuscoletto spaziato, mono, ambra scuro).
 export const sectionLabel: CSSProperties = {
-  color: colors.muted,
-  fontSize: "0.75rem",
-  letterSpacing: "0.1em",
+  color: "var(--amber-ink)",
+  fontFamily: "var(--font-geist-mono), ui-monospace, monospace",
+  fontSize: "0.6875rem",
+  fontWeight: 600,
+  letterSpacing: "0.18em",
+  textTransform: "uppercase",
   margin: 0,
 };
 
@@ -145,7 +148,7 @@ export function pill(fg: string, bg: string, border: string): CSSProperties {
     borderRadius: radius.pill,
     padding: "0.25rem 0.75rem",
     fontSize: "0.72rem",
-    fontWeight: 700,
+    fontWeight: 600,
     letterSpacing: "0.04em",
   };
 }

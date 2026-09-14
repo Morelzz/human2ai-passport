@@ -36,7 +36,7 @@ export function GoalStart({ alias, onPick }: { alias: string; onPick: (goal: str
 
   return (
     <div className="mt-5">
-      <h2 className="text-2xl font-extralight tracking-[-0.03em] text-foreground">
+      <h2 className="text-2xl font-bold tracking-[-0.03em] text-foreground">
         Cosa vuoi creare con <span className="font-semibold">{alias}</span>?
       </h2>
       <p className="mt-1.5 mb-4 text-sm leading-relaxed text-muted">
@@ -49,9 +49,9 @@ export function GoalStart({ alias, onPick }: { alias: string; onPick: (goal: str
             key={g.v}
             type="button"
             onClick={() => onPick(g.v)}
-            className="focus-ring rounded-2xl border border-border bg-surface p-3.5 text-left transition-colors hover:border-amber/50 hover:bg-amber/10"
+            className="focus-ring rounded-2xl border border-border bg-surface p-3.5 text-left transition-colors hover:border-amber/50 hover:bg-amber-soft"
           >
-            <span className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-xl bg-amber/15 text-base text-amber">
+            <span className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-xl bg-amber-soft text-base text-amber">
               {GOAL_ICON[g.v] ?? "◉"}
             </span>
             <span className="block text-sm font-semibold text-foreground">{g.l}</span>

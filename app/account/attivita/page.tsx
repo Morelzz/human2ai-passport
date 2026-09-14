@@ -4,7 +4,6 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 
 export const metadata = {
@@ -62,14 +61,13 @@ export default async function AttivitaPage() {
   const isEnterprise = myAvatars.length > 1;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="mb-8">
-            <span className="text-xs font-bold tracking-[0.14em] text-teal">IL TUO VOLTO</span>
+            <span className="text-xs font-bold tracking-[0.14em] text-verified">IL TUO VOLTO</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Attività del mio volto</h1>
             <p className="mt-3 leading-relaxed text-muted">
               Ogni volta che qualcuno genera con la tua identità, lo vedi qui, con la royalty che hai guadagnato.
@@ -77,12 +75,12 @@ export default async function AttivitaPage() {
           </div>
 
           {ids.length === 0 ? (
-            <div className="glass rounded-2xl p-6">
+            <div className="card rounded-2xl p-6">
               <p className="text-sm leading-relaxed text-muted">
                 Questa sezione è per chi mette il proprio volto nel registro. Quando il tuo avatar è attivo,
                 qui compare ogni suo utilizzo.
               </p>
-              <Link href="/account" className="mt-4 inline-block text-sm font-semibold text-teal hover:underline">
+              <Link href="/account" className="mt-4 inline-block text-sm font-semibold text-verified hover:underline">
                 ← Torna all&apos;account
               </Link>
             </div>
@@ -90,12 +88,12 @@ export default async function AttivitaPage() {
             <>
               {/* Totali */}
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="glass glass-hover rounded-2xl p-5">
-                  <div className="text-3xl font-extrabold leading-none text-teal">{formatEur(totalRoyalty)}</div>
+                <div className="card transition-colors hover:border-amber/60 rounded-2xl p-5">
+                  <div className="text-3xl font-extrabold leading-none text-verified">{formatEur(totalRoyalty)}</div>
                   <p className="mt-2 text-sm text-muted">Maturato per il tuo volto</p>
                 </div>
-                <div className="glass glass-hover rounded-2xl p-5">
-                  <div className="text-3xl font-extrabold leading-none text-violet-light">{totalUses}</div>
+                <div className="card transition-colors hover:border-amber/60 rounded-2xl p-5">
+                  <div className="text-3xl font-extrabold leading-none text-amber-ink">{totalUses}</div>
                   <p className="mt-2 text-sm text-muted">Utilizzi totali</p>
                 </div>
               </div>
@@ -104,7 +102,7 @@ export default async function AttivitaPage() {
               <div className="mt-6">
                 <p className="mb-3 text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">Utilizzi recenti</p>
                 {feed.length === 0 ? (
-                  <div className="glass rounded-2xl p-6 text-sm leading-relaxed text-muted">
+                  <div className="card rounded-2xl p-6 text-sm leading-relaxed text-muted">
                     Ancora nessun utilizzo. Quando qualcuno genera con il tuo volto, comparirà qui, con la tua royalty.
                   </div>
                 ) : (
@@ -112,11 +110,11 @@ export default async function AttivitaPage() {
                     {feed.map((g) => {
                       const av = avatarOf(g);
                       return (
-                        <li key={g.id} className="glass glass-hover flex flex-wrap items-center justify-between gap-3 rounded-xl p-4">
+                        <li key={g.id} className="card transition-colors hover:border-amber/60 flex flex-wrap items-center justify-between gap-3 rounded-xl p-4">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               {g.category && (
-                                <span className="rounded-full border border-violet/30 bg-violet/10 px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-violet-light">
+                                <span className="rounded-full border border-amber/50 bg-amber-soft px-2 py-0.5 text-[0.62rem] font-bold tracking-wide text-amber-ink">
                                   {g.category}
                                 </span>
                               )}
@@ -129,11 +127,11 @@ export default async function AttivitaPage() {
                             )}
                           </div>
                           <div className="flex items-center gap-4">
-                            <span className="font-bold text-teal">+{formatEur(g.royalty_cents ?? 0)}</span>
+                            <span className="font-bold text-verified">+{formatEur(g.royalty_cents ?? 0)}</span>
                             {g.certificate && (
                               <Link
                                 href={`/verify?token=${encodeURIComponent(g.certificate)}`}
-                                className="text-xs text-violet-light hover:underline"
+                                className="text-xs text-amber-ink hover:underline"
                               >
                                 Verifica →
                               </Link>
@@ -145,7 +143,7 @@ export default async function AttivitaPage() {
                                 query={`cert=${encodeURIComponent(g.certificate)}&v=seller`}
                                 filename={`semblic-story-${g.certificate.slice(0, 8)}.png`}
                                 label="Condividi ↗"
-                                className="rounded-full border border-violet/30 bg-violet/10 px-3 py-1.5 text-xs font-semibold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-50"
+                                className="rounded-full border border-amber/50 bg-amber-soft px-3 py-1.5 text-xs font-semibold text-amber-ink transition-colors hover:bg-amber-soft disabled:opacity-50"
                               />
                             )}
                           </div>

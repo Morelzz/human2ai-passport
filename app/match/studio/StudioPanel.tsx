@@ -220,13 +220,13 @@ export function StudioPanel(props: StudioPanelProps) {
   // Stato "in lavorazione" mostrato durante la generazione (con copy
   // ECHO-aware: la generazione async puo' durare minuti).
   const inProgress = generating ? (
-    <div className="mt-3 flex items-start gap-3 rounded-xl border border-violet/30 bg-violet/10 p-4">
+    <div className="mt-3 flex items-start gap-3 rounded-xl border border-amber/50 bg-amber-soft p-4">
       <span className="mt-0.5 inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-violet-light border-t-transparent" aria-hidden />
       <div className="text-[0.8rem] leading-relaxed text-foreground">
         <span className="font-semibold">Generazione in corso…</span>
         {engine === "echo" ? " ECHO lavora alla massima fedeltà: può richiedere 1-3 minuti." : ""}
         <br />
-        <span className="text-faint">Puoi restare qui o tornare dopo: la trovi in <Link href="/account" className="text-violet-light underline">I miei contenuti</Link>.</span>
+        <span className="text-faint">Puoi restare qui o tornare dopo: la trovi in <Link href="/account" className="text-amber-ink underline">I miei contenuti</Link>.</span>
       </div>
     </div>
   ) : null;
@@ -239,7 +239,7 @@ export function StudioPanel(props: StudioPanelProps) {
   // (goal === null) mostriamo l'hero del volto + GoalStart e NON la composizione.
   if (goal === null) {
     return (
-      <div className="glass rounded-2xl border-teal/25 p-6">
+      <div className="glass rounded-2xl border-verified/25 p-6">
         <AvatarHero
           alias={avatar.alias}
           handle={avatar.handle}
@@ -256,7 +256,7 @@ export function StudioPanel(props: StudioPanelProps) {
   }
 
   return (
-    <div className="glass rounded-2xl border-teal/25 p-6">
+    <div className="glass rounded-2xl border-verified/25 p-6">
       <AvatarHero
         alias={avatar.alias}
         handle={avatar.handle}
@@ -284,7 +284,7 @@ export function StudioPanel(props: StudioPanelProps) {
               onChange={(e) => setSceneByHandle((m) => ({ ...m, [avatar.handle]: e.target.value }))}
               placeholder="Es. che balla in spiaggia al tramonto, luce dorata, look estivo, 35mm"
               rows={2}
-              className="w-full resize-y rounded-xl border border-border bg-obsidian-2 px-3 py-3 text-sm leading-relaxed text-foreground outline-none focus:border-amber/40"
+              className="w-full resize-y rounded-xl border border-border bg-surface px-3 py-3 text-sm leading-relaxed text-foreground outline-none focus:border-amber/40"
             />
 
             {/* Dettatura vocale (push-to-talk): appende il parlato alla scena
@@ -303,14 +303,14 @@ export function StudioPanel(props: StudioPanelProps) {
               type="button"
               onClick={() => composeFromVoice(avatar.handle)}
               disabled={composingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
-              className="mt-2.5 w-full rounded-xl border border-amber/30 bg-amber/[0.07] px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber/15 disabled:opacity-40"
+              className="mt-2.5 w-full rounded-xl border border-amber/30 bg-amber/[0.07] px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber-soft disabled:opacity-40"
             >
               {composingHandle === avatar.handle ? "✦ Compongo lo Studio…" : "✦ Imposta lo Studio dalla descrizione"}
             </button>
             {composedByHandle[avatar.handle] && (
-              <div className="mt-2 flex items-start justify-between gap-3 rounded-xl border border-teal/30 bg-teal/[0.07] p-3">
+              <div className="mt-2 flex items-start justify-between gap-3 rounded-xl border border-verified/50 bg-verified/[0.07] p-3">
                 <p className="text-[0.75rem] leading-relaxed text-foreground">
-                  <span className="font-semibold text-teal">Regia impostata:</span> {composedByHandle[avatar.handle]!.labels.join(" · ")}
+                  <span className="font-semibold text-verified">Regia impostata:</span> {composedByHandle[avatar.handle]!.labels.join(" · ")}
                 </p>
                 <button
                   type="button"
@@ -326,7 +326,7 @@ export function StudioPanel(props: StudioPanelProps) {
               Scena libera: azione, ambientazione, luce, stile. Il volto resta {avatar.alias}, identità bloccata dalle sue foto reali.
             </p>
             {styleRisk.length > 0 && (
-              <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber/40 bg-amber/10 p-3 text-[0.72rem] leading-relaxed text-amber">
+              <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber/50 bg-amber-soft p-3 text-[0.72rem] leading-relaxed text-amber">
                 <span aria-hidden>⚠️</span>
                 <span>
                   ECHO è <span className="font-semibold">fotorealistico</span>: «{styleRisk.join("», «")}» può far perdere l&apos;identità reale di {avatar.alias} (e spendere una generazione per un risultato fuori target). Per la massima fedeltà descrivi una <span className="font-semibold">scena reale</span>: luogo, luce, abbigliamento, posa.
@@ -368,7 +368,7 @@ export function StudioPanel(props: StudioPanelProps) {
             <div className="mt-5 space-y-3">
               <span className="block text-[0.66rem] font-semibold uppercase tracking-[0.06em] text-amber">Motore e formato</span>
               {/* Motore fisso: identita bloccata, nessuna scelta di modello. */}
-              <span className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-amber/10 px-3 py-1.5 text-xs font-medium text-amber">
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-amber-soft px-3 py-1.5 text-xs font-medium text-amber">
                 <span aria-hidden>◉</span> ECHO fotoreale
                 <span className="text-[0.65rem] font-normal text-muted">identità bloccata</span>
               </span>
@@ -417,7 +417,7 @@ export function StudioPanel(props: StudioPanelProps) {
               <span className="mb-2 flex items-center gap-2 text-[0.66rem] font-semibold uppercase tracking-[0.06em] text-amber">
                 Immagini di riferimento <span className="font-normal normal-case tracking-normal text-faint">· fino a 2</span>
               </span>
-              <p className="mb-2 rounded-lg border border-amber/30 bg-amber/10 px-2.5 py-2 text-[0.66rem] leading-snug text-amber">
+              <p className="mb-2 rounded-lg border border-amber/30 bg-amber-soft px-2.5 py-2 text-[0.66rem] leading-snug text-amber">
                 <span aria-hidden>⚠️</span> Un solo outfit per generazione
               </p>
               <div className="space-y-2">
@@ -429,7 +429,7 @@ export function StudioPanel(props: StudioPanelProps) {
                   const other = echoRefs[i === 0 ? 1 : 0];
                   const outfitTakenElsewhere = other?.role === "outfit";
                   return (
-                    <div key={i} className="rounded-xl border border-border bg-obsidian-2 p-2.5">
+                    <div key={i} className="rounded-xl border border-border bg-surface p-2.5">
                       {ref?.dataUrl ? (
                         <div className="flex gap-2.5">
                           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border bg-obsidian">
@@ -508,7 +508,7 @@ export function StudioPanel(props: StudioPanelProps) {
               type="button"
               onClick={() => enhance(avatar.handle)}
               disabled={enhancingHandle === avatar.handle || !(sceneByHandle[avatar.handle] ?? "").trim()}
-              className="w-full rounded-xl border border-amber/30 bg-amber/10 px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber/20 disabled:opacity-40"
+              className="w-full rounded-xl border border-amber/30 bg-amber-soft px-3 py-2.5 text-[0.8rem] font-semibold text-amber transition-colors hover:bg-amber/20 disabled:opacity-40"
             >
               {enhancingHandle === avatar.handle ? "✦ Miglioro la scena…" : "✦ Migliora prompt"}
             </button>
@@ -523,14 +523,14 @@ export function StudioPanel(props: StudioPanelProps) {
                       setSceneByHandle((m) => ({ ...m, [avatar.handle]: enhancedByHandle[avatar.handle] ?? "" }));
                       setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }));
                     }}
-                    className="flex-1 rounded-lg border border-teal/40 bg-teal/10 px-3 py-2 text-center text-[0.75rem] font-semibold text-teal transition-colors hover:bg-teal/20"
+                    className="flex-1 rounded-lg border border-verified/50 bg-verified-soft px-3 py-2 text-center text-[0.75rem] font-semibold text-verified transition-colors hover:bg-verified-soft"
                   >
                     Usa questa
                   </button>
                   <button
                     type="button"
                     onClick={() => setEnhancedByHandle((m) => ({ ...m, [avatar.handle]: null }))}
-                    className="flex-1 rounded-lg border border-border px-3 py-2 text-center text-[0.75rem] font-semibold text-muted transition-colors hover:bg-white/5"
+                    className="flex-1 rounded-lg border border-border px-3 py-2 text-center text-[0.75rem] font-semibold text-muted transition-colors hover:bg-surface"
                   >
                     Tieni la mia
                   </button>
@@ -563,29 +563,29 @@ export function StudioPanel(props: StudioPanelProps) {
           {voltGatePanel}
           {inProgress}
           <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">Output pulito, full-res, con certificato e royalty a {avatar.alias}.</p>
-          <Link href={`/passport/${avatar.handle}`} className="mt-3 block rounded-xl border border-violet/30 bg-violet/10 px-4 py-3 text-center text-sm font-semibold text-foreground transition-colors hover:bg-violet/20">
+          <Link href={`/passport/${avatar.handle}`} className="mt-3 block rounded-xl border border-amber/50 bg-amber-soft px-4 py-3 text-center text-sm font-semibold text-foreground transition-colors hover:bg-amber-soft">
             Vedi il passport →
           </Link>
         </>
       ) : (
-        <div className="mt-5 rounded-xl border border-teal/25 bg-obsidian p-5">
-          <p className="mb-1 text-sm font-bold text-teal">✓ Generazione certificata</p>
+        <div className="mt-5 rounded-xl border border-verified/25 bg-obsidian p-5">
+          <p className="mb-1 text-sm font-bold text-verified">✓ Generazione certificata</p>
           {gen.volt && (
             <p className="mb-1 text-[0.72rem] font-semibold text-foreground">
               {voltStr("gen.success.body", { n: FMT_VOLT.format(gen.volt.spent), saldo: gen.volt.balance !== null ? FMT_VOLT.format(gen.volt.balance) : "—" })}
             </p>
           )}
           {gen.voltMission && (
-            <p className="mb-1 text-[0.7rem] italic text-violet-light">{gen.voltMission}</p>
+            <p className="mb-1 text-[0.7rem] italic text-amber-ink">{gen.voltMission}</p>
           )}
           {gen.size && (
-            <p className="mb-3 text-[0.72rem] font-semibold text-violet-light">Motore ECHO · {echoResLabel(gen.size)} · {gen.size.replace("x", "×")} px</p>
+            <p className="mb-3 text-[0.72rem] font-semibold text-amber-ink">Motore ECHO · {echoResLabel(gen.size)} · {gen.size.replace("x", "×")} px</p>
           )}
           {gen.image_url && (
             // eslint-disable-next-line @next/next/no-img-element
             // Mostra la versione con filigrana invisibile (se c'è il certificato),
             // così l'immagine che l'utente vede/salva porta già il codice nascosto.
-            <img src={gen.certificate ? `/api/content/${gen.certificate}` : gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-border bg-obsidian-3" />
+            <img src={gen.certificate ? `/api/content/${gen.certificate}` : gen.image_url} alt="output generato" className="mb-4 w-full max-w-[280px] rounded-lg border border-border bg-elevated" />
           )}
           {/* CTA verso il Semblic Editor (non un redirect forzato: la
               generazione e async, la gente edita anche dopo, da /account). */}
@@ -594,15 +594,15 @@ export function StudioPanel(props: StudioPanelProps) {
               ✦ Modifica con Semblic Editor
             </a>
           )}
-          <div className="mb-4 rounded-lg bg-obsidian-2 p-4">
+          <div className="mb-4 rounded-lg bg-surface p-4">
             <EuroRow label={`Costo generazione${gen.category ? ` (${gen.category})` : ""}`} value={formatEur(gen.gross_cents ?? 0)} dim />
             <div className="my-2 h-px bg-white/6" />
             <EuroRow label={`Royalty a ${gen.alias}`} value={formatEur(gen.royalty_cents ?? 0)} highlight />
           </div>
           <p className="mb-1 text-[0.7rem] tracking-wide text-faint">CREDENZIALE D&apos;USCITA (hash anonimo)</p>
-          <code className="mb-4 block break-all font-mono text-[0.7rem] text-violet-light">{gen.certificate}</code>
+          <code className="mb-4 block break-all font-mono text-[0.7rem] text-amber-ink">{gen.certificate}</code>
           {gen.certificate && (
-            <a href={`/api/content/${gen.certificate}`} className="block rounded-xl border border-teal/30 bg-teal/10 px-4 py-3 text-center text-sm font-bold text-teal transition-colors hover:bg-teal/20">
+            <a href={`/api/content/${gen.certificate}`} className="block rounded-xl border border-verified/50 bg-verified-soft px-4 py-3 text-center text-sm font-bold text-verified transition-colors hover:bg-verified-soft">
               Scarica con provenienza →
             </a>
           )}
@@ -613,7 +613,7 @@ export function StudioPanel(props: StudioPanelProps) {
               query={`cert=${encodeURIComponent(gen.certificate)}&v=buyer`}
               filename={`semblic-story-${gen.certificate.slice(0, 8)}.png`}
               label="Condividi come Storia →"
-              className="mt-2 block w-full rounded-xl border border-violet/30 bg-violet/10 px-4 py-3 text-center text-sm font-bold text-violet-light transition-colors hover:bg-violet/20 disabled:opacity-50"
+              className="mt-2 block w-full rounded-xl border border-amber/50 bg-amber-soft px-4 py-3 text-center text-sm font-bold text-amber-ink transition-colors hover:bg-amber-soft disabled:opacity-50"
             />
           )}
 
@@ -626,7 +626,7 @@ export function StudioPanel(props: StudioPanelProps) {
             {voltGatePanel}
             {inProgress}
             <button onClick={() => resetGeneration(avatar.handle)} disabled={generating}
-              className="w-full rounded-xl border border-border bg-white/[0.03] px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">
+              className="w-full rounded-xl border border-border bg-surface px-5 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50">
               Nuova scena (cambia prompt e immagini) →
             </button>
           </div>
@@ -647,7 +647,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       onClick={onClick}
       aria-pressed={active}
       className={`focus-ring rounded-full px-3.5 py-2 text-sm font-semibold transition-all ${
-        active ? "border border-amber bg-amber/10 text-amber" : "border border-border bg-obsidian-2 text-muted hover:text-foreground"
+        active ? "border border-amber bg-amber-soft text-amber" : "border border-border bg-surface text-muted hover:text-foreground"
       }`}
     >
       {children}
@@ -659,7 +659,7 @@ function EuroRow({ label, value, dim, highlight }: { label: string; value: strin
   return (
     <div className="flex items-baseline justify-between py-0.5">
       <span className={`text-sm ${dim ? "text-muted" : "text-foreground/80"}`}>{label}</span>
-      <span className={highlight ? "text-base font-extrabold text-teal" : "text-sm font-semibold text-foreground/80"}>{value}</span>
+      <span className={highlight ? "text-base font-extrabold text-verified" : "text-sm font-semibold text-foreground/80"}>{value}</span>
     </div>
   );
 }

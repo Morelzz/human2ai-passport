@@ -38,8 +38,8 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
   if (approved) {
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
-        <div className="glass rounded-2xl p-8 text-center">
-          <p className="text-lg font-extrabold text-teal">✓ Identità verificata</p>
+        <div className="card rounded-2xl p-8 text-center">
+          <p className="text-lg font-extrabold text-verified">✓ Identità verificata</p>
           <p className="mt-2 text-sm text-muted">Sei un creatore verificato. Ora puoi creare il tuo avatar nel registro.</p>
           <Link href="/account/avatar" className="mt-6 inline-block rounded-xl bg-[#F2A93B] px-6 py-3 text-sm font-bold text-[#412402] transition-all hover:brightness-110">
             Crea il tuo avatar →
@@ -52,12 +52,12 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
   if (inReview) {
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
-        <div className="glass rounded-2xl p-8 text-center">
-          <p className="text-lg font-extrabold text-violet-light">● In verifica</p>
+        <div className="card rounded-2xl p-8 text-center">
+          <p className="text-lg font-extrabold text-amber-ink">● In verifica</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Stiamo verificando la tua identità. Appena è confermata te lo diciamo e potrai creare il tuo avatar.
           </p>
-          <Link href="/account" className="mt-6 inline-block text-sm text-violet-light hover:underline">← Torna all&apos;account</Link>
+          <Link href="/account" className="mt-6 inline-block text-sm text-amber-ink hover:underline">← Torna all&apos;account</Link>
         </div>
       </section>
     );
@@ -65,7 +65,7 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
 
   return (
     <section className="mx-auto max-w-xl px-5 py-14 sm:px-8">
-      <span className="text-xs font-bold tracking-[0.14em] text-teal">VERIFICA IDENTITÀ</span>
+      <span className="text-xs font-bold tracking-[0.14em] text-verified">VERIFICA IDENTITÀ</span>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Verifica la tua identità</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
         Per entrare nel registro confermiamo che sei una persona reale e che il volto è il tuo.
@@ -73,7 +73,7 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
       </p>
 
       {diditEnabled ? (
-        <div className="glass mt-8 rounded-2xl p-6">
+        <div className="card mt-8 rounded-2xl p-6">
           <p className="text-sm leading-relaxed text-muted">
             Bastano un <span className="text-foreground">documento d&apos;identità</span> e un <span className="text-foreground">selfie con controllo di vivenza</span>: ti guidiamo passo passo, in un minuto. Niente da caricare a mano.
           </p>
@@ -85,13 +85,13 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
           >
             {busy ? "Apro la verifica…" : "Verifica la mia identità →"}
           </button>
-          {err && <p className="mt-3 text-sm text-crimson">{err}</p>}
+          {err && <p className="mt-3 text-sm text-blocked">{err}</p>}
           <p className="mt-4 text-xs leading-relaxed text-faint">
             Procedendo dichiari di essere la persona rappresentata e acconsenti alla verifica della tua identità.
           </p>
         </div>
       ) : (
-        <div className="glass mt-8 rounded-2xl p-6">
+        <div className="card mt-8 rounded-2xl p-6">
           <p className="text-sm leading-relaxed text-muted">
             La verifica d&apos;identità non è al momento disponibile. Riprova tra poco.
           </p>

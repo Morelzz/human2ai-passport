@@ -103,7 +103,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
 
   const zero = balance <= 0;
   const low = !zero && balance < threshold;
-  const counterColor = zero ? "text-crimson" : low ? "text-amber-400" : "text-foreground";
+  const counterColor = zero ? "text-blocked" : low ? "text-amber-400" : "text-foreground";
   const tooltip = zero
     ? VOLT_STRINGS["volt.zero.tooltip"]
     : low
@@ -120,7 +120,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
           {txs.slice(0, limit).map((t) => (
             <li key={t.id} className="flex items-center justify-between gap-3 text-xs">
               <span className="truncate text-muted">{txLabel(t)}</span>
-              <span className={`shrink-0 font-bold ${t.delta_volt < 0 ? "text-muted" : "text-teal"}`}>
+              <span className={`shrink-0 font-bold ${t.delta_volt < 0 ? "text-muted" : "text-verified"}`}>
                 {t.delta_volt < 0 ? "−" : "+"}{FMT.format(Math.abs(t.delta_volt))} ⚡
               </span>
             </li>
@@ -145,7 +145,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
       <div ref={wrapRef} className="relative hidden md:block">
         <div
           className={`flex items-center gap-1 rounded-full border py-0.5 pl-2 pr-0.5 ${
-            zero ? "border-crimson/40 bg-crimson/10" : low ? "border-amber-400/30 bg-amber-400/5" : "border-border bg-white/[0.04]"
+            zero ? "border-blocked/50 bg-blocked-soft" : low ? "border-amber-400/30 bg-amber-400/5" : "border-border bg-surface"
           }`}
         >
           <button
@@ -171,7 +171,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
             <motion.div
               initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-border bg-obsidian-3 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+              className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-border bg-elevated p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
             >
               <div className="mb-3 flex items-baseline justify-between">
                 <span className="text-2xl font-extrabold tabular-nums">{FMT.format(balance)} <span aria-hidden>⚡</span></span>
@@ -188,7 +188,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
         onClick={() => setSheet(true)}
         aria-label={`Saldo VOLT: ${balance}. ${VOLT_STRINGS["volt.badge.cta"]}`}
         className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm md:hidden ${
-          zero ? "border-crimson/40 bg-crimson/10" : low ? "border-amber-400/30 bg-amber-400/5" : "border-border bg-white/[0.04]"
+          zero ? "border-blocked/50 bg-blocked-soft" : low ? "border-amber-400/30 bg-amber-400/5" : "border-border bg-surface"
         }`}
       >
         <span aria-hidden>⚡</span>
@@ -206,7 +206,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
             <motion.div
               initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-border bg-obsidian-3 p-5 pb-8 md:hidden"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-border bg-elevated p-5 pb-8 md:hidden"
             >
               <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-white/15" />
               <div className="mb-4 flex items-baseline gap-2">

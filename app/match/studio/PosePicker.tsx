@@ -139,7 +139,7 @@ export function PosePicker({ value, onChange }: { value: string; onChange: (v: s
                         >
                           <span
                             className={`grid aspect-[3/4] w-full place-items-center rounded-xl border-[1.5px] transition-colors ${
-                              active ? "border-amber bg-amber/10 text-amber" : "border-border bg-elevated text-muted"
+                              active ? "border-amber bg-amber-soft text-amber" : "border-border bg-elevated text-muted"
                             }`}
                           >
                             <PoseGlyph value={p.v} className="h-16 w-12" />
