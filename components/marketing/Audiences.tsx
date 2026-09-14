@@ -20,11 +20,11 @@ export function Audiences() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="glass glass-hover relative overflow-hidden rounded-[1.75rem] p-7 sm:p-9"
+          className="card transition-colors hover:border-amber/60 relative overflow-hidden rounded-[1.75rem] p-7 sm:p-9"
         >
           <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_0%_0%,rgba(127,174,150,0.12),transparent_70%)]" />
           <div className="relative">
-            <span className="label-mono text-teal">Per chi mette il volto</span>
+            <span className="kicker text-verified">Per chi mette il volto</span>
             <h3 className="mt-2 text-balance text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
               Il tuo volto, alle tue condizioni.
             </h3>
@@ -45,11 +45,11 @@ export function Audiences() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, delay: 0.08, ease: EASE }}
-          className="glass glass-hover relative overflow-hidden rounded-[1.75rem] p-7 sm:p-9"
+          className="card transition-colors hover:border-amber/60 relative overflow-hidden rounded-[1.75rem] p-7 sm:p-9"
         >
           <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_100%_0%,rgba(242,169,59,0.14),transparent_70%)]" />
           <div className="relative">
-            <span className="label-mono text-violet-light">Per i brand</span>
+            <span className="kicker">Per i brand</span>
             <h3 className="mt-2 text-balance text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
               Volti che puoi usare senza paura.
             </h3>

@@ -38,8 +38,8 @@ export function ContactForm({ prefill }: { prefill?: { subject?: string; message
 
   if (done) {
     return (
-      <div className="glass rounded-2xl border-teal/30 p-8 text-center">
-        <p className="text-lg font-bold text-teal">✓ Messaggio ricevuto</p>
+      <div className="card rounded-2xl border-verified/50 p-8 text-center">
+        <p className="text-lg font-bold text-verified">✓ Messaggio ricevuto</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. Ti rispondiamo a {email} il prima possibile.
         </p>
@@ -47,7 +47,7 @@ export function ContactForm({ prefill }: { prefill?: { subject?: string; message
     );
   }
 
-  const inp = "w-full rounded-xl border border-border bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
+  const inp = "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
@@ -79,19 +79,19 @@ export function ContactForm({ prefill }: { prefill?: { subject?: string; message
       <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" placeholder="website" />
 
       {error && (
-        <div className="flex items-start gap-2 rounded-xl border border-crimson/40 bg-crimson/10 p-3.5 text-sm font-medium text-crimson">
+        <div className="flex items-start gap-2 rounded-xl border border-blocked/50 bg-blocked-soft p-3.5 text-sm font-medium text-blocked">
           <span aria-hidden>⚠️</span>
           <span>{error}</span>
         </div>
       )}
 
       <button type="submit" disabled={sending}
-        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-on-amber transition-all hover:brightness-110 disabled:opacity-50">
+        className="mt-1 rounded-full bg-amber px-7 py-3.5 text-[0.9rem] font-semibold text-on-amber transition-all hover:brightness-110 disabled:opacity-50">
         {sending ? "Invio…" : "Invia il messaggio"}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">
         Usiamo questi dati solo per risponderti. Niente spam, niente cessioni,{" "}
-        <Link href="/privacy" className="text-violet-light underline">informativa privacy</Link>.
+        <Link href="/privacy" className="text-amber-ink underline">informativa privacy</Link>.
       </p>
     </form>
   );

@@ -14,7 +14,7 @@ export function ScanLocations({ sedi }: { sedi: MapSede[] }) {
     <section className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
       <SectionTitle subtitle="Entra nel registro ad alta fedeltà.">La scansione</SectionTitle>
       <div className="max-w-2xl">
-        <span className="label-mono text-teal">Le sedi di scansione</span>
+        <span className="kicker text-verified">Le sedi di scansione</span>
         <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
           Fatti scansionare <GradientFlowText>da un professionista</GradientFlowText>.
         </h2>

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Building2, Users, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { SediMap } from "@/components/marketing/SediMap";
@@ -48,15 +47,14 @@ export default async function ScansionePage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
+    <div className="relative min-h-screen overflow-x-hidden">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <CineBackground />
-      <div className="relative z-[2]">
+<div className="relative z-[2]">
         <SiteNav />
 
         {/* ── HERO ─────────────────────────────────────────────────────── */}
         <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="label-mono text-teal">La scansione umana</span>
+          <span className="kicker text-verified">La scansione umana</span>
           <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
             <KineticText text="Il momento in cui il tuo volto" />
             <span className="mt-1 block">
@@ -77,7 +75,7 @@ export default async function ScansionePage() {
         {/* ── IL PERCORSO ──────────────────────────────────────────────── */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
-            <span className="label-mono text-violet-light">Il percorso</span>
+            <span className="kicker">Il percorso</span>
             <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Come si entra nel registro
             </h2>
@@ -105,7 +103,7 @@ export default async function ScansionePage() {
                   c: "#EE7A70",
                 },
               ].map(({ Icon, n, t, d, c }) => (
-                <div key={n} className="glass glass-hover rounded-2xl p-6">
+                <div key={n} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <div className="flex items-center justify-between">
                     <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
                       <Icon className="h-5 w-5" style={{ color: c }} />
@@ -123,7 +121,7 @@ export default async function ScansionePage() {
         {/* ── LO STANDARD SEMBLIC-SCAN ────────────────────────────────────── */}
         <Reveal>
           <section id="standard" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-12 sm:px-8">
-            <span className="label-mono text-teal">Specifica pubblica</span>
+            <span className="kicker text-verified">Specifica pubblica</span>
             <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Lo standard SEMBLIC-SCAN
             </h2>
@@ -143,7 +141,7 @@ export default async function ScansionePage() {
                 <strong className="text-foreground">Camera su cavalletto, frontale al soggetto.</strong> Inquadratura
                 stabile e costante per l&apos;intera sessione.
                 {isDev && (
-                  <span className="mt-2 block rounded-lg border border-amber/35 bg-amber/10 px-3 py-2 font-mono text-[0.72rem] text-amber">
+                  <span className="mt-2 block rounded-lg border border-amber/35 bg-amber-soft px-3 py-2 font-mono text-[0.72rem] text-amber">
                     [Parametri minimi: risoluzione, ottica, DA MORELZ] · segnaposto visibile solo in dev
                   </span>
                 )}
@@ -160,16 +158,16 @@ export default async function ScansionePage() {
 
             {/* La postproduzione — il punto che ci distingue */}
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              <div className="glass rounded-2xl border-teal/25 p-6">
-                <span className="label-mono text-teal">Consentito</span>
+              <div className="card rounded-2xl border-verified/25 p-6">
+                <span className="kicker text-verified">Consentito</span>
                 <p className="mt-3 text-sm leading-relaxed text-muted">
                   Correzione colore; rimozione delle imperfezioni temporanee,
                   occhiaie, un brufolo, i segni di una giornata storta.{" "}
                   <strong className="text-foreground">Il tempo passa, tu resti.</strong>
                 </p>
               </div>
-              <div className="glass rounded-2xl border-crimson/25 p-6">
-                <span className="label-mono text-crimson-light">Vietato, sempre</span>
+              <div className="card rounded-2xl border-blocked/50 p-6">
+                <span className="kicker text-blocked">Vietato, sempre</span>
                 <p className="mt-3 text-sm leading-relaxed text-muted">
                   Qualsiasi modifica alla geometria del volto. Proporzioni, naso, mascella, occhi:
                   non si toccano. La struttura umana resta al cento per cento,{" "}
@@ -179,8 +177,8 @@ export default async function ScansionePage() {
             </div>
 
             {/* L'ingrandimento */}
-            <div className="glass mt-3 rounded-2xl p-6">
-              <span className="label-mono text-violet-light">L&apos;ingrandimento</span>
+            <div className="card mt-3 rounded-2xl p-6">
+              <span className="kicker">L&apos;ingrandimento</span>
               <p className="mt-3 text-sm leading-relaxed text-muted">
                 Le immagini selezionate vengono portate alla massima risoluzione con upscaling
                 conservativo: più informazione per i motori, nessun dettaglio inventato. Ogni
@@ -193,7 +191,7 @@ export default async function ScansionePage() {
               I requisiti sono gratuiti. La maestria si impara: il protocollo completo,
               esecuzione, postproduzione, certificazione, è il corso avanzato della{" "}
               <span className="text-foreground">SEMBLIC Academy</span>, la porta del{" "}
-              <Link href="/partner" className="text-violet-light underline-offset-2 hover:underline">programma Capture Partner</Link>.
+              <Link href="/partner" className="text-amber-ink underline-offset-2 hover:underline">programma Capture Partner</Link>.
             </p>
           </section>
         </Reveal>
@@ -201,7 +199,7 @@ export default async function ScansionePage() {
         {/* ── PREPARARSI ALLA SCANSIONE ────────────────────────────────── */}
         <Reveal>
           <section className="mx-auto max-w-3xl px-5 py-12 sm:px-8">
-            <span className="label-mono text-violet-light">Per te, non per il fotografo</span>
+            <span className="kicker">Per te, non per il fotografo</span>
             <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Prima della tua sessione
             </h2>
@@ -216,8 +214,8 @@ export default async function ScansionePage() {
                 { t: "Riposa la sera prima.", d: "Non è un consiglio della nonna ma tecnico: un volto riposato dà più informazione pulita ai motori." },
                 { t: "In sessione, e dopo.", d: "Sali su una piastra che ruota, la camera resta ferma, circa cento scatti in pochi minuti. Poi scegliamo le migliori, costruiamo l'avatar e ricevi il tuo passaporto pubblico: da lì il volto lavora solo se dici sì." },
               ].map((x) => (
-                <div key={x.t} className="glass flex gap-4 rounded-2xl p-5">
-                  <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-teal" />
+                <div key={x.t} className="card flex gap-4 rounded-2xl p-5">
+                  <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-verified" />
                   <p className="m-0 text-sm leading-relaxed text-muted">
                     <strong className="text-foreground">{x.t}</strong> {x.d}
                   </p>
@@ -230,7 +228,7 @@ export default async function ScansionePage() {
         {/* ── LA MAPPA — "Dove scansionarti" ───────────────────────────── */}
         <Reveal>
           <section className="mx-auto max-w-4xl px-5 py-12 sm:px-8">
-            <span className="label-mono text-teal">Dove scansionarti</span>
+            <span className="kicker text-verified">Dove scansionarti</span>
             <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Ogni punto è una sede certificata
             </h2>
@@ -246,7 +244,7 @@ export default async function ScansionePage() {
 
             <p className="mt-6 text-center text-sm leading-relaxed text-muted">
               La tua città non c&apos;è? <strong className="text-foreground">Diventa tu il punto di scansione.</strong>{" "}
-              <Link href="/partner" className="font-semibold text-violet-light underline-offset-2 hover:underline">Il programma Capture Partner →</Link>
+              <Link href="/partner" className="font-semibold text-amber-ink underline-offset-2 hover:underline">Il programma Capture Partner →</Link>
             </p>
           </section>
         </Reveal>
@@ -271,8 +269,8 @@ export default async function ScansionePage() {
 // Riga di specifica in stile scheda tecnica (codice mono a sinistra).
 function SpecRow({ code, children }: { code: string; children: React.ReactNode }) {
   return (
-    <div className="glass flex flex-col gap-2 rounded-2xl p-5 sm:flex-row sm:gap-5">
-      <span className="shrink-0 font-mono text-[0.68rem] font-extrabold tracking-[0.12em] text-teal sm:w-24 sm:pt-0.5">{code}</span>
+    <div className="card flex flex-col gap-2 rounded-2xl p-5 sm:flex-row sm:gap-5">
+      <span className="shrink-0 font-mono text-[0.68rem] font-extrabold tracking-[0.12em] text-verified sm:w-24 sm:pt-0.5">{code}</span>
       <p className="m-0 text-sm leading-relaxed text-muted">{children}</p>
     </div>
   );

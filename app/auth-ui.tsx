@@ -3,7 +3,6 @@
 // Componenti UI condivisi tra /login e /signup.
 import { useId } from "react";
 import { Logo } from "@/app/Nav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 
 export const labelStyle: React.CSSProperties = {
   display: "block",
@@ -66,12 +65,11 @@ export function passwordIssue(pw: string): string | null {
 
 export function Shell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-obsidian p-6 text-foreground">
-      <CineBackground />
-      <div className="relative z-[2] mb-8">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-6 text-foreground">
+<div className="relative z-[2] mb-8">
         <Logo size={26} />
       </div>
-      <div className="glass relative z-[2] w-full max-w-sm rounded-2xl p-8">
+      <div className="card relative z-[2] w-full max-w-sm rounded-2xl p-8">
         <h1 className="mb-6 text-xl font-extrabold">{title}</h1>
         {children}
       </div>

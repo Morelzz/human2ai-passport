@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { FAQ_ITEMS } from "@/content/faq";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 
 export const metadata = {
@@ -27,14 +26,13 @@ export default function FaqPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <section className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
           <div className="text-center">
-            <span className="label-mono text-teal">Domande frequenti</span>
+            <span className="kicker text-verified">Domande frequenti</span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
               Le domande giuste. <span className="text-gradient">Risposte oneste.</span>
             </h1>
@@ -49,9 +47,9 @@ export default function FaqPage() {
               {FAQ_ITEMS.map((it) => (
                 <details
                   key={it.q}
-                  className="group glass overflow-hidden rounded-2xl open:border-violet/30"
+                  className="group card overflow-hidden rounded-2xl open:border-amber/50"
                 >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left text-[0.95rem] font-bold leading-snug transition-colors hover:text-violet-light sm:px-6 [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left text-[0.95rem] font-bold leading-snug transition-colors hover:text-amber-ink sm:px-6 [&::-webkit-details-marker]:hidden">
                     {it.q}
                     <ChevronDown className="h-4 w-4 shrink-0 text-muted transition-transform duration-300 group-open:rotate-180" />
                   </summary>
@@ -66,11 +64,11 @@ export default function FaqPage() {
           <div className="mt-12 text-center">
             <p className="text-sm text-muted">
               Non hai trovato la tua domanda?{" "}
-              <Link href="/report" className="font-semibold text-violet-light hover:underline">
+              <Link href="/report" className="font-semibold text-amber-ink hover:underline">
                 Segnala un problema
               </Link>{" "}
               o verifica un contenuto su{" "}
-              <Link href="/verify" className="font-semibold text-teal hover:underline">
+              <Link href="/verify" className="font-semibold text-verified hover:underline">
                 /verify
               </Link>
               .

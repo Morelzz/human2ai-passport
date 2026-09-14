@@ -4,7 +4,6 @@ import { getPublicAvatars, countProtectedFaces } from "@/lib/registry";
 import { countBlockedThisMonth } from "@/lib/blocked";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { PublicRoadmapCompact } from "@/components/marketing/PublicRoadmap";
 
 export const metadata = {
@@ -51,15 +50,14 @@ export default async function TrasparenzaPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <section className="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-24">
           {/* Intro */}
           <div className="reveal mb-12 text-center">
-            <span className="label-mono text-teal">Transparency report</span>
+            <span className="kicker text-verified">Transparency report</span>
             <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">La prova è nei numeri</h1>
             <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Ogni volto è una persona reale che ha acconsentito. Ogni generazione è tracciata e
@@ -72,16 +70,16 @@ export default async function TrasparenzaPage() {
               rifiutate) e le persone che hanno detto no (volti protetti). Reali dal DB. */}
           <div className="reveal mb-10 grid gap-4 sm:grid-cols-2">
             {/* 1. Il filtro al lavoro: richieste rifiutate questo mese (crimson) */}
-            <div className="glass relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
+            <div className="card relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(238,122,112,0.16),transparent_70%)]" />
               <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,var(--blocked-c),transparent)]" />
               <div className="relative">
-                <span className="label-mono text-crimson-light">Il filtro al lavoro</span>
-                <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-crimson sm:text-6xl">
+                <span className="kicker text-blocked">Il filtro al lavoro</span>
+                <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-blocked sm:text-6xl">
                   {blockedMonth ?? 0}
                 </div>
                 <p className="mx-auto mt-4 max-w-xs text-balance text-base font-semibold leading-snug text-foreground sm:text-lg">
-                  richieste di generare un essere umano <span className="text-crimson">rifiutate questo mese</span> per mancanza di consenso.
+                  richieste di generare un essere umano <span className="text-blocked">rifiutate questo mese</span> per mancanza di consenso.
                 </p>
                 <p className="mt-2 text-sm text-faint">
                   {blockedTotal ?? 0} da sempre.
@@ -90,16 +88,16 @@ export default async function TrasparenzaPage() {
             </div>
 
             {/* 2. Il diritto di dire no: volti protetti (violet) — VETO */}
-            <div className="glass relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
+            <div className="card relative flex flex-col justify-center overflow-hidden rounded-[2rem] p-8 text-center">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(242,169,59,0.18),transparent_70%)]" />
               <div aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,transparent,#F2A93B,transparent)]" />
               <div className="relative">
-                <span className="label-mono text-violet-light">Il diritto di dire no</span>
-                <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-violet-light sm:text-6xl">
+                <span className="kicker">Il diritto di dire no</span>
+                <div className="mt-4 font-mono text-5xl font-extrabold leading-none text-amber-ink sm:text-6xl">
                   {protectedFaces ?? 0}
                 </div>
                 <p className="mx-auto mt-4 max-w-xs text-balance text-base font-semibold leading-snug text-foreground sm:text-lg">
-                  volti registrati <span className="text-violet-light">per non essere mai generati</span> dall&apos;IA.
+                  volti registrati <span className="text-amber-ink">per non essere mai generati</span> dall&apos;IA.
                 </p>
                 <p className="mt-2 text-sm text-faint">
                   Dentro Semblic non sono generabili; fuori, allerta precoce e rimozione assistita.
@@ -111,7 +109,7 @@ export default async function TrasparenzaPage() {
           {/* Numeri */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {stats.map((s, i) => (
-              <div key={s.label} className="reveal glass glass-hover rounded-2xl p-6" style={{ animationDelay: `${0.05 * i}s` }}>
+              <div key={s.label} className="reveal card transition-colors hover:border-amber/60 rounded-2xl p-6" style={{ animationDelay: `${0.05 * i}s` }}>
                 <div className="text-4xl font-extrabold leading-none" style={{ color: s.c }}>{s.value}</div>
                 <div className="mt-3 h-1 w-12 rounded-full" style={{ background: s.c }} />
                 <p className="mt-3 text-sm text-muted">{s.label}</p>
@@ -120,12 +118,12 @@ export default async function TrasparenzaPage() {
           </div>
 
           {/* ── LA VISIONE ───────────────────────────────────────────── */}
-          <div className="reveal glass relative mt-16 overflow-hidden rounded-[2rem] p-8 sm:p-12">
+          <div className="reveal card relative mt-16 overflow-hidden rounded-[2rem] p-8 sm:p-12">
             <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(242,169,59,0.18),transparent_70%)]" />
             <div className="relative">
-              <span className="label-mono text-violet-light">La visione</span>
+              <span className="kicker">La visione</span>
               <h2 className="mt-2 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-                Presto, generare un volto <span className="text-crimson">senza consenso</span> sarà <span className="text-gradient">impossibile</span>.
+                Presto, generare un volto <span className="text-blocked">senza consenso</span> sarà <span className="text-gradient">impossibile</span>.
               </h2>
               <p className="mt-5 max-w-2xl leading-relaxed text-muted">
                 Semblic non è un generatore: è il <span className="text-foreground">registro dei diritti d&apos;immagine</span>,
@@ -139,7 +137,7 @@ export default async function TrasparenzaPage() {
                   { t: "Ogni uso pagato", d: "Royalty alla persona reale, tracciabili e portabili, anche on-chain." },
                   { t: "Prova ovunque", d: "Filigrana invisibile + certificato: l'origine è verificabile su qualsiasi piattaforma." },
                 ].map((b) => (
-                  <div key={b.t} className="rounded-xl border border-border bg-white/[0.02] p-4">
+                  <div key={b.t} className="rounded-xl border border-border bg-surface p-4">
                     <p className="text-sm font-bold">{b.t}</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted">{b.d}</p>
                   </div>
@@ -157,7 +155,7 @@ export default async function TrasparenzaPage() {
         <section className="mx-auto max-w-xl px-5 pb-20 text-center sm:px-8">
           <p className="text-xs leading-relaxed text-faint">
             Nessun dato personale o biometrico è esposto. Solo aggregati. Ogni contenuto è
-            verificabile dal suo certificato in <Link href="/verify" className="text-teal hover:underline">/verify</Link>.
+            verificabile dal suo certificato in <Link href="/verify" className="text-verified hover:underline">/verify</Link>.
           </p>
         </section>
       </div>

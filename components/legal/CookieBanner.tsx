@@ -57,14 +57,14 @@ export function CookieBanner() {
         <p className="mt-1.5 text-[0.8rem] leading-relaxed text-muted">
           Usiamo solo cookie <span className="text-foreground">essenziali</span> (accesso e preferenze).
           Niente profilazione, niente pubblicità. Dettagli nella{" "}
-          <Link href="/cookie" className="text-violet-light underline">cookie policy</Link>.
+          <Link href="/cookie" className="text-amber-ink underline">cookie policy</Link>.
         </p>
 
         {detail && (
-          <div className="mt-3 flex flex-col gap-2 rounded-xl border border-border bg-white/[0.02] p-3.5">
+          <div className="mt-3 flex flex-col gap-2 rounded-xl border border-border bg-surface p-3.5">
             <label className="flex items-center justify-between gap-3 text-[0.8rem]">
               <span><span className="font-semibold text-foreground">Essenziali</span> <span className="text-faint">· accesso, sicurezza, preferenze</span></span>
-              <span className="rounded-full border border-teal/35 bg-teal/10 px-2.5 py-0.5 text-[0.65rem] font-bold text-teal">sempre attivi</span>
+              <span className="rounded-full border border-verified/35 bg-verified-soft px-2.5 py-0.5 text-[0.65rem] font-bold text-verified">sempre attivi</span>
             </label>
             <label className="flex cursor-pointer items-center justify-between gap-3 text-[0.8rem]">
               <span><span className="font-semibold text-foreground">Statistiche</span> <span className="text-faint">· oggi non in uso; la scelta varrà se le introdurremo</span></span>
@@ -75,10 +75,10 @@ export function CookieBanner() {
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {/* Pari dignità visiva: nessun dark pattern */}
-          <button onClick={() => save(false)} className="rounded-full border border-border px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-edge">
+          <button onClick={() => save(false)} className="rounded-full border border-border px-5 py-2.5 text-[0.9rem] font-semibold text-foreground transition-colors hover:border-edge">
             Solo essenziali
           </button>
-          <button onClick={() => save(detail ? analytics : true)} className="rounded-full border border-border px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-edge">
+          <button onClick={() => save(detail ? analytics : true)} className="rounded-full border border-border px-5 py-2.5 text-[0.9rem] font-semibold text-foreground transition-colors hover:border-edge">
             {detail ? "Salva preferenze" : "Accetta tutto"}
           </button>
           {!detail && (
@@ -97,7 +97,7 @@ export function ManageCookiesButton() {
   return (
     <button
       onClick={() => window.dispatchEvent(new Event("semblic:cookie-prefs"))}
-      className="rounded-full border border-violet/35 bg-violet/10 px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-violet-light transition-colors hover:bg-violet/20"
+      className="rounded-full border border-amber/50 bg-amber-soft px-5 py-2.5 text-[0.9rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft"
     >
       Gestisci le preferenze cookie
     </button>

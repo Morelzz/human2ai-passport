@@ -73,11 +73,11 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
   return (
     <div className="space-y-5">
       {/* Handle */}
-      <div className="glass rounded-2xl p-5">
+      <div className="card rounded-2xl p-5">
         <label htmlFor="h" className="mb-2 block text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">
           Handle dell&apos;avatar
         </label>
-        <div className="flex items-center gap-2 rounded-xl border border-border bg-obsidian px-3 focus-within:border-teal/50">
+        <div className="flex items-center gap-2 rounded-xl border border-border px-3 focus-within:border-verified/50">
           <span className="text-muted">@</span>
           <input
             id="h"
@@ -90,14 +90,14 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
           />
         </div>
         {notFound && (
-          <p className="mt-2 text-xs text-crimson-light">
+          <p className="mt-2 text-xs text-blocked">
             Nessun avatar pubblico con questo handle (o non ancora approvato).
           </p>
         )}
       </div>
 
       {/* Anteprima + dimensione */}
-      <div className="glass rounded-2xl p-5">
+      <div className="card rounded-2xl p-5">
         <div className="mb-4 flex items-center justify-between">
           <span className="text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">Anteprima</span>
           <div className="flex gap-1 rounded-lg border border-border p-0.5">
@@ -106,7 +106,7 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
                 key={s.key}
                 onClick={() => setSize(s.key)}
                 className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
-                  size === s.key ? "bg-violet/25 text-violet-light" : "text-muted hover:text-foreground"
+                  size === s.key ? "bg-amber-soft text-amber-ink" : "text-muted hover:text-foreground"
                 }`}
               >
                 {s.label}
@@ -134,10 +134,10 @@ export default function BadgeClient({ initialHandle }: { initialHandle: string }
 
         {canUse && (
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm">
-            <a href={`/api/badge/${handle}`} target="_blank" rel="noopener" className="text-teal hover:underline">
+            <a href={`/api/badge/${handle}`} target="_blank" rel="noopener" className="text-verified hover:underline">
               Apri il badge ↗
             </a>
-            <a href={`/passport/${handle}`} className="text-violet-light hover:underline">
+            <a href={`/passport/${handle}`} className="text-amber-ink hover:underline">
               Vai al passport →
             </a>
           </div>
@@ -188,7 +188,7 @@ function SnippetBox({
   onCopy: () => void;
 }) {
   return (
-    <div className="glass rounded-2xl p-5">
+    <div className="card rounded-2xl p-5">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <p className="text-sm font-bold">{title}</p>
@@ -199,16 +199,16 @@ function SnippetBox({
           disabled={disabled}
           className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-bold transition-colors ${
             disabled
-              ? "cursor-not-allowed bg-white/5 text-faint"
+              ? "cursor-not-allowed bg-surface text-faint"
               : copied
-                ? "bg-teal/20 text-teal-light"
-                : "bg-gradient-to-r from-violet to-crimson text-white hover:opacity-90"
+                ? "bg-verified-soft text-verified"
+                : "bg-amber text-on-amber hover:bg-amber-hover"
           }`}
         >
           {copied ? "Copiato!" : "Copia"}
         </button>
       </div>
-      <pre className="overflow-x-auto rounded-xl border border-border bg-obsidian p-3.5 text-xs leading-relaxed text-muted">
+      <pre className="overflow-x-auto rounded-xl border border-border p-3.5 text-xs leading-relaxed text-muted">
         <code>{code}</code>
       </pre>
     </div>

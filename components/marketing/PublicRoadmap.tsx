@@ -89,7 +89,7 @@ export function PublicRoadmap() {
     <section id="la-strada" className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
       {/* Intestazione */}
       <div className="mx-auto max-w-2xl text-center">
-        <span className="label-mono text-teal">La strada</span>
+        <span className="kicker text-verified">La strada</span>
         <h2 className="mt-2 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
           <KineticText text="Dove stiamo andando" />
         </h2>
@@ -165,7 +165,7 @@ export function PublicRoadmap() {
       {/* Chiusura + nota onestà sulle date */}
       <div className="mx-auto mt-16 max-w-xl text-center">
         <p className="text-balance text-lg font-semibold text-foreground sm:text-xl">
-          Ogni fase è una promessa che diventa codice. <span className="text-crimson">Siamo alla prima.</span>
+          Ogni fase è una promessa che diventa codice. <span className="text-blocked">Siamo alla prima.</span>
         </p>
         <p className="mt-4 text-xs leading-relaxed text-faint">
           Gli orizzonti temporali indicano la nostra visione, non impegni contrattuali. Gli anni sono indicativi.
@@ -183,7 +183,7 @@ export function PublicRoadmapCompact() {
   return (
     <section className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
       <div className="text-center">
-        <span className="label-mono text-teal">La strada</span>
+        <span className="kicker text-verified">La strada</span>
         <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">Dove stiamo andando</h2>
       </div>
       <ol className="mt-8 space-y-2">
@@ -191,7 +191,7 @@ export function PublicRoadmapCompact() {
           const c = COLOR[p.status];
           const isCurrent = p.status === "current";
           return (
-            <li key={p.num} className="glass flex items-center gap-4 rounded-full px-5 py-3">
+            <li key={p.num} className="card flex items-center gap-4 rounded-full px-5 py-3">
               <span className="font-mono text-[0.65rem] font-extrabold" style={{ color: c }}>{p.num}</span>
               <span className="min-w-0 flex-1 truncate text-sm font-bold">{p.title}</span>
               {isCurrent && (
@@ -206,7 +206,7 @@ export function PublicRoadmapCompact() {
         })}
       </ol>
       <p className="mt-6 text-center">
-        <Link href="/#la-strada" className="text-sm font-semibold text-violet-light transition-colors hover:text-foreground">
+        <Link href="/#la-strada" className="text-sm font-semibold text-amber-ink transition-colors hover:text-foreground">
           La roadmap completa, fase per fase →
         </Link>
       </p>
@@ -272,7 +272,7 @@ function PhaseCard({ phase }: { phase: Phase }) {
   const c = COLOR[phase.status];
   const isCurrent = phase.status === "current";
   return (
-    <div className="glass glass-hover relative h-full overflow-hidden rounded-2xl p-5 text-left">
+    <div className="card transition-colors hover:border-amber/60 relative h-full overflow-hidden rounded-2xl p-5 text-left">
       {/* Accento superiore nel colore di stato */}
       <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${c}, transparent)` }} />
       <div className="flex items-center gap-2">

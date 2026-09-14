@@ -40,13 +40,13 @@ export default function FilterDemo() {
   const block = res?.decision === "BLOCK";
 
   return (
-    <div className="glass rounded-2xl p-5 sm:p-6">
+    <div className="card rounded-2xl p-5 sm:p-6">
       <p className="mb-4 text-[0.7rem] font-bold uppercase tracking-[0.12em] text-faint">Provalo dal vivo</p>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
         <div>
           <label htmlFor="subj" className="mb-1 block text-xs text-muted">subject (handle)</label>
-          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-obsidian px-3 focus-within:border-teal/50">
+          <div className="flex items-center gap-1.5 rounded-xl border border-border px-3 focus-within:border-verified/50">
             <span className="text-muted">@</span>
             <input
               id="subj"
@@ -63,7 +63,7 @@ export default function FilterDemo() {
             id="use"
             value={use}
             onChange={(e) => setUse(e.target.value)}
-            className="w-full rounded-xl border border-border bg-obsidian px-3 py-2.5 text-sm text-foreground outline-none focus:border-teal/50"
+            className="w-full rounded-xl border border-border px-3 py-2.5 text-sm text-foreground outline-none focus:border-verified/50"
           >
             <option value="">(qualsiasi)</option>
             {CATEGORIES.map((c) => (
@@ -76,7 +76,7 @@ export default function FilterDemo() {
             onClick={ask}
             disabled={loading || !subject.trim()}
             className={`w-full rounded-xl px-4 py-2.5 text-sm font-bold transition-opacity sm:w-auto ${
-              subject.trim() ? "bg-gradient-to-r from-violet to-crimson text-white hover:opacity-90" : "cursor-not-allowed bg-white/5 text-faint"
+              subject.trim() ? "bg-amber text-on-amber hover:bg-amber-hover" : "cursor-not-allowed bg-surface text-faint"
             }`}
           >
             {loading ? "…" : "Interroga il filtro"}
@@ -100,13 +100,13 @@ export default function FilterDemo() {
           </div>
           {res.reason && <p className="mt-2 text-sm text-muted">{res.reason}</p>}
 
-          <pre className="mt-4 overflow-x-auto rounded-xl border border-border bg-obsidian p-3.5 text-xs leading-relaxed text-muted">
+          <pre className="mt-4 overflow-x-auto rounded-xl border border-border p-3.5 text-xs leading-relaxed text-muted">
             <code>{JSON.stringify(res, null, 2)}</code>
           </pre>
         </div>
       )}
 
-      {res?.error && <p className="mt-4 text-sm text-crimson-light">{res.error}</p>}
+      {res?.error && <p className="mt-4 text-sm text-blocked">{res.error}</p>}
     </div>
   );
 }

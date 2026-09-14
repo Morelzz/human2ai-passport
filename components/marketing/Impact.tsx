@@ -50,7 +50,7 @@ export function Impact() {
         <span className="font-mono text-[11px] uppercase tracking-[0.34em] text-[#F2A93B]/85">La tesi</span>
 
         {/* La tesi: sottile, emerge dal buio */}
-        <h2 className="mx-auto mt-5 max-w-[19ch] text-balance text-3xl font-extralight leading-[1.12] tracking-tight text-foreground/60 sm:text-5xl">
+        <h2 className="mx-auto mt-5 max-w-[19ch] text-balance text-3xl font-bold leading-[1.12] tracking-tight text-foreground/60 sm:text-5xl">
           L&apos;AI ha imparato a fabbricare persone.
         </h2>
 

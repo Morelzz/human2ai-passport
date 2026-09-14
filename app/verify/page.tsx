@@ -1,5 +1,5 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import VerifyClient from "./VerifyClient";
 
 // Il portale della campagna: i link /verify (e i deep-link ?token=) vengono
@@ -22,16 +22,15 @@ export default async function VerifyPage({
   // dal badge, dalle segnalazioni). Senza il parametro, comportamento invariato.
   const { token } = await searchParams;
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
           <div className="mb-8">
-            <span className="text-xs font-bold tracking-[0.14em] text-teal">SIGIL</span>
+            <span className="text-xs font-bold tracking-[0.14em] text-verified">SIGIL</span>
             {/* Titolo in display sottile (Geist peso 200, tracking -0.04em) */}
-            <h1 className="mt-2 text-4xl font-extralight tracking-[-0.04em] sm:text-5xl">Verifica un contenuto</h1>
+            <h1 className="mt-2 text-4xl font-bold tracking-[-0.04em] sm:text-5xl">Verifica un contenuto</h1>
             <p className="mt-3 leading-relaxed text-muted">
               <span className="text-foreground">Sigil</span> è il verificatore pubblico di Semblic.
               Carica un&apos;immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e ti mostriamo
@@ -43,6 +42,7 @@ export default async function VerifyPage({
           </div>
           <VerifyClient initialToken={token ?? ""} />
         </main>
+        <Footer />
       </div>
     </div>
   );

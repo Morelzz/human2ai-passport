@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FileCheck2, ScanSearch, BadgeCheck, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 
@@ -49,14 +49,13 @@ const MAPPA = [
 
 export default function AiActPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <main className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="label-mono text-teal">AI Act · in applicazione dal 2 agosto 2026</span>
+            <span className="kicker text-verified">AI Act · in applicazione dal 2 agosto 2026</span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
               <KineticText text="La trasparenza e'" />
               <span className="mt-1 block">
@@ -77,7 +76,7 @@ export default function AiActPage() {
           <Reveal>
             <div className="mt-12 grid gap-4 sm:grid-cols-2">
               {MAPPA.map((m) => (
-                <div key={m.chiede} className="glass glass-hover relative overflow-hidden rounded-[2rem] p-7">
+                <div key={m.chiede} className="card transition-colors hover:border-amber/60 relative overflow-hidden rounded-[2rem] p-7">
                   <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${m.c}, transparent)` }} />
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: `${m.c}1a`, color: m.c }}>
@@ -90,7 +89,7 @@ export default function AiActPage() {
                   <h2 className="mt-4 text-lg font-extrabold leading-tight">{m.chiede}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted">{m.dettaglio}</p>
                   <p className="mt-3 text-sm leading-relaxed">
-                    <span className="font-bold text-teal">Semblic risponde: </span>
+                    <span className="font-bold text-verified">Semblic risponde: </span>
                     {m.risponde}
                   </p>
                 </div>
@@ -116,6 +115,7 @@ export default function AiActPage() {
             </div>
           </Reveal>
         </main>
+        <Footer />
       </div>
     </div>
   );

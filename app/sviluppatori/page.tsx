@@ -1,5 +1,5 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import FilterDemo from "./FilterDemo";
 
 export const metadata = {
@@ -28,14 +28,13 @@ export default function SviluppatoriPage() {
 }`;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <main className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="mb-10">
-            <span className="text-xs font-bold tracking-[0.14em] text-teal">FASE 2 · IL FILTRO PER TUTTI</span>
+            <span className="text-xs font-bold tracking-[0.14em] text-verified">FASE 2 · IL FILTRO PER TUTTI</span>
             <h1 className="mt-2 text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">
               Il filtro del consenso, via API.
             </h1>
@@ -43,7 +42,7 @@ export default function SviluppatoriPage() {
               Prima di generare un essere umano, qualsiasi sistema può chiedere a Semblic se quella
               persona ha <span className="text-foreground">acconsentito</span>, per quella categoria d&apos;uso.
               È il passaggio che trasforma il consenso in <span className="text-foreground">infrastruttura</span>:
-              senza <code className="rounded bg-teal/10 px-1.5 py-0.5 font-mono text-sm text-teal">ALLOW</code>, non si genera.
+              senza <code className="rounded bg-verified-soft px-1.5 py-0.5 font-mono text-sm text-verified">ALLOW</code>, non si genera.
             </p>
           </div>
 
@@ -53,12 +52,12 @@ export default function SviluppatoriPage() {
           {/* Endpoint */}
           <section className="mt-12">
             <h2 className="text-xl font-bold">L&apos;endpoint</h2>
-            <pre className="mt-3 overflow-x-auto rounded-xl border border-border bg-obsidian p-4 text-sm leading-relaxed">
-              <code className="text-foreground">GET /api/filter?subject=<span className="text-teal">&lt;handle&gt;</span>&amp;use=<span className="text-teal">&lt;categoria&gt;</span></code>
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-border p-4 text-sm leading-relaxed">
+              <code className="text-foreground">GET /api/filter?subject=<span className="text-verified">&lt;handle&gt;</span>&amp;use=<span className="text-verified">&lt;categoria&gt;</span></code>
             </pre>
             <ul className="mt-4 space-y-2 text-sm text-muted">
-              <li><code className="font-mono text-violet-light">subject</code>: l&apos;handle della persona nel registro (obbligatorio).</li>
-              <li><code className="font-mono text-violet-light">use</code>: la categoria d&apos;uso da verificare (opzionale): Business, Fashion, Beauty, Sport, …</li>
+              <li><code className="font-mono text-amber-ink">subject</code>: l&apos;handle della persona nel registro (obbligatorio).</li>
+              <li><code className="font-mono text-amber-ink">use</code>: la categoria d&apos;uso da verificare (opzionale): Business, Fashion, Beauty, Sport, …</li>
             </ul>
           </section>
 
@@ -66,22 +65,23 @@ export default function SviluppatoriPage() {
           <section className="mt-10">
             <h2 className="text-xl font-bold">La risposta</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              Sempre <code className="font-mono text-violet-light">ALLOW</code> o <code className="font-mono text-violet-light">BLOCK</code>,
+              Sempre <code className="font-mono text-amber-ink">ALLOW</code> o <code className="font-mono text-amber-ink">BLOCK</code>,
               con il motivo e la <span className="text-foreground">prova pubblica</span> (token, link di verifica, passaporto).
               Il consenso è una timeline: una revoca rende <code className="font-mono">BLOCK</code> in tempo reale.
             </p>
-            <pre className="mt-3 overflow-x-auto rounded-xl border border-border bg-obsidian p-4 text-xs leading-relaxed text-muted">
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-border p-4 text-xs leading-relaxed text-muted">
               <code>{exampleResponse}</code>
             </pre>
           </section>
 
-          <p className="mt-10 rounded-2xl border border-border bg-white/[0.02] p-5 text-sm leading-relaxed text-muted">
+          <p className="mt-10 rounded-2xl border border-border bg-surface p-5 text-sm leading-relaxed text-muted">
             <span className="font-semibold text-foreground">Nota.</span> Questa è una demo pubblica in sola
             lettura. In produzione il filtro precede ogni generazione e ogni contenuto autorizzato esce con
             <span className="text-foreground"> filigrana invisibile</span> e <span className="text-foreground">certificato verificabile</span>,
             così la prova viaggia ovunque, anche fuori dalla piattaforma.
           </p>
         </main>
+        <Footer />
       </div>
     </div>
   );

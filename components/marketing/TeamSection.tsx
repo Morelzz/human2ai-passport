@@ -38,14 +38,14 @@ export function TeamSection({
   return (
     <section className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
       <div className="text-center">
-        <span className="label-mono text-teal">{eyebrow}</span>
+        <span className="kicker text-verified">{eyebrow}</span>
         <h2 className="mt-3 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">{title}</h2>
         {subtitle && <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">{subtitle}</p>}
       </div>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-3">
         {MEMBERS.map((m, i) => (
-          <div key={i} className="glass glass-hover relative flex flex-col items-center overflow-hidden rounded-[2rem] p-7 text-center">
+          <div key={i} className="card transition-colors hover:border-amber/60 relative flex flex-col items-center overflow-hidden rounded-[2rem] p-7 text-center">
             <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${m.accent}, transparent)` }} />
 
             {/* Ritratto: foto quando c'e', altrimenti silhouette su alone */}

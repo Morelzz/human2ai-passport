@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import RegisterOrgClient from "./RegisterOrgClient";
 
 export const metadata = {
@@ -31,13 +30,12 @@ export default async function EnterpriseRegisterPage() {
   const blocked = role !== "buyer" && role !== "enterprise";
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
         <section className="mx-auto max-w-2xl px-5 pb-24 pt-16 sm:px-8 sm:pt-24">
-          <span className="label-mono text-crimson-light">Enterprise · KYB</span>
-          <h1 className="mt-4 text-balance text-3xl font-extralight leading-[1.05] tracking-[-0.03em] sm:text-4xl">
+          <span className="kicker text-blocked">Enterprise · KYB</span>
+          <h1 className="mt-4 text-balance text-3xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-4xl">
             Registra la tua agenzia.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted">
@@ -47,8 +45,8 @@ export default async function EnterpriseRegisterPage() {
           </p>
 
           {blocked ? (
-            <div className="glass mt-8 rounded-2xl border-crimson/30 p-6">
-              <p className="text-sm font-semibold text-crimson">Questo account non può registrare un&apos;azienda</p>
+            <div className="card mt-8 rounded-2xl border-blocked/50 p-6">
+              <p className="text-sm font-semibold text-blocked">Questo account non può registrare un&apos;azienda</p>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 Il tuo profilo è già un Creatore o un operatore. Usa un account dedicato all&apos;agenzia
                 (una email aziendale) per registrare l&apos;organizzazione.

@@ -33,8 +33,8 @@ export function WardIntro() {
         <span aria-hidden className="text-lg leading-none">&lsaquo;</span> Indietro
       </Link>
 
-      <span className="mt-8 block label-mono text-violet-light">Ward</span>
-      <h1 className="mt-4 text-balance text-4xl font-extralight leading-[1.02] tracking-[-0.03em] text-foreground sm:text-6xl">
+      <span className="mt-8 block kicker">Ward</span>
+      <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-foreground sm:text-6xl">
         Le tue immagini,
         <br />
         trovate ovunque.
@@ -55,8 +55,8 @@ export function WardIntro() {
 
       <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3">
         {STEPS.map((s, i) => (
-          <div key={s.k} className="bg-obsidian-2 p-6">
-            <div className="font-mono text-xs text-violet-light">0{i + 1}</div>
+          <div key={s.k} className="bg-surface p-6">
+            <div className="font-mono text-xs text-amber-ink">0{i + 1}</div>
             <h2 className="mt-3 text-lg font-semibold text-foreground">{s.k}</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted">{s.d}</p>
           </div>
@@ -64,7 +64,7 @@ export function WardIntro() {
       </div>
 
       {/* NEMESIS: lo strike. Ward trova, Nemesis colpisce. */}
-      <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-obsidian-2 p-6 sm:p-8" style={{ borderColor: "rgba(238,122,112,0.25)" }}>
+      <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-surface p-6 sm:p-8" style={{ borderColor: "rgba(238,122,112,0.25)" }}>
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl text-[#2a1404]" style={{ background: TRAMONTO }}>
             <NemesisMark className="h-5 w-5" />
@@ -82,7 +82,7 @@ export function WardIntro() {
 
       <p className="mt-10 max-w-xl text-sm leading-relaxed text-faint">
         Cerchi invece di non essere generabile dalle AI? Quella e' la{" "}
-        <Link href="/tutela" className="text-violet-light underline-offset-2 hover:underline">
+        <Link href="/tutela" className="text-amber-ink underline-offset-2 hover:underline">
           protezione identita&apos;
         </Link>
         , una cosa diversa: registri il tuo volto per restare fuori dal generativo.

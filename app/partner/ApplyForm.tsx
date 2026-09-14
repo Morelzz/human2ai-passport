@@ -36,8 +36,8 @@ export function ApplyForm() {
 
   if (done) {
     return (
-      <div className="glass rounded-2xl border-teal/30 p-8 text-center">
-        <p className="text-lg font-bold text-teal">✓ Candidatura ricevuta</p>
+      <div className="card rounded-2xl border-verified/50 p-8 text-center">
+        <p className="text-lg font-bold text-verified">✓ Candidatura ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. I primi partner verranno contattati per il percorso
           di certificazione, ti scriviamo a {email}.
@@ -46,7 +46,7 @@ export function ApplyForm() {
     );
   }
 
-  const inp = "w-full rounded-xl border border-border bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
+  const inp = "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
@@ -79,7 +79,7 @@ export function ApplyForm() {
       <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" placeholder="website" />
 
       {error && (
-        <div className="flex items-start gap-2 rounded-xl border border-crimson/40 bg-crimson/10 p-3.5 text-sm font-medium text-crimson">
+        <div className="flex items-start gap-2 rounded-xl border border-blocked/50 bg-blocked-soft p-3.5 text-sm font-medium text-blocked">
           <span aria-hidden>⚠️</span>
           <span>{error}</span>
         </div>

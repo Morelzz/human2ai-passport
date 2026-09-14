@@ -60,7 +60,7 @@ export function ShareStoryButton({
         {busy ? "Preparo la Storia…" : label}
       </button>
       {error && (
-        <p role="status" className="mt-1 text-[0.7rem] text-crimson">
+        <p role="status" className="mt-1 text-[0.7rem] text-blocked">
           {error}
         </p>
       )}

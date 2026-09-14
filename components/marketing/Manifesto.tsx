@@ -58,7 +58,7 @@ export function Manifesto() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="label-mono text-crimson-light"
+          className="kicker text-blocked"
         >
           Il manifesto
         </motion.span>

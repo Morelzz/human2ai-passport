@@ -1,5 +1,5 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import { LegalNotice } from "@/components/legal/LegalNotice";
 
 export const metadata = {
@@ -10,12 +10,11 @@ export const metadata = {
 // NB: bozza informativa allineata alle pratiche del prodotto. Da far validare a un legale prima del lancio.
 export default function PrivacyPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
-          <span className="text-xs font-bold tracking-[0.14em] text-violet-light">PRIVACY</span>
+          <span className="text-xs font-bold tracking-[0.14em] text-amber-ink">PRIVACY</span>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Informativa privacy</h1>
           <LegalNotice />
 
@@ -97,10 +96,11 @@ export default function PrivacyPage() {
               <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>.
               Responsabile della protezione dei dati (DPO):{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: nomina del DPO se dovuta ex Art. 37, probabile, dato il trattamento biometrico su larga scala]</span>.
-              Puoi anche scriverci dalla pagina <a href="/contatti" className="text-violet-light underline">/contatti</a>.
+              Puoi anche scriverci dalla pagina <a href="/contatti" className="text-amber-ink underline">/contatti</a>.
             </Section>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="glass rounded-2xl p-6">
+    <section className="card rounded-2xl p-6">
       <h2 className="mb-2 text-lg font-bold text-foreground">{title}</h2>
       <p className="m-0">{children}</p>
     </section>

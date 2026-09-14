@@ -48,8 +48,8 @@ export function InquiryForm({
 
   if (done) {
     return (
-      <div className="glass rounded-2xl border-teal/30 p-8 text-center">
-        <p className="text-lg font-bold text-teal">✓ Richiesta ricevuta</p>
+      <div className="card rounded-2xl border-verified/50 p-8 text-center">
+        <p className="text-lg font-bold text-verified">✓ Richiesta ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. Ti rispondiamo a {email} entro 48 ore lavorative.
         </p>
@@ -57,7 +57,7 @@ export function InquiryForm({
     );
   }
 
-  const inp = "w-full rounded-xl border border-border bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
+  const inp = "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
@@ -95,14 +95,14 @@ export function InquiryForm({
       <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" placeholder="website" />
 
       {error && (
-        <div className="flex items-start gap-2 rounded-xl border border-crimson/40 bg-crimson/10 p-3.5 text-sm font-medium text-crimson">
+        <div className="flex items-start gap-2 rounded-xl border border-blocked/50 bg-blocked-soft p-3.5 text-sm font-medium text-blocked">
           <span aria-hidden>⚠️</span>
           <span>{error}</span>
         </div>
       )}
 
       <button type="submit" disabled={sending}
-        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-white transition-all hover:brightness-110 disabled:opacity-50">
+        className="mt-1 rounded-full bg-amber px-7 py-3.5 text-[0.9rem] font-semibold text-on-amber transition-all hover:brightness-110 disabled:opacity-50">
         {sending ? "Invio…" : cta}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">

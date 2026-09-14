@@ -56,21 +56,21 @@ export function BookingClient({
 
   if (done) {
     return (
-      <div className="glass rounded-2xl border-teal/30 p-8 text-center">
-        <p className="text-lg font-bold text-teal">✓ Richiesta ricevuta</p>
+      <div className="card rounded-2xl border-verified/50 p-8 text-center">
+        <p className="text-lg font-bold text-verified">✓ Richiesta ricevuta</p>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
           Grazie {name.split(" ")[0]}. Ti confermiamo data e ora a {email}, e ricorda:{" "}
           <span className="text-foreground">vieni come sei</span>.
         </p>
         <p className="mx-auto mt-3 max-w-sm text-xs leading-relaxed text-faint">
           Il pagamento ({priceLabel}) si salda in studio. Nel frattempo,{" "}
-          <Link href="/scansione" className="text-violet-light underline">ripassa come prepararti</Link>.
+          <Link href="/scansione" className="text-amber-ink underline">ripassa come prepararti</Link>.
         </p>
       </div>
     );
   }
 
-  const inp = "w-full rounded-xl border border-border bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
+  const inp = "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50";
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
@@ -120,20 +120,20 @@ export function BookingClient({
       <input type="text" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" placeholder="website" />
 
       {error && (
-        <div className="flex items-start gap-2 rounded-xl border border-crimson/40 bg-crimson/10 p-3.5 text-sm font-medium text-crimson">
+        <div className="flex items-start gap-2 rounded-xl border border-blocked/50 bg-blocked-soft p-3.5 text-sm font-medium text-blocked">
           <span aria-hidden>⚠️</span>
           <span>{error}</span>
         </div>
       )}
 
       <button type="submit" disabled={sending}
-        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-on-amber transition-all hover:brightness-110 disabled:opacity-50">
+        className="mt-1 rounded-full bg-amber px-7 py-3.5 text-[0.9rem] font-semibold text-on-amber transition-all hover:brightness-110 disabled:opacity-50">
         {sending ? "Invio…" : `Prenota la sessione · ${priceLabel}`}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">
         Slot soggetto a conferma: ti scriviamo noi. Oggi il pagamento si salda in studio
         (l&apos;online arriva a breve). Usiamo questi dati solo per la tua sessione,{" "}
-        <Link href="/privacy" className="text-violet-light underline">privacy</Link>.
+        <Link href="/privacy" className="text-amber-ink underline">privacy</Link>.
       </p>
     </form>
   );

@@ -1,5 +1,5 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import BadgeClient from "./BadgeClient";
 
 export const metadata = {
@@ -19,14 +19,13 @@ export default async function BadgePage({
   const { handle } = await searchParams;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="mb-8">
-            <span className="text-xs font-bold tracking-[0.14em] text-teal">LO STANDARD</span>
+            <span className="text-xs font-bold tracking-[0.14em] text-verified">LO STANDARD</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
               Badge «Volto Verificato»
             </h1>
@@ -40,6 +39,7 @@ export default async function BadgePage({
 
           <BadgeClient initialHandle={handle ?? "random"} />
         </main>
+        <Footer />
       </div>
     </div>
   );

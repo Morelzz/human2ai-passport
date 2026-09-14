@@ -94,7 +94,7 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
       onClick={onClick}
       aria-pressed={active}
       className={`focus-ring rounded-full border px-2.5 py-1 text-[0.68rem] font-semibold transition-colors ${
-        active ? "border-teal/60 bg-teal/15 text-teal" : "border-border text-faint hover:border-edge hover:text-muted"
+        active ? "border-verified/60 bg-verified-soft text-verified" : "border-border text-faint hover:border-edge hover:text-muted"
       }`}
     >
       {children}
@@ -309,10 +309,10 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
     : "idle";
   const ringClass = {
     idle: "border-border",
-    drag: "border-teal/70 bg-teal/5",
-    busy: "border-violet/40",
-    ok: "border-teal/60",
-    warn: "border-crimson/50",
+    drag: "border-verified/70 bg-verified/5",
+    busy: "border-amber/50",
+    ok: "border-verified/60",
+    warn: "border-blocked/50",
   }[portalState];
 
   const face = result?.face;
@@ -329,24 +329,24 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       >
         <label
           data-state={portalState}
-          className={`relative flex h-[clamp(15rem,40vw,18rem)] w-[clamp(15rem,40vw,18rem)] cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
+          className={`relative flex h-[clamp(15rem,40vw,18rem)] w-[clamp(15rem,40vw,18rem)] cursor-pointer items-center justify-center overflow-hidden rounded-[28px] border bg-surface shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-22px_rgba(0,0,0,0.9)] transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-light focus-within:ring-offset-2 focus-within:ring-offset-black ${ringClass} ${busy ? "cursor-wait" : ""} ${dragOver ? "scale-[1.02]" : ""}`}
         >
           {/* Aura di verifica (solo a riposo: su un'immagine caricata la toglie per non tingerla) */}
           {!preview && (
             <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 55% at 50% 42%, rgba(127,174,150,0.12), transparent 62%)" }} />
           )}
           {/* Cornice a mirino (scanner): l'identita di Sigil = verifica (salvia) */}
-          <span aria-hidden className="pointer-events-none absolute left-3.5 top-3.5 h-5 w-5 rounded-tl-lg border-l-[1.5px] border-t-[1.5px] border-teal/50" />
-          <span aria-hidden className="pointer-events-none absolute right-3.5 top-3.5 h-5 w-5 rounded-tr-lg border-r-[1.5px] border-t-[1.5px] border-teal/50" />
-          <span aria-hidden className="pointer-events-none absolute bottom-3.5 left-3.5 h-5 w-5 rounded-bl-lg border-b-[1.5px] border-l-[1.5px] border-teal/50" />
-          <span aria-hidden className="pointer-events-none absolute bottom-3.5 right-3.5 h-5 w-5 rounded-br-lg border-b-[1.5px] border-r-[1.5px] border-teal/50" />
+          <span aria-hidden className="pointer-events-none absolute left-3.5 top-3.5 h-5 w-5 rounded-tl-lg border-l-[1.5px] border-t-[1.5px] border-verified/50" />
+          <span aria-hidden className="pointer-events-none absolute right-3.5 top-3.5 h-5 w-5 rounded-tr-lg border-r-[1.5px] border-t-[1.5px] border-verified/50" />
+          <span aria-hidden className="pointer-events-none absolute bottom-3.5 left-3.5 h-5 w-5 rounded-bl-lg border-b-[1.5px] border-l-[1.5px] border-verified/50" />
+          <span aria-hidden className="pointer-events-none absolute bottom-3.5 right-3.5 h-5 w-5 rounded-br-lg border-b-[1.5px] border-r-[1.5px] border-verified/50" />
           {preview ? (
             // L'immagine si SCALA dentro al portale: soggetto sempre intero, mai tagliato.
             // eslint-disable-next-line @next/next/no-img-element
             <img src={preview} alt="" className={`h-full w-full object-contain p-2 transition-opacity ${busy ? "opacity-40" : "opacity-90"}`} />
           ) : (
             <span className="px-8 text-center text-[0.8rem] leading-relaxed text-faint">
-              <span aria-hidden className="mb-2 block text-4xl font-extralight text-muted">⌖</span>
+              <span aria-hidden className="mb-2 block text-4xl font-bold text-muted">⌖</span>
               Trascina qui un&apos;immagine
               <span className="block text-[0.7rem]">o tocca per sceglierla</span>
             </span>
@@ -363,7 +363,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.currentTarget.value = ""; }}
           />
         </label>
-        <p aria-live="polite" className="mt-3 h-5 text-center text-[0.75rem] text-violet-light">{stage ?? ""}</p>
+        <p aria-live="polite" className="mt-3 h-5 text-center text-[0.75rem] text-amber-ink">{stage ?? ""}</p>
         <p className="max-w-md text-center text-[0.68rem] leading-relaxed text-faint">
           Per leggere la filigrana l&apos;immagine <span className="text-muted">può essere inviata al server</span>
           (elaborata al volo, mai salvata); i file grandi vengono letti direttamente
@@ -377,7 +377,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
       {/* Live region SEMPRE montata: l'esito viene annunciato agli screen reader. */}
       <div role="status">
       {result && (
-        <div className={`mt-6 rounded-3xl border p-6 ${result.valid ? "border-teal/30 bg-teal/[0.04]" : result.marked ? "border-amber/30 bg-amber/[0.04]" : "border-crimson/25 bg-crimson/[0.03]"}`}>
+        <div className={`mt-6 rounded-3xl border p-6 ${result.valid ? "border-verified/50 bg-verified/[0.04]" : result.marked ? "border-amber/30 bg-amber/[0.04]" : "border-blocked/50 bg-blocked/[0.03]"}`}>
           {result.valid ? (
             <>
               {/* Sigillo + verdetto: emesso, non constatato */}
@@ -391,7 +391,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   </path>
                 </svg>
                 <div>
-                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-teal">
+                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-verified">
                     {result.type === "content" ? "GENERATO DA SEMBLIC" : "TOKEN VALIDO"}
                   </h2>
                   <p className="m-0 text-[0.8rem] text-muted">
@@ -404,18 +404,18 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
 
               {/* Correlazione visiva: contenuto ↔ persona del registro */}
               {result.type === "content" && result.handle && (
-                <div className="mb-5 flex items-center gap-4 rounded-2xl border border-border bg-obsidian p-4">
+                <div className="mb-5 flex items-center gap-4 rounded-2xl border border-border p-4">
                   {preview && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={preview} alt="" className="h-16 w-16 rounded-xl object-cover" />
                   )}
-                  <span aria-hidden className="text-lg text-teal">⇄</span>
+                  <span aria-hidden className="text-lg text-verified">⇄</span>
                   <div className="flex items-center gap-3">
                     {result.has_portrait ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={`/api/sample/${result.handle}/0`} alt={result.alias ?? ""} className="h-16 w-16 rounded-xl object-cover" />
                     ) : (
-                      <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-violet/15 text-xl font-bold text-violet-light">
+                      <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-violet/15 text-xl font-bold text-amber-ink">
                         {(result.alias ?? "?").charAt(0)}
                       </span>
                     )}
@@ -423,8 +423,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                       <p className="m-0 font-semibold text-foreground">{result.alias}</p>
                       <p className="m-0 text-[0.8rem] text-faint">@{result.handle}</p>
                       {result.status === "ATTIVO"
-                        ? <span className="text-[0.72rem] font-bold text-teal">● CONSENSO ATTIVO</span>
-                        : <span className="text-[0.72rem] font-bold text-crimson">✕ CONSENSO REVOCATO</span>}
+                        ? <span className="text-[0.72rem] font-bold text-verified">● CONSENSO ATTIVO</span>
+                        : <span className="text-[0.72rem] font-bold text-blocked">✕ CONSENSO REVOCATO</span>}
                     </div>
                   </div>
                 </div>
@@ -456,7 +456,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 {result.revoked_at && (
                   <div>
                     <p className="mb-0.5 text-[0.7rem] tracking-[0.08em] text-faint">REVOCATO DAL</p>
-                    <p className="m-0 font-semibold text-crimson">{formatDate(result.revoked_at)}</p>
+                    <p className="m-0 font-semibold text-blocked">{formatDate(result.revoked_at)}</p>
                   </div>
                 )}
               </div>
@@ -464,11 +464,11 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               {/* Check di coerenza: consenso commerciale ATTUALE della persona */}
               {result.type === "content" && typeof result.commercial_consent === "boolean" && (
                 result.commercial_consent ? (
-                  <p className="mt-4 rounded-xl border border-teal/25 bg-teal/5 p-3 text-[0.78rem] leading-relaxed text-teal">
+                  <p className="mt-4 rounded-xl border border-verified/25 bg-verified/5 p-3 text-[0.78rem] leading-relaxed text-verified">
                     ✓ La persona consente l&apos;uso commerciale del proprio volto. La concessione valeva al momento della generazione.
                   </p>
                 ) : (
-                  <p className="mt-4 rounded-xl border border-crimson/25 bg-crimson/5 p-3 text-[0.78rem] leading-relaxed text-crimson">
+                  <p className="mt-4 rounded-xl border border-blocked/50 bg-blocked/5 p-3 text-[0.78rem] leading-relaxed text-blocked">
                     ✗ Oggi la persona non consente più l&apos;uso commerciale: usi futuri sono bloccati. La concessione valeva al momento della generazione.
                   </p>
                 )
@@ -481,7 +481,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   <div className="flex flex-col gap-1.5 border-l border-border pl-4">
                     {result.events.slice(-6).map((ev, i) => {
                       const meta = EVENT_LABELS[ev.event_type] ?? { label: ev.event_type, tone: "teal" as const };
-                      const color = meta.tone === "crimson" ? "text-crimson" : meta.tone === "amber" ? "text-amber" : "text-teal";
+                      const color = meta.tone === "crimson" ? "text-blocked" : meta.tone === "amber" ? "text-amber" : "text-verified";
                       return (
                         <p key={i} className="m-0 text-[0.75rem] leading-relaxed text-muted">
                           <span className={`font-semibold ${color}`}>{meta.label}</span>
@@ -495,14 +495,14 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               )}
 
               {result.type === "content" && result.status === "REVOCATO" && (
-                <p className="mt-4 rounded-xl border border-crimson/25 bg-crimson/5 p-3 text-[0.78rem] leading-relaxed text-crimson">
+                <p className="mt-4 rounded-xl border border-blocked/50 bg-blocked/5 p-3 text-[0.78rem] leading-relaxed text-blocked">
                   Il consenso è stato revocato <strong>dopo</strong> questa generazione. La revoca è prospettica:
                   blocca gli usi futuri, mentre questo contenuto resta tracciato e attribuito.
                 </p>
               )}
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <Link href={`/passport/${result.handle}`} className="rounded-full border border-violet/40 px-4 py-1.5 text-[0.82rem] font-semibold text-violet-light transition-colors hover:bg-violet/10">
+                <Link href={`/passport/${result.handle}`} className="rounded-full border border-amber/50 px-4 py-1.5 text-[0.82rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft">
                   Vai al Passport →
                 </Link>
                 <Link
@@ -519,13 +519,13 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             /* ── GATE DI CONSENSO: il confronto biometrico non parte da solo ──
                (si arriva qui SOLO senza filigrana: il caso marked ha il suo stato) */
             <>
-              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">{result.wm_checked ? "NESSUNA FILIGRANA TROVATA" : "FILIGRANA NON VERIFICATA"}</h2>
+              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-blocked">{result.wm_checked ? "NESSUNA FILIGRANA TROVATA" : "FILIGRANA NON VERIFICATA"}</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 {result.wm_checked
                   ? "Questa immagine non porta la filigrana Semblic (o è stata rimossa da screenshot/ricompressione)."
                   : "La filigrana invisibile vive solo nei PNG originali scaricati da Semblic: un JPEG, uno screenshot o un'immagine molto grande non la conservano. Posso comunque confrontare il volto con il registro."}
               </p>
-              <div className="mt-4 rounded-2xl border border-border bg-obsidian p-4">
+              <div className="mt-4 rounded-2xl border border-border p-4">
                 <p className="m-0 text-[0.85rem] font-semibold text-foreground">
                   Vuoi confrontare il volto con il registro?
                 </p>
@@ -564,7 +564,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 Il volto in questa immagine è troppo piccolo o sfocato: una percentuale calcolata su pixel
                 che non contengono l&apos;informazione sarebbe un&apos;invenzione.
               </p>
-              <p className="mt-3 rounded-xl border border-border bg-white/[0.03] p-3 text-[0.78rem] leading-relaxed text-muted">
+              <p className="mt-3 rounded-xl border border-border bg-surface p-3 text-[0.78rem] leading-relaxed text-muted">
                 Non &laquo;miglioriamo&raquo; la foto con l&apos;AI inventando un volto: l&apos;identità è il prodotto,
                 o c&apos;è, o non ci pronunciamo. Se puoi, carica il <span className="text-foreground">file originale</span> (non uno screenshot).
               </p>
@@ -575,11 +575,11 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               <div className="mb-4 flex items-start gap-3">
                 <span aria-hidden className="mt-1 h-3 w-3 shrink-0 rounded-full bg-violet" />
                 <div>
-                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-violet-light">VOLTO PROTETTO: GENERAZIONE VIETATA</h2>
+                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-amber-ink">VOLTO PROTETTO: GENERAZIONE VIETATA</h2>
                   <p className="m-0 text-[0.8rem] text-muted">Questa persona si &egrave; registrata per NON essere generata.</p>
                 </div>
               </div>
-              <p className="rounded-xl border border-violet/20 bg-violet/[0.06] p-3 text-[0.8rem] leading-relaxed text-muted">
+              <p className="rounded-xl border border-amber/40 bg-amber-soft p-3 text-[0.8rem] leading-relaxed text-muted">
                 Per tutela non riveliamo di chi si tratta. Il titolare del volto &egrave; stato avvisato: sar&agrave; lui,
                 se vorr&agrave;, a procedere. Dentro Semblic questo volto non &egrave; generabile; fuori restano allerta precoce e rimozione assistita.
               </p>
@@ -589,9 +589,9 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             /* ── VOLTO RICONOSCIUTO (contenuto non certificato) ── */
             <>
               <div className="mb-4 flex items-start gap-3">
-                <span aria-hidden className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-crimson/15 text-crimson">⚠</span>
+                <span aria-hidden className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blocked-soft text-blocked">⚠</span>
                 <div>
-                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">CONTENUTO NON CERTIFICATO: VOLTO RICONOSCIUTO</h2>
+                  <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-blocked">CONTENUTO NON CERTIFICATO: VOLTO RICONOSCIUTO</h2>
                   <p className="m-0 text-[0.8rem] text-muted">Nessuna filigrana Semblic, ma il volto corrisponde a una persona del registro.</p>
                 </div>
               </div>
@@ -605,23 +605,23 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               {/* Candidati: barre hairline, ~% sempre, primo evidenziato */}
               <div className="flex flex-col gap-2">
                 {(face.candidates ?? []).map((c, i) => (
-                  <div key={c.handle} className={`select-none rounded-xl border p-3 ${i === 0 ? "border-crimson/30 bg-crimson/[0.04]" : "border-border"}`}>
+                  <div key={c.handle} className={`select-none rounded-xl border p-3 ${i === 0 ? "border-blocked/50 bg-blocked/[0.04]" : "border-border"}`}>
                     <div className="flex cursor-default items-baseline justify-between gap-3">
                       <p className="m-0 text-[0.85rem] font-semibold text-foreground">
                         {c.alias} <span className="font-normal text-faint">@{c.handle}</span>
-                        {c.status === "REVOCATO" && <span className="ml-2 text-[0.68rem] font-bold text-crimson">REVOCATO</span>}
+                        {c.status === "REVOCATO" && <span className="ml-2 text-[0.68rem] font-bold text-blocked">REVOCATO</span>}
                       </p>
                       <p className="m-0 font-mono text-[0.8rem] font-bold text-foreground">~{c.similarity}%</p>
                     </div>
                     <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/8">
-                      <div className="h-full rounded-full bg-crimson/70 transition-all duration-500" style={{ width: `${Math.min(100, c.similarity ?? 0)}%` }} />
+                      <div className="h-full rounded-full bg-blocked/70 transition-all duration-500" style={{ width: `${Math.min(100, c.similarity ?? 0)}%` }} />
                     </div>
                     {i === 0 && (
                       <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                        <Link href={`/report?handle=${encodeURIComponent(c.handle)}`} className="rounded-full bg-crimson px-3.5 py-1.5 text-[0.75rem] font-bold text-white transition-opacity hover:opacity-90">
+                        <Link href={`/report?handle=${encodeURIComponent(c.handle)}`} className="rounded-full bg-blocked px-3.5 py-1.5 text-[0.75rem] font-bold text-white transition-opacity hover:opacity-90">
                           Segnala questo contenuto →
                         </Link>
-                        <Link href={`/passport/${c.handle}`} className="rounded-full border border-violet/40 px-3.5 py-1.5 text-[0.75rem] font-semibold text-violet-light transition-colors hover:bg-violet/10">
+                        <Link href={`/passport/${c.handle}`} className="rounded-full border border-amber/50 px-3.5 py-1.5 text-[0.75rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft">
                           Passport
                         </Link>
                       </div>
@@ -630,14 +630,14 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 ))}
               </div>
 
-              <p className="mt-3 rounded-xl border border-crimson/20 bg-crimson/5 p-3 text-[0.76rem] leading-relaxed text-crimson/90">
+              <p className="mt-3 rounded-xl border border-blocked/20 bg-blocked/5 p-3 text-[0.76rem] leading-relaxed text-blocked/90">
                 Ogni contenuto autorizzato da Semblic porta la filigrana col certificato. Questa immagine non la porta:
                 con ogni probabilità è stata generata <strong>fuori</strong> da Semblic, senza il consenso della persona.
               </p>
             </>
           ) : face && face.scanned && !face.face_found ? (
             <>
-              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-crimson">NESSUN VOLTO ANALIZZABILE</h2>
+              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-blocked">NESSUN VOLTO ANALIZZABILE</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">Nell&apos;immagine non è stato rilevato un volto su cui eseguire il confronto.</p>
               {face.detail && (
                 <p className="mt-2 font-mono text-[0.65rem] text-faint">dettaglio tecnico: {face.detail}</p>
@@ -659,7 +659,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             </>
           ) : (
             <>
-              <h2 className={`m-0 font-mono text-[0.95rem] font-bold tracking-wide ${result.marked ? "text-amber" : "text-crimson"}`}>
+              <h2 className={`m-0 font-mono text-[0.95rem] font-bold tracking-wide ${result.marked ? "text-amber" : "text-blocked"}`}>
                 {result.source === "token" ? "NON VALIDO" : result.marked ? "FILIGRANA TROVATA: CERTIFICATO SCONOSCIUTO" : "NESSUNA FILIGRANA"}
               </h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
@@ -674,7 +674,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
 
           {/* ── RESTRINGI IL CERCHIO (solo dopo un'analisi volto riuscita) ── */}
           {showFilters && (
-            <div className="mt-5 rounded-2xl border border-border bg-obsidian p-4">
+            <div className="mt-5 rounded-2xl border border-border p-4">
               <div className="mb-3 flex items-baseline justify-between gap-3">
                 <p className="m-0 text-[0.7rem] font-bold tracking-[0.1em] text-faint">RESTRINGI IL CERCHIO</p>
                 <p className="m-0 text-[0.7rem] text-faint" aria-live="polite">

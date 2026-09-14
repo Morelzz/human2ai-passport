@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import { LegalNotice } from "@/components/legal/LegalNotice";
 import { ManageCookiesButton } from "@/components/legal/CookieBanner";
 
@@ -12,12 +12,11 @@ export const metadata = {
 // F1 — cookie policy. Bozza in revisione legale (vedi LegalNotice).
 export default function CookiePage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
-          <span className="text-xs font-bold tracking-[0.14em] text-violet-light">COOKIE</span>
+          <span className="text-xs font-bold tracking-[0.14em] text-amber-ink">COOKIE</span>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Cookie policy</h1>
           <LegalNotice />
 
@@ -44,12 +43,13 @@ export default function CookiePage() {
               del browser. <span className="mt-3 block"><ManageCookiesButton /></span>
             </Section>
             <Section title="Titolare e contatti">
-              Il titolare del trattamento è indicato nell&apos;<Link href="/privacy" className="text-violet-light underline">informativa privacy</Link>.
+              Il titolare del trattamento è indicato nell&apos;<Link href="/privacy" className="text-amber-ink underline">informativa privacy</Link>.
               Per qualsiasi domanda sui cookie: <span className="text-foreground">privacy@semblic.example</span>{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>.
             </Section>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );
@@ -57,7 +57,7 @@ export default function CookiePage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="glass rounded-2xl p-6">
+    <section className="card rounded-2xl p-6">
       <h2 className="mb-2 text-lg font-bold text-foreground">{title}</h2>
       <p className="m-0">{children}</p>
     </section>

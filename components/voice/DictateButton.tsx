@@ -44,8 +44,8 @@ export function DictateButton({
         aria-label={listening ? "Ferma la dettatura" : "Detta a voce"}
         className={`focus-ring relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[0.72rem] font-semibold transition-colors ${
           listening
-            ? "border border-amber bg-amber/15 text-amber"
-            : "border border-amber/30 bg-amber/[0.07] text-amber hover:bg-amber/15"
+            ? "border border-amber bg-amber-soft text-amber"
+            : "border border-amber/30 bg-amber/[0.07] text-amber hover:bg-amber-soft"
         }`}
       >
         {listening && (
@@ -58,7 +58,7 @@ export function DictateButton({
       {/* Didascalia dal vivo: errore (crimson) ha la priorita', poi l'anteprima
           del parlato mentre si ascolta, infine il suggerimento neutro a riposo. */}
       {error ? (
-        <span className="text-[0.7rem] leading-snug text-crimson">{error}</span>
+        <span className="text-[0.7rem] leading-snug text-blocked">{error}</span>
       ) : listening ? (
         <span className="truncate text-[0.7rem] italic leading-snug text-muted" aria-live="polite">
           {interim || "Parla pure…"}

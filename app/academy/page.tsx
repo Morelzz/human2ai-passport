@@ -2,7 +2,7 @@ import Link from "next/link";
 import { GraduationCap, Sparkles, Award, Palette, Code2, Camera, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { TeamSection } from "@/components/marketing/TeamSection";
@@ -77,14 +77,13 @@ export default async function AcademyPage() {
   const corsi = await getCorsi();
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <main className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="label-mono text-teal">SEMBLIC Academy</span>
+            <span className="kicker text-verified">SEMBLIC Academy</span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
               <KineticText text="Capire i propri diritti" />
               <span className="mt-1 block">
@@ -104,7 +103,7 @@ export default async function AcademyPage() {
               {corsi.map((corso) => {
                 const ui = LIVELLO_UI[corso.livello];
                 return (
-                  <div key={corso.slug} className="glass glass-hover relative flex flex-col overflow-hidden rounded-[2rem] p-6">
+                  <div key={corso.slug} className="card transition-colors hover:border-amber/60 relative flex flex-col overflow-hidden rounded-[2rem] p-6">
                     <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${ui.c}, transparent)` }} />
                     <div className="flex items-center justify-between">
                       <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${ui.c}1a`, border: `1px solid ${ui.c}55` }}>
@@ -122,7 +121,7 @@ export default async function AcademyPage() {
                       {corso.certificante && (
                         <p className="mt-2 text-[0.7rem] leading-relaxed text-faint">
                           L&apos;esame finale è il requisito della certificazione{" "}
-                          <Link href="/partner" className="text-violet-light underline-offset-2 hover:underline">Capture Partner</Link>.
+                          <Link href="/partner" className="text-amber-ink underline-offset-2 hover:underline">Capture Partner</Link>.
                         </p>
                       )}
                       <span className="mt-3 inline-block rounded-full border border-border px-3 py-1 text-[0.62rem] font-bold uppercase tracking-[0.1em] text-muted">
@@ -139,7 +138,7 @@ export default async function AcademyPage() {
           <section id="aziende" className="scroll-mt-24 pt-16 sm:pt-20">
             <Reveal>
               <div className="mx-auto max-w-2xl text-center">
-                <span className="label-mono" style={{ color: "#F2A93B" }}>Formazione per le aziende</span>
+                <span className="kicker" style={{ color: "#F2A93B" }}>Formazione per le aziende</span>
                 <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
                   L&apos;AI Act chiede anche <span className="text-gradient">competenza</span>.<br />
                   Noi la insegniamo.
@@ -155,13 +154,13 @@ export default async function AcademyPage() {
             <Reveal>
               <div className="mt-10 grid gap-4 sm:grid-cols-2">
                 {PERCORSI_AZIENDE.map((p) => (
-                  <div key={p.titolo} className="glass glass-hover relative flex flex-col overflow-hidden rounded-[2rem] p-6">
+                  <div key={p.titolo} className="card transition-colors hover:border-amber/60 relative flex flex-col overflow-hidden rounded-[2rem] p-6">
                     <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${p.c}, transparent)` }} />
                     <div className="flex items-center gap-3">
                       <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${p.c}1a`, border: `1px solid ${p.c}55` }}>
                         <p.Icon className="h-5 w-5" style={{ color: p.c }} />
                       </span>
-                      <span className="label-mono text-faint">{p.strumenti}</span>
+                      <span className="kicker text-faint">{p.strumenti}</span>
                     </div>
                     <h3 className="mt-4 text-lg font-extrabold leading-tight">{p.titolo}</h3>
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">{p.descrizione}</p>
@@ -180,7 +179,7 @@ export default async function AcademyPage() {
             <Reveal>
               <div className="mt-8 text-center">
                 <Button asChild size="lg">
-                  <Link href="/contatti?tema=formazione">Richiedi la formazione per la tua azienda</Link>
+                  <Link href="/contatti?tema=formazione">Richiedi la formazione</Link>
                 </Button>
               </div>
             </Reveal>
@@ -200,18 +199,19 @@ export default async function AcademyPage() {
                 Il corso avanzato non insegna soltanto: <span className="text-gradient">apre la rete</span>.
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                Lo standard SEMBLIC-SCAN è <Link href="/scansione#standard" className="text-teal underline-offset-2 hover:underline">pubblico e gratuito</Link>.
+                Lo standard SEMBLIC-SCAN è <Link href="/scansione#standard" className="text-verified underline-offset-2 hover:underline">pubblico e gratuito</Link>.
                 La maestria, esecuzione, postproduzione, certificazione, si impara qui, e chi supera
                 l&apos;esame diventa un punto di scansione sulla mappa.
               </p>
               <p className="mt-6">
-                <Link href="/partner" className="text-sm font-semibold text-violet-light transition-colors hover:text-foreground">
+                <Link href="/partner" className="text-sm font-semibold text-amber-ink transition-colors hover:text-foreground">
                   Il programma Capture Partner →
                 </Link>
               </p>
             </div>
           </Reveal>
         </main>
+        <Footer />
       </div>
     </div>
   );

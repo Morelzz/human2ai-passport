@@ -42,10 +42,10 @@ export default function RegisterOrgClient({ defaultEmail }: { defaultEmail: stri
   }
 
   const inp =
-    "w-full rounded-xl border border-border bg-obsidian px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50 focus-ring";
+    "w-full rounded-xl border border-border px-3.5 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet/50 focus-ring";
 
   return (
-    <form onSubmit={submit} className="glass flex flex-col gap-4 rounded-[2rem] p-7 sm:p-8">
+    <form onSubmit={submit} className="card flex flex-col gap-4 rounded-[2rem] p-7 sm:p-8">
       <div>
         <label htmlFor="org-name" className="mb-1.5 block text-xs font-semibold text-muted">Ragione sociale *</label>
         <input id="org-name" value={name} onChange={(e) => setName(e.target.value)} required className={inp} placeholder="Es. Acme S.r.l." />
@@ -75,13 +75,13 @@ export default function RegisterOrgClient({ defaultEmail }: { defaultEmail: stri
       <input type="text" value={hp} onChange={(e) => setHp(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" placeholder="website" />
 
       {error && (
-        <div className="flex items-start gap-2 rounded-xl border border-crimson/40 bg-crimson/10 p-3.5 text-sm font-medium text-crimson">
+        <div className="flex items-start gap-2 rounded-xl border border-blocked/50 bg-blocked-soft p-3.5 text-sm font-medium text-blocked">
           <span aria-hidden>⚠️</span><span>{error}</span>
         </div>
       )}
 
       <button type="submit" disabled={sending}
-        className="mt-1 rounded-full bg-violet-light px-7 py-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.05em] text-white transition-all hover:brightness-110 disabled:opacity-50 focus-ring">
+        className="mt-1 rounded-full bg-amber px-7 py-3.5 text-[0.9rem] font-semibold text-on-amber transition-all hover:brightness-110 disabled:opacity-50 focus-ring">
         {sending ? "Invio…" : "Invia per la verifica KYB"}
       </button>
       <p className="text-[0.68rem] leading-relaxed text-faint">

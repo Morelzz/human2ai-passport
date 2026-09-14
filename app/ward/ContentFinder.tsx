@@ -103,7 +103,7 @@ export function ContentFinder({
 
           {/* Immagine GRANDE (a lato su desktop, in cima su mobile) */}
           <div className="sm:sticky sm:top-4 sm:self-start">
-            <div className={`relative w-full overflow-hidden rounded-2xl border border-border bg-obsidian-2 transition-shadow duration-300 ${busy ? "ward-scanglow" : ""}`} style={{ aspectRatio: "4 / 5" }}>
+            <div className={`relative w-full overflow-hidden rounded-2xl border border-border bg-surface transition-shadow duration-300 ${busy ? "ward-scanglow" : ""}`} style={{ aspectRatio: "4 / 5" }}>
               {imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={imageUrl} alt={alias} className="h-full w-full object-cover" />
@@ -200,8 +200,8 @@ function Card({ m, onSafe, onTakedown }: { m: FinderMatch; onSafe: () => void; o
   const confirmed = m.band === "confirmed";
   const exposed = m.reputation === "exposed";
   return (
-    <div className="flex gap-3 rounded-2xl border border-border bg-obsidian-2 p-2.5 transition-[transform,border-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[rgba(242,169,59,0.35)] hover:shadow-[0_12px_30px_-16px_rgba(0,0,0,0.7)]">
-      <div className="relative h-[58px] w-[58px] flex-none overflow-hidden rounded-xl border border-border bg-obsidian-3">
+    <div className="flex gap-3 rounded-2xl border border-border bg-surface p-2.5 transition-[transform,border-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-[rgba(242,169,59,0.35)] hover:shadow-[0_12px_30px_-16px_rgba(0,0,0,0.7)]">
+      <div className="relative h-[58px] w-[58px] flex-none overflow-hidden rounded-xl border border-border bg-elevated">
         {imgOk ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={`/api/ward/preview/${m.id}`} alt="" className="h-full w-full object-cover" onError={() => setImgOk(false)} />
@@ -226,10 +226,10 @@ function Card({ m, onSafe, onTakedown }: { m: FinderMatch; onSafe: () => void; o
           )}
         </div>
         <div className="mt-2 flex gap-1.5">
-          <a href={m.pageUrl || m.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors hover:bg-obsidian-3">
+          <a href={m.pageUrl || m.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors hover:bg-elevated">
             <ExternalLink className="h-3 w-3" /> Apri
           </a>
-          <button type="button" onClick={onSafe} className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors hover:bg-obsidian-3">
+          <button type="button" onClick={onSafe} className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors hover:bg-elevated">
             <ShieldCheck className="h-3 w-3" /> Segna sicuro
           </button>
           {confirmed && (
@@ -271,7 +271,7 @@ function WhitelistTab({ allow }: { allow: AllowEntry[] }) {
   return (
     <div className="flex flex-col gap-2">
       {allow.map((a, i) => (
-        <div key={i} className="flex items-center gap-2.5 rounded-xl border border-border bg-obsidian-2 px-3 py-2.5">
+        <div key={i} className="flex items-center gap-2.5 rounded-xl border border-border bg-surface px-3 py-2.5">
           <span className="h-2 w-2 flex-none rounded-full" style={{ background: "#7FAE96" }} />
           <span className="truncate text-[13px]">{a.value}</span>
           <span className="ml-auto flex-none text-[10px] text-faint">{a.type === "host" ? "tutto il dominio" : "questa pagina"}</span>

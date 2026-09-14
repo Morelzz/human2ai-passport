@@ -1,6 +1,5 @@
 import { ClipboardList, Users, PackageCheck, ShieldCheck, Fingerprint, Scale } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { InquiryForm } from "@/components/business/InquiryForm";
@@ -16,15 +15,14 @@ export const metadata = {
 // consenzienti. Pagina narrativa + form: vende il servizio e genera richieste.
 export default function StudioPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         {/* Hero */}
         <section className="mx-auto max-w-3xl px-5 pb-14 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="label-mono text-violet-light">Semblic Studio</span>
-          <h1 className="mt-4 text-balance text-4xl font-extralight leading-[1.02] tracking-[-0.03em] sm:text-5xl">
+          <span className="kicker">Semblic Studio</span>
+          <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.02] tracking-[-0.03em] sm:text-5xl">
             <KineticText text="Tu descrivi la campagna." />
             <span className="mt-2 block">
               <KineticText text="Noi consegniamo i contenuti" delay={0.25} />{" "}
@@ -47,7 +45,7 @@ export default function StudioPage() {
                 { Icon: Users, t: "2 · Il volto giusto", d: "Selezioniamo dal registro la persona consenziente più adatta, categoria d'uso verificata, royalty alla persona inclusa.", c: "#EE7A70" },
                 { Icon: PackageCheck, t: "3 · La consegna", d: "Ricevi i contenuti finiti, in alta risoluzione, ognuno con la sua prova di provenienza verificabile.", c: "#7FAE96" },
               ].map(({ Icon, t, d, c }) => (
-                <div key={t} className="glass glass-hover rounded-2xl p-6">
+                <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
                     <Icon className="h-5 w-5" style={{ color: c }} />
                   </span>
@@ -62,7 +60,7 @@ export default function StudioPage() {
         {/* Perché lo Studio */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
-            <span className="label-mono text-teal">Perché lo Studio</span>
+            <span className="kicker text-verified">Perché lo Studio</span>
             <h2 className="mt-3 max-w-2xl text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               La velocità dell&apos;AI, senza il rischio legale.
             </h2>
@@ -73,7 +71,7 @@ export default function StudioPage() {
                 { Icon: Scale, t: "Zero cause", d: "Niente volti rubati, niente sintetico spacciato per vero: la prova di provenienza è nel file." },
               ].map(({ Icon, t, d }) => (
                 <div key={t} className="flex gap-3">
-                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-teal" />
+                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-verified" />
                   <div>
                     <h3 className="text-sm font-bold">{t}</h3>
                     <p className="mt-1 text-sm leading-relaxed text-muted">{d}</p>
@@ -87,10 +85,10 @@ export default function StudioPage() {
         {/* Form */}
         <Reveal>
           <section className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
-            <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
+            <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(242,169,59,0.10),transparent_70%)]" />
               <div className="relative">
-                <span className="label-mono text-violet-light">Parlaci della campagna</span>
+                <span className="kicker">Parlaci della campagna</span>
                 <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
                   Il primo brief è senza impegno.
                 </h2>

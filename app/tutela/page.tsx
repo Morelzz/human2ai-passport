@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ScanFace, Fingerprint, ShieldCheck, BadgeCheck, Lock, History, ArrowRight } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 
@@ -18,15 +17,14 @@ export const metadata = {
 // Vedi docs/superpowers/specs/2026-06-23-pagina-tutela-identita-design.md.
 export default function TutelaPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         {/* ── HERO: il cuore (verifica → faceprint → confronto) ───────────── */}
         <section className="mx-auto max-w-3xl px-5 pb-12 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="label-mono text-teal">Tutela dell&apos;identità</span>
-          <h1 className="mt-4 text-balance text-4xl font-extralight leading-[1.05] tracking-[-0.03em] sm:text-5xl">
+          <span className="kicker text-verified">Tutela dell&apos;identità</span>
+          <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-5xl">
             <KineticText text="Il tuo volto entra nel registro" />
             <span className="mt-2 block">
               <KineticText text="solo se sei" delay={0.25} />{" "}
@@ -42,15 +40,15 @@ export default function TutelaPage() {
           {/* Flusso: tre passi + esito (salvia / coral). Stack su mobile, in riga su desktop. */}
           <div className="mx-auto mt-9 max-w-xl">
             <div className="flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center">
-              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-white/[0.02] px-3.5 py-2.5 text-sm">
+              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
                 <ScanFace className="h-4 w-4 shrink-0" style={{ color: "#F2A93B" }} /> Verifica Didit
               </span>
               <ArrowRight className="hidden h-4 w-4 shrink-0 text-faint sm:block" aria-hidden />
-              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-white/[0.02] px-3.5 py-2.5 text-sm">
+              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
                 <Fingerprint className="h-4 w-4 shrink-0" style={{ color: "#F2A93B" }} /> Faceprint, 128 numeri
               </span>
               <ArrowRight className="hidden h-4 w-4 shrink-0 text-faint sm:block" aria-hidden />
-              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-white/[0.02] px-3.5 py-2.5 text-sm">
+              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
                 <ShieldCheck className="h-4 w-4 shrink-0" style={{ color: "#F2A93B" }} /> Confronto
               </span>
             </div>
@@ -65,10 +63,10 @@ export default function TutelaPage() {
           </div>
 
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/signup/avatar" className="rounded-full bg-violet-light px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-on-amber transition hover:brightness-110 focus-ring">
+            <Link href="/signup/avatar" className="rounded-full bg-amber px-6 py-3 text-[0.9rem] font-semibold text-on-amber transition hover:brightness-110 focus-ring">
               Proteggi il tuo volto
             </Link>
-            <Link href="/verify" className="rounded-full border border-border px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground transition hover:border-violet/50 focus-ring">
+            <Link href="/verify" className="rounded-full border border-border px-6 py-3 text-[0.9rem] font-semibold text-foreground transition hover:border-amber/60 focus-ring">
               Verifica con Sigil
             </Link>
           </div>
@@ -108,13 +106,13 @@ export default function TutelaPage() {
                   cta: "Proteggi il tuo volto",
                 },
               ].map(({ Icon, t, d, href, cta }) => (
-                <div key={t} className="glass glass-hover rounded-2xl p-6">
+                <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.33)" }}>
                     <Icon className="h-5 w-5" style={{ color: "#F2A93B" }} />
                   </span>
                   <h2 className="mt-4 text-lg font-bold">{t}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted">{d}</p>
-                  <Link href={href} className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-violet-light hover:underline">
+                  <Link href={href} className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-ink hover:underline">
                     {cta} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                   </Link>
                 </div>
@@ -126,14 +124,14 @@ export default function TutelaPage() {
         {/* ── CHIUSURA ────────────────────────────────────────────────────── */}
         <Reveal>
           <section className="mx-auto max-w-3xl px-5 py-12 pb-24 text-center sm:px-8">
-            <div className="glass relative overflow-hidden rounded-[2rem] p-8 sm:p-12">
+            <div className="card relative overflow-hidden rounded-[2rem] p-8 sm:p-12">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_0%,rgba(242,169,59,0.18),transparent_70%)]" />
               <div className="relative">
-                <p className="text-balance text-2xl font-extralight tracking-[-0.02em] sm:text-3xl">Real Humans. Real Rights.</p>
+                <p className="text-balance text-2xl font-bold tracking-[-0.02em] sm:text-3xl">Real Humans. Real Rights.</p>
                 <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
                   Una persona vera dietro ogni volto, e il diritto di decidere come viene usato.
                 </p>
-                <Link href="/signup/avatar" className="mt-7 inline-block rounded-full bg-violet-light px-7 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-on-amber transition hover:brightness-110 focus-ring">
+                <Link href="/signup/avatar" className="mt-7 inline-block rounded-full bg-amber px-7 py-3 text-[0.9rem] font-semibold text-on-amber transition hover:brightness-110 focus-ring">
                   Entra nel registro
                 </Link>
               </div>

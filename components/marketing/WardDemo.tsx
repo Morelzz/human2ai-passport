@@ -28,7 +28,7 @@ export function WardDemo() {
   }, []);
 
   return (
-    <div className="glass relative overflow-hidden rounded-[2rem] p-5 pt-6">
+    <div className="card relative overflow-hidden rounded-[2rem] p-5 pt-6">
       <span className="absolute left-4 top-4 z-10 rounded-md border border-border bg-black/70 px-2.5 py-1 font-mono text-[8.5px] uppercase tracking-[0.14em] text-foreground">
         Anteprima simulata
       </span>

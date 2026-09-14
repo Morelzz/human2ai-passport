@@ -26,5 +26,5 @@ export const metadata: Metadata = {
 };
 
 export default function WardLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`${wardDisplay.variable} ${wardMono.variable} ward-app`}>{children}</div>;
+  return <div data-theme="dark" className={`${wardDisplay.variable} ${wardMono.variable} ward-app`}>{children}</div>;
 }

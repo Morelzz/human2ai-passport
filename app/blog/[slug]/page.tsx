@@ -3,7 +3,6 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPost, listPosts } from "@/lib/blog";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { ShareBar } from "../ShareBar";
 import { siteUrl } from "@/lib/site";
 
@@ -71,9 +70,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         <script
@@ -102,10 +100,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             )}
 
             <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.66rem] font-bold tracking-[0.12em] text-faint">
-              <span className="rounded-full border border-violet-light/40 px-3 py-1 uppercase text-violet-light">
+              <span className="rounded-full border border-amber/50 px-3 py-1 uppercase text-amber-ink">
                 {post.category}
               </span>
-              <time dateTime={post.date} className="text-teal">
+              <time dateTime={post.date} className="text-verified">
                 {new Date(post.date + "T00:00:00").toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" }).toUpperCase()}
               </time>
               {post.tags.map((t) => (
@@ -132,7 +130,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="mt-8">
               <ShareBar title={post.title} />
             </div>
-            <div className="glass mt-8 rounded-2xl p-6 text-center sm:p-8">
+            <div className="card mt-8 rounded-2xl p-6 text-center sm:p-8">
               <p className="text-balance text-lg font-bold">Ogni volto generato deve avere una persona vera dietro.</p>
               <Link href="/match" className="mt-4 inline-block rounded-xl bg-[#F2A93B] px-6 py-3 text-sm font-bold text-[#412402] transition-all hover:brightness-110">
                 Esplora il Registro Volti
@@ -140,10 +138,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
             {others.length > 0 && (
               <div className="mt-10">
-                <span className="label-mono text-violet-light">Continua a leggere</span>
+                <span className="kicker">Continua a leggere</span>
                 <div className="mt-4 flex flex-col gap-3">
                   {others.map((p) => (
-                    <Link key={p.slug} href={`/blog/${p.slug}`} className="glass glass-hover block rounded-xl p-5">
+                    <Link key={p.slug} href={`/blog/${p.slug}`} className="card transition-colors hover:border-amber/60 block rounded-xl p-5">
                       <span className="block text-sm font-bold">{p.title}</span>
                       <span className="mt-1 block text-xs text-muted">{p.description}</span>
                     </Link>

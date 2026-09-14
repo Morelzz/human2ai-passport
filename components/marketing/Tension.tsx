@@ -16,7 +16,7 @@ export function Tension() {
       {/* Alone di fondo che dà aria alla sezione */}
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_50%_at_50%_40%,rgba(242,169,59,0.10),transparent_70%)]" />
 
-      <span className="label-mono relative text-crimson-light">Il problema</span>
+      <span className="kicker relative text-blocked">Il problema</span>
 
       {/* Il problema — grande, grigio, pesante */}
       <h2 className="relative mt-6 text-balance text-3xl font-extrabold leading-[1.12] tracking-tight text-muted sm:text-5xl">

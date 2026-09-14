@@ -93,8 +93,8 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
   if (done) {
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
-        <div className="glass rounded-2xl p-8 text-center">
-          <p className="text-lg font-extrabold text-violet-light">● Volto protetto</p>
+        <div className="card rounded-2xl p-8 text-center">
+          <p className="text-lg font-extrabold text-amber-ink">● Volto protetto</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Il tuo volto e&apos; registrato in sola protezione. Dentro Semblic non puo&apos; essere generato:
             e&apos; una garanzia, applicata dai nostri sistemi. Se qualcuno prova a usarlo, te lo segnaliamo.
@@ -103,7 +103,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
             Fuori da Semblic offriamo allerta precoce e rimozione assistita: un impegno serio, non una garanzia che
             il tuo volto non compaia mai da nessuna parte. Testi in revisione legale.
           </p>
-          <Link href="/account" className="mt-6 inline-block text-sm text-violet-light hover:underline">← Torna all&apos;account</Link>
+          <Link href="/account" className="mt-6 inline-block text-sm text-amber-ink hover:underline">← Torna all&apos;account</Link>
         </div>
       </section>
     );
@@ -112,13 +112,13 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
   if (hasPublicAvatar) {
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
-        <div className="glass rounded-2xl p-8 text-center">
+        <div className="card rounded-2xl p-8 text-center">
           <p className="text-lg font-extrabold text-foreground">Hai gia&apos; un volto nel registro</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Non puoi al tempo stesso concedere e proteggere lo stesso volto. Se vuoi passare alla sola protezione,
             scrivici dai contatti e ti aiutiamo.
           </p>
-          <Link href="/account" className="mt-6 inline-block text-sm text-violet-light hover:underline">← Torna all&apos;account</Link>
+          <Link href="/account" className="mt-6 inline-block text-sm text-amber-ink hover:underline">← Torna all&apos;account</Link>
         </div>
       </section>
     );
@@ -126,14 +126,14 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
 
   return (
     <section className="mx-auto max-w-xl px-5 py-14 sm:px-8">
-      <span className="text-xs font-bold tracking-[0.14em] text-violet-light">PROTEZIONE DEL VOLTO</span>
+      <span className="text-xs font-bold tracking-[0.14em] text-amber-ink">PROTEZIONE DEL VOLTO</span>
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Registra il tuo volto perche&apos; non venga generato</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
         Confermiamo che il volto e&apos; il tuo (come per un documento), poi lo mettiamo in <span className="text-foreground">sola protezione</span>:
         dentro Semblic nessuno potra&apos; generarlo, in nessuna categoria. Non creiamo nessun avatar, nessun repertorio:
         solo un&apos;impronta difensiva del tuo volto.
       </p>
-      <p className="mt-2 rounded-xl border border-violet/20 bg-violet/[0.06] p-3 text-[0.74rem] leading-relaxed text-faint">
+      <p className="mt-2 rounded-xl border border-amber/40 bg-amber-soft p-3 text-[0.74rem] leading-relaxed text-faint">
         Dentro Semblic la non generazione e&apos; una garanzia (controllo sui nostri sistemi). Fuori, offriamo allerta
         precoce e rimozione assistita: best effort, non la promessa che il volto non compaia mai altrove. Testi in revisione legale.
       </p>
@@ -159,7 +159,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
           <div className="grid grid-cols-4 gap-2.5">
             {POSES.map((p, slot) => (
               <label key={p.key} title={p.tip}
-                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-violet/10" : "border-border hover:border-violet/40"}`}>
+                className={`relative flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border border-dashed p-1.5 transition-colors ${poseSlots[slot] ? "border-violet bg-amber-soft" : "border-border hover:border-amber/60"}`}>
                 {poseSlots[slot] ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={poseSlots[slot]!.url} alt={p.label} className="absolute inset-0 h-full w-full object-cover" />
@@ -181,7 +181,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
           <p className="mt-2 text-xs text-faint">{photoCount > 0 ? `${photoCount} su ${POSES.length} pose caricate` : "Carica almeno una posa frontale (piu' ne carichi, piu' robusta e' la protezione)."}</p>
         </div>
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-white/[0.02] p-3.5">
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-3.5">
           <input type="checkbox" checked={art9} onChange={(e) => setArt9(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-violet-500" />
           <span className="text-[0.78rem] leading-relaxed text-muted">
             Acconsento al trattamento del mio dato biometrico (impronta del volto) a <span className="text-foreground">soli fini di protezione</span>,
@@ -189,7 +189,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
           </span>
         </label>
 
-        {err && <p className="text-sm text-crimson">{err}</p>}
+        {err && <p className="text-sm text-blocked">{err}</p>}
 
         <button type="submit" disabled={busy}
           className="mt-1 rounded-xl bg-[#F2A93B] px-6 py-3.5 text-sm font-bold text-[#412402] shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50">
@@ -205,7 +205,7 @@ function PickBox({ label, hint, slot, aspect, onPick }: {
 }) {
   return (
     <label
-      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-violet/10" : "border-border hover:border-violet/40"}`}
+      className={`relative flex cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-xl border border-dashed p-3 transition-colors ${slot ? "border-violet bg-amber-soft" : "border-border hover:border-amber/60"}`}
       style={{ aspectRatio: aspect === "3/2" ? "3 / 2" : "3 / 4" }}>
       {slot ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -214,10 +214,10 @@ function PickBox({ label, hint, slot, aspect, onPick }: {
         <>
           <span className="text-sm font-bold text-foreground">{label}</span>
           <span className="text-center text-[0.66rem] leading-tight text-faint">{hint}</span>
-          <span className="mt-1 text-xs font-semibold text-violet-light">Sfoglia</span>
+          <span className="mt-1 text-xs font-semibold text-amber-ink">Sfoglia</span>
         </>
       )}
-      {slot && <span className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-2 py-0.5 text-[0.62rem] font-bold text-violet-light">Cambia</span>}
+      {slot && <span className="absolute bottom-1.5 right-1.5 rounded-full bg-black/70 px-2 py-0.5 text-[0.62rem] font-bold text-amber-ink">Cambia</span>}
       <input type="file" accept="image/*" className="hidden"
         onChange={(e) => { onPick(e.target.files?.[0]); e.currentTarget.value = ""; }} />
     </label>

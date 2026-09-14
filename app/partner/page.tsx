@@ -1,6 +1,5 @@
 import { Camera, FileSignature, MapPin, Coins, Repeat, Handshake } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { CineBackground } from "@/components/marketing/CineBackground";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { ApplyForm } from "./ApplyForm";
@@ -16,14 +15,13 @@ export const metadata = {
 // share) arriva dopo il lancio: qui si costruisce la lista d'attesa reale.
 export default function PartnerPage() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-obsidian text-foreground">
-      <CineBackground />
-      <div className="relative z-[2]">
+    <div className="relative min-h-screen overflow-x-hidden">
+<div className="relative z-[2]">
         <SiteNav />
 
         {/* Hero — il messaggio di reclutamento del doc */}
         <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="label-mono text-teal">Capture Partner Program</span>
+          <span className="kicker text-verified">Capture Partner Program</span>
           <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
             <KineticText text="L'AI ti ha tolto lavoro?" />
             <span className="mt-2 block">
@@ -42,7 +40,7 @@ export default function PartnerPage() {
         {/* Cosa fa un partner */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
-            <span className="label-mono text-violet-light">Cosa fa un partner</span>
+            <span className="kicker">Cosa fa un partner</span>
             <h2 className="mt-3 max-w-2xl text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Tre responsabilità, un protocollo certificato.
             </h2>
@@ -52,7 +50,7 @@ export default function PartnerPage() {
                 { Icon: FileSignature, t: "Consenso on-site", d: "La firma del consenso avviene davanti a te, sul posto, con la persona. Tu sei il garante fisico del nostro filtro.", c: "#EE7A70" },
                 { Icon: MapPin, t: "La tua città", d: "Sei il riferimento SEMBLIC della tua zona: eventi di acquisizione, brand locali, persone che vogliono entrare nel registro.", c: "#7FAE96" },
               ].map(({ Icon, t, d, c }) => (
-                <div key={t} className="glass glass-hover rounded-2xl p-6">
+                <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
                     <Icon className="h-5 w-5" style={{ color: c }} />
                   </span>
@@ -67,7 +65,7 @@ export default function PartnerPage() {
         {/* Cosa ci guadagni */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
-            <span className="label-mono text-crimson-light">Cosa ci guadagni</span>
+            <span className="kicker text-blocked">Cosa ci guadagni</span>
             <h2 className="mt-3 max-w-2xl text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Tre flussi, non una marchetta.
             </h2>
@@ -77,7 +75,7 @@ export default function PartnerPage() {
                 { Icon: Repeat, t: "Quota ricorrente", d: "Una percentuale sulle royalty generate dai volti che hai acquisito. Per tutta la loro vita sulla piattaforma.", c: "#F2A93B" },
                 { Icon: Handshake, t: "Ingaggi reali", d: "Quando un brand vuole lo shooting vero con la persona vera, il partner della sua città è il primo a essere chiamato.", c: "#EE7A70" },
               ].map(({ Icon, t, d, c }) => (
-                <div key={t} className="glass glass-hover rounded-2xl p-6">
+                <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
                     <Icon className="h-5 w-5" style={{ color: c }} />
                   </span>
@@ -96,10 +94,10 @@ export default function PartnerPage() {
         {/* Come funziona + form */}
         <Reveal>
           <section className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
-            <div className="glass relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
+            <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(127,174,150,0.10),transparent_70%)]" />
               <div className="relative">
-                <span className="label-mono text-teal">Candidature aperte</span>
+                <span className="kicker text-verified">Candidature aperte</span>
                 <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
                   Tre passi: candidatura, certificazione, operatività.
                 </h2>

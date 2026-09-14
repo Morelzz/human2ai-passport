@@ -60,7 +60,7 @@ export function BlogList({ posts }: { posts: BlogCard[] }) {
             <Link
               key={p.slug}
               href={`/blog/${p.slug}`}
-              className="reveal glass glass-hover block overflow-hidden rounded-2xl"
+              className="reveal card transition-colors hover:border-amber/60 block overflow-hidden rounded-2xl"
               style={{ animationDelay: `${0.05 * i}s` }}
             >
               <div className="flex flex-col sm:flex-row">
@@ -71,8 +71,8 @@ export function BlogList({ posts }: { posts: BlogCard[] }) {
                 )}
                 <div className="p-6 sm:p-8">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.66rem] font-bold tracking-[0.12em] text-faint">
-                    <span className="rounded-full border border-violet-light/40 px-3 py-1 uppercase text-violet-light">{p.category}</span>
-                    <time dateTime={p.date} className="text-teal">
+                    <span className="rounded-full border border-amber/50 px-3 py-1 uppercase text-amber-ink">{p.category}</span>
+                    <time dateTime={p.date} className="text-verified">
                       {new Date(p.date + "T00:00:00").toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" }).toUpperCase()}
                     </time>
                     {p.tags.slice(0, 2).map((t) => (
@@ -81,7 +81,7 @@ export function BlogList({ posts }: { posts: BlogCard[] }) {
                   </div>
                   <h2 className="mt-3 text-balance text-xl font-extrabold leading-tight tracking-tight sm:text-2xl">{p.title}</h2>
                   <p className="mt-2.5 text-pretty text-sm leading-relaxed text-muted sm:text-base">{p.description}</p>
-                  <span className="mt-4 inline-block text-sm font-semibold text-violet-light">Leggi &rarr;</span>
+                  <span className="mt-4 inline-block text-sm font-semibold text-amber-ink">Leggi &rarr;</span>
                 </div>
               </div>
             </Link>

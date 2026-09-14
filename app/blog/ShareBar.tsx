@@ -46,7 +46,7 @@ export function ShareBar({ title }: { title: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="label-mono mr-1 text-faint">CONDIVIDI</span>
+      <span className="kicker mr-1 text-faint">CONDIVIDI</span>
       <button
         type="button"
         className={BTN}
