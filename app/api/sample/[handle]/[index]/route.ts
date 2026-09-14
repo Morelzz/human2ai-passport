@@ -1,12 +1,13 @@
 import { createServerClient } from "@/lib/supabase";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { watermarkBuffer } from "@/lib/watermark";
+import { sampleWidth } from "@/lib/sample-size";
 
 // Serve un'immagine campione della galleria, WATERMARKATA.
 // L'URL pulito del motore non lascia mai il server: il client vede solo questa.
 // Fonte: avatars.gallery_urls (fallback: mappa storica in lib/sample-galleries).
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ handle: string; index: string }> }
 ) {
   const { handle, index } = await params;
@@ -29,7 +30,8 @@ export async function GET(
 
   let buf: Buffer;
   try {
-    buf = await watermarkBuffer(src);
+    // ?w= fra le larghezze ammesse: miniatura leggera, filigranata come l'originale.
+    buf = await watermarkBuffer(src, sampleWidth(new URL(req.url).searchParams.get("w")) ?? undefined);
   } catch {
     return new Response("Errore immagine", { status: 502 });
   }
@@ -37,7 +39,9 @@ export async function GET(
   return new Response(new Uint8Array(buf), {
     headers: {
       "Content-Type": "image/jpeg",
-      "Cache-Control": "public, max-age=86400, immutable",
+      // s-maxage: la CDN di Vercel tiene la versione filigranata, cosi' la filigrana
+      // si calcola una volta per immagine e larghezza, non a ogni visitatore.
+      "Cache-Control": "public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800",
     },
   });
 }

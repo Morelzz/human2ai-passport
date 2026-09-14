@@ -28,12 +28,10 @@ export function Hero({ count, paidCount, protectedFaces }: { count: number; paid
         <motion.div variants={container} initial="hidden" animate="show" className="flex flex-col justify-center gap-5 sm:gap-6">
           <motion.span variants={item} className="kicker">Il filtro di tutela umana</motion.span>
 
-          <motion.h1
-            variants={item}
-            className="text-balance text-[2.9rem] font-bold leading-[0.96] tracking-[-0.04em] sm:text-[4.4rem] lg:text-[5.1rem]"
-          >
+          {/* Il titolo e' visibile col primo HTML (su desktop e' lui l'elemento piu' grande). */}
+          <h1 className="text-balance text-[2.9rem] font-bold leading-[0.96] tracking-[-0.04em] sm:text-[4.4rem] lg:text-[5.1rem]">
             Real Humans.<br />Real Rights.<br />Real <span className="text-amber">Earnings</span>.
-          </motion.h1>
+          </h1>
 
           {/* Hairline tramonto: la firma sotto il titolo */}
           <motion.div
@@ -72,14 +70,11 @@ export function Hero({ count, paidCount, protectedFaces }: { count: number; paid
           </motion.dl>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="order-first flex items-center justify-center lg:order-none"
-        >
+        {/* Niente entrata animata qui: il riquadro video e' l'elemento piu' grande
+            della home (LCP) e deve dipingersi col primo HTML, non dopo il JavaScript. */}
+        <div className="order-first flex items-center justify-center lg:order-none">
           <HeroVideo className="w-full max-w-[440px] lg:max-w-[470px]" />
-        </motion.div>
+        </div>
       </div>
     </section>
   );

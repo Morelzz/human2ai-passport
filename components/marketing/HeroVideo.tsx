@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { preload } from "react-dom";
 import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
 // Sorgenti su Supabase Storage pubblico (CDN), niente peso nel repo git.
@@ -15,6 +16,8 @@ const VIDEO = `${BASE}/hero-v3.mp4`; // 1:1, muto, ottimizzato
 // muted + playsInline). Sul punto di loop una piccola transizione "dip-to-dark"
 // ammorbidisce lo stacco. Sotto prefers-reduced-motion resta il poster, fermo.
 export function HeroVideo({ className = "" }: { className?: string }) {
+  // Il poster e' l'LCP della home: lo chiediamo al browser subito, dall'<head>.
+  preload(POSTER, { as: "image", fetchPriority: "high" });
   const reduce = useReducedMotionSafe();
   const seamRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);

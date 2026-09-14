@@ -2,17 +2,24 @@ import sharp from "sharp";
 import { embedStego } from "./stegano";
 
 // Applica un watermark "impresso nei pixel" a un buffer immagine e restituisce JPEG.
-export async function watermarkBytes(buf: Buffer): Promise<Buffer> {
-  const img = sharp(buf);
+// `width`: se c'e', l'immagine viene prima ridotta a quella larghezza (mai
+// ingrandita) e la trama della filigrana scala con lei, cosi' una miniatura resta
+// protetta come l'originale ma pesa una frazione.
+export async function watermarkBytes(buf: Buffer, width?: number): Promise<Buffer> {
+  const source = width
+    ? await sharp(buf).resize({ width, withoutEnlargement: true }).toBuffer()
+    : buf;
+  const img = sharp(source);
   const meta = await img.metadata();
   const w = meta.width ?? 1024;
   const h = meta.height ?? 1024;
+  const k = Math.max(0.45, Math.min(1, w / 1024)); // scala della trama
 
   // Watermark diagonale ripetuto su tutta la superficie.
   const svg = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <pattern id="wm" width="360" height="220" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
-        <text x="0" y="110" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="rgba(255,255,255,0.30)">SEMBLIC · ANTEPRIMA</text>
+      <pattern id="wm" width="${Math.round(360 * k)}" height="${Math.round(220 * k)}" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
+        <text x="0" y="${Math.round(110 * k)}" font-family="Arial, Helvetica, sans-serif" font-size="${Math.round(26 * k)}" font-weight="700" fill="rgba(255,255,255,0.30)">SEMBLIC · ANTEPRIMA</text>
       </pattern>
     </defs>
     <rect width="${w}" height="${h}" fill="url(#wm)"/>
@@ -20,16 +27,16 @@ export async function watermarkBytes(buf: Buffer): Promise<Buffer> {
 
   return img
     .composite([{ input: Buffer.from(svg), blend: "over" }])
-    .jpeg({ quality: 80 })
+    .jpeg({ quality: 80, mozjpeg: true })
     .toBuffer();
 }
 
 // Versione da URL: scarica e watermarka. L'URL pulito del motore NON viene mai
 // esposto al client, solo questa versione protetta.
-export async function watermarkBuffer(imageUrl: string): Promise<Buffer> {
+export async function watermarkBuffer(imageUrl: string, width?: number): Promise<Buffer> {
   const resp = await fetch(imageUrl);
   if (!resp.ok) throw new Error("download immagine fallito");
-  return watermarkBytes(Buffer.from(await resp.arrayBuffer()));
+  return watermarkBytes(Buffer.from(await resp.arrayBuffer()), width);
 }
 
 // Variante data-URL da URL (anteprima inline, motori che restituiscono un URL).

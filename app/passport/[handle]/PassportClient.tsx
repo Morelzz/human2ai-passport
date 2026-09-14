@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Copy, Check, BadgeCheck, Sparkles, ArrowLeft, AlertTriangle, Link2, Handshake, Smartphone } from "lucide-react";
 import { Avatar, ConsentEvent, IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 import { avatarArt } from "@/lib/avatar-art";
+import { sampleSrc } from "@/lib/sample-size";
 
 interface Props {
   avatar: Avatar;
@@ -94,7 +95,8 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
   const royaltyEur = (avatar.royalty_accrued_cents / 100).toFixed(2);
   // Regola unica: avatar con galleria -> ritratto reale (watermarkato) via
   // route interna; gli altri l'avatar-art. Vale per Mario e per gli ambassador.
-  const portrait = galleryCount > 0 ? `/api/sample/${avatar.handle}/0` : avatarArt(avatar.handle, avatar.alias);
+  // 720 basta per il riquadro (440px di altezza): su 4G pesa la meta' dell'originale.
+  const portrait = galleryCount > 0 ? sampleSrc(`/api/sample/${avatar.handle}/0`, 720) : avatarArt(avatar.handle, avatar.alias);
 
   const labels: Record<string, string> = {
     GRANTED: "Consenso concesso",
@@ -114,7 +116,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           in alto su vetro scuro, e il blocco identita in un pannello di vetro
           ancorato in basso: la foto respira sopra, il testo resta leggibile
           sotto in ogni tema. */}
-      <motion.div custom={0} variants={fade} initial="hidden" animate="show"
+      <motion.div custom={0} variants={fade} initial={false} animate="show"
         className="relative h-[440px] overflow-hidden rounded-3xl border border-border sm:h-[480px]">
         {/* Ritratto a tutto campo (foto reale watermarkata o avatar-art). Per i
             revocati il volto e' desaturato: l'identita e' "spenta". */}
@@ -122,6 +124,9 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         <img
           src={portrait}
           alt={avatar.alias}
+          // E' l'elemento piu' grande della pagina: niente coda, priorita' alta.
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-[50%_30%]"
           style={{
             viewTransitionName: `vt-portrait-${avatar.handle}`,
@@ -248,7 +253,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {Array.from({ length: galleryCount }).map((_, idx) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={idx} src={`/api/sample/${avatar.handle}/${idx}`} alt={`esempio ${idx + 1}`} loading="lazy"
+              <img key={idx} src={sampleSrc(`/api/sample/${avatar.handle}/${idx}`, 720)} alt={`esempio ${idx + 1}`} loading="lazy"
                 className="aspect-[3/4] w-full rounded-[14px] bg-elevated object-cover" />
             ))}
           </div>

@@ -5,6 +5,7 @@
 // view-transition-name: passando al passaporto "vola" da qui alla pagina.
 import { Link } from "next-view-transitions";
 import { portraitFor } from "@/lib/sample-galleries";
+import { sampleSrc } from "@/lib/sample-size";
 
 export type TileAvatar = {
   handle: string;
@@ -15,7 +16,8 @@ export type TileAvatar = {
 };
 
 export function AvatarTile({ a, className = "", priority = false }: { a: TileAvatar; className?: string; priority?: boolean }) {
-  const src = portraitFor(a);
+  // 720: basta per la tile piu' grande a 2x/3x, e pesa un quinto dell'originale.
+  const src = sampleSrc(portraitFor(a), 720);
   const revoked = !!a.revoked_at;
   const chip = revoked ? "Revocato" : a.gender === "donna" ? "Verificata" : "Verificato";
   return (

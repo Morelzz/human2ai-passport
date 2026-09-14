@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Geist_Mono } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
+import { preconnect } from "react-dom";
 import "./globals.css";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { CookieBanner } from "@/components/legal/CookieBanner";
@@ -97,6 +98,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Storage Supabase: poster, video e immagini arrivano da li'. Connessione aperta
+  // subito, prima di qualunque await (dopo un await il preconnect sparisce).
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL) preconnect(process.env.NEXT_PUBLIC_SUPABASE_URL, { crossOrigin: "anonymous" });
   return (
     // ONDATA MOBILE — View Transitions: le navigazioni coi Link di
     // next-view-transitions usano document.startViewTransition (dove c'è)
