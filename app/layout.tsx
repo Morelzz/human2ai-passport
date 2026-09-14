@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Instrument_Sans, Geist_Mono } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
 import "./globals.css";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
@@ -7,9 +7,12 @@ import { CookieBanner } from "@/components/legal/CookieBanner";
 import { PwaManager } from "@/components/pwa/PwaManager";
 import { siteUrl, INSTAGRAM_URL } from "@/lib/site";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Casa nuova: Instrument Sans per titoli e testo (pesi 400-700, variabile),
+// Geist Mono resta per etichette e numeri.
+const instrument = Instrument_Sans({
+  variable: "--font-instrument",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -71,12 +74,12 @@ export const metadata: Metadata = {
   alternates: {
     types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
   },
-  // PWA: su iOS l'app installata si apre a tutto schermo e usa lo scudo come
-  // icona Home. La barra di stato scura si fonde col void Obsidian.
+  // PWA: su iOS l'app installata si apre a tutto schermo col marchio come
+  // icona Home. Barra di stato chiara, come il corpo del sito.
   appleWebApp: {
     capable: true,
     title: "Semblic",
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
   icons: {
     icon: "/icon.png",
@@ -84,9 +87,9 @@ export const metadata: Metadata = {
   },
 };
 
-// theme-color: la chrome del browser/PWA prende il colore Obsidian.
+// theme-color: la chrome del browser/PWA prende l'avorio del corpo del sito.
 export const viewport: Viewport = {
-  themeColor: "#0C0F17",
+  themeColor: "#F7F4EE",
 };
 
 export default function RootLayout({
@@ -103,16 +106,16 @@ export default function RootLayout({
     <ViewTransitions>
       <html
         lang="it"
-        className={`${geistSans.variable} ${geistMono.variable}`}
+        className={`${instrument.variable} ${geistMono.variable}`}
         suppressHydrationWarning
       >
         {/* NB: niente h-full/height:100% su html/body — rompe la misura dello
             scroll di Lenis (lo scroll "scattava" e tornava in cima). */}
         <body className="min-h-screen flex flex-col" suppressHydrationWarning>
-          {/* Anti-lampo tema: imposta data-theme PRIMA del paint (scuro = default) */}
+          {/* Anti-lampo tema: imposta data-theme PRIMA del paint (chiaro = default) */}
           <script
             dangerouslySetInnerHTML={{
-              __html: `(function(){try{var t=localStorage.getItem('semblic-theme');document.documentElement.dataset.theme=(t==='light'||t==='dark')?t:'dark';}catch(e){document.documentElement.dataset.theme='dark';}})();`,
+              __html: `(function(){try{var t=localStorage.getItem('semblic-theme');document.documentElement.dataset.theme=(t==='light'||t==='dark')?t:'light';}catch(e){document.documentElement.dataset.theme='light';}})();`,
             }}
           />
           <script

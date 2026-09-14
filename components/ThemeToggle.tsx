@@ -6,13 +6,13 @@ import { Sun, Moon } from "lucide-react";
 // Interruttore tema chiaro/scuro. Lo stato vero vive su
 // document.documentElement.dataset.theme (impostato prima del paint dallo
 // script anti-lampo in layout.tsx). Qui leggiamo quello e lo cambiamo,
-// salvando la scelta in localStorage. Scuro e il default (brand-first).
+// salvando la scelta in localStorage. Chiaro e' il default (casa nuova).
 export function ThemeToggle({ className = "" }: { className?: string }) {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">("light");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const t = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    const t = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     setTheme(t);
     setReady(true);
   }, []);

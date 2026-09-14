@@ -2,44 +2,46 @@
 
 /* ──────────────────────────────────────────────────────────────────────────
    TEMA, sorgente di verita dei colori (SEMBLIC).
-   Scuro = default (brand-first). Chiaro = avorio caldo (data-theme="light").
+   CHIARO = default (avorio caldo). SCURO = isole (data-theme="dark" su una sezione) o tema opzionale.
    I token Tailwind (@theme, sotto) puntano a queste variabili, cosi tutte le
    classi (bg-obsidian, text-foreground, bg-surface, text-muted, ...) si
    ribaltano da sole quando cambia data-theme. Amber e i testi-su-pieno sono
    COSTANTI; superfici/testo/bordi e gli stati cambiano col tema.
    ────────────────────────────────────────────────────────────────────────── */
-:root, [data-theme="dark"] {
-  /* Scuro (default). Vale anche per le "isole sempre scure" (es. hero su video):
-     mettendo data-theme="dark" su una sezione, il suo sottoalbero resta scuro
-     anche quando la pagina e in tema chiaro. */
-  --bg:          #0C0F17;
-  --surface:     #141A24;
-  --elevated:    #1E2530;
-  --edge:        #2C3440;
-  --text:        #F2E9D8;
-  --text-muted:  #ADA89E;
-  --text-faint:  #74716E;
-  --hairline:      rgba(242,233,216,0.12);
-  --hairline-soft: rgba(242,233,216,0.06);
-  --nav-bg:          rgba(12,15,23,0.70);
-  --nav-bg-scrolled: rgba(12,15,23,0.90);
-  --glass-bg:    rgba(242,233,216,0.04);
-  --star-ink:    rgba(242,233,216,0.16);
+:root, [data-theme="light"] {
+  /* CHIARO (default). Corpo del sito: avorio caldo a bassa croma, inchiostro. */
+  --bg:          #F7F4EE;
+  --surface:     #FFFFFF;
+  --elevated:    #FFFFFF;
+  --edge:        #D9D3C5;
+  --text:        #17150F;
+  --text-muted:  #5B564B;
+  --text-faint:  #8C867A;
+  --hairline:      #E6E1D6;
+  --hairline-soft: #EFEBE2;
+  --nav-bg:          rgba(247,244,238,0.78);
+  --nav-bg-scrolled: rgba(247,244,238,0.94);
+  --glass-bg:    rgba(255,255,255,0.62);
+  --star-ink:    rgba(23,21,15,0.10);
 
-  /* Stati (cambiano col tema per leggibilita) */
-  --verified-c:  #7FAE96;
-  --blocked-c:   #EE7A70;
+  /* Stati */
+  --verified-c:    #3E8E78;
+  --verified-soft: #E3F1EC;
+  --blocked-c:     #CB5A3C;
+  --blocked-soft:  #F8E6E0;
 
-  /* Costanti nei due temi */
-  --amber-c:        #F2A93B;
-  --amber-hover-c:  #E29A2E;
+  /* Un solo colore d'azione: l'ambra */
+  --amber-c:        #E29A2E;
+  --amber-hover-c:  #D08A22;
+  --amber-soft:     #F8E9CF;
+  --amber-ink:      #B85C10;
   --on-amber-c:     #412402;
   --on-verified-c:  #16352A;
   --on-blocked-c:   #5A201B;
 
   /* Gradienti, solo sfondi/sezioni */
-  --grad-tramonto: linear-gradient(135deg, #F2A93B 0%, #EE7A70 100%);
-  --grad-aurora:   linear-gradient(135deg, #F2A93B 0%, #C25C3A 42%, var(--bg) 100%);
+  --grad-tramonto: linear-gradient(135deg, #E29A2E 0%, #E0715F 100%);
+  --grad-aurora:   linear-gradient(135deg, #E29A2E 0%, #C25C3A 42%, var(--bg) 100%);
   --grad-fiducia:  linear-gradient(135deg, #7FAE96 0%, #2E8B7E 100%);
 
   /* Alias semantici */
@@ -48,22 +50,29 @@
   --text-on-amber: var(--on-amber-c);
 }
 
-[data-theme="light"] {
-  --bg:          #ECE6D6;
-  --surface:     #F5F1E7;
-  --elevated:    #FBF8F1;
-  --edge:          rgba(42,36,26,0.16);
-  --text:        #2A2418;
-  --text-muted:  #6E6655;
-  --text-faint:  #9A9080;
-  --hairline:      rgba(42,36,26,0.14);
-  --hairline-soft: rgba(42,36,26,0.07);
-  --nav-bg:          rgba(236,230,214,0.72);
-  --nav-bg-scrolled: rgba(236,230,214,0.92);
-  --glass-bg:    rgba(255,255,255,0.45);
-  --star-ink:    rgba(42,36,26,0.16);
-  --verified-c:  #3E8E78;
-  --blocked-c:   #CB5A3C;
+[data-theme="dark"] {
+  /* SCURO: le ISOLE (hero, Ward, Nemesis, Studio, appello) e il tema scuro
+     opzionale. Mettendo data-theme="dark" su una sezione, il suo sottoalbero
+     resta scuro dentro una pagina chiara. */
+  --bg:          #0C0F17;
+  --surface:     #141A24;
+  --elevated:    #1E2530;
+  --edge:        #2C3440;
+  --text:        #F2E9D8;
+  --text-muted:  rgba(242,233,216,0.66);
+  --text-faint:  rgba(242,233,216,0.42);
+  --hairline:      rgba(242,233,216,0.14);
+  --hairline-soft: rgba(242,233,216,0.07);
+  --nav-bg:          rgba(12,15,23,0.70);
+  --nav-bg-scrolled: rgba(12,15,23,0.90);
+  --glass-bg:    rgba(242,233,216,0.05);
+  --star-ink:    rgba(242,233,216,0.16);
+  --verified-c:    #7FAE96;
+  --verified-soft: rgba(127,174,150,0.16);
+  --blocked-c:     #EE7A70;
+  --blocked-soft:  rgba(238,122,112,0.16);
+  --amber-soft:    rgba(226,154,46,0.16);
+  --amber-ink:     #E5B57A;
 }
 
 /* Le isole (data-theme su una sezione) RI-DICHIARANO il colore del testo del
@@ -99,13 +108,18 @@
   --color-crimson:     var(--blocked-c);
   --color-crimson-light: var(--blocked-c);
 
+  --color-amber-soft:  var(--amber-soft);
+  --color-amber-ink:   var(--amber-ink);
+  --color-verified-soft: var(--verified-soft);
+  --color-blocked-soft:  var(--blocked-soft);
+
   --color-on-amber:    var(--on-amber-c);
   --color-on-verified: var(--on-verified-c);
   --color-on-blocked:  var(--on-blocked-c);
 
   --color-background:  var(--bg);
 
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-instrument);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -129,7 +143,7 @@ html.lenis, html.lenis body { height: auto; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-instrument), "Instrument Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
@@ -320,3 +334,24 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
   animation: ward-sweep 1.4s ease-in-out infinite;
 }
 .ward-scanglow { box-shadow: inset 0 0 0 1px rgba(242,169,59,0.5), inset 0 0 40px rgba(242,169,59,0.18); }
+
+/* ── Casa nuova (2026-09-14): mattoni condivisi della pelle chiara ── */
+.card { background: var(--surface); border: 1px solid var(--hairline); border-radius: 20px; }
+.kicker {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--amber-ink);
+}
+.isola { background: var(--bg); color: var(--text); border-radius: 28px; position: relative; overflow: hidden; }
+.riga-scorrevole {
+  display: flex; gap: 0.75rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.riga-scorrevole::-webkit-scrollbar { display: none; }
+.riga-scorrevole > * { scroll-snap-align: start; flex: 0 0 auto; }
+/* Reveal allo scroll fatto dal browser (scroll-driven): dove non c'e', resta statico. */
+@supports (animation-timeline: view()) {
+  .sv { animation: sv-in linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+  @keyframes sv-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+}
+@media (prefers-reduced-motion: reduce) { .sv { animation: none; } }
