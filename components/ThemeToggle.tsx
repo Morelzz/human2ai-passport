@@ -33,7 +33,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggle}
       aria-label={theme === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro"}
       title={theme === "dark" ? "Tema chiaro" : "Tema scuro"}
-      className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:text-amber focus-ring ${className}`}
+      className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:text-amber-ink focus-ring ${className}`}
     >
       {/* Mostra l'icona della destinazione: sole quando sei al buio, luna quando sei in chiaro */}
       {ready && theme === "dark" ? <Sun className="h-[1.15rem] w-[1.15rem]" /> : <Moon className="h-[1.15rem] w-[1.15rem]" />}

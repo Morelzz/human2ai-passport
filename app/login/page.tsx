@@ -55,7 +55,7 @@ export default function LoginPage() {
 
         <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
           Non hai un account?{" "}
-          <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"} style={{ color: "#F2A93B" }}>Registrati</Link>
+          <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"} style={{ color: "var(--amber-ink)" }}>Registrati</Link>
         </p>
       </form>
     </Shell>

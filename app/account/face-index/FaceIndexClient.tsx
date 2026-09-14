@@ -127,11 +127,11 @@ export default function FaceIndexClient() {
                   </p>
                 </>
               ) : (
-                <p style={{ color: "#F2A93B", fontWeight: 700, margin: 0 }}>Indice mai costruito, il fallback di /verify è spento.</p>
+                <p style={{ color: "var(--amber-ink)", fontWeight: 700, margin: 0 }}>Indice mai costruito, il fallback di /verify è spento.</p>
               )}
             </div>
             <button onClick={rebuild} disabled={building || totalSources === 0}
-              style={{ padding: "0.7rem 1.4rem", borderRadius: 999, border: "none", background: building || totalSources === 0 ? "var(--elevated)" : "#F2A93B", color: building || totalSources === 0 ? "var(--text-faint)" : "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: building || totalSources === 0 ? "default" : "pointer" }}>
+              style={{ padding: "0.7rem 1.4rem", borderRadius: 999, border: "none", background: building || totalSources === 0 ? "var(--elevated)" : "var(--amber-c)", color: building || totalSources === 0 ? "var(--text-faint)" : "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: building || totalSources === 0 ? "default" : "pointer" }}>
               {building ? "Costruzione in corso…" : index ? "Ricostruisci indice" : "Costruisci indice"}
             </button>
           </div>

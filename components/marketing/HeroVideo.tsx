@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
 // Sorgenti su Supabase Storage pubblico (CDN), niente peso nel repo git.
 // Casa nuova (2026-09-14): il video dell'hero e' QUADRATO (generato con
@@ -15,7 +15,7 @@ const VIDEO = `${BASE}/hero-v3.mp4`; // 1:1, muto, ottimizzato
 // muted + playsInline). Sul punto di loop una piccola transizione "dip-to-dark"
 // ammorbidisce lo stacco. Sotto prefers-reduced-motion resta il poster, fermo.
 export function HeroVideo({ className = "" }: { className?: string }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const seamRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState<string | null>(null);

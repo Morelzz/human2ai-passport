@@ -221,8 +221,8 @@ export default async function AccountPage() {
                     textAlign: "center",
                     padding: "0.75rem",
                     borderRadius: 10,
-                    background: "#F2A93B",
-                    color: "#412402",
+                    background: "var(--amber-c)",
+                    color: "var(--on-amber-c)",
                     fontWeight: 700,
                     fontSize: "0.85rem",
                     textDecoration: "none",
@@ -240,7 +240,7 @@ export default async function AccountPage() {
             buyer: qui glielo ricordiamo con un CTA diretto al form (dopo il KYB
             diventa enterprise e questo blocco sparisce). */}
         {role === "buyer" && (user.user_metadata as { account_intent?: string } | null)?.account_intent === "enterprise" && (
-          <Link href="/enterprise/register" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
+          <Link href="/enterprise/register" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
             Completa la registrazione della tua azienda
           </Link>
         )}
@@ -253,7 +253,7 @@ export default async function AccountPage() {
               <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
                 <span aria-hidden style={{ fontSize: "1.4rem" }}>⚡</span>
-                <span style={{ color: volt <= 0 ? "var(--blocked-c)" : volt < LOW_BALANCE_THRESHOLD ? "#F2A93B" : "var(--text)", fontSize: "2.6rem", fontWeight: 200, letterSpacing: "-0.04em", lineHeight: 1 }}>
+                <span style={{ color: volt <= 0 ? "var(--blocked-c)" : volt < LOW_BALANCE_THRESHOLD ? "var(--amber-c)" : "var(--text)", fontSize: "2.6rem", fontWeight: 200, letterSpacing: "-0.04em", lineHeight: 1 }}>
                   {volt.toLocaleString("it-IT")}
                 </span>
               </div>
@@ -263,7 +263,7 @@ export default async function AccountPage() {
                 </p>
               )}
             </div>
-            <Link href="/account/volt" style={{ flexShrink: 0, padding: "0.7rem 1.4rem", borderRadius: 999, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+            <Link href="/account/volt" style={{ flexShrink: 0, padding: "0.7rem 1.4rem", borderRadius: 999, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
               Ricarica
             </Link>
           </div>
@@ -306,7 +306,7 @@ export default async function AccountPage() {
                         {new Date(a.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
                       </span>
                       {a.similarity !== null && (
-                        <span style={{ color: "#F2A93B", fontSize: "0.8rem", fontWeight: 700 }}>somiglianza ~{a.similarity}%</span>
+                        <span style={{ color: "var(--amber-ink)", fontSize: "0.8rem", fontWeight: 700 }}>somiglianza ~{a.similarity}%</span>
                       )}
                     </div>
                   ))}
@@ -317,7 +317,7 @@ export default async function AccountPage() {
                   </p>
                 )}
 
-                <Link href="/signup/avatar/protected" style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "1.1rem" }}>
+                <Link href="/signup/avatar/protected" style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--amber-ink)", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "1.1rem" }}>
                   Gestisci la tua protezione
                 </Link>
               </>
@@ -377,11 +377,11 @@ export default async function AccountPage() {
                   </div>
                 ) : (
                   <div style={{ background: "var(--bg)", border: "1px solid rgba(242,169,59,0.25)", borderRadius: 12, padding: "1.1rem" }}>
-                    <p style={{ color: "#F2A93B", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.8rem" }}>ATTIVA IL TUO SOUL</p>
+                    <p style={{ color: "var(--amber-ink)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.8rem" }}>ATTIVA IL TUO SOUL</p>
                     <SoulActivate />
                   </div>
                 )}
-                <Link href={`/passport/${myAvatar}`} style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
+                <Link href={`/passport/${myAvatar}`} style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
                   Vai al tuo passport pubblico
                 </Link>
                 <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "transparent", border: "1px solid var(--hairline)", color: "var(--text-muted)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
@@ -390,7 +390,7 @@ export default async function AccountPage() {
                 <LinkWallet initialWallet={myWallet} />
               </div>
             ) : isVerifiedSeller ? (
-              <Link href="/account/avatar" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+              <Link href="/account/avatar" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
                 Crea il tuo avatar nel registro
               </Link>
             ) : (
@@ -412,7 +412,7 @@ export default async function AccountPage() {
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.7rem", flexWrap: "wrap", marginTop: "0.15rem" }}>
                 <span style={{ color: "var(--verified-c)", fontSize: "2.9rem", fontWeight: 200, letterSpacing: "-0.04em", lineHeight: 1 }}>{formatEur(royaltyCents)}</span>
                 {revenue && revenue.last30Cents > 0 && (
-                  <span style={{ color: "#F2A93B", fontSize: "0.85rem", fontWeight: 700 }}>
+                  <span style={{ color: "var(--amber-ink)", fontSize: "0.85rem", fontWeight: 700 }}>
                     +{formatEur(revenue.last30Cents)} <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>ultimi 30 giorni</span>
                     {revenue.deltaPct !== null && (
                       <span style={{ color: revenue.deltaPct >= 0 ? "var(--verified-c)" : "var(--blocked-c)", marginLeft: "0.4rem" }}>
@@ -485,11 +485,11 @@ export default async function AccountPage() {
             {demand.notGranted > 0 && (
               <>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem", margin: "0.9rem 0 0" }}>
-                  <span style={{ color: "#F2A93B", fontSize: "0.82rem", fontWeight: 700 }}>
+                  <span style={{ color: "var(--amber-ink)", fontSize: "0.82rem", fontWeight: 700 }}>
                     {demand.notGranted === 1 ? "1 era in una categoria che oggi non concedi" : `${demand.notGranted} erano in categorie che oggi non concedi`}
                   </span>
                 </div>
-                <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "0.8rem" }}>
+                <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--amber-ink)", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "0.8rem" }}>
                   Apri nuove categorie, decidi tu
                 </Link>
               </>
@@ -523,7 +523,7 @@ export default async function AccountPage() {
               Sei una persona reale: il tuo volto può entrare nel registro, restare sotto il tuo
               consenso e farti guadagnare ogni volta che viene usato. Tu decidi tutto, sempre.
             </p>
-            <Link href="/scansione" style={{ display: "inline-block", padding: "0.7rem 1.4rem", borderRadius: 999, background: "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+            <Link href="/scansione" style={{ display: "inline-block", padding: "0.7rem 1.4rem", borderRadius: 999, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
               Scopri come entrare
             </Link>
           </div>

@@ -1,9 +1,11 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-const GRAD = "linear-gradient(90deg,#F2A93B,#EE7A70,#F2A93B)";
+// Gradiente dal tema (--grad-testo): leggibile sia su avorio sia nelle isole scure.
+const GRAD = "var(--grad-testo)";
 
 const charV: Variants = {
   hidden: { opacity: 0, y: "0.55em", filter: "blur(8px)" },
@@ -30,7 +32,7 @@ export function KineticText({
   delay?: number;
   gradient?: boolean;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
 
   // ── Variante GRADIENTE: blocco unico (no per-lettera), robusta al 100% ────
   if (gradient) {

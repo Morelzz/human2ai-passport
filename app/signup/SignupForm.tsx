@@ -96,7 +96,7 @@ export default function SignupForm() {
       ) : done ? (
         <p style={{ color: "var(--verified-c)", fontSize: "0.9rem", lineHeight: 1.6 }}>
           Account creato. Controlla la tua email per confermare, poi{" "}
-          <Link href="/login" style={{ color: "#F2A93B" }}>accedi</Link>
+          <Link href="/login" style={{ color: "var(--amber-ink)" }}>accedi</Link>
           {accountType === "enterprise" ? " e completa la registrazione della tua azienda." : "."}
         </p>
       ) : (
@@ -146,7 +146,7 @@ export default function SignupForm() {
                     fontWeight: 600,
                     background: accountType === r ? "rgba(242,169,59,0.15)" : "var(--surface)",
                     color: accountType === r ? "var(--text)" : "var(--text-muted)",
-                    border: `1px solid ${accountType === r ? "#F2A93B" : "var(--hairline-soft)"}`,
+                    border: `1px solid ${accountType === r ? "var(--amber-c)" : "var(--hairline-soft)"}`,
                   }}
                 >
                   {r === "buyer" ? "Compratore" : r === "seller" ? "Creatore" : "Azienda"}
@@ -171,7 +171,7 @@ export default function SignupForm() {
 
           <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
             Hai già un account?{" "}
-            <Link href="/login" style={{ color: "#F2A93B" }}>Accedi</Link>
+            <Link href="/login" style={{ color: "var(--amber-ink)" }}>Accedi</Link>
           </p>
         </form>
       )}

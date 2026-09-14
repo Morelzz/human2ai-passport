@@ -43,7 +43,7 @@ export default async function ReceiptPage({ params }: Props) {
       .page-bg { background: #ffffff !important; padding: 0 !important; }
       .paper { box-shadow: none !important; border: none !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
     }
-    .receipt-link { color: #F2A93B; text-decoration: none; overflow-wrap: anywhere; }
+    .receipt-link { color: #9A4A0B; text-decoration: none; overflow-wrap: anywhere; }
     .receipt-link:hover { text-decoration: underline; }
   `;
 
@@ -69,7 +69,7 @@ export default async function ReceiptPage({ params }: Props) {
             <div style={{ color: "#6b7280", fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase" }}>Registro dei diritti d&apos;immagine</div>
           </div>
           {/* Barra tricolore del brand */}
-          <div style={{ height: 3, borderRadius: 2, marginTop: "0.9rem", background: "linear-gradient(90deg,#F2A93B,#B8005C,#00A896)" }} />
+          <div style={{ height: 3, borderRadius: 2, marginTop: "0.9rem", background: "linear-gradient(90deg,#E29A2E,#E0715F,#3E8E78)" }} />
 
           <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "1.6rem 0 0.3rem" }}>Ricevuta di conformità del consenso</h1>
           <p style={{ color: "#6b7280", fontSize: "0.82rem", margin: 0 }}>Emessa il {fmtDate(r.issued_at)} da {r.issuer}</p>

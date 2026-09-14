@@ -36,7 +36,7 @@ export default function ConsentClient({ token, alias, identity, commercialConsen
     <div style={{ background: "var(--bg)", minHeight: "100vh", color: "var(--text)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: 480, width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", justifyContent: "center", marginBottom: "2rem" }}>
-          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#F2A93B" }} />
+          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--amber-c)" }} />
           <span style={{ fontSize: "0.85rem", letterSpacing: "0.15em", fontWeight: 700 }}>SEMBLIC</span>
         </div>
 
@@ -81,7 +81,7 @@ export default function ConsentClient({ token, alias, identity, commercialConsen
             {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.82rem", margin: "0 0 1rem" }}>{error}</p>}
 
             <button onClick={confirm} disabled={loading}
-              style={{ width: "100%", padding: "0.9rem", borderRadius: 10, border: "none", background: loading ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
+              style={{ width: "100%", padding: "0.9rem", borderRadius: 10, border: "none", background: loading ? "var(--elevated)" : "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
               {loading ? "Conferma…" : "Confermo il mio consenso"}
             </button>
           </div>

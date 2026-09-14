@@ -15,8 +15,8 @@ export interface ActiveJob {
 }
 
 const STATUS: Record<string, { label: string; color: string }> = {
-  pending: { label: "In coda", color: "#F2A93B" },
-  running: { label: "In generazione…", color: "#F2A93B" },
+  pending: { label: "In coda", color: "var(--amber-ink)" },
+  running: { label: "In generazione…", color: "var(--amber-ink)" },
   done: { label: "Pronta", color: "var(--verified-c)" },
   error: { label: "Non riuscita. I VOLT sono stati riaccreditati.", color: "var(--blocked-c)" },
 };

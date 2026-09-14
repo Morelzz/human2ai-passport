@@ -41,11 +41,11 @@ export default async function TrasparenzaPage() {
   const protectedFaces = await countProtectedFaces(sb);
 
   const stats = [
-    { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#F2A93B" },
+    { label: "Persone reali nel registro", value: String(avatarsTotal ?? 0), c: "#9A4A0B" },
     { label: "Consensi attivi", value: String(avatarsActive ?? 0), c: "var(--verified-c)" },
     { label: "Generazioni certificate", value: String(genCount), c: "var(--blocked-c)" },
     { label: "Maturato per le persone reali", value: formatEur(royaltyAccrued), c: "var(--verified-c)" },
-    { label: "Già erogato (payout)", value: formatEur(payoutPaid), c: "#F2A93B" },
+    { label: "Già erogato (payout)", value: formatEur(payoutPaid), c: "#9A4A0B" },
     { label: "Payout effettuati", value: String(payoutCount), c: "var(--text-faint)" },
   ];
 

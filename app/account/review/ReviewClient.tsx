@@ -23,7 +23,7 @@ interface PendingAvatar {
 
 // salvia=forte, amber=media, coral=bassa (come nel flusso di creazione).
 function bandColor(band: "strong" | "review" | "weak"): string {
-  return band === "strong" ? "var(--verified-c)" : band === "review" ? "#F2A93B" : "var(--blocked-c)";
+  return band === "strong" ? "var(--verified-c)" : band === "review" ? "var(--amber-c)" : "var(--blocked-c)";
 }
 
 const THUMBS: { key: "doc_url" | "selfie_url" | "photo_url"; label: string }[] = [

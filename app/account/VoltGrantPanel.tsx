@@ -51,7 +51,7 @@ export default function VoltGrantPanel() {
       <button
         onClick={grant}
         disabled={busy || !email || !amount}
-        className="mt-3 rounded-xl bg-[#F2A93B] px-4 py-2 text-sm font-bold text-[#412402] transition-all hover:brightness-110 disabled:opacity-50"
+        className="mt-3 rounded-full bg-amber px-4 py-2 text-sm font-semibold text-on-amber transition-all hover:brightness-110 disabled:opacity-50"
       >
         {busy ? "Accredito…" : "Accredita ⚡"}
       </button>

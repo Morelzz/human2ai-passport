@@ -51,7 +51,7 @@ export default function AnchorPanel() {
             <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="handle avatar (es. random)"
               style={{ flex: 1, minWidth: 160, background: "var(--bg)", border: "1px solid var(--hairline)", borderRadius: 8, color: "var(--text)", fontSize: "0.85rem", padding: "0.55rem 0.7rem", outline: "none" }} />
             <button onClick={anchor} disabled={busy || !handle.trim()}
-              style={{ padding: "0.55rem 1rem", borderRadius: 8, border: "none", background: busy || !handle.trim() ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.82rem", cursor: busy || !handle.trim() ? "default" : "pointer" }}>
+              style={{ padding: "0.55rem 1rem", borderRadius: 8, border: "none", background: busy || !handle.trim() ? "var(--elevated)" : "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.82rem", cursor: busy || !handle.trim() ? "default" : "pointer" }}>
               {busy ? "Ancoraggio…" : "Ancora"}
             </button>
           </div>

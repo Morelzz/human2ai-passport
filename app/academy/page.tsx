@@ -20,24 +20,24 @@ export const metadata = {
 // gradi: qui nessuna iscrizione finta, solo la mappa onesta di cosa sarà.
 
 const LIVELLO_UI: Record<CorsoLivello, { label: string; accesso: string; c: string; Icon: typeof GraduationCap }> = {
-  base: { label: "Base", accesso: "Gratuito per gli iscritti", c: "#7FAE96", Icon: GraduationCap },
-  medio: { label: "Medio", accesso: "Con abbonamento", c: "#F2A93B", Icon: Sparkles },
-  avanzato: { label: "Avanzato", accesso: "A pagamento · certificante", c: "#EE7A70", Icon: Award },
+  base: { label: "Base", accesso: "Gratuito per gli iscritti", c: "#2F7563", Icon: GraduationCap },
+  medio: { label: "Medio", accesso: "Con abbonamento", c: "#9A4A0B", Icon: Sparkles },
+  avanzato: { label: "Avanzato", accesso: "A pagamento · certificante", c: "#B0472B", Icon: Award },
 };
 
 // Formazione in azienda: i percorsi che l'AI Act rende urgenti (personale
 // formato sugli strumenti AI in uso). Livelli come chip; contenuti erogati
 // su richiesta via /contatti (prefill ?tema=formazione).
 const LIVELLI_AZIENDE = [
-  { label: "Base", c: "#7FAE96" },
-  { label: "Operativo", c: "#F2A93B" },
-  { label: "Avanzato", c: "#EE7A70" },
+  { label: "Base", c: "#2F7563" },
+  { label: "Operativo", c: "#9A4A0B" },
+  { label: "Avanzato", c: "#B0472B" },
 ];
 
 const PERCORSI_AZIENDE = [
   {
     Icon: Palette,
-    c: "#F2A93B",
+    c: "#9A4A0B",
     titolo: "Generazione visiva con metodo",
     strumenti: "Semblic · Higgsfield",
     descrizione:
@@ -55,7 +55,7 @@ const PERCORSI_AZIENDE = [
   },
   {
     Icon: Camera,
-    c: "#7FAE96",
+    c: "#2F7563",
     titolo: "Fotografia aumentata",
     strumenti: "Media team · content creator",
     descrizione:
@@ -64,7 +64,7 @@ const PERCORSI_AZIENDE = [
   },
   {
     Icon: Scale,
-    c: "#EE7A70",
+    c: "#B0472B",
     titolo: "Conformita' nell'uso quotidiano",
     strumenti: "AI Act in pratica",
     descrizione:
@@ -138,7 +138,7 @@ export default async function AcademyPage() {
           <section id="aziende" className="scroll-mt-24 pt-16 sm:pt-20">
             <Reveal>
               <div className="mx-auto max-w-2xl text-center">
-                <span className="kicker" style={{ color: "#F2A93B" }}>Formazione per le aziende</span>
+                <span className="kicker">Formazione per le aziende</span>
                 <h2 className="mt-3 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
                   L&apos;AI Act chiede anche <span className="text-gradient">competenza</span>.<br />
                   Noi la insegniamo.

@@ -90,7 +90,7 @@ export default function ReportsClient() {
                   <span style={{ background: "rgba(238,122,112,0.12)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--blocked-c)", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.72rem", fontWeight: 700 }}>
                     {REASON_LABEL[r.reason] ?? r.reason}
                   </span>
-                  <span style={{ background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "#F2A93B", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.72rem", fontWeight: 700 }}>
+                  <span style={{ background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--amber-ink)", borderRadius: 999, padding: "0.2rem 0.7rem", fontSize: "0.72rem", fontWeight: 700 }}>
                     {r.target_type === "content" ? "Contenuto" : "Avatar"}
                   </span>
                   <span style={{ color: "var(--text-faint)", fontSize: "0.78rem", marginLeft: "auto" }}>{formatDate(r.created_at)}</span>

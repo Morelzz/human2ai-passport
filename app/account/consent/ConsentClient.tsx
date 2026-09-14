@@ -71,14 +71,14 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
         <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
           Il consenso è una timeline: ogni modifica viene registrata e vale solo per il
           futuro. Revocare non cancella ciò che è già avvenuto.{" "}
-          <Link href={`/passport/${handle}`} style={{ color: "#F2A93B" }}>Vedi il passport</Link>
+          <Link href={`/passport/${handle}`} style={{ color: "var(--amber-ink)" }}>Vedi il passport</Link>
         </p>
 
         {/* Identity kit — immutabile, fissato alla creazione */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", margin: "0 0 0.3rem" }}>
             <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: 0 }}>IDENTITY KIT</p>
-            <span style={{ fontSize: "0.62rem", fontWeight: 700, color: "#F2A93B", background: "rgba(242,169,59,0.12)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 999, padding: "0.1rem 0.5rem", letterSpacing: "0.04em" }}>IMMUTABILE</span>
+            <span style={{ fontSize: "0.62rem", fontWeight: 700, color: "var(--amber-ink)", background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 999, padding: "0.1rem 0.5rem", letterSpacing: "0.04em" }}>IMMUTABILE</span>
           </div>
           <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1.2rem", lineHeight: 1.5 }}>
             Le caratteristiche strutturali dell&apos;avatar, fissate alla creazione. Rappresentano la persona reale e non sono modificabili.
@@ -104,7 +104,7 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
               della revoca resta registrata.
             </p>
             <button disabled={busy} onClick={() => { if (confirm("Riattivare il consenso? Il tuo avatar tornerà utilizzabile da oggi.")) act({ type: "reactivate" }); }}
-              style={{ padding: "0.7rem 1.2rem", borderRadius: 10, border: "none", background: busy ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+              style={{ padding: "0.7rem 1.2rem", borderRadius: 10, border: "none", background: busy ? "var(--elevated)" : "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
               Riattiva il consenso
             </button>
           </div>

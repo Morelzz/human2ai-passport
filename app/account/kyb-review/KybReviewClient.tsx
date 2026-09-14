@@ -81,7 +81,7 @@ export default function KybReviewClient() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
                   {o.website && (
                     <a href={o.website.startsWith("http") ? o.website : `https://${o.website}`} target="_blank" rel="noreferrer noopener"
-                      style={{ color: "#F2A93B", fontSize: "0.78rem", textDecoration: "none", wordBreak: "break-all" }}>
+                      style={{ color: "var(--amber-ink)", fontSize: "0.78rem", textDecoration: "none", wordBreak: "break-all" }}>
                       {o.website} ↗
                     </a>
                   )}

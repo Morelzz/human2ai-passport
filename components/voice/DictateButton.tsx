@@ -44,8 +44,8 @@ export function DictateButton({
         aria-label={listening ? "Ferma la dettatura" : "Detta a voce"}
         className={`focus-ring relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[0.72rem] font-semibold transition-colors ${
           listening
-            ? "border border-amber bg-amber-soft text-amber"
-            : "border border-amber/30 bg-amber/[0.07] text-amber hover:bg-amber-soft"
+            ? "border border-amber bg-amber-soft text-amber-ink"
+            : "border border-amber/30 bg-amber/[0.07] text-amber-ink hover:bg-amber-soft"
         }`}
       >
         {listening && (

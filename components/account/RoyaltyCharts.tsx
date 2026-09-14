@@ -61,7 +61,7 @@ function CategoryBars({ byCategory }: { byCategory: RevenueStats["byCategory"] }
                 <span className="font-bold text-verified">{formatEur(c.cents)}</span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/6">
-                <div className="h-full rounded-full bg-[#F2A93B]" style={{ width: `${Math.max(4, (c.cents / max) * 100)}%` }} />
+                <div className="h-full rounded-full bg-amber" style={{ width: `${Math.max(4, (c.cents / max) * 100)}%` }} />
               </div>
             </li>
           ))}

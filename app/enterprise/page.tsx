@@ -54,9 +54,9 @@ export default function EnterprisePage() {
           <section className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                { Icon: UserCheck, t: "1 · Scegli il volto", d: "Dal catalogo verificato: persona reale, consenziente per la tua categoria, con storico di utilizzi visibile.", c: "#F2A93B" },
-                { Icon: Lock, t: "2 · Riservi la categoria", d: "Per la durata del contratto la categoria è tua: la riserva vive nel registro dei consensi, non in una promessa.", c: "#EE7A70" },
-                { Icon: CalendarRange, t: "3 · 6 o 12 mesi", d: "Canone ricorrente + royalty alla persona a ogni utilizzo. Alla scadenza: rinnovo prioritario o rilascio.", c: "#7FAE96" },
+                { Icon: UserCheck, t: "1 · Scegli il volto", d: "Dal catalogo verificato: persona reale, consenziente per la tua categoria, con storico di utilizzi visibile.", c: "#9A4A0B" },
+                { Icon: Lock, t: "2 · Riservi la categoria", d: "Per la durata del contratto la categoria è tua: la riserva vive nel registro dei consensi, non in una promessa.", c: "#B0472B" },
+                { Icon: CalendarRange, t: "3 · 6 o 12 mesi", d: "Canone ricorrente + royalty alla persona a ogni utilizzo. Alla scadenza: rinnovo prioritario o rilascio.", c: "#2F7563" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>

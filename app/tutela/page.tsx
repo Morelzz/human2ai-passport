@@ -41,15 +41,15 @@ export default function TutelaPage() {
           <div className="mx-auto mt-9 max-w-xl">
             <div className="flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center">
               <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
-                <ScanFace className="h-4 w-4 shrink-0" style={{ color: "#F2A93B" }} /> Verifica Didit
+                <ScanFace className="h-4 w-4 shrink-0" style={{ color: "var(--amber-ink)" }} /> Verifica Didit
               </span>
               <ArrowRight className="hidden h-4 w-4 shrink-0 text-faint sm:block" aria-hidden />
               <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
-                <Fingerprint className="h-4 w-4 shrink-0" style={{ color: "#F2A93B" }} /> Faceprint, 128 numeri
+                <Fingerprint className="h-4 w-4 shrink-0" style={{ color: "var(--amber-ink)" }} /> Faceprint, 128 numeri
               </span>
               <ArrowRight className="hidden h-4 w-4 shrink-0 text-faint sm:block" aria-hidden />
               <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
-                <ShieldCheck className="h-4 w-4 shrink-0" style={{ color: "#F2A93B" }} /> Confronto
+                <ShieldCheck className="h-4 w-4 shrink-0" style={{ color: "var(--amber-ink)" }} /> Confronto
               </span>
             </div>
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2.5">
@@ -108,7 +108,7 @@ export default function TutelaPage() {
               ].map(({ Icon, t, d, href, cta }) => (
                 <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.33)" }}>
-                    <Icon className="h-5 w-5" style={{ color: "#F2A93B" }} />
+                    <Icon className="h-5 w-5" style={{ color: "var(--amber-ink)" }} />
                   </span>
                   <h2 className="mt-4 text-lg font-bold">{t}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted">{d}</p>

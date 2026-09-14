@@ -26,7 +26,7 @@ interface PendingKyc {
 // Lettura della distanza FaceNet: <=0.5 alta, <=0.6 media, oltre bassa.
 function matchTone(pair: MatchPair): { label: string; color: string; bg: string } {
   if (pair.distance <= 0.5) return { label: "alta", color: "var(--verified-c)", bg: "rgba(127,174,150,0.12)" };
-  if (pair.distance <= 0.6) return { label: "media", color: "#F2A93B", bg: "rgba(242,169,59,0.1)" };
+  if (pair.distance <= 0.6) return { label: "media", color: "var(--amber-ink)", bg: "rgba(242,169,59,0.1)" };
   return { label: "bassa", color: "var(--blocked-c)", bg: "rgba(238,122,112,0.1)" };
 }
 

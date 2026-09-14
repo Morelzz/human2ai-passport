@@ -11,7 +11,7 @@ export default function PrintButton() {
         padding: "0.65rem 1.3rem",
         borderRadius: 10,
         border: "none",
-        background: "#F2A93B",
+        background: "var(--amber-c)",
         color: "#0C0F17",
         fontWeight: 700,
         fontSize: "0.9rem",

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
+import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
 // Reveal allo scroll: il blocco entra in scena (fade + slide + sfocatura che si
 // risolve) quando entra nel viewport. Una volta sola. Sotto reduced-motion resta
@@ -21,7 +22,7 @@ export function Reveal({
   y?: number;
   delay?: number;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   if (reduce) return <div className={className}>{children}</div>;
 
   return (
@@ -45,7 +46,7 @@ export const revealItem: Variants = {
 };
 
 export function RevealStagger({ children, className, gap = 0.09 }: { children: ReactNode; className?: string; gap?: number }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   if (reduce) return <div className={className}>{children}</div>;
   return (
     <motion.div

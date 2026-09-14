@@ -19,28 +19,28 @@ export const metadata = {
 const MAPPA = [
   {
     Icon: BadgeCheck,
-    c: "#F2A93B",
+    c: "#9A4A0B",
     chiede: "Dichiarare i contenuti generati",
     dettaglio: "Chi pubblica immagini, video o audio generati o alterati dall'AI deve renderlo riconoscibile.",
     risponde: "Ogni generazione esce con un certificato pubblico e il badge «Volto Verificato».",
   },
   {
     Icon: FileCheck2,
-    c: "#7FAE96",
+    c: "#2F7563",
     chiede: "Marcatura leggibile dalle macchine",
     dettaglio: "I contenuti sintetici devono portare un segno tecnico che le macchine possano rilevare.",
     risponde: "Filigrana invisibile e metadati di provenienza dentro ogni output, dal primo giorno.",
   },
   {
     Icon: ScanSearch,
-    c: "#9B8CFF",
+    c: "#5B4FB8",
     chiede: "Verificabilita'",
     dettaglio: "La trasparenza vale se chiunque puo' controllare cosa ha davanti.",
     risponde: "Sigil, il verificatore pubblico: incolli un contenuto e sai chi c'e' dietro, in un clic.",
   },
   {
     Icon: ShieldCheck,
-    c: "#EE7A70",
+    c: "#B0472B",
     chiede: "Persone reali tutelate",
     dettaglio: "I deepfake vanno dichiarati; l'identita' delle persone va protetta dagli abusi.",
     risponde: "Nessun volto senza consenso verificato e pagato; Ward trova le copie, Nemesis le fa rimuovere.",

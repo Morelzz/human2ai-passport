@@ -103,7 +103,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                   {g.certificate && (
                     <>
                       {/* Tasto grande Modifica (Semblic Editor) sopra Scarica/Condividi */}
-                      <a href={`/studio/edit/${g.certificate}`} className="mb-1.5 block w-full rounded-lg bg-[#F2A93B] px-2 py-2 text-center text-[0.74rem] font-bold text-[#412402] transition-[filter] hover:brightness-110">
+                      <a href={`/studio/edit/${g.certificate}`} className="mb-1.5 block w-full rounded-lg bg-amber px-2 py-2 text-center text-[0.74rem] font-bold text-on-amber transition-[filter] hover:brightness-110">
                         ✦ Modifica
                       </a>
                       {/* Ward: cerca le copie di QUESTA immagine sul web. Tasto vero

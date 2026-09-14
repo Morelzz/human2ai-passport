@@ -41,7 +41,7 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
         <div className="card rounded-2xl p-8 text-center">
           <p className="text-lg font-extrabold text-verified">Identità verificata</p>
           <p className="mt-2 text-sm text-muted">Sei un creatore verificato. Ora puoi creare il tuo avatar nel registro.</p>
-          <Link href="/account/avatar" className="mt-6 inline-block rounded-xl bg-[#F2A93B] px-6 py-3 text-sm font-bold text-[#412402] transition-all hover:brightness-110">
+          <Link href="/account/avatar" className="mt-6 inline-block rounded-full bg-amber px-6 py-3 text-sm font-semibold text-on-amber transition-all hover:brightness-110">
             Crea il tuo avatar
           </Link>
         </div>
@@ -81,7 +81,7 @@ export default function VerifyClient({ initialStatus, diditEnabled = false }: { 
             type="button"
             onClick={startVerification}
             disabled={busy}
-            className="mt-5 w-full rounded-xl bg-[#F2A93B] px-6 py-3.5 text-sm font-bold text-[#412402] shadow-[0_8px_40px_rgba(242,169,59,0.35)] transition-all hover:brightness-110 disabled:opacity-50"
+            className="mt-5 w-full rounded-full bg-amber px-6 py-3.5 text-sm font-semibold text-on-amber  transition-all hover:brightness-110 disabled:opacity-50"
           >
             {busy ? "Apro la verifica…" : "Verifica la mia identità →"}
           </button>

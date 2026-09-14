@@ -159,10 +159,10 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             */}
         <div className="card !absolute inset-x-3 bottom-3 rounded-2xl p-5 sm:inset-x-4 sm:bottom-4 sm:max-w-md">
           {/* Tier come kicker sopra al nome */}
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full border px-3 py-1" style={{ background: tier.bg, borderColor: `${tier.color}44` }}>
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: tier.color }} />
-            <span className="text-xs font-bold tracking-wide" style={{ color: tier.color }}>{tier.label}</span>
-            <span className="text-xs" style={{ color: `${tier.color}99` }}>· {tier.description}</span>
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-amber-soft px-3 py-1">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber" />
+            <span className="text-xs font-bold tracking-wide text-amber-ink">{tier.label}</span>
+            <span className="text-xs text-muted">· {tier.description}</span>
           </div>
 
           <h1 className="text-[2.4rem] font-bold leading-[1] tracking-[-0.04em] sm:text-5xl">{avatar.alias}</h1>

@@ -481,7 +481,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   <div className="flex flex-col gap-1.5 border-l border-border pl-4">
                     {result.events.slice(-6).map((ev, i) => {
                       const meta = EVENT_LABELS[ev.event_type] ?? { label: ev.event_type, tone: "teal" as const };
-                      const color = meta.tone === "crimson" ? "text-blocked" : meta.tone === "amber" ? "text-amber" : "text-verified";
+                      const color = meta.tone === "crimson" ? "text-blocked" : meta.tone === "amber" ? "text-amber-ink" : "text-verified";
                       return (
                         <p key={i} className="m-0 text-[0.75rem] leading-relaxed text-muted">
                           <span className={`font-semibold ${color}`}>{meta.label}</span>
@@ -538,7 +538,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   type="button"
                   onClick={onFaceConsent}
                   disabled={busy}
-                  className="focus-ring mt-1 rounded-full bg-[#F2A93B] px-5 py-2 text-[0.82rem] font-bold text-[#412402] transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="focus-ring mt-1 rounded-full bg-amber px-5 py-2 text-[0.82rem] font-bold text-on-amber transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   Acconsento all&apos;analisi del volto
                 </button>
@@ -547,7 +547,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           ) : face?.quality === "error" ? (
             /* ── ERRORE TECNICO: distinto da "nessun volto" (mai confonderli) ── */
             <>
-              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-amber">ANALISI NON RIUSCITA SUL TUO DISPOSITIVO</h2>
+              <h2 className="m-0 text-[1.05rem] font-bold tracking-[-0.01em] text-amber-ink">Analisi non riuscita sul tuo dispositivo</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 Non è un verdetto sull&apos;immagine: l&apos;analisi del volto si è interrotta per un problema
                 tecnico del browser (memoria/GPU). Ricarica la pagina e riprova; se persiste, prova da un altro browser.
@@ -559,7 +559,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           ) : face?.quality === "low" ? (
             /* ── QUALITY GATE: meglio nessuna risposta che una inventata ── */
             <>
-              <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-amber">QUALITÀ INSUFFICIENTE PER UN CONFRONTO AFFIDABILE</h2>
+              <h2 className="m-0 text-[1.05rem] font-bold tracking-[-0.01em] text-amber-ink">Qualità insufficiente per un confronto affidabile</h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 Il volto in questa immagine è troppo piccolo o sfocato: una percentuale calcolata su pixel
                 che non contengono l&apos;informazione sarebbe un&apos;invenzione.
@@ -659,8 +659,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             </>
           ) : (
             <>
-              <h2 className={`m-0 font-mono text-[0.95rem] font-bold tracking-wide ${result.marked ? "text-amber" : "text-blocked"}`}>
-                {result.source === "token" ? "NON VALIDO" : result.marked ? "FILIGRANA TROVATA: CERTIFICATO SCONOSCIUTO" : "NESSUNA FILIGRANA"}
+              <h2 className={`m-0 text-[1.05rem] font-bold tracking-[-0.01em] ${result.marked ? "text-amber-ink" : "text-blocked"}`}>
+                {result.source === "token" ? "Non valido" : result.marked ? "Filigrana trovata, certificato sconosciuto" : "Nessuna filigrana"}
               </h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
                 {result.source === "token"

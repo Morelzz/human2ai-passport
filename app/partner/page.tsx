@@ -46,9 +46,9 @@ export default function PartnerPage() {
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
-                { Icon: Camera, t: "Acquisizione", d: "Lo shooting secondo il protocollo SEMBLIC: i set di pose e la qualità che servono all'identity-lock dei motori.", c: "#F2A93B" },
-                { Icon: FileSignature, t: "Consenso on-site", d: "La firma del consenso avviene davanti a te, sul posto, con la persona. Tu sei il garante fisico del nostro filtro.", c: "#EE7A70" },
-                { Icon: MapPin, t: "La tua città", d: "Sei il riferimento SEMBLIC della tua zona: eventi di acquisizione, brand locali, persone che vogliono entrare nel registro.", c: "#7FAE96" },
+                { Icon: Camera, t: "Acquisizione", d: "Lo shooting secondo il protocollo SEMBLIC: i set di pose e la qualità che servono all'identity-lock dei motori.", c: "#9A4A0B" },
+                { Icon: FileSignature, t: "Consenso on-site", d: "La firma del consenso avviene davanti a te, sul posto, con la persona. Tu sei il garante fisico del nostro filtro.", c: "#B0472B" },
+                { Icon: MapPin, t: "La tua città", d: "Sei il riferimento SEMBLIC della tua zona: eventi di acquisizione, brand locali, persone che vogliono entrare nel registro.", c: "#2F7563" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>
@@ -71,9 +71,9 @@ export default function PartnerPage() {
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
-                { Icon: Coins, t: "Fee di acquisizione", d: "Un compenso per ogni persona che porti nel registro e superi la verifica.", c: "#7FAE96" },
-                { Icon: Repeat, t: "Quota ricorrente", d: "Una percentuale sulle royalty generate dai volti che hai acquisito. Per tutta la loro vita sulla piattaforma.", c: "#F2A93B" },
-                { Icon: Handshake, t: "Ingaggi reali", d: "Quando un brand vuole lo shooting vero con la persona vera, il partner della sua città è il primo a essere chiamato.", c: "#EE7A70" },
+                { Icon: Coins, t: "Fee di acquisizione", d: "Un compenso per ogni persona che porti nel registro e superi la verifica.", c: "#2F7563" },
+                { Icon: Repeat, t: "Quota ricorrente", d: "Una percentuale sulle royalty generate dai volti che hai acquisito. Per tutta la loro vita sulla piattaforma.", c: "#9A4A0B" },
+                { Icon: Handshake, t: "Ingaggi reali", d: "Quando un brand vuole lo shooting vero con la persona vera, il partner della sua città è il primo a essere chiamato.", c: "#B0472B" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl" style={{ background: `${c}1a`, border: `1px solid ${c}55` }}>

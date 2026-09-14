@@ -16,7 +16,7 @@
   --edge:        #D9D3C5;
   --text:        #17150F;
   --text-muted:  #5B564B;
-  --text-faint:  #8C867A;
+  --text-faint:  #736D62;
   --hairline:      #E6E1D6;
   --hairline-soft: #EFEBE2;
   --nav-bg:          rgba(247,244,238,0.78);
@@ -25,16 +25,16 @@
   --star-ink:    rgba(23,21,15,0.10);
 
   /* Stati */
-  --verified-c:    #3E8E78;
+  --verified-c:    #2F7563;
   --verified-soft: #E3F1EC;
-  --blocked-c:     #CB5A3C;
+  --blocked-c:     #B0472B;
   --blocked-soft:  #F8E6E0;
 
   /* Un solo colore d'azione: l'ambra */
   --amber-c:        #E29A2E;
   --amber-hover-c:  #D08A22;
   --amber-soft:     #F8E9CF;
-  --amber-ink:      #B85C10;
+  --amber-ink:      #9A4A0B;
   --on-amber-c:     #412402;
   --on-verified-c:  #16352A;
   --on-blocked-c:   #5A201B;
@@ -43,6 +43,9 @@
   --grad-tramonto: linear-gradient(135deg, #E29A2E 0%, #E0715F 100%);
   --grad-aurora:   linear-gradient(135deg, #E29A2E 0%, #C25C3A 42%, var(--bg) 100%);
   --grad-fiducia:  linear-gradient(135deg, #7FAE96 0%, #2E8B7E 100%);
+  /* Gradiente per le PAROLE colorate nei titoli: su avorio servono toni scuri
+     (contrasto oltre 4.5:1), nelle isole scure torna l'ambra luminosa. */
+  --grad-testo:    linear-gradient(110deg, #9A4A0B, #A83F26, #9A4A0B);
 
   /* Alias semantici */
   --action: var(--amber-c);
@@ -73,6 +76,7 @@
   --blocked-soft:  rgba(238,122,112,0.16);
   --amber-soft:    rgba(226,154,46,0.16);
   --amber-ink:     #E5B57A;
+  --grad-testo:    linear-gradient(110deg, #F2A93B, #EE7A70, #F2A93B);
 }
 
 /* Le isole (data-theme su una sezione) RI-DICHIARANO il colore del testo del

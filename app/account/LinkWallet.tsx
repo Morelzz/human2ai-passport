@@ -47,7 +47,7 @@ export default function LinkWallet({ initialWallet, handle }: { initialWallet: s
 
   return (
     <div style={{ background: "var(--bg)", border: "1px solid rgba(242,169,59,0.25)", borderRadius: 12, padding: "1rem" }}>
-      <p style={{ color: "#F2A93B", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.5rem" }}>
+      <p style={{ color: "var(--amber-ink)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.5rem" }}>
         WALLET DI PROPRIETÀ
       </p>
       {short ? (
@@ -67,7 +67,7 @@ export default function LinkWallet({ initialWallet, handle }: { initialWallet: s
             Collega il tuo wallet: quando ancoreremo l&apos;identità su Base, il token soulbound del tuo volto sarà mintato qui.
           </p>
           <button onClick={connect} disabled={busy}
-            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
+            style={{ width: "100%", padding: "0.7rem", borderRadius: 10, border: "none", background: busy ? "var(--elevated)" : "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", cursor: busy ? "default" : "pointer" }}>
             {busy ? "Connessione…" : "Collega wallet (Phantom)"}
           </button>
         </>

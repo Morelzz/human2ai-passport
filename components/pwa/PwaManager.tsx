@@ -269,7 +269,7 @@ function PushOptIn({ onEnable, onDismiss }: { onEnable: () => void; onDismiss: (
             width: 56,
             height: 56,
             borderRadius: radius.pill,
-            background: "rgba(242,169,59,0.12)",
+            background: "var(--amber-soft)",
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",

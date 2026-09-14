@@ -159,9 +159,9 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
               Dopo la conferma, l&apos;avatar passa alla revisione dei nostri operatori.
             </p>
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
-              <code style={{ flex: 1, minWidth: 200, background: "var(--bg)", border: "1px solid var(--hairline)", borderRadius: 8, padding: "0.6rem 0.8rem", color: "#F2A93B", fontSize: "0.78rem", wordBreak: "break-all" }}>{consentUrl}</code>
+              <code style={{ flex: 1, minWidth: 200, background: "var(--bg)", border: "1px solid var(--hairline)", borderRadius: 8, padding: "0.6rem 0.8rem", color: "var(--amber-ink)", fontSize: "0.78rem", wordBreak: "break-all" }}>{consentUrl}</code>
               <button type="button" onClick={() => { navigator.clipboard.writeText(consentUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-                style={{ padding: "0.6rem 1rem", borderRadius: 8, border: "1px solid rgba(242,169,59,0.3)", background: "rgba(242,169,59,0.12)", color: copied ? "var(--verified-c)" : "#F2A93B", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
+                style={{ padding: "0.6rem 1rem", borderRadius: 8, border: "1px solid rgba(242,169,59,0.3)", background: "var(--amber-soft)", color: copied ? "var(--verified-c)" : "var(--amber-c)", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer" }}>
                 {copied ? "Copiato" : "Copia"}
               </button>
             </div>
@@ -231,7 +231,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.6rem" }}>
               {POSES.map((p, slot) => (
                 <label key={p.key} title={p.tip} className="focus-ring"
-                  style={{ cursor: "pointer", border: `1px dashed ${refs[slot] ? "#F2A93B" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: refs[slot] ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "3 / 4", overflow: "hidden", position: "relative" }}>
+                  style={{ cursor: "pointer", border: `1px dashed ${refs[slot] ? "var(--amber-c)" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: refs[slot] ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "3 / 4", overflow: "hidden", position: "relative" }}>
                   {refs[slot] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={refs[slot]!} alt={p.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -246,7 +246,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
               ))}
             </div>
             <button type="button" onClick={analyze} disabled={analyzing || refs.every((d) => !d)}
-              style={{ marginTop: "1rem", width: "100%", padding: "0.6rem", borderRadius: 8, border: "1px solid rgba(242,169,59,0.3)", background: "rgba(242,169,59,0.12)", color: "#F2A93B", fontWeight: 700, fontSize: "0.8rem", cursor: analyzing || refs.every((d) => !d) ? "default" : "pointer", opacity: refs.every((d) => !d) ? 0.5 : 1 }}>
+              style={{ marginTop: "1rem", width: "100%", padding: "0.6rem", borderRadius: 8, border: "1px solid rgba(242,169,59,0.3)", background: "var(--amber-soft)", color: "var(--amber-ink)", fontWeight: 700, fontSize: "0.8rem", cursor: analyzing || refs.every((d) => !d) ? "default" : "pointer", opacity: refs.every((d) => !d) ? 0.5 : 1 }}>
               {analyzing ? "Analisi in corso…" : "✨ Analizza le foto e compila l'identikit"}
             </button>
             {analyzeNote && <p style={{ color: "var(--text-muted)", fontSize: "0.72rem", margin: "0.6rem 0 0", lineHeight: 1.5 }}>{analyzeNote}</p>}
@@ -261,7 +261,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
               <label title="Documento d'identità, lato con la foto" className="focus-ring"
-                style={{ cursor: "pointer", border: `1px dashed ${docFront ? "#F2A93B" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: docFront ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "4 / 3", overflow: "hidden", position: "relative" }}>
+                style={{ cursor: "pointer", border: `1px dashed ${docFront ? "var(--amber-c)" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: docFront ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "4 / 3", overflow: "hidden", position: "relative" }}>
                 {docFront ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={docFront} alt="Documento" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -274,7 +274,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
                 <input type="file" accept="image/*" aria-label="Carica documento (fronte)" onChange={(e) => { pickSingle(setDocFront, e.target.files?.[0]); e.currentTarget.value = ""; }} className="sr-only" />
               </label>
               <label title="Un selfie frontale, ben illuminato" className="focus-ring"
-                style={{ cursor: "pointer", border: `1px dashed ${selfie ? "#F2A93B" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: selfie ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "4 / 3", overflow: "hidden", position: "relative" }}>
+                style={{ cursor: "pointer", border: `1px dashed ${selfie ? "var(--amber-c)" : "var(--hairline)"}`, borderRadius: 10, padding: "0.4rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.3rem", background: selfie ? "rgba(242,169,59,0.08)" : "transparent", aspectRatio: "4 / 3", overflow: "hidden", position: "relative" }}>
                 {selfie ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={selfie} alt="Selfie" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -332,7 +332,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
                       const on = kit[field] === opt;
                       return (
                         <button key={opt} type="button" aria-pressed={on} className="focus-ring" onClick={() => setKit({ ...kit, [field]: opt })}
-                          style={{ padding: "0.3rem 0.7rem", borderRadius: 999, fontSize: "0.76rem", fontWeight: 600, cursor: "pointer", background: on ? "rgba(242,169,59,0.15)" : "var(--surface)", color: on ? "var(--text)" : "var(--text-muted)", border: `1px solid ${on ? "#F2A93B" : "var(--hairline)"}` }}>
+                          style={{ padding: "0.3rem 0.7rem", borderRadius: 999, fontSize: "0.76rem", fontWeight: 600, cursor: "pointer", background: on ? "rgba(242,169,59,0.15)" : "var(--surface)", color: on ? "var(--text)" : "var(--text-muted)", border: `1px solid ${on ? "var(--amber-c)" : "var(--hairline)"}` }}>
                           {opt}
                         </button>
                       );
@@ -349,7 +349,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
               Lo assegniamo noi in base alla scansione. Il tuo avatar nasce a livello ECHO.
             </p>
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-              <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "rgba(242,169,59,0.12)", border: "1px solid #F2A93B", color: "var(--text)", fontWeight: 700, fontSize: "0.8rem" }}>ECHO</span>
+              <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "var(--amber-soft)", border: "1px solid #F2A93B", color: "var(--text)", fontWeight: 700, fontSize: "0.8rem" }}>ECHO</span>
               <span style={{ padding: "0.5rem 0.9rem", borderRadius: 10, background: "var(--surface)", border: "1px dashed var(--hairline)", color: "var(--text-faint)", fontSize: "0.8rem" }}>HUMAN · in arrivo</span>
             </div>
           </div>
@@ -370,7 +370,7 @@ export default function NewAvatarClient({ defaultAlias, isEnterprise = false }: 
 
           {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.85rem", margin: 0 }}>{error}</p>}
 
-          <button type="submit" disabled={loading} style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading ? "var(--elevated)" : "#F2A93B", color: "#412402", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
+          <button type="submit" disabled={loading} style={{ padding: "0.85rem", borderRadius: 10, border: "none", background: loading ? "var(--elevated)" : "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.9rem", cursor: loading ? "default" : "pointer" }}>
             {loading ? "Creazione…" : isEnterprise ? "Crea avatar e genera link di consenso" : "Crea avatar e firma il consenso"}
           </button>
         </form>
@@ -422,7 +422,7 @@ function SelfieGlyph() {
 
 // Colore/parola per banda del match (salvia=forte, amber=media, coral=bassa).
 function bandColor(band: "strong" | "review" | "weak"): string {
-  return band === "strong" ? "var(--verified-c)" : band === "review" ? "#F2A93B" : "var(--blocked-c)";
+  return band === "strong" ? "var(--verified-c)" : band === "review" ? "var(--amber-c)" : "var(--blocked-c)";
 }
 function bandWord(band: "strong" | "review" | "weak"): string {
   return band === "strong" ? "coerente" : band === "review" ? "media" : "bassa";
@@ -430,7 +430,7 @@ function bandWord(band: "strong" | "review" | "weak"): string {
 // Pillola di esito (sempre: la certificazione resta manuale, qui solo trasparenza).
 const VERDICT_UI: Record<string, { bg: string; color: string; border: string; text: string }> = {
   strong: { bg: "rgba(127,174,150,0.12)", color: "var(--verified-c)", border: "rgba(127,174,150,0.4)", text: "Coerente, pronto per la certificazione" },
-  review: { bg: "rgba(242,169,59,0.12)", color: "#F2A93B", border: "rgba(242,169,59,0.4)", text: "Somiglianza media: certifichiamo a mano" },
+  review: { bg: "var(--amber-soft)", color: "var(--amber-ink)", border: "rgba(242,169,59,0.4)", text: "Somiglianza media: certifichiamo a mano" },
   weak: { bg: "rgba(238,122,112,0.12)", color: "var(--blocked-c)", border: "rgba(238,122,112,0.4)", text: "Somiglianza bassa: verifichiamo con attenzione" },
   inconclusive: { bg: "var(--elevated)", color: "var(--text-muted)", border: "var(--hairline)", text: "Verifichiamo a mano (volto non sempre leggibile)" },
 };

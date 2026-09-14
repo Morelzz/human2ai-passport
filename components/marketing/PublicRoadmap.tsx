@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Rocket, Webhook, Network, BadgeCheck, Leaf, type LucideIcon } from "lucide-react";
 import { KineticText } from "@/components/motion/KineticText";
+import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Roadmap PUBBLICA (visione, orizzonte 5 anni). Fonte copy: docs/SITE_ROADMAP.md.
@@ -75,15 +76,15 @@ const PHASES: Phase[] = [
 // Accenti decorativi della timeline (usati anche con append alpha esadecimale,
 // es. `${c}66`): restano hex costanti, leggibili nei due temi.
 const COLOR: Record<Status, string> = {
-  done: "#7FAE96",
-  current: "#EE7A70",
-  future: "#F2A93B",
+  done: "#2F7563",
+  current: "#B0472B",
+  future: "#9A4A0B",
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PublicRoadmap() {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
 
   return (
     <section id="la-strada" className="relative mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">

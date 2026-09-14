@@ -132,7 +132,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
           Storico completo
         </Link>
         <Link href="/account/volt" onClick={() => { setOpen(false); setSheet(false); }}
-          className="rounded-full bg-[#F2A93B] px-3.5 py-1.5 text-xs font-bold text-on-amber transition-all hover:brightness-110">
+          className="rounded-full bg-amber px-3.5 py-1.5 text-xs font-bold text-on-amber transition-all hover:brightness-110">
           {VOLT_STRINGS["volt.badge.cta"]}
         </Link>
       </div>
@@ -161,7 +161,7 @@ export function VoltBadge({ initial, threshold }: { initial: number; threshold: 
           </button>
           <Link
             href="/account/volt"
-            className={`ml-1 rounded-full bg-[#F2A93B] px-2.5 py-0.5 text-[0.68rem] font-bold text-on-amber transition-all hover:brightness-110 ${zero ? "animate-[pulse_1s_ease-in-out_1]" : ""}`}
+            className={`ml-1 rounded-full bg-amber px-2.5 py-0.5 text-[0.68rem] font-bold text-on-amber transition-all hover:brightness-110 ${zero ? "animate-[pulse_1s_ease-in-out_1]" : ""}`}
           >
             {VOLT_STRINGS["volt.badge.cta"]}
           </Link>

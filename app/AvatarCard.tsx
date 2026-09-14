@@ -31,7 +31,7 @@ export default function AvatarCard({ handle, alias, portrait_url, tier: tierKey,
           alignItems: "center",
         }}
         onMouseEnter={e => {
-          (e.currentTarget as HTMLDivElement).style.borderColor = tier.color + "55";
+          (e.currentTarget as HTMLDivElement).style.borderColor = "var(--amber-c)";
           (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
         }}
         onMouseLeave={e => {
@@ -40,7 +40,7 @@ export default function AvatarCard({ handle, alias, portrait_url, tier: tierKey,
         }}
       >
         {/* Portrait */}
-        <div style={{ width: 64, height: 64, borderRadius: 12, overflow: "hidden", background: "var(--elevated)", border: `1px solid ${tier.color}33`, flexShrink: 0 }}>
+        <div style={{ width: 64, height: 64, borderRadius: 12, overflow: "hidden", background: "var(--elevated)", border: "1px solid var(--hairline)", flexShrink: 0 }}>
           {portrait_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={portrait_url} alt={alias} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -61,7 +61,7 @@ export default function AvatarCard({ handle, alias, portrait_url, tier: tierKey,
           </div>
           <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", margin: "0 0 0.5rem" }}>@{handle}</p>
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            <span style={{ background: tier.bg, color: tier.color, border: `1px solid ${tier.color}33`, borderRadius: 999, padding: "0.15rem 0.6rem", fontSize: "0.7rem", fontWeight: 700 }}>
+            <span style={{ background: "var(--amber-soft)", color: "var(--amber-ink)", border: "1px solid transparent", borderRadius: 999, padding: "0.15rem 0.6rem", fontSize: "0.7rem", fontWeight: 700 }}>
               {tier.label}
             </span>
             <span style={{ color: "var(--text-faint)", fontSize: "0.75rem" }}>{usage_count?.toLocaleString("it-IT")} utilizzi</span>

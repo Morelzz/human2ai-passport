@@ -43,7 +43,7 @@ export function BlogList({ posts }: { posts: BlogCard[] }) {
               type="button"
               onClick={() => setActive(c)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                active === c ? "bg-[#F2A93B] text-[#412402]" : "border border-border text-muted hover:text-foreground"
+                active === c ? "bg-amber text-on-amber" : "border border-border text-muted hover:text-foreground"
               }`}
             >
               {c}

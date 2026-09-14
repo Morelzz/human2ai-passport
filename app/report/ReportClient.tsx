@@ -64,7 +64,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
         <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", lineHeight: 1.6, margin: "0 0 1.5rem" }}>
           Grazie. Gli operatori la revisioneranno. Se hai lasciato un&apos;email, ti aggiorneremo sull&apos;esito.
         </p>
-        <Link href="/" style={{ color: "#F2A93B", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 8, padding: "0.5rem 1rem" }}>
+        <Link href="/" style={{ color: "var(--amber-ink)", fontSize: "0.85rem", textDecoration: "none", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 8, padding: "0.5rem 1rem" }}>
           Torna alla home
         </Link>
       </div>
@@ -135,7 +135,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
           padding: "0.8rem",
           borderRadius: 10,
           border: "none",
-          background: canSubmit && !busy ? "#F2A93B" : "var(--elevated)",
+          background: canSubmit && !busy ? "var(--amber-c)" : "var(--elevated)",
           color: canSubmit && !busy ? "#412402" : "var(--text-faint)",
           fontWeight: 700,
           fontSize: "0.9rem",

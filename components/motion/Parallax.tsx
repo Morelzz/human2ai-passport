@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import type { ReactNode } from "react";
+import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
 // Parallasse legato allo scroll: il contenuto si muove a velocità diversa dallo
 // scorrimento, creando profondità. `speed` positivo = si muove più lento (sfondo);
@@ -17,7 +18,7 @@ export function Parallax({
   speed?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const range = speed * 80;
   const y = useTransform(scrollYProgress, [0, 1], [-range, range]);

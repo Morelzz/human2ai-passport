@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
 // Cornice "scanner" HUD: quattro staffe angolari + linea di scansione che
 // percorre il contenuto + leggera griglia di profondità. Comunica "verifica
@@ -18,7 +19,7 @@ export function ScannerFrame({
   color?: string;
   active?: boolean;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const b = `2px solid ${color}`;
 
   return (
