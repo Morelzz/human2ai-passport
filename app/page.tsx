@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getPublicAvatars, countProtectedFaces } from "@/lib/registry";
 import { createServerClient } from "@/lib/supabase";
-import { countBlockedThisMonth } from "@/lib/blocked";
 import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { CineBackground } from "@/components/marketing/CineBackground";
@@ -26,12 +25,13 @@ export default async function Home() {
   // contatori di catalogo e trasparenza.
   const approved = await getPublicAvatars();
 
-  // Review C3 / Fase 4.1 — i DUE numeri manifesto nell'hero, stessa fonte di
-  // /trasparenza: (1) richieste rifiutate dal filtro del consenso questo mese,
-  // (2) volti registrati per non essere mai generati (VETO). Un solo client.
+  // I numeri veri dell'hero, stessa fonte di /trasparenza: volti nel registro,
+  // generazioni pagate alle persone, volti protetti (VETO). Un solo client.
   const sb = createServerClient();
-  const blockedMonth = await countBlockedThisMonth(sb);
   const protectedFaces = await countProtectedFaces(sb);
+  // Le generazioni commerciali: ognuna ha pagato la persona del volto.
+  const { count: paidRaw } = await sb.from("generations").select("id", { count: "exact", head: true }).eq("mode", "commercial");
+  const paidCount = paidRaw ?? 0;
 
   // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
   // i volti REALI (con galleria: Mario/Random e gli ambassador) restano in
@@ -64,7 +64,7 @@ export default async function Home() {
 
       <div className="relative z-[2]">
         <SiteNav />
-        <Hero count={approved.length} blockedMonth={blockedMonth} protectedFaces={protectedFaces} />
+        <Hero count={approved.length} paidCount={paidCount} protectedFaces={protectedFaces} />
         <Reveal><Impact /></Reveal>
         {/* Niente <Reveal>: la sezione è PINNATA da ScrollTrigger e un antenato
             con transform romperebbe il position:fixed del pin. Si anima da sola. */}

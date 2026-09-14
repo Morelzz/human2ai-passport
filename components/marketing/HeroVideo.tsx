@@ -3,32 +3,30 @@
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
-// Sorgenti su Supabase Storage pubblico (CDN) — niente peso nel repo git.
-// ONDATA MOBILE: l'originale (7,7MB) non si serve più. Poster del primo frame
-// per LCP istantaneo + variante per viewport: 720p (~0,8MB) su mobile,
-// 1080p (~2,2MB) su desktop. Scelta al mount, così si scarica UN solo file.
+// Sorgenti su Supabase Storage pubblico (CDN), niente peso nel repo git.
+// Casa nuova (2026-09-14): il video dell'hero e' QUADRATO (generato con
+// Seedance 2.5, 720p): un solo file che sta bene sia nel riquadro desktop sia
+// sopra il titolo sul telefono. Poster del primo frame per LCP istantaneo.
 const BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/assets`;
-const POSTER = `${BASE}/hero-v2-poster.jpg`;
-const VIDEO = `${BASE}/hero-v2.mp4`; // verticale 3:4, ottimizzato (muto), un solo file
+const POSTER = `${BASE}/hero-v3-poster.jpg`;
+const VIDEO = `${BASE}/hero-v3.mp4`; // 1:1, muto, ottimizzato
 
-// Video di sfondo dell'hero: autoplay muto in loop (regole mobile rispettate:
-// muted + playsInline). Sul punto di loop facciamo una piccola transizione
-// "dip-to-dark" (lo schermo respira verso lo scuro e torna) per ammorbidire lo
-// stacco del loop. Sotto prefers-reduced-motion: resta il poster, fermo.
-export function HeroVideo({ className }: { className?: string }) {
+// Riquadro video dell'hero: autoplay muto in loop (regole mobile rispettate:
+// muted + playsInline). Sul punto di loop una piccola transizione "dip-to-dark"
+// ammorbidisce lo stacco. Sotto prefers-reduced-motion resta il poster, fermo.
+export function HeroVideo({ className = "" }: { className?: string }) {
   const reduce = useReducedMotion();
   const seamRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    // Con reduced-motion niente video: il poster è l'immagine dell'hero.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     setSrc(VIDEO);
   }, []);
 
-  // La src arriva DOPO il mount: l'attributo autoplay da solo può non
-  // riscattare -> play() esplicito (best-effort, il poster resta il fallback).
+  // La src arriva DOPO il mount: l'attributo autoplay da solo puo' non
+  // riscattare, quindi play() esplicito (best-effort, il poster resta il fallback).
   useEffect(() => {
     if (src) videoRef.current?.play().catch(() => {});
   }, [src]);
@@ -37,15 +35,15 @@ export function HeroVideo({ className }: { className?: string }) {
     const v = e.currentTarget;
     const d = v.duration;
     if (!d || !seamRef.current) return;
-    const FADE = 0.6; // secondi di transizione attorno al loop
+    const FADE = 0.5; // secondi di transizione attorno al loop
     let op = 0;
-    if (v.currentTime > d - FADE) op = (v.currentTime - (d - FADE)) / FADE; // verso la fine: scurisce
-    else if (v.currentTime < FADE) op = 1 - v.currentTime / FADE; // dopo il restart: rischiara
-    seamRef.current.style.opacity = String(Math.max(0, Math.min(1, op)) * 0.7);
+    if (v.currentTime > d - FADE) op = (v.currentTime - (d - FADE)) / FADE;
+    else if (v.currentTime < FADE) op = 1 - v.currentTime / FADE;
+    seamRef.current.style.opacity = String(Math.max(0, Math.min(1, op)) * 0.8);
   }
 
   return (
-    <div className={className} aria-hidden>
+    <div className={`relative aspect-square overflow-hidden rounded-[24px] bg-[#0C0F17] shadow-[0_40px_80px_-40px_rgba(0,0,0,0.8)] ${className}`} aria-hidden>
       <video
         ref={videoRef}
         className="h-full w-full object-cover"
@@ -55,14 +53,14 @@ export function HeroVideo({ className }: { className?: string }) {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         onTimeUpdate={reduce ? undefined : onTimeUpdate}
-        // idempotente: se un blip (visibilità/load) ha interrotto l'autoplay,
-        // al canplay si riparte; play() su un video già in corso è un no-op.
+        // idempotente: se un blip (visibilita'/load) ha interrotto l'autoplay,
+        // al canplay si riparte; play() su un video gia' in corso e' un no-op.
         onCanPlay={reduce ? undefined : () => videoRef.current?.play().catch(() => {})}
       />
-      {/* Overlay del "dip-to-dark" sul loop (opacità guidata da onTimeUpdate). */}
-      <div ref={seamRef} className="pointer-events-none absolute inset-0 bg-obsidian" style={{ opacity: 0 }} />
+      {/* Overlay del "dip-to-dark" sul loop (opacita' guidata da onTimeUpdate). */}
+      <div ref={seamRef} className="pointer-events-none absolute inset-0 bg-[#0C0F17]" style={{ opacity: 0 }} />
     </div>
   );
 }
