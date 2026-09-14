@@ -423,8 +423,8 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                       <p className="m-0 font-semibold text-foreground">{result.alias}</p>
                       <p className="m-0 text-[0.8rem] text-faint">@{result.handle}</p>
                       {result.status === "ATTIVO"
-                        ? <span className="text-[0.72rem] font-bold text-verified">CONSENSO ATTIVO</span>
-                        : <span className="text-[0.72rem] font-bold text-blocked">CONSENSO REVOCATO</span>}
+                        ? <span className="kicker text-verified">Consenso attivo</span>
+                        : <span className="kicker text-blocked">Consenso revocato</span>}
                     </div>
                   </div>
                 </div>
@@ -434,14 +434,14 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               <div className="grid grid-cols-2 gap-4">
                 {result.type !== "content" && (
                   <div>
-                    <p className="mb-0.5 text-[0.7rem] tracking-[0.08em] text-faint">AVATAR</p>
+                    <p className="kicker mb-0.5 text-faint">Avatar</p>
                     <p className="m-0 font-semibold text-foreground">{result.alias}</p>
                     <p className="m-0 text-[0.8rem] text-faint">@{result.handle}</p>
                   </div>
                 )}
                 {result.type === "content" && (
                   <div>
-                    <p className="mb-0.5 text-[0.7rem] tracking-[0.08em] text-faint">GENERATO IL</p>
+                    <p className="kicker mb-0.5 text-faint">Generato il</p>
                     <p className="m-0 font-semibold text-foreground">{result.generated_at ? formatDate(result.generated_at) : "—"}</p>
                   </div>
                 )}
@@ -450,12 +450,12 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                   <p className="m-0 font-semibold text-foreground">{result.category ?? "—"}</p>
                 </div>
                 <div>
-                  <p className="mb-0.5 text-[0.7rem] tracking-[0.08em] text-faint">AUTORIZZATO DAL</p>
+                  <p className="kicker mb-0.5 text-faint">Autorizzato dal</p>
                   <p className="m-0 font-semibold text-foreground">{result.consent_start ? formatDate(result.consent_start) : "—"}</p>
                 </div>
                 {result.revoked_at && (
                   <div>
-                    <p className="mb-0.5 text-[0.7rem] tracking-[0.08em] text-faint">REVOCATO DAL</p>
+                    <p className="kicker mb-0.5 text-faint">Revocato dal</p>
                     <p className="m-0 font-semibold text-blocked">{formatDate(result.revoked_at)}</p>
                   </div>
                 )}
@@ -477,7 +477,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
               {/* Catena del consenso */}
               {result.events && result.events.length > 0 && (
                 <div className="mt-5">
-                  <p className="mb-2 text-[0.7rem] tracking-[0.08em] text-faint">CATENA DEL CONSENSO</p>
+                  <p className="kicker mb-2 text-faint">Catena del consenso</p>
                   <div className="flex flex-col gap-1.5 border-l border-border pl-4">
                     {result.events.slice(-6).map((ev, i) => {
                       const meta = EVENT_LABELS[ev.event_type] ?? { label: ev.event_type, tone: "teal" as const };

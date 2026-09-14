@@ -104,7 +104,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
       </div>
 
       <div>
-        <label style={labelStyle}>MOTIVO</label>
+        <label style={labelStyle}>Motivo</label>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           {REASONS.map((r) => (
             <label key={r.value} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", color: reason === r.value ? "var(--text)" : "var(--text-muted)", fontSize: "0.88rem" }}>

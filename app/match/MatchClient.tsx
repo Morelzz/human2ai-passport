@@ -608,9 +608,9 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-verified opacity-60" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-verified" />
         </span>
-        <span className="text-verified">REGISTRO ATTIVO</span>
+        <span className="text-verified">Registro attivo</span>
         <span className="text-faint">/</span>
-        <span className="text-amber-ink">PASSO 1: CHI</span>
+        <span className="text-amber-ink">Passo 1: chi</span>
       </div>
       <h1 className="mt-2 text-4xl font-bold tracking-[-0.04em] sm:text-5xl">
         <KineticText text="Descrivi chi cerchi" />
@@ -627,7 +627,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       <form onSubmit={search} className="flex flex-col gap-6">
         {/* Review D1 — il brief in linguaggio naturale al centro */}
         <div>
-          <label htmlFor="brief" className="mb-2 block text-xs font-bold tracking-[0.1em] text-amber-ink">IL TUO BRIEF</label>
+          <label htmlFor="brief" className="kicker mb-2 block">Il tuo brief</label>
           {/* Palco del brief: il centro della pagina. Bordo amber tenue + glow
               d'angolo; al focus il bordo si accende. La textarea e' trasparente
               dentro al palco (il bordo lo da il contenitore). */}
