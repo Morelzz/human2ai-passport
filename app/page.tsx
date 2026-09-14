@@ -15,11 +15,11 @@ import { AiActStrip } from "@/components/marketing/AiActStrip";
 import { ScanLocations } from "@/components/marketing/ScanLocations";
 import { ToolsBusiness } from "@/components/marketing/ToolsBusiness";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { getSedi } from "@/lib/scan";
 
-import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/site";
 
 export default async function Home() {
   // Fonte UNICA del registro pubblico (lib/registry): stessi volti e stessi
@@ -77,89 +77,7 @@ export default async function Home() {
         <Reveal><ToolsBusiness /></Reveal>
         <Reveal><ClosingCTA /></Reveal>
 
-        <footer className="relative mt-8 overflow-hidden">
-          <hr className="divider-glow mx-auto max-w-6xl" />
-          <div className="mx-auto max-w-6xl px-5 pb-10 pt-12 sm:px-8">
-            <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
-              {/* Identità */}
-              <div className="max-w-xs">
-                <div className="flex items-center gap-2.5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/semblic-mark.png" alt="" aria-hidden className="h-9 w-9 object-contain opacity-90 [mask-image:radial-gradient(circle,#000_62%,transparent_84%)] [-webkit-mask-image:radial-gradient(circle,#000_62%,transparent_84%)]" />
-                  <span className="text-sm font-bold tracking-[0.18em]">SEMBLIC</span>
-                </div>
-                <p className="mt-4 text-sm leading-relaxed text-faint">
-                  Il registro dei diritti d&apos;immagine. Il filtro di tutela umana sopra ogni IA generativa.
-                </p>
-                <p className="mt-3 font-mono text-[0.62rem] font-semibold tracking-[0.12em] text-muted">
-                  REAL HUMANS · REAL RIGHTS · REAL EARNINGS
-                </p>
-
-                {/* A4 — Seguici: link leggero, niente embed */}
-                <a
-                  href={INSTAGRAM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group mt-5 inline-flex items-center gap-2.5 rounded-full border border-border bg-white/[0.03] py-2 pl-2.5 pr-4 transition-all hover:border-violet/40 hover:bg-violet/10"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F2A93B]">
-                    {/* Glifo Instagram inline (lucide non distribuisce più icone brand) */}
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="#412402" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                    </svg>
-                  </span>
-                  <span className="text-sm font-semibold text-muted transition-colors group-hover:text-foreground">@{INSTAGRAM_HANDLE}</span>
-                </a>
-                <p className="mt-2 text-[0.68rem] text-faint">I volti veri dietro il registro, ogni settimana.</p>
-              </div>
-
-              {/* Colonne link (gli stessi di prima, organizzati) */}
-              <div className="grid grid-cols-2 gap-x-12 gap-y-8 sm:grid-cols-3">
-                <div>
-                  <span className="label-mono text-violet-light">Piattaforma</span>
-                  <div className="mt-3 flex flex-col gap-2.5">
-                    <Link href="/match" className="text-sm text-faint transition-colors hover:text-foreground">Registro</Link>
-                    <Link href="/scansione" className="text-sm text-faint transition-colors hover:text-foreground">La scansione</Link>
-                    <Link href="/prezzi" className="text-sm text-faint transition-colors hover:text-foreground">Prezzi</Link>
-                    <Link href="/verify" className="text-sm text-faint transition-colors hover:text-foreground">Sigil</Link>
-                    <Link href="/partner" className="text-sm text-faint transition-colors hover:text-foreground">Diventa partner</Link>
-                    <Link href="/academy" className="text-sm text-faint transition-colors hover:text-foreground">Academy</Link>
-                    <Link href="/studio" className="text-sm text-faint transition-colors hover:text-foreground">Studio</Link>
-                    <Link href="/enterprise" className="text-sm text-faint transition-colors hover:text-foreground">Enterprise</Link>
-                  </div>
-                </div>
-                <div>
-                  <span className="label-mono text-teal">Fiducia</span>
-                  <div className="mt-3 flex flex-col gap-2.5">
-                    <Link href="/trasparenza" className="text-sm text-faint transition-colors hover:text-foreground">Trasparenza</Link>
-                    <Link href="/ai-act" className="text-sm text-faint transition-colors hover:text-foreground">AI Act</Link>
-                    <Link href="/sviluppatori" className="text-sm text-faint transition-colors hover:text-foreground">Sviluppatori</Link>
-                    <Link href="/faq" className="text-sm text-faint transition-colors hover:text-foreground">FAQ</Link>
-                    <Link href="/blog" className="text-sm text-faint transition-colors hover:text-foreground">Blog</Link>
-                  </div>
-                </div>
-                <div>
-                  <span className="label-mono text-crimson-light">Legale</span>
-                  <div className="mt-3 flex flex-col gap-2.5">
-                    <Link href="/privacy" className="text-sm text-faint transition-colors hover:text-foreground">Privacy</Link>
-                    <Link href="/termini" className="text-sm text-faint transition-colors hover:text-foreground">Termini</Link>
-                    <Link href="/cookie" className="text-sm text-faint transition-colors hover:text-foreground">Cookie</Link>
-                    <Link href="/contatti" className="text-sm text-faint transition-colors hover:text-foreground">Contatti</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Wordmark gigante in chiusura (tipografia oversize, trend 2026) */}
-            <div aria-hidden className="pointer-events-none mt-12 select-none overflow-hidden">
-              <p className="bg-gradient-to-b from-white/[0.07] to-transparent bg-clip-text text-center text-[18vw] font-extrabold leading-[0.85] tracking-tighter text-transparent sm:text-[11rem]">
-                SEMBLIC
-              </p>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </div>
   );

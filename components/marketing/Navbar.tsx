@@ -73,15 +73,15 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
   // spezzava su due righe) e underline AMBRA che cresce da sinistra all'hover,
   // firma cinematica in linea col sistema (accento Amber + easing del brand).
   const topLinkBase =
-    "relative whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.11em] text-muted transition-colors duration-300 hover:text-foreground after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)]";
+    "relative whitespace-nowrap text-[0.9rem] font-medium text-muted transition-colors duration-300 hover:text-foreground after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)]";
 
   return (
     <>
     <header
-      className={`sticky top-0 z-40 border-b backdrop-blur-xl transition-all duration-500 ${
+      className={`sticky top-0 z-40 border-b border-border backdrop-blur-xl transition-all duration-500 ${
         scrolled
-          ? "border-violet/20 bg-[var(--nav-bg-scrolled)] shadow-[0_8px_40px_rgba(0,0,0,0.45),0_1px_0_rgba(242,169,59,0.25)]"
-          : "border-white/[0.06] bg-[var(--nav-bg)]"
+          ? "bg-[var(--nav-bg-scrolled)] shadow-[0_10px_30px_-22px_rgba(23,21,15,0.35)]"
+          : "bg-[var(--nav-bg)]"
       }`}
     >
       <ScrollProgress />
@@ -111,10 +111,10 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                   <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180" />
                 </button>
                 <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                  <div className="flex min-w-[11rem] flex-col gap-0.5 rounded-2xl border border-white/10 bg-[var(--elevated)] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                  <div className="card flex min-w-[12rem] flex-col gap-0.5 p-2 shadow-[0_24px_60px_-30px_rgba(23,21,15,0.35)]">
                     {entry.items.map((it) =>
                       "heading" in it ? (
-                        <div key={it.heading} className="mt-1.5 px-3 pb-1 pt-1 text-[0.58rem] font-bold uppercase tracking-[0.16em] text-faint">{it.heading}</div>
+                        <div key={it.heading} className="kicker mt-1.5 px-3 pb-1 pt-1 text-[0.58rem] text-faint">{it.heading}</div>
                       ) : (
                         <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
                       )
@@ -138,17 +138,17 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 href="/account"
                 title="Il tuo account"
                 aria-label={`Il tuo account: ${firstName}`}
-                className="relative inline-flex items-center gap-2.5 rounded-full border border-violet/30 bg-violet/10 py-1 pl-1 pr-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-violet/20"
+                className="relative inline-flex items-center gap-2.5 rounded-full border border-border bg-surface py-1 pl-1 pr-3.5 text-sm font-semibold text-foreground transition-colors hover:border-amber/60"
               >
                 <span className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-amber text-[0.7rem] font-extrabold uppercase leading-none text-on-amber">
                   {firstName.charAt(0)}
                 </span>
                 <span className="flex flex-col items-start leading-none">
-                  <span className="text-[0.52rem] font-bold uppercase tracking-[0.16em] text-violet-light">Account</span>
+                  <span className="kicker text-[0.52rem]">Account</span>
                   <span className="mt-[3px] max-w-[9rem] truncate">{firstName}</span>
                 </span>
                 {badge && (
-                  <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-crimson px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_rgba(12,15,23,1)]">
+                  <span title={`${unseen} nuove generazioni`} className="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-blocked px-1 text-[0.62rem] font-bold leading-none text-white shadow-[0_0_0_2px_var(--bg)]">
                     {badge}
                   </span>
                 )}
@@ -158,7 +158,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
             )}
             <ThemeToggle />
             <Button asChild size="sm">
-              <Link href="/signup/avatar">Proteggiti</Link>
+              <Link href="/signup/avatar">Entra nel registro</Link>
             </Button>
           </div>
         </div>
@@ -186,15 +186,15 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm xl:hidden"
+              className="fixed inset-0 z-50 bg-black/30 xl:hidden"
             />
             <motion.aside
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-white/10 bg-[var(--elevated)] p-6 shadow-[-20px_0_60px_rgba(0,0,0,0.6)] xl:hidden"
+              className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-xs flex-col border-l border-border bg-surface p-6 shadow-[-20px_0_60px_rgba(23,21,15,0.18)] xl:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
-                <span className="text-sm font-bold tracking-[0.15em]">MENU</span>
+                <span className="kicker text-foreground">Menu</span>
                 <button onClick={() => setOpen(false)} aria-label="Chiudi menu" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:bg-[var(--hairline)] hover:text-foreground">
                   <X className="h-5 w-5" />
                 </button>
@@ -217,7 +217,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                         <div className="flex flex-col gap-0.5 pb-1.5 pl-3">
                           {entry.items.map((it) =>
                             "heading" in it ? (
-                              <div key={it.heading} className="px-3 pb-0.5 pt-2 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-faint">{it.heading}</div>
+                              <div key={it.heading} className="kicker px-3 pb-0.5 pt-2 text-[0.6rem] text-faint">{it.heading}</div>
                             ) : (
                               <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-base text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
                             )
@@ -233,14 +233,14 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                   className="mt-1 flex items-center justify-between rounded-lg px-3 py-3 text-lg font-medium text-foreground transition-colors hover:bg-[var(--hairline)]">
                   <span>{firstName ? `Account · ${firstName}` : "Accedi"}</span>
                   {badge && (
-                    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-crimson px-1.5 text-xs font-bold text-white">{badge}</span>
+                    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-blocked px-1.5 text-xs font-bold text-white">{badge}</span>
                   )}
                 </Link>
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
                 <Button asChild variant="primary" size="lg" className="w-full">
-                  <Link href="/signup/avatar" onClick={() => setOpen(false)}>Proteggiti</Link>
+                  <Link href="/signup/avatar" onClick={() => setOpen(false)}>Entra nel registro</Link>
                 </Button>
               </div>
             </motion.aside>

@@ -1,20 +1,28 @@
 import type { ReactNode } from "react";
-import { GradientFlowText } from "@/components/marketing/GradientFlowText";
 
-// Titolo GRANDE di sezione (capitolo): MAIUSCOLO, col gradiente animato, una
-// hairline tramonto e un sottotitolo. Apre ogni sezione della home con
-// un'intestazione ricca (non piatta), nello stile di "Come funziona".
-export function SectionTitle({ children, subtitle, className }: { children: ReactNode; subtitle?: string; className?: string }) {
+// Testata di sezione, casa nuova: kicker mono ambra + titolo pesante e stretto,
+// allineato a sinistra (al centro solo dove la sezione e' simmetrica). Il
+// figlio e' il titolo; `kicker` e' l'etichetta sopra; `subtitle` la riga sotto.
+export function SectionTitle({
+  children,
+  kicker,
+  subtitle,
+  className,
+  align = "left",
+}: {
+  children: ReactNode;
+  kicker?: string;
+  subtitle?: string;
+  className?: string;
+  align?: "left" | "center";
+}) {
+  const centered = align === "center";
   return (
-    <div className={`mb-12 text-center sm:mb-16${className ? ` ${className}` : ""}`}>
-      <h2 className="text-4xl font-extrabold uppercase tracking-[-0.02em] sm:text-6xl">
-        <GradientFlowText>{children}</GradientFlowText>
-      </h2>
-      <div aria-hidden className="mx-auto mt-5 h-px w-12 bg-[linear-gradient(90deg,transparent,#F2A93B,transparent)] opacity-70" />
+    <div className={`mb-8 flex flex-col gap-3 sm:mb-10${centered ? " items-center text-center" : ""}${className ? ` ${className}` : ""}`}>
+      {kicker && <span className="kicker">{kicker}</span>}
+      <h2 className="text-balance text-[2.1rem] font-bold leading-[1] tracking-[-0.035em] sm:text-[3.25rem]">{children}</h2>
       {subtitle && (
-        <p className="mx-auto mt-4 max-w-md text-balance text-sm leading-relaxed text-muted sm:text-base">
-          {subtitle}
-        </p>
+        <p className={`max-w-[54ch] text-pretty text-[1.05rem] leading-relaxed text-muted${centered ? " mx-auto" : ""}`}>{subtitle}</p>
       )}
     </div>
   );
