@@ -13,6 +13,9 @@ export async function generateMetadata() {
   return { title: "Ricevuta di conformità", robots: { index: false, follow: false } };
 }
 
+// Il JSON della ricevuta resta tecnico (commercial, preview): qui si legge in italiano.
+const MODALITA: Record<string, string> = { commercial: "Uso commerciale", preview: "Anteprima" };
+
 function fmtDate(iso: string | null): string {
   if (!iso) return "n.d.";
   try {
@@ -87,9 +90,10 @@ export default async function ReceiptPage({ params }: Props) {
                 <a href={r.subject.registry_url} className="receipt-link">{r.subject.registry_url}</a>
               </Field>
             )}
-            <Field label="Data della generazione">{r.generation.date}</Field>
-            <Field label="Categoria d&apos;uso">{r.generation.category ?? "non specificata"}</Field>
-            <Field label="Modalità">{r.generation.mode}</Field>
+            <Field label="Data della generazione">{fmtDate(r.generation.date)}</Field>
+            {/* Il consenso oggi e' si/no: la categoria compare solo sulle generazioni che l'avevano */}
+            {r.generation.category && <Field label="Categoria d&apos;uso">{r.generation.category}</Field>}
+            <Field label="Modalità">{MODALITA[r.generation.mode] ?? r.generation.mode}</Field>
           </div>
 
           {/* Esito consenso */}
