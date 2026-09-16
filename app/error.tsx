@@ -31,7 +31,7 @@ export default function Errore({ error, reset }: { error: Error & { digest?: str
           Questa pagina non è partita. Riprova.
         </h1>
         <p className="max-w-[52ch] text-pretty text-[1.05rem] leading-relaxed text-muted">
-          Ci è arrivata la segnalazione e ci stiamo guardando. I tuoi dati e il registro dei volti non sono stati toccati.
+          L'errore ci è stato segnalato in automatico. I tuoi dati e il registro dei volti non sono stati toccati.
           {error.digest && <span className="mt-2 block font-mono text-[0.8rem] text-faint">Codice: {error.digest}</span>}
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
