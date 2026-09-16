@@ -76,7 +76,7 @@ export default function KybReviewClient() {
               <div style={{ flex: 1, minWidth: 220 }}>
                 <div style={{ fontWeight: 700, fontSize: "1.02rem" }}>{o.name}</div>
                 <div style={{ color: "var(--text-muted)", fontSize: "0.8rem", marginBottom: "0.4rem" }}>
-                  {[o.vat_number, o.country].filter(Boolean).join(" · ") || "—"}
+                  {[o.vat_number, o.country].filter(Boolean).join(" · ") || "n.d."}
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
                   {o.website && (

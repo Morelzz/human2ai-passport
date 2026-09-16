@@ -87,7 +87,7 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
             {(Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).map((field) => (
               <div key={field}>
                 <p style={{ color: "var(--text-muted)", fontSize: "0.68rem", letterSpacing: "0.03em", margin: "0 0 0.2rem" }}>{IDENTITY_LABELS[field]}</p>
-                <p style={{ color: "var(--text)", fontSize: "0.85rem", fontWeight: 600, margin: 0, textTransform: "capitalize" }}>{kit[field] ?? "—"}</p>
+                <p style={{ color: "var(--text)", fontSize: "0.85rem", fontWeight: 600, margin: 0, textTransform: "capitalize" }}>{kit[field] ?? "n.d."}</p>
               </div>
             ))}
           </div>

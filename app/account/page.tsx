@@ -128,7 +128,7 @@ export default async function AccountPage() {
     return {
       id: g.id, certificate: g.certificate, image_url: g.image_url,
       category: g.category, tier: g.tier, created_at: g.created_at,
-      alias: av?.alias ?? "—", handle: av?.handle ?? "",
+      alias: av?.alias ?? "Avatar", handle: av?.handle ?? "",
     };
   });
 

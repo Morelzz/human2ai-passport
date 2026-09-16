@@ -14,7 +14,7 @@ export async function generateMetadata() {
 }
 
 function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "n.d.";
   try {
     return new Date(iso).toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
   } catch {
@@ -80,7 +80,7 @@ export default async function ReceiptPage({ params }: Props) {
               <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: "0.8rem", wordBreak: "break-all" }}>{r.certificate}</code>
             </Field>
             <Field label="Persona del registro">
-              {r.subject.alias ?? "—"}{r.subject.handle ? <span style={{ color: "#6b7280", fontWeight: 400 }}> · @{r.subject.handle}</span> : null}
+              {r.subject.alias ?? "Avatar"}{r.subject.handle ? <span style={{ color: "#6b7280", fontWeight: 400 }}> · @{r.subject.handle}</span> : null}
             </Field>
             {r.subject.registry_url && (
               <Field label="Passaporto pubblico">

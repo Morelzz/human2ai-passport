@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   const upscale = body?.upscale === "2k" || body?.upscale === "4k" ? body.upscale : null;
   const format = typeof body?.format === "string" && body.format in FORMAT_AR ? (body.format as string) : null;
   const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
-  const alias = av?.alias ?? "—";
+  const alias = av?.alias ?? "Avatar";
 
   try {
     // 1. immagine pulita

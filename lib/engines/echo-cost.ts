@@ -37,7 +37,7 @@ export function pixelsOf(size?: string | null): number {
 // non si deve dedurre dai pixel quale risoluzione è stata generata.
 export function echoResLabel(size?: string | null): string {
   const px = pixelsOf(size);
-  if (!px) return "—";
+  if (!px) return "n.d.";
   if (px <= 1_600_000) return "Standard";
   if (px <= 4_500_000) return "2K";
   return "4K";

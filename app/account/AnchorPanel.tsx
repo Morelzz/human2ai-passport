@@ -11,7 +11,7 @@ export default function AnchorPanel() {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/anchor").then((r) => r.json()).then(setCfg).catch(() => setCfg({ configured: false, chain: "—" }));
+    fetch("/api/admin/anchor").then((r) => r.json()).then(setCfg).catch(() => setCfg({ configured: false, chain: "n.d." }));
   }, []);
 
   async function anchor() {

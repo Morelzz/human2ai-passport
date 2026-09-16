@@ -572,7 +572,7 @@ export function StudioPanel(props: StudioPanelProps) {
           <p className="mb-1 text-sm font-bold text-verified">Generazione certificata</p>
           {gen.volt && (
             <p className="mb-1 text-[0.72rem] font-semibold text-foreground">
-              {voltStr("gen.success.body", { n: FMT_VOLT.format(gen.volt.spent), saldo: gen.volt.balance !== null ? FMT_VOLT.format(gen.volt.balance) : "—" })}
+              {voltStr("gen.success.body", { n: FMT_VOLT.format(gen.volt.spent), saldo: gen.volt.balance !== null ? FMT_VOLT.format(gen.volt.balance) : "n.d." })}
             </p>
           )}
           {gen.voltMission && (

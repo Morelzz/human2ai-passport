@@ -98,7 +98,7 @@ export default function ReviewClient() {
                     <div style={{ fontWeight: 700, fontSize: "1.02rem" }}>{a.alias}</div>
                     <div style={{ color: "var(--text-muted)", fontSize: "0.8rem", marginBottom: "0.4rem" }}>@{a.handle} · {isOrg ? "organizzazione" : "privato"}</div>
                     <div style={{ color: "var(--text-faint)", fontSize: "0.76rem", marginBottom: "0.4rem" }}>
-                      {[a.gender, a.age_range, a.ethnicity, a.hair_color].filter(Boolean).join(" · ") || "—"}
+                      {[a.gender, a.age_range, a.ethnicity, a.hair_color].filter(Boolean).join(" · ") || "n.d."}
                     </div>
                     {isOrg ? (
                       a.person_consented_at ? (

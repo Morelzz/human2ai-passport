@@ -40,7 +40,7 @@ export default async function EditPage({ params }: { params: Promise<{ cert: str
     <EditorClient
       cert={cert}
       imageUrl={gen.image_url}
-      alias={av?.alias ?? "—"}
+      alias={av?.alias ?? "Avatar"}
       category={gen.category ?? null}
       initialState={gen.edit_state ? coerceEditState(gen.edit_state) : defaultEditState()}
     />

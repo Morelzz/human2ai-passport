@@ -72,7 +72,7 @@ export default async function EditorLanding() {
                   <img src={g.image_url} alt="" className="block aspect-[3/4] w-full bg-elevated object-cover" />
                 )}
                 <div className="flex items-center justify-between gap-1 p-2.5">
-                  <span className="truncate text-[0.78rem] font-medium text-foreground">{av?.alias ?? "—"}</span>
+                  <span className="truncate text-[0.78rem] font-medium text-foreground">{av?.alias ?? "Avatar"}</span>
                   <span className="shrink-0 text-[0.62rem] font-semibold text-amber opacity-0 transition-opacity group-hover:opacity-100">
                     Modifica
                   </span>

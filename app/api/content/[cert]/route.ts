@@ -36,7 +36,7 @@ export async function GET(
   try {
     out = await embedProvenancePng(gen.image_url, {
       certificate: cert,
-      alias: av?.alias ?? "—",
+      alias: av?.alias ?? "Avatar",
       verifyUrl: `${origin}/verify`,
     });
   } catch {

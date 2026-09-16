@@ -442,16 +442,16 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 {result.type === "content" && (
                   <div>
                     <p className="kicker mb-0.5 text-faint">Generato il</p>
-                    <p className="m-0 font-semibold text-foreground">{result.generated_at ? formatDate(result.generated_at) : "—"}</p>
+                    <p className="m-0 font-semibold text-foreground">{result.generated_at ? formatDate(result.generated_at) : "n.d."}</p>
                   </div>
                 )}
                 <div>
                   <p className="mb-0.5 text-[0.7rem] tracking-[0.08em] text-faint">CATEGORIA D&apos;USO</p>
-                  <p className="m-0 font-semibold text-foreground">{result.category ?? "—"}</p>
+                  <p className="m-0 font-semibold text-foreground">{result.category ?? "n.d."}</p>
                 </div>
                 <div>
                   <p className="kicker mb-0.5 text-faint">Autorizzato dal</p>
-                  <p className="m-0 font-semibold text-foreground">{result.consent_start ? formatDate(result.consent_start) : "—"}</p>
+                  <p className="m-0 font-semibold text-foreground">{result.consent_start ? formatDate(result.consent_start) : "n.d."}</p>
                 </div>
                 {result.revoked_at && (
                   <div>
