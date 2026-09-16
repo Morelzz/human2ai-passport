@@ -6,7 +6,7 @@ import Link from "next/link";
 const REASONS: { value: string; label: string }[] = [
   { value: "no_consent", label: "La persona non ha dato il consenso" },
   { value: "impersonation", label: "Impersonazione / identità falsa" },
-  { value: "misuse", label: "Uso fuori dalle categorie concesse" },
+  { value: "misuse", label: "Uso oltre il consenso dato" },
   { value: "illegal", label: "Contenuto illegale o dannoso" },
   { value: "other", label: "Altro" },
 ];
@@ -74,32 +74,32 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
   const inputStyle: React.CSSProperties = {
     width: "100%",
     background: "var(--bg)",
-    border: "1px solid var(--hairline-soft)",
-    borderRadius: 10,
+    border: "1px solid var(--edge)",
+    borderRadius: 12,
     color: "var(--text)",
-    fontSize: "0.9rem",
-    padding: "0.7rem",
+    fontSize: "1rem",
+    padding: "0.75rem 0.9rem",
     outline: "none",
     boxSizing: "border-box",
   };
   const labelStyle: React.CSSProperties = {
     display: "block",
     color: "var(--text-muted)",
-    fontSize: "0.75rem",
-    letterSpacing: "0.08em",
-    margin: "0 0 0.5rem",
+    fontSize: "0.8rem",
+    fontWeight: 500,
+    margin: "0 0 0.4rem",
   };
 
   return (
-    <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+    <div className="card flex flex-col gap-5 rounded-3xl p-5 sm:p-7">
       <div>
-        <label htmlFor="rp-handle" style={labelStyle}>AVATAR (HANDLE)</label>
+        <label htmlFor="rp-handle" style={labelStyle}>Avatar (handle)</label>
         <input id="rp-handle" value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@random" style={inputStyle} />
       </div>
 
       <div>
-        <label htmlFor="rp-cert" style={labelStyle}>CERTIFICATO CONTENUTO (OPZIONALE)</label>
-        <input id="rp-cert" value={certificate} onChange={(e) => setCertificate(e.target.value)} placeholder="SHA-256 del contenuto generato…" style={{ ...inputStyle, fontFamily: "monospace", fontSize: "0.82rem" }} />
+        <label htmlFor="rp-cert" style={labelStyle}>Certificato del contenuto (facoltativo)</label>
+        <input id="rp-cert" value={certificate} onChange={(e) => setCertificate(e.target.value)} placeholder="SHA-256 del contenuto generato…" style={{ ...inputStyle, fontFamily: "var(--font-geist-mono), monospace", fontSize: "0.9rem" }} />
         <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0.4rem 0 0" }}>Indica l&apos;handle dell&apos;avatar oppure il certificato di un contenuto.</p>
       </div>
 
@@ -108,7 +108,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           {REASONS.map((r) => (
             <label key={r.value} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", color: reason === r.value ? "var(--text)" : "var(--text-muted)", fontSize: "0.88rem" }}>
-              <input type="radio" name="reason" value={r.value} checked={reason === r.value} onChange={() => setReason(r.value)} style={{ accentColor: "#F2A93B" }} />
+              <input type="radio" name="reason" value={r.value} checked={reason === r.value} onChange={() => setReason(r.value)} style={{ accentColor: "var(--amber-c)" }} />
               {r.label}
             </label>
           ))}
@@ -116,12 +116,12 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
       </div>
 
       <div>
-        <label htmlFor="rp-details" style={labelStyle}>DETTAGLI (OPZIONALE)</label>
+        <label htmlFor="rp-details" style={labelStyle}>Dettagli (facoltativo)</label>
         <textarea id="rp-details" value={details} onChange={(e) => setDetails(e.target.value)} rows={4} placeholder="Descrivi cosa è successo…" style={{ ...inputStyle, resize: "vertical" }} />
       </div>
 
       <div>
-        <label htmlFor="rp-email" style={labelStyle}>LA TUA EMAIL (OPZIONALE, PER RICONTATTO)</label>
+        <label htmlFor="rp-email" style={labelStyle}>La tua email (facoltativa, per ricontattarti)</label>
         <input id="rp-email" value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="tu@esempio.com" style={inputStyle} />
       </div>
 
@@ -132,13 +132,13 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
         disabled={!canSubmit || busy}
         style={{
           width: "100%",
-          padding: "0.8rem",
-          borderRadius: 10,
+          padding: "0.9rem",
+          borderRadius: 9999,
           border: "none",
-          background: canSubmit && !busy ? "var(--amber-c)" : "var(--elevated)",
-          color: canSubmit && !busy ? "#412402" : "var(--text-faint)",
-          fontWeight: 700,
-          fontSize: "0.9rem",
+          background: canSubmit && !busy ? "var(--amber-c)" : "var(--hairline)",
+          color: canSubmit && !busy ? "var(--on-amber-c)" : "var(--text-faint)",
+          fontWeight: 600,
+          fontSize: "0.95rem",
           cursor: canSubmit && !busy ? "pointer" : "not-allowed",
         }}
       >

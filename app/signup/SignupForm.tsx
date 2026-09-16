@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
-import { Field, Shell, labelStyle, submitStyle, passwordIssue } from "../auth-ui";
+import { Field, Shell, labelClass, inputClass, submitClass, passwordIssue, authErrorMessage } from "../auth-ui";
 import { isAdult } from "@/lib/age";
+import { cn } from "@/lib/utils";
 
 // Accetta solo path interni (niente open redirect).
 function safeNext(raw: string | null): string | null {
@@ -62,7 +63,7 @@ export default function SignupForm() {
     });
 
     if (error) {
-      setError(error.message);
+      setError(authErrorMessage(error.message));
       setLoading(false);
       return;
     }
@@ -83,78 +84,71 @@ export default function SignupForm() {
   }
 
   return (
-    <Shell title="Crea il tuo account">
+    <Shell title="Crea il tuo account" subtitle="Genera con volti veri, o metti il tuo e guadagna a ogni utilizzo.">
       {blockedUnderage ? (
-        <div style={{ textAlign: "center" }}>
-          <p style={{ color: "var(--blocked-c)", fontWeight: 700, fontSize: "1rem", margin: "0 0 0.6rem" }}>
+        <div className="text-center">
+          <p className="mb-2.5 text-base font-bold text-blocked">
             SEMBLIC è riservato ai maggiorenni
           </p>
-          <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: 1.6, margin: 0 }}>
+          <p className="text-[0.9rem] leading-relaxed text-muted">
             In base alla data di nascita inserita non possiamo creare il tuo account. SEMBLIC custodisce volti di persone reali e l'accesso è consentito solo dai 18 anni.
           </p>
         </div>
       ) : done ? (
-        <p style={{ color: "var(--verified-c)", fontSize: "0.9rem", lineHeight: 1.6 }}>
+        <p className="rounded-xl bg-verified-soft px-4 py-3 text-[0.9rem] leading-relaxed text-verified">
           Account creato. Controlla la tua email per confermare, poi{" "}
-          <Link href="/login" style={{ color: "var(--amber-ink)" }}>accedi</Link>
+          <Link href="/login" className="font-semibold text-amber-ink hover:underline">accedi</Link>
           {accountType === "enterprise" ? " e completa la registrazione della tua azienda." : "."}
         </p>
       ) : (
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Field label="Nome completo" value={fullName} onChange={setFullName} type="text" />
           <Field label="Email" value={email} onChange={setEmail} type="email" />
-          <Field label="Password" value={password} onChange={setPassword} type="password" />
+          <Field label="Password" value={password} onChange={setPassword} type="password" autoComplete="new-password" />
 
           <div>
-            <label style={labelStyle}>Data di nascita</label>
-            <div style={{ display: "flex", gap: "0.4rem" }}>
-              <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} required
-                style={{ flex: "0 0 64px", padding: "0.7rem 0.5rem", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--hairline-soft)", color: "var(--text)", fontSize: "0.85rem" }}>
+            <label className={labelClass}>Data di nascita</label>
+            <div className="flex gap-2">
+              <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} required aria-label="Giorno"
+                className={cn(inputClass, "w-[4.6rem] shrink-0 px-2.5")}>
                 <option value="">GG</option>
                 {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => <option key={d} value={String(d)}>{d}</option>)}
               </select>
-              <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} required
-                style={{ flex: 1, padding: "0.7rem 0.5rem", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--hairline-soft)", color: "var(--text)", fontSize: "0.85rem" }}>
+              <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} required aria-label="Mese"
+                className={cn(inputClass, "min-w-0 flex-1 px-2.5")}>
                 <option value="">Mese</option>
                 {["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"].map((name, i) => <option key={name} value={String(i + 1)}>{name}</option>)}
               </select>
-              <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} required
-                style={{ flex: "0 0 90px", padding: "0.7rem 0.5rem", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--hairline-soft)", color: "var(--text)", fontSize: "0.85rem" }}>
+              <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} required aria-label="Anno"
+                className={cn(inputClass, "w-[5.8rem] shrink-0 px-2.5")}>
                 <option value="">AAAA</option>
                 {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map((y) => <option key={y} value={String(y)}>{y}</option>)}
               </select>
             </div>
-            <p style={{ color: "var(--verified-c)", fontSize: "0.72rem", margin: "0.45rem 0 0", lineHeight: 1.5 }}>
+            <p className="mt-1.5 text-[0.78rem] leading-snug text-faint">
               Devi avere almeno 18 anni per usare SEMBLIC.
             </p>
           </div>
 
           <div>
-            <label style={labelStyle}>Tipo di account</label>
-            <div style={{ display: "flex", gap: "0.4rem" }}>
+            <label className={labelClass}>Tipo di account</label>
+            <div className="grid grid-cols-3 gap-1 rounded-full border border-edge bg-surface p-1">
               {(["buyer", "seller", "enterprise"] as const).map((r) => (
                 <button
                   key={r}
                   type="button"
                   onClick={() => setAccountType(r)}
-                  style={{
-                    flex: 1,
-                    padding: "0.55rem 0.4rem",
-                    borderRadius: 10,
-                    cursor: "pointer",
-                    fontSize: "0.78rem",
-                    fontWeight: 600,
-                    background: accountType === r ? "rgba(242,169,59,0.15)" : "var(--surface)",
-                    color: accountType === r ? "var(--text)" : "var(--text-muted)",
-                    border: `1px solid ${accountType === r ? "var(--amber-c)" : "var(--hairline-soft)"}`,
-                  }}
+                  aria-pressed={accountType === r}
+                  className={`rounded-full px-2 py-2 text-[0.82rem] font-semibold transition-colors focus-ring ${
+                    accountType === r ? "bg-amber-soft text-amber-ink" : "text-muted hover:text-foreground"
+                  }`}
                 >
-                  {r === "buyer" ? "Compratore" : r === "seller" ? "Creatore" : "Azienda"}
+                  {r === "buyer" ? "Genero" : r === "seller" ? "Il mio volto" : "Azienda"}
                 </button>
               ))}
             </div>
             {/* Una riga d'aiuto: cosa significano i 3 tipi, senza sovraccaricare. */}
-            <p style={{ color: "var(--text-muted)", fontSize: "0.72rem", margin: "0.5rem 0 0", lineHeight: 1.5 }}>
+            <p className="mt-2 text-[0.8rem] leading-snug text-muted">
               {accountType === "buyer"
                 ? "Compri e generi con i volti del registro."
                 : accountType === "seller"
@@ -163,15 +157,15 @@ export default function SignupForm() {
             </p>
           </div>
 
-          {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.8rem", margin: 0 }}>{error}</p>}
+          {error && <p role="alert" className="rounded-xl bg-blocked-soft px-3.5 py-2.5 text-[0.85rem] text-blocked">{error}</p>}
 
-          <button type="submit" disabled={loading} style={submitStyle(loading)}>
+          <button type="submit" disabled={loading} className={submitClass(loading)}>
             {loading ? "Creazione…" : "Crea account"}
           </button>
 
-          <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
+          <p className="text-center text-[0.85rem] text-muted">
             Hai già un account?{" "}
-            <Link href="/login" style={{ color: "var(--amber-ink)" }}>Accedi</Link>
+            <Link href="/login" className="font-semibold text-amber-ink hover:underline">Accedi</Link>
           </p>
         </form>
       )}

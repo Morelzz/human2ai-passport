@@ -156,7 +156,7 @@ export default async function TrasparenzaPage() {
         <section className="mx-auto max-w-xl px-5 pb-20 text-center sm:px-8">
           <p className="text-xs leading-relaxed text-faint">
             Nessun dato personale o biometrico è esposto. Solo aggregati. Ogni contenuto è
-            verificabile dal suo certificato in <Link href="/verify" className="text-verified hover:underline">/verify</Link>.
+            verificabile dal suo certificato con <Link href="/verify" className="text-verified hover:underline">Sigil</Link>.
           </p>
         </section>
         <Footer />

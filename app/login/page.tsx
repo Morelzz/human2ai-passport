@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
-import { Field, Shell, submitStyle } from "../auth-ui";
+import { Field, Shell, submitClass, authErrorMessage } from "../auth-ui";
 
 // Accetta solo path interni (niente open redirect): "/x" si', "//x" o "http..." no.
 function safeNext(raw: string | null): string | null {
@@ -31,7 +31,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setError(error.message);
+      setError(authErrorMessage(error.message));
       setLoading(false);
       return;
     }
@@ -42,20 +42,20 @@ export default function LoginPage() {
   }
 
   return (
-    <Shell title="Accedi">
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
+    <Shell title="Accedi" subtitle="Bentornato nel registro dei volti.">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Field label="Email" value={email} onChange={setEmail} type="email" />
         <Field label="Password" value={password} onChange={setPassword} type="password" />
 
-        {error && <p style={{ color: "var(--blocked-c)", fontSize: "0.8rem", margin: 0 }}>{error}</p>}
+        {error && <p role="alert" className="rounded-xl bg-blocked-soft px-3.5 py-2.5 text-[0.85rem] text-blocked">{error}</p>}
 
-        <button type="submit" disabled={loading} style={submitStyle(loading)}>
+        <button type="submit" disabled={loading} className={submitClass(loading)}>
           {loading ? "Accesso…" : "Accedi"}
         </button>
 
-        <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", textAlign: "center", margin: 0 }}>
+        <p className="text-center text-[0.85rem] text-muted">
           Non hai un account?{" "}
-          <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"} style={{ color: "var(--amber-ink)" }}>Registrati</Link>
+          <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"} className="font-semibold text-amber-ink hover:underline">Registrati</Link>
         </p>
       </form>
     </Shell>

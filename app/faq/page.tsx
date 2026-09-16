@@ -68,9 +68,9 @@ export default function FaqPage() {
               <Link href="/report" className="font-semibold text-amber-ink hover:underline">
                 Segnala un problema
               </Link>{" "}
-              o verifica un contenuto su{" "}
+              o verifica un contenuto con{" "}
               <Link href="/verify" className="font-semibold text-verified hover:underline">
-                /verify
+                Sigil
               </Link>
               .
             </p>
