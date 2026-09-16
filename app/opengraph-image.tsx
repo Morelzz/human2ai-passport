@@ -1,68 +1,37 @@
 import { ImageResponse } from "next/og";
 import { geistOgFonts } from "@/lib/og-fonts";
 import { checkIcon } from "@/lib/og-icons";
+import { OG, OG_SIZE, OgCornice, OgPillola, ogMarchio } from "@/lib/og-casa";
 
-// OG card di DEFAULT del sito (1200x630 landscape, per le card social
-// "summary_large_image"). Sostituisce il logo-shield quadrato 1024x1024 che si
-// tagliava male nelle anteprime. Stesso stile della card passport (gia'
-// approvato): void assoluto, wordmark, barra tricolore. Pura tipografia.
-// Il titolo display usa Geist peso 200 (brand "Dala"); il resto resta Geist 400.
-// Le route con immagine PROPRIA restano invariate: il passport ha il suo
-// opengraph-image per-volto; gli articoli col cover usano openGraph.images.
-// Tutte le altre (home, verify, proteggi, catalogo, prezzi, trasparenza...)
-// usano questa, ereditandola dalla root.
+// OG card di DEFAULT del sito (1200x630, card social "summary_large_image").
+// Casa nuova: isola scura come l'hero, titolo pieno con l'accento ambra.
+// Le route con immagine PROPRIA restano a parte: il passport ha la sua card
+// per volto, gli articoli col cover usano openGraph.images. Tutte le altre
+// pagine (home, verify, catalogo, prezzi...) ereditano questa dalla root.
 
 export const alt = "Semblic · Il registro dei volti consenzienti";
-export const size = { width: 1200, height: 630 };
+export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export default async function Image() {
-  const fonts = await geistOgFonts();
+  const [fonts, marchio] = await Promise.all([geistOgFonts(), ogMarchio()]);
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          background: "#0C0F17",
-          color: "#F2E9D8",
-          padding: "64px 72px",
-          fontFamily: "Geist",
-        }}
-      >
-        {/* Testata */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ display: "flex", fontSize: 30, letterSpacing: "0.18em", color: "#F2E9D8" }}>SEMBLIC</div>
-          <div style={{ display: "flex", fontSize: 19, letterSpacing: "0.14em", color: "rgba(242,233,216,0.70)" }}>· REGISTRO DEI VOLTI</div>
-        </div>
-
-        {/* Messaggio */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          <div style={{ display: "flex", fontWeight: 200, fontSize: 80, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#F2E9D8", maxWidth: 1000 }}>
-            Il registro dei volti consenzienti.
+      <OgCornice occhiello="Registro dei volti" marchioUri={marchio}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+          <div style={{ display: "flex", flexDirection: "column", fontSize: 88, letterSpacing: "-0.045em", lineHeight: 1.02 }}>
+            <div style={{ display: "flex", color: OG.crema }}>Real Humans. Real Rights.</div>
+            <div style={{ display: "flex", color: OG.ambra }}>Real Earnings.</div>
           </div>
-          <div style={{ display: "flex", fontSize: 30, color: "rgba(242,233,216,0.70)", lineHeight: 1.4, maxWidth: 900 }}>
-            Ogni volto ha un consenso verificabile. Ogni generazione paga la persona reale.
+          <div style={{ display: "flex", fontSize: 30, color: OG.tenue, lineHeight: 1.35, maxWidth: 940 }}>
+            Nessuna AI genera un essere umano senza il permesso di una persona reale: riconosciuta, protetta e pagata.
           </div>
-        </div>
-
-        {/* Chiusura */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, border: "2px solid #9CC6B2", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "#9CC6B2", letterSpacing: "0.06em" }}>
-              <img width={20} height={20} src={checkIcon("#9CC6B2")} />
-              CONSENSO VERIFICABILE
-            </div>
-            <div style={{ display: "flex", border: "1px solid rgba(255,255,255,0.22)", borderRadius: 999, padding: "8px 22px", fontSize: 22, color: "rgba(242,233,216,0.70)", letterSpacing: "0.06em" }}>
-              FILIGRANA INVISIBILE
-            </div>
+            <OgPillola colore={OG.verde} icona={checkIcon(OG.verde)}>Consenso verificabile</OgPillola>
+            <OgPillola colore={OG.tenue}>Filigrana invisibile</OgPillola>
           </div>
-          <div style={{ display: "flex", height: 4, width: 380, borderRadius: 999, background: "linear-gradient(90deg, #F2A93B, #F2958C, #9CC6B2)" }} />
         </div>
-      </div>
+      </OgCornice>
     ),
     fonts.length ? { ...size, fonts } : size
   );

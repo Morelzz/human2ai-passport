@@ -2,9 +2,9 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 // Font Geist per le OG card (next/og / Satori). Satori NON accetta WOFF2, quindi
-// uso due TTF (assets/fonts/Geist-{400,200}.ttf, da Google Fonts): il 400 per il
-// testo UI (wordmark, occhiello, sottotitolo, pill) e il 200 (UltraLight) per i
-// TITOLI display, coerente col brand "Dala" (peso 200, tracking -0.04em).
+// uso i TTF in assets/fonts/. Casa nuova (17/9/2026): le card usano solo il 400,
+// il piu' pieno disponibile (il 200 ultraleggero era la veste vecchia); il 200
+// resta caricato per compatibilita' finche' non arriva Instrument Sans in TTF.
 // Carico via fs.readFile (runtime Node): fetch(file://) NON funziona su Node, ma
 // new URL(..., import.meta.url) fa emettere/tracciare l'asset dal bundler (vale
 // anche su Vercel). Difensivo + cache di modulo: se fallisce torna [] e la card
