@@ -41,7 +41,7 @@ export default async function PrenotaPage({ searchParams }: { searchParams: Prom
             <span className="text-3xl font-extrabold">{formatEur(SCAN_PRICE_CENTS)}</span>
             <div className="min-w-0">
               <p className="text-sm font-bold text-amber-ink">{SCAN_PRICE_LABEL_SUFFIX.toUpperCase()}</p>
-              <p className="text-xs leading-snug text-faint">Sessione completa + postproduzione + ingresso nel registro. Si salda in studio.</p>
+              <p className="text-xs leading-snug text-muted">Sessione completa + postproduzione + ingresso nel registro. Si salda in studio.</p>
             </div>
           </div>
 

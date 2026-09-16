@@ -254,10 +254,10 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 /* ── Tipografia del blog (.prose-semblic) ── */
 .prose-semblic { font-size: 1.02rem; line-height: 1.78; color: var(--text-muted); }
 .prose-semblic p { margin: 0 0 1.25em; }
-.prose-semblic h2 { margin: 2em 0 0.6em; font-size: 1.45rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
-.prose-semblic h3 { margin: 1.6em 0 0.5em; font-size: 1.15rem; font-weight: 700; color: var(--text); }
-.prose-semblic a { color: var(--amber-c); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(242, 169, 59, 0.4); }
-.prose-semblic a:hover { text-decoration-color: var(--amber-c); }
+.prose-semblic h2 { margin: 2em 0 0.6em; font-size: 1.45rem; font-weight: 700; line-height: 1.22; letter-spacing: -0.025em; color: var(--text); text-wrap: balance; }
+.prose-semblic h3 { margin: 1.6em 0 0.5em; font-size: 1.15rem; font-weight: 700; line-height: 1.3; letter-spacing: -0.015em; color: var(--text); }
+.prose-semblic a { color: var(--amber-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(226, 154, 46, 0.5); }
+.prose-semblic a:hover { text-decoration-color: var(--amber-ink); }
 .prose-semblic strong { color: var(--text); font-weight: 700; }
 .prose-semblic em { color: var(--text); opacity: 0.85; }
 .prose-semblic ul, .prose-semblic ol { margin: 0 0 1.25em; padding-left: 1.3em; }

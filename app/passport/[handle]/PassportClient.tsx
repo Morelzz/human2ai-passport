@@ -476,9 +476,9 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
 
       {/* Segnala abuso */}
       <div className="mt-6 text-center">
-        <Link href={`/report?handle=${encodeURIComponent(avatar.handle)}`} className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground">
-          <AlertTriangle className="h-4 w-4" />
-          Questo avatar non rappresenta una persona consenziente? <span className="font-semibold text-blocked">Segnala un abuso</span>
+        <Link href={`/report?handle=${encodeURIComponent(avatar.handle)}`} className="text-balance text-sm leading-relaxed text-muted transition-colors hover:text-foreground">
+          <AlertTriangle className="mr-1.5 inline h-4 w-4 align-[-3px]" />
+          Questo avatar non rappresenta una persona consenziente?{" "}<span className="whitespace-nowrap font-semibold text-blocked">Segnala un abuso</span>
         </Link>
       </div>
       </div>
