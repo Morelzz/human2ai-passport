@@ -157,8 +157,9 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               <Link href="/login" className={`${topLinkBase} hover:after:scale-x-100`}>Accedi</Link>
             )}
             <ThemeToggle />
+            {/* Chi e' gia' dentro non ha bisogno di entrare nel registro: la sua azione e' generare. */}
             <Button asChild size="sm">
-              <Link href="/signup/avatar">Entra nel registro</Link>
+              {firstName ? <Link href="/match">Genera</Link> : <Link href="/signup/avatar">Entra nel registro</Link>}
             </Button>
           </div>
         </div>
@@ -240,7 +241,9 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
 
               <div className="mt-4 flex flex-col gap-2">
                 <Button asChild variant="primary" size="lg" className="w-full">
-                  <Link href="/signup/avatar" onClick={() => setOpen(false)}>Entra nel registro</Link>
+                  {firstName
+                    ? <Link href="/match" onClick={() => setOpen(false)}>Genera</Link>
+                    : <Link href="/signup/avatar" onClick={() => setOpen(false)}>Entra nel registro</Link>}
                 </Button>
               </div>
             </motion.aside>
