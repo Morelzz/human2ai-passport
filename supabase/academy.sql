@@ -50,9 +50,9 @@ create table if not exists certificazioni (
 
 -- I tre corsi fondativi (NON pubblicati: il modello c'e', i contenuti arrivano).
 insert into corsi (slug, titolo, descrizione, livello, pubblico, requisito_accesso, certificante) values
-  ('benvenuti-in-human2ai', 'Benvenuti in HUMAN2AI', 'Cos''e'' il registro, come funziona il consenso, i tier, i tuoi diritti d''immagine spiegati semplici.', 'base', 'tutti', 'free', false),
+  ('benvenuti-in-human2ai', 'Benvenuti in SEMBLIC', 'Cos''è il registro, come funziona il consenso, i tier, i tuoi diritti d''immagine spiegati semplici.', 'base', 'tutti', 'free', false),
   ('creare-con-i-volti-veri', 'Creare con i volti veri', 'Prompt efficaci, uso avanzato della piattaforma, workflow creativi con gli LLM.', 'medio', 'buyer e creator', 'abbonamento', false),
-  ('protocollo-h2ai-scan', 'Il protocollo H2AI-SCAN', 'Il percorso Capture Partner: esecuzione, consenso on-site, postproduzione, esame finale. Chi lo supera entra nella rete.', 'avanzato', 'professionisti', 'pagamento', true)
+  ('protocollo-h2ai-scan', 'Il protocollo SEMBLIC-SCAN', 'Il percorso Capture Partner: esecuzione, consenso on-site, postproduzione, esame finale. Chi lo supera entra nella rete.', 'avanzato', 'professionisti', 'pagamento', true)
 on conflict (slug) do nothing;
 
 -- Accesso SOLO server-side (service role): nessuna policy pubblica.

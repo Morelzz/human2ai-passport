@@ -9,7 +9,7 @@ import { geistOgFonts } from "@/lib/og-fonts";
 // openGraph nei metadata -> questa card file-based si aggancia da sola. Copy
 // senza accenti (font di sistema next/og: solo · e ✓). Titolo in Geist peso 200.
 
-export const alt = "Transparency report · Semblic";
+export const alt = "Rapporto di trasparenza · Semblic";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

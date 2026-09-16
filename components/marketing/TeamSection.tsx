@@ -39,13 +39,13 @@ export function TeamSection({
     <section className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
       <div className="text-center">
         <span className="kicker text-verified">{eyebrow}</span>
-        <h2 className="mt-3 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">{title}</h2>
+        <h2 className="mt-3 text-balance text-3xl font-bold tracking-[-0.03em] sm:text-4xl">{title}</h2>
         {subtitle && <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">{subtitle}</p>}
       </div>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
+      <div className="riga-scorrevole -mx-5 mt-10 px-5 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
         {MEMBERS.map((m, i) => (
-          <div key={i} className="card transition-colors hover:border-amber/60 relative flex flex-col items-center overflow-hidden rounded-[2rem] p-7 text-center">
+          <div key={i} className="card relative flex w-[78%] flex-col items-center overflow-hidden rounded-[2rem] p-7 text-center transition-colors hover:border-amber/60 sm:w-auto">
             <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `linear-gradient(90deg, ${m.accent}, transparent)` }} />
 
             {/* Ritratto: foto quando c'e', altrimenti silhouette su alone */}
@@ -65,7 +65,7 @@ export function TeamSection({
                 {m.role}
               </span>
             </div>
-            <h3 className="mt-3 text-lg font-extrabold leading-tight">{m.name}</h3>
+            <h3 className="mt-3 text-lg font-bold leading-tight">{m.name}</h3>
             {m.todo && <p className="mt-0.5 font-mono text-[0.62rem] text-faint">[da completare]</p>}
             <p className="mt-3 text-sm leading-relaxed text-muted">{m.bio}</p>
           </div>

@@ -246,7 +246,8 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 @keyframes reveal-up { to { opacity: 1; transform: none; } }
 
 .text-gradient {
-  background: var(--grad-tramonto);
+  /* dal tema: bruciato sull'avorio (contrasto AA), luminoso nelle isole scure */
+  background: var(--grad-testo);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 

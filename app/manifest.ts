@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "SEMBLIC, il registro dei volti consenzienti",
     short_name: "SEMBLIC",
     description:
-      "Il filtro di tutela umana per l'IA: ogni volto ha un consenso verificabile, ogni generazione paga la persona reale.",
+      "Il filtro di tutela umana per l'AI: ogni volto ha un consenso verificabile, ogni generazione paga la persona reale.",
     start_url: "/",
     display: "standalone",
     background_color: "#0C0F17",

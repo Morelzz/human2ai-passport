@@ -24,7 +24,7 @@ const geistMono = Geist_Mono({
 const SITE_URL = siteUrl();
 const TITLE = "Semblic | Il registro dei volti consenzienti";
 const DESCRIPTION =
-  "Il filtro di tutela umana per l'IA: ogni volto ha un consenso verificabile, ogni generazione paga la persona reale.";
+  "Il filtro di tutela umana per l'AI: ogni volto ha un consenso verificabile, ogni generazione paga la persona reale.";
 
 // Dati strutturati globali: dicono a Google chi siamo (Organization) e come è
 // fatto il sito (WebSite). Letti su ogni pagina.

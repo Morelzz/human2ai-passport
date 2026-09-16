@@ -20,7 +20,7 @@ export type BlogCard = {
   coverAlt?: string;
 };
 
-const CATEGORIES = ["Politica", "Tecnologia", "Regolamentazione", "Industria", "Societa"];
+const CATEGORIES = ["Politica", "Tecnologia", "Regolamentazione", "Industria", "Finanza", "Società"];
 
 export function BlogList({ posts }: { posts: BlogCard[] }) {
   const [active, setActive] = useState<string>("Tutte");
@@ -36,13 +36,13 @@ export function BlogList({ posts }: { posts: BlogCard[] }) {
   return (
     <>
       {chips.length > 1 && (
-        <div className="reveal mb-8 flex flex-wrap gap-2">
+        <div className="reveal riga-scorrevole -mx-5 mb-8 px-5 sm:mx-0 sm:flex sm:flex-wrap sm:gap-2 sm:px-0">
           {chips.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setActive(c)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                 active === c ? "bg-amber text-on-amber" : "border border-border text-muted hover:text-foreground"
               }`}
             >

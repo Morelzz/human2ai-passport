@@ -58,7 +58,7 @@ export default async function TrasparenzaPage() {
         <section className="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-24">
           {/* Intro */}
           <div className="reveal mb-12 text-center">
-            <span className="kicker text-verified">Transparency report</span>
+            <span className="kicker text-verified">Rapporto di trasparenza</span>
             <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">La prova è nei numeri</h1>
             <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Ogni volto è una persona reale che ha acconsentito. Ogni generazione è tracciata e
@@ -98,7 +98,7 @@ export default async function TrasparenzaPage() {
                   {protectedFaces ?? 0}
                 </div>
                 <p className="mx-auto mt-4 max-w-xs text-balance text-base font-semibold leading-snug text-foreground sm:text-lg">
-                  volti registrati <span className="text-amber-ink">per non essere mai generati</span> dall&apos;IA.
+                  volti registrati <span className="text-amber-ink">per non essere mai generati</span>{" "}dall&apos;AI.
                 </p>
                 <p className="mt-2 text-sm text-faint">
                   Dentro Semblic non sono generabili; fuori, allerta precoce e rimozione assistita.
@@ -108,12 +108,12 @@ export default async function TrasparenzaPage() {
           </div>
 
           {/* Numeri */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             {stats.map((s, i) => (
-              <div key={s.label} className="reveal card transition-colors hover:border-amber/60 rounded-2xl p-6" style={{ animationDelay: `${0.05 * i}s` }}>
-                <div className="text-4xl font-extrabold leading-none" style={{ color: s.c }}>{s.value}</div>
+              <div key={s.label} className="reveal card rounded-2xl p-4 transition-colors hover:border-amber/60 sm:p-6" style={{ animationDelay: `${0.05 * i}s` }}>
+                <div className="text-[1.75rem] font-bold leading-none tracking-[-0.03em] sm:text-4xl" style={{ color: s.c }}>{s.value}</div>
                 <div className="mt-3 h-1 w-12 rounded-full" style={{ background: s.c }} />
-                <p className="mt-3 text-sm text-muted">{s.label}</p>
+                <p className="mt-3 text-[0.8rem] leading-snug text-muted sm:text-sm">{s.label}</p>
               </div>
             ))}
           </div>
@@ -128,8 +128,8 @@ export default async function TrasparenzaPage() {
               </h2>
               <p className="mt-5 max-w-2xl leading-relaxed text-muted">
                 Semblic non è un generatore: è il <span className="text-foreground">registro dei diritti d&apos;immagine</span>,
-                la &quot;SIAE dei volti umani&quot;. La nostra missione è rendere la <span className="text-foreground">certificazione del consenso obbligatoria</span>:
-                un filtro che si aggancia sopra i sistemi di IA generativa più potenti, così che <span className="text-foreground">nessun
+                la «SIAE dei volti umani». La nostra missione è rendere la <span className="text-foreground">certificazione del consenso obbligatoria</span>:
+                un filtro che si aggancia sopra i sistemi di AI generativa più potenti, così che <span className="text-foreground">nessun
                 essere umano venga più generato nell&apos;anonimato</span> e <span className="text-foreground">ogni persona venga retribuita</span> ogni volta che il suo volto viene usato.
               </p>
               <div className="mt-7 grid gap-3 sm:grid-cols-3">
