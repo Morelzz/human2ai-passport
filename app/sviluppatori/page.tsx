@@ -66,7 +66,7 @@ export default function SviluppatoriPage() {
             <h2 className="text-xl font-bold">La risposta</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted">
               Sempre <code className="font-mono text-amber-ink">ALLOW</code> o <code className="font-mono text-amber-ink">BLOCK</code>,
-              con il motivo e la <span className="text-foreground">prova pubblica</span> (token, link di verifica, passaporto).
+              con il motivo e la <span className="text-foreground">prova pubblica</span>{" "}(token, link di verifica, passaporto).
               Il consenso è una timeline: una revoca rende <code className="font-mono">BLOCK</code> in tempo reale.
             </p>
             <pre className="mt-3 overflow-x-auto rounded-xl border border-border p-4 text-xs leading-relaxed text-muted">
@@ -75,7 +75,7 @@ export default function SviluppatoriPage() {
           </section>
 
           <p className="mt-10 rounded-2xl border border-border bg-surface p-5 text-sm leading-relaxed text-muted">
-            <span className="font-semibold text-foreground">Nota.</span> Questa è una demo pubblica in sola
+            <span className="font-semibold text-foreground">Nota.</span>{" "}Questa è una demo pubblica in sola
             lettura. In produzione il filtro precede ogni generazione e ogni contenuto autorizzato esce con
             <span className="text-foreground"> filigrana invisibile</span> e <span className="text-foreground">certificato verificabile</span>,
             così la prova viaggia ovunque, anche fuori dalla piattaforma.

@@ -289,7 +289,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         </div>
 
         <p className="mt-3 text-xs leading-relaxed text-faint">
-          Questo è il titolo del volto: <strong className="text-muted">non vendibile</strong> (non si vende la propria identità).
+          Questo è il titolo del volto: <strong className="text-muted">non vendibile</strong>{" "}(non si vende la propria identità).
           Le licenze d&apos;uso sono separate e tracciabili, con royalty alla persona a ogni utilizzo.
         </p>
         </div>

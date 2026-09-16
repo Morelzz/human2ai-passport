@@ -55,7 +55,7 @@ export function CookieBanner() {
       <div className="rounded-2xl border border-border bg-[color-mix(in_oklab,var(--surface)_95%,transparent)] p-5 shadow-[0_24px_60px_-24px_rgba(23,21,15,0.35)] backdrop-blur-xl">
         <p className="text-sm font-bold">Cookie, senza giochetti.</p>
         <p className="mt-1.5 text-[0.8rem] leading-relaxed text-muted">
-          Usiamo solo cookie <span className="text-foreground">essenziali</span> (accesso e preferenze).
+          Usiamo solo cookie <span className="text-foreground">essenziali</span>{" "}(accesso e preferenze).
           Niente profilazione, niente pubblicità. Dettagli nella{" "}
           <Link href="/cookie" className="text-amber-ink underline">cookie policy</Link>.
         </p>

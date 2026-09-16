@@ -69,8 +69,8 @@ export default function ReportsClient() {
         <span style={{ color: "var(--blocked-c)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
         <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Segnalazioni di abuso</h1>
         <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
-          Segnalazioni aperte sul registro. <strong style={{ color: "var(--text-muted)" }}>Sospendi</strong> rimuove
-          l&apos;avatar dal registro pubblico (rimozione prospettica). <strong style={{ color: "var(--text-muted)" }}>Accogli</strong> chiude
+          Segnalazioni aperte sul registro. <strong style={{ color: "var(--text-muted)" }}>Sospendi</strong>{" "}rimuove
+          l&apos;avatar dal registro pubblico (rimozione prospettica). <strong style={{ color: "var(--text-muted)" }}>Accogli</strong>{" "}chiude
           la segnalazione senza sospendere; <strong style={{ color: "var(--text-muted)" }}>Archivia</strong> la respinge.
         </p>
 

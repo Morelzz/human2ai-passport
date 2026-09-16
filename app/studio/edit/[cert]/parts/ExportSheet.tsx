@@ -50,7 +50,7 @@ export function ExportSheet({
           {/* Upscale */}
           <div className="rounded-xl border border-amber/30 bg-gradient-to-br from-amber/[0.14] to-amber/[0.04] p-3">
             <div className="flex items-center gap-2 text-sm font-semibold">
-              <span className="grid h-7 w-7 place-items-center rounded-lg bg-amber text-[0.9rem] text-[#412402]" aria-hidden>▲</span>
+              <span className="grid h-7 w-7 place-items-center rounded-lg bg-amber text-[0.9rem] text-[#412402]" aria-hidden>▲</span>{" "}
               Upscale
             </div>
             <p className="mb-3 mt-1.5 text-[0.7rem] leading-relaxed text-muted">

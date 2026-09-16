@@ -86,7 +86,7 @@ export default async function ScansionePage() {
                   Icon: Building2,
                   n: "01",
                   t: "In studio, da noi.",
-                  d: "La via maestra: una sessione nello studio Void di Rimini, con il protocollo completo SEMBLIC-SCAN. Il risultato è il massimo livello di fedeltà: l'avatar SOUL o HUMAN, identico a te.",
+                  d: "La via maestra: una sessione nello studio Void di Rimini, con il protocollo completo SEMBLIC-SCAN. Il risultato è il massimo livello di fedeltà: l'avatar ECHO o HUMAN, identico a te.",
                   c: "#9A4A0B",
                 },
                 {
@@ -134,12 +134,12 @@ export default async function ScansionePage() {
             {/* Il set — scheda tecnica */}
             <div className="mt-8 flex flex-col gap-3">
               <SpecRow code="LUCI ×6">
-                <strong className="text-foreground">Sei luci.</strong> Due frontali a 45°, due posteriori, una dedicata
+                <strong className="text-foreground">Sei luci.</strong>{" "}Due frontali a 45°, due posteriori, una dedicata
                 al fondale bianco, una zenitale sopra il soggetto. Il volto va letto da ogni direzione:
                 l&apos;ombra nasconde, e qui niente deve nascondersi.
               </SpecRow>
               <SpecRow code="CAMERA">
-                <strong className="text-foreground">Camera su cavalletto, frontale al soggetto.</strong> Inquadratura
+                <strong className="text-foreground">Camera su cavalletto, frontale al soggetto.</strong>{" "}Inquadratura
                 stabile e costante per l&apos;intera sessione.
                 {isDev && (
                   <span className="mt-2 block rounded-lg border border-amber/35 bg-amber-soft px-3 py-2 font-mono text-[0.72rem] text-amber-ink">
@@ -148,11 +148,11 @@ export default async function ScansionePage() {
                 )}
               </SpecRow>
               <SpecRow code="SOGGETTO">
-                <strong className="text-foreground">Il soggetto su piastra rotante elettronica.</strong> Una rotazione
+                <strong className="text-foreground">Il soggetto su piastra rotante elettronica.</strong>{" "}Una rotazione
                 completa e controllata: è la piastra che gira, non la persona che si mette in posa.
               </SpecRow>
               <SpecRow code="VOLUME">
-                <strong className="text-foreground">Circa cento scatti per sessione.</strong> Da questi, la selezione
+                <strong className="text-foreground">Circa cento scatti per sessione.</strong>{" "}Da questi, la selezione
                 delle immagini che entrano nel database e costruiscono l&apos;avatar.
               </SpecRow>
             </div>

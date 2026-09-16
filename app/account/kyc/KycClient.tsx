@@ -111,7 +111,7 @@ export default function KycClient() {
       <span style={{ color: "var(--verified-c)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Verifiche identità (KYC)</h1>
       <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 2rem" }}>
-        Persone in attesa di verifica. Approva solo se <strong>documento, selfie e foto sono la stessa persona</strong> e
+        Persone in attesa di verifica. Approva solo se <strong>documento, selfie e foto sono la stessa persona</strong>{" "}e
         il documento è leggibile. I link alle immagini scadono dopo 1 ora; se servono di nuovo usa &quot;Ricarica coda&quot;.
       </p>
 

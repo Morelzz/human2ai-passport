@@ -41,7 +41,7 @@ export default function SoulActivate() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
       <p style={{ color: "var(--text-muted)", fontSize: "0.84rem", lineHeight: 1.6, margin: 0 }}>
-        Carica <strong style={{ color: "var(--text-muted)" }}>{MIN}-{MAX} foto nitide</strong> del tuo volto
+        Carica <strong style={{ color: "var(--text-muted)" }}>{MIN}-{MAX} foto nitide</strong>{" "}del tuo volto
         (angolazioni e luci diverse). Creeremo il tuo <strong style={{ color: "var(--text-muted)" }}>Soul</strong>:
         il modello che garantisce la tua identità in ogni generazione.
       </p>

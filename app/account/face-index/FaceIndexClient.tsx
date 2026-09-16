@@ -98,8 +98,8 @@ export default function FaceIndexClient() {
       <span style={{ color: "var(--verified-c)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em" }}>OPERATORI</span>
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, margin: "0.3rem 0 0.5rem" }}>Indice volti del registro</h1>
       <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
-        L&apos;indice permette a <strong>/verify</strong> di riconoscere il volto di un avatar anche quando
-        un&apos;immagine <strong>non ha la filigrana</strong> (contenuti generati fuori da Semblic): la persona
+        L&apos;indice permette a <strong>/verify</strong>{" "}di riconoscere il volto di un avatar anche quando
+        un&apos;immagine <strong>non ha la filigrana</strong>{" "}(contenuti generati fuori da Semblic): la persona
         può così scoprire l&apos;abuso e fare ricorso. I descrittori si calcolano <strong>in questo browser</strong>;
         al server arrivano solo vettori numerici, mai foto.
       </p>

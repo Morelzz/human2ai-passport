@@ -617,7 +617,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       </h1>
       <p className="mt-2 mb-6 text-sm leading-relaxed text-muted sm:text-base">
         Scrivi il tuo brief come lo diresti a un&apos;agenzia: il matching trova la{" "}
-        <span className="text-foreground">persona reale e consenziente</span> più affine nel registro.
+        <span className="text-foreground">persona reale e consenziente</span>{" "}più affine nel registro.
         La <em>scena</em> la dirigi dopo.
       </p>
 
@@ -726,7 +726,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
             </ChipGroup>
 
             <p className="text-[0.68rem] leading-relaxed text-faint">
-              Con un filtro selezionato la ricerca usa <span className="text-muted">i filtri</span> e
+              Con un filtro selezionato la ricerca usa <span className="text-muted">i filtri</span>{" "}e
               ignora la descrizione scritta sopra.
             </p>
           </div>

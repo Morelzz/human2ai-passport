@@ -28,7 +28,7 @@ export default function CookiePage() {
             </Section>
             <Section title="Cookie essenziali (sempre attivi)">
               Sono i cookie tecnici senza cui il sito non funziona, e non richiedono consenso:
-              i cookie di <strong className="text-foreground">sessione</strong> (Supabase Auth, per tenerti
+              i cookie di <strong className="text-foreground">sessione</strong>{" "}(Supabase Auth, per tenerti
               collegato in sicurezza), la <strong className="text-foreground">memoria delle tue preferenze</strong>{" "}
               (incluse quelle sui cookie stessi) e il segnalibro &laquo;contenuti già visti&raquo; che fa
               funzionare le notifiche dei tuoi contenuti. Durano il tempo strettamente necessario.

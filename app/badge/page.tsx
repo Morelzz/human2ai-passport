@@ -32,7 +32,7 @@ export default async function BadgePage({
             <p className="mt-3 leading-relaxed text-muted">
               Incorpora il badge sul tuo sito o profilo: dichiara che dietro quel volto c&apos;è una{" "}
               <span className="text-foreground">persona reale, consenziente e pagata</span>, e linka alla{" "}
-              <span className="text-foreground">prova pubblica</span> nel registro. Il badge si aggiorna da
+              <span className="text-foreground">prova pubblica</span>{" "}nel registro. Il badge si aggiorna da
               solo: se il consenso viene revocato, lo mostra.
             </p>
           </div>

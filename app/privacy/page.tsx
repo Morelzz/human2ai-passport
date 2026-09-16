@@ -29,7 +29,7 @@ export default function PrivacyPage() {
               fondatore della piattaforma, raggiungibile ai contatti in fondo a questa pagina.
             </Section>
             <Section title="Base giuridica: e perché qui è speciale">
-              Il cuore della piattaforma sono <strong className="text-foreground">dati biometrici</strong> (il tuo volto, le
+              Il cuore della piattaforma sono <strong className="text-foreground">dati biometrici</strong>{" "}(il tuo volto, le
               foto di referenza, il selfie di verifica): per il GDPR sono &laquo;categorie particolari&raquo; (Art. 9) e li
               trattiamo <strong className="text-foreground">solo con il tuo consenso esplicito</strong>, raccolto al momento
               della creazione dell&apos;avatar e revocabile in ogni momento. Per i dati di account vale il contratto
@@ -37,24 +37,24 @@ export default function PrivacyPage() {
               <span className="mt-2 block font-mono text-[0.78rem] text-faint">[DA AVVOCATO: formula di consenso esplicito e DPIA, valutazione d&apos;impatto ex Art. 35]</span>
             </Section>
             <Section title="Dati che raccogliamo">
-              Dati di account (email, nome), <strong className="text-foreground">immagini del volto</strong> (le foto di
+              Dati di account (email, nome), <strong className="text-foreground">immagini del volto</strong>{" "}(le foto di
               referenza che carichi), <strong className="text-foreground">documento d&apos;identità e selfie/video di
-              liveness</strong> per la verifica KYC, dati dell&apos;avatar (alias, caratteristiche dichiarate, categorie
+              liveness</strong>{" "}per la verifica KYC, dati dell&apos;avatar (alias, caratteristiche dichiarate, categorie
               d&apos;uso), eventi di consenso, generazioni, royalty e payout.
             </Section>
             <Section title="Conservazione: quanto teniamo cosa">
               Dati di account: finché l&apos;account è attivo. Foto di referenza:{" "}
-              <strong className="text-foreground">cancellate alla revoca del consenso</strong> (&laquo;cancello, non
+              <strong className="text-foreground">cancellate alla revoca del consenso</strong>{" "}(&laquo;cancello, non
               cassaforte&raquo;). Documenti KYC: solo il tempo necessario alla verifica e agli obblighi di legge{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: termine esatto]</span>. Certificati delle
               generazioni: permanenti, perché sono la prova, ma sono hash anonimi, non dati personali.
             </Section>
             <Section title="Le tue foto: dove vivono e per quanto">
               Le foto che carichi per creare l&apos;avatar (il &laquo;reference-set&raquo;) vengono ridimensionate sul tuo
-              dispositivo e salvate in uno <strong className="text-foreground">spazio privato e cifrato</strong> (Supabase
+              dispositivo e salvate in uno <strong className="text-foreground">spazio privato e cifrato</strong>{" "}(Supabase
               Storage), accessibile solo dai nostri sistemi lato server: non sono mai pubbliche, non finiscono nel codice,
               non vengono indicizzate. Servono unicamente a bloccare l&apos;identità reale nelle generazioni autorizzate.
-              <strong className="text-foreground"> Quando revochi il consenso, le foto-reference vengono cancellate</strong>
+              <strong className="text-foreground"> Quando revochi il consenso, le foto-reference vengono cancellate</strong>{" "}
               (&laquo;cancello, non cassaforte&raquo;): restano solo i certificati anonimi delle generazioni già avvenute,
               come prova. Conserviamo i dati nel territorio dell&apos;Unione Europea ove possibile.
             </Section>
@@ -69,7 +69,7 @@ export default function PrivacyPage() {
             </Section>
             <Section title="I tuoi diritti (GDPR)">
               Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e{" "}
-              <strong className="text-foreground">revoca del consenso in ogni momento</strong> (dalla tua area account,
+              <strong className="text-foreground">revoca del consenso in ogni momento</strong>{" "}(dalla tua area account,
               con effetto immediato e prospettico). Hai inoltre il diritto di proporre reclamo al Garante per la
               protezione dei dati personali (gpdp.it). Per esercitare i diritti, contattaci all&apos;indirizzo in fondo.
             </Section>
@@ -85,9 +85,9 @@ export default function PrivacyPage() {
             </Section>
             <Section title="Fornitori che ci aiutano (sub-processor)">
               Per erogare il servizio ci appoggiamo a fornitori selezionati, che trattano i dati solo per nostro conto e
-              limitatamente a ciò che serve: <strong className="text-foreground">Supabase</strong> (database, autenticazione
+              limitatamente a ciò che serve: <strong className="text-foreground">Supabase</strong>{" "}(database, autenticazione
               e archiviazione cifrata delle foto), <strong className="text-foreground">Anthropic (Claude)</strong>, solo se
-              scegli di far analizzare le foto per pre-compilare l&apos;identikit, <strong className="text-foreground">OpenAI</strong> (ECHO, gpt-image) per la generazione delle immagini quando autorizzata.
+              scegli di far analizzare le foto per pre-compilare l&apos;identikit, <strong className="text-foreground">OpenAI</strong>{" "}(ECHO, gpt-image) per la generazione delle immagini quando autorizzata.
               Alcuni di questi fornitori hanno sede fuori dall&apos;UE: i trasferimenti avvengono con le garanzie previste dal
               GDPR. Non cediamo i tuoi dati a nessun altro e non li usiamo per addestrare modelli senza il tuo consenso.
             </Section>

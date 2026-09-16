@@ -41,7 +41,7 @@ export default function TerminiPage() {
               avere il pieno diritto sulle immagini e di essere la persona rappresentata.
             </Section>
             <Section title="Natura della licenza: concessione, mai cessione">
-              Generando ottieni una <strong className="text-foreground">licenza d&apos;uso</strong> del contenuto, nei
+              Generando ottieni una <strong className="text-foreground">licenza d&apos;uso</strong>{" "}del contenuto, nei
               limiti della categoria autorizzata. <strong className="text-foreground">Il volto resta della persona,
               sempre</strong>: nessun utilizzo trasferisce la titolarità dell&apos;immagine, e l&apos;identità non è
               vendibile né cedibile, né dalla persona, né da noi, né da te.

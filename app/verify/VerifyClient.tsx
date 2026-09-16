@@ -346,7 +346,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             <img src={preview} alt="" className={`h-full w-full object-contain p-2 transition-opacity ${busy ? "opacity-40" : "opacity-90"}`} />
           ) : (
             <span className="px-8 text-center text-[0.8rem] leading-relaxed text-faint">
-              <span aria-hidden className="mb-2 block text-4xl font-bold text-muted">⌖</span>
+              <span aria-hidden className="mb-2 block text-4xl font-bold text-muted">⌖</span>{" "}
               Trascina qui un&apos;immagine
               <span className="block text-[0.7rem]">o tocca per sceglierla</span>
             </span>
@@ -365,7 +365,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
         </label>
         <p aria-live="polite" className="mt-3 h-5 text-center text-[0.75rem] text-amber-ink">{stage ?? ""}</p>
         <p className="max-w-md text-center text-[0.68rem] leading-relaxed text-faint">
-          Per leggere la filigrana l&apos;immagine <span className="text-muted">può essere inviata al server</span>
+          Per leggere la filigrana l&apos;immagine <span className="text-muted">può essere inviata al server</span>{" "}
           (elaborata al volo, mai salvata); i file grandi vengono letti direttamente
           <span className="text-muted"> sul tuo dispositivo</span>. L&apos;analisi del volto avviene comunque tutta
           sul tuo dispositivo: al server arriva solo un vettore numerico, mai conservato.
@@ -496,7 +496,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
 
               {result.type === "content" && result.status === "REVOCATO" && (
                 <p className="mt-4 rounded-xl border border-blocked/50 bg-blocked/5 p-3 text-[0.78rem] leading-relaxed text-blocked">
-                  Il consenso è stato revocato <strong>dopo</strong> questa generazione. La revoca è prospettica:
+                  Il consenso è stato revocato <strong>dopo</strong>{" "}questa generazione. La revoca è prospettica:
                   blocca gli usi futuri, mentre questo contenuto resta tracciato e attribuito.
                 </p>
               )}
