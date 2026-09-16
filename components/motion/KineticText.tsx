@@ -46,7 +46,12 @@ export function KineticText({
         {text}
       </motion.span>
     );
-    if (reduce) return inner;
+    // Con "riduci animazioni" il contenitore DEVE cambiare tipo (span semplice,
+    // non motion.span): il primo render (server) e' quello animato, partito da
+    // opacity 0 + blur; se al secondo render restituissimo un motion.span nella
+    // stessa posizione, React riuserebbe l'istanza e framer le lascerebbe
+    // addosso opacity 0: parole del titolo invisibili (bug 17/9/2026).
+    if (reduce) return <span className="inline-block">{inner}</span>;
     return (
       <motion.span
         className="inline-block"
