@@ -93,7 +93,7 @@ export function FinalPrompt({
         <span>&quot;{sceneText}&quot;</span>
         {added && <span className="text-amber">, {added}</span>}
         <span className="mt-1.5 block text-[0.6rem] text-faint">
-          + prefisso identita di sistema (dalle foto consensuali, lato server)
+          + prefisso identità di sistema (dalle foto consensuali, lato server)
         </span>
       </div>
     </div>
