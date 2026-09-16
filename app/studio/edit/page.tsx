@@ -1,3 +1,4 @@
+import { ImmagineSicura } from "@/components/ui/ImmagineSicura";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase";
@@ -68,8 +69,7 @@ export default async function EditorLanding() {
                 className="group overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-amber/40"
               >
                 {g.image_url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={g.image_url} alt="" className="block aspect-[3/4] w-full bg-elevated object-cover" />
+                  <ImmagineSicura src={g.image_url} className="block aspect-[3/4] w-full bg-elevated object-cover" />
                 )}
                 <div className="flex items-center justify-between gap-1 p-2.5">
                   <span className="truncate text-[0.78rem] font-medium text-foreground">{av?.alias ?? "Avatar"}</span>

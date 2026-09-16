@@ -67,7 +67,7 @@ export default async function AttivitaPage() {
 
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="mb-8">
-            <span className="kicker text-verified">Il tuo volto</span>
+            <span className="kicker">Il tuo volto</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Attività del mio volto</h1>
             <p className="mt-3 leading-relaxed text-muted">
               Ogni volta che qualcuno genera con la tua identità, lo vedi qui, con la royalty che hai guadagnato.
@@ -87,13 +87,13 @@ export default async function AttivitaPage() {
           ) : (
             <>
               {/* Totali */}
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="card transition-colors hover:border-amber/60 rounded-2xl p-5">
-                  <div className="text-3xl font-extrabold leading-none text-verified">{formatEur(totalRoyalty)}</div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="card rounded-2xl p-4 transition-colors hover:border-amber/60 sm:p-5">
+                  <div className="text-[1.6rem] font-bold leading-none tracking-[-0.03em] text-verified sm:text-3xl">{formatEur(totalRoyalty)}</div>
                   <p className="mt-2 text-sm text-muted">Maturato per il tuo volto</p>
                 </div>
-                <div className="card transition-colors hover:border-amber/60 rounded-2xl p-5">
-                  <div className="text-3xl font-extrabold leading-none text-amber-ink">{totalUses}</div>
+                <div className="card rounded-2xl p-4 transition-colors hover:border-amber/60 sm:p-5">
+                  <div className="text-[1.6rem] font-bold leading-none tracking-[-0.03em] text-amber-ink sm:text-3xl">{totalUses}</div>
                   <p className="mt-2 text-sm text-muted">Utilizzi totali</p>
                 </div>
               </div>
