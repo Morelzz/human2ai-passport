@@ -38,7 +38,7 @@ export function TeamSection({
   return (
     <section className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
       <div className="text-center">
-        <span className="kicker text-verified">{eyebrow}</span>
+        <span className="kicker">{eyebrow}</span>
         <h2 className="mt-3 text-balance text-3xl font-bold tracking-[-0.03em] sm:text-4xl">{title}</h2>
         {subtitle && <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">{subtitle}</p>}
       </div>

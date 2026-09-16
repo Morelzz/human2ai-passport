@@ -24,7 +24,7 @@ export default function EnterprisePage() {
 
         {/* Hero */}
         <section className="mx-auto max-w-3xl px-5 pb-14 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker text-blocked">Enterprise</span>
+          <span className="kicker">Enterprise</span>
           <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.02] tracking-[-0.03em] sm:text-5xl">
             <KineticText text="Il volto giusto," />
             <span className="mt-2 block">
@@ -74,7 +74,7 @@ export default function EnterprisePage() {
         {/* I principi (l'etica resta) */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
-            <span className="kicker text-verified">I principi non si comprano</span>
+            <span className="kicker">I principi non si comprano</span>
             <h2 className="mt-3 max-w-2xl text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Esclusiva di categoria, mai esclusiva della persona.
             </h2>
@@ -106,7 +106,7 @@ export default function EnterprisePage() {
             <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(238,122,112,0.10),transparent_70%)]" />
               <div className="relative">
-                <span className="kicker text-blocked">Richiesta riservata</span>
+                <span className="kicker">Richiesta riservata</span>
                 <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
                   Dicci categoria e obiettivi.
                 </h2>

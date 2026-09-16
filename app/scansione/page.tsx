@@ -55,7 +55,7 @@ export default async function ScansionePage() {
 
         {/* ── HERO ─────────────────────────────────────────────────────── */}
         <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker text-verified">La scansione umana</span>
+          <span className="kicker">La scansione umana</span>
           <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
             <KineticText text="Il momento in cui il tuo volto" />
             <span className="mt-1 block">
@@ -122,7 +122,7 @@ export default async function ScansionePage() {
         {/* ── LO STANDARD SEMBLIC-SCAN ────────────────────────────────────── */}
         <Reveal>
           <section id="standard" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-12 sm:px-8">
-            <span className="kicker text-verified">Specifica pubblica</span>
+            <span className="kicker">Specifica pubblica</span>
             <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Lo standard SEMBLIC-SCAN
             </h2>
@@ -229,7 +229,7 @@ export default async function ScansionePage() {
         {/* ── LA MAPPA — "Dove scansionarti" ───────────────────────────── */}
         <Reveal>
           <section className="mx-auto max-w-4xl px-5 py-12 sm:px-8">
-            <span className="kicker text-verified">Dove scansionarti</span>
+            <span className="kicker">Dove scansionarti</span>
             <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Ogni punto è una sede certificata
             </h2>

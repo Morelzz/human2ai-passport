@@ -34,7 +34,7 @@ export default async function EnterpriseRegisterPage() {
 <div className="relative z-[2]">
         <SiteNav />
         <section className="mx-auto max-w-2xl px-5 pb-24 pt-16 sm:px-8 sm:pt-24">
-          <span className="kicker text-blocked">Enterprise · KYB</span>
+          <span className="kicker">Enterprise · KYB</span>
           <h1 className="mt-4 text-balance text-3xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-4xl">
             Registra la tua agenzia.
           </h1>

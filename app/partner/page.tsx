@@ -22,7 +22,7 @@ export default function PartnerPage() {
 
         {/* Hero — il messaggio di reclutamento del doc */}
         <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker text-verified">Capture Partner Program</span>
+          <span className="kicker">Programma Capture Partner</span>
           <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
             <KineticText text="L'AI ti ha tolto lavoro?" />
             <span className="mt-2 block">
@@ -66,7 +66,7 @@ export default function PartnerPage() {
         {/* Cosa ci guadagni */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
-            <span className="kicker text-blocked">Cosa ci guadagni</span>
+            <span className="kicker">Cosa ci guadagni</span>
             <h2 className="mt-3 max-w-2xl text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               Tre flussi, non una marchetta.
             </h2>
@@ -98,7 +98,7 @@ export default function PartnerPage() {
             <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(127,174,150,0.10),transparent_70%)]" />
               <div className="relative">
-                <span className="kicker text-verified">Candidature aperte</span>
+                <span className="kicker">Candidature aperte</span>
                 <h2 className="mt-3 text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
                   Tre passi: candidatura, certificazione, operatività.
                 </h2>

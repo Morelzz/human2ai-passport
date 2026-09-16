@@ -25,7 +25,7 @@ export default async function PrenotaPage({ searchParams }: { searchParams: Prom
         <SiteNav />
 
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
-          <span className="kicker text-verified">Prenotazione</span>
+          <span className="kicker">Prenotazione</span>
           <h1 className="mt-3 text-balance text-3xl font-extrabold leading-[1.06] tracking-tight sm:text-4xl">
             Prenota la tua scansione
           </h1>

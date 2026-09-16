@@ -32,7 +32,7 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
 
         <main className="mx-auto max-w-4xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="text-center">
-            <span className="kicker text-verified">Contatti</span>
+            <span className="kicker">Contatti</span>
             <h1 className="mt-3 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
               Parliamone. <span className="text-gradient">Da persone.</span>
             </h1>
@@ -91,7 +91,7 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
           <Reveal>
             <section className="mt-16">
               <div className="text-center">
-                <span className="kicker text-verified">Dove siamo</span>
+                <span className="kicker">Dove siamo</span>
                 <h2 className="mt-3 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">Lo studio, e la rete</h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">
                   Lo studio Void a Rimini e ogni sede certificata sul protocollo SEMBLIC-SCAN.

@@ -33,7 +33,7 @@ export default function FaqPage() {
 
         <section className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
           <div className="text-center">
-            <span className="kicker text-verified">Domande frequenti</span>
+            <span className="kicker">Domande frequenti</span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
               Le domande giuste. <span className="text-gradient">Risposte oneste.</span>
             </h1>

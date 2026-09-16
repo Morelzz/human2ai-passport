@@ -43,7 +43,7 @@ export default function StudioPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               {[
                 { Icon: ClipboardList, t: "1 · Il brief", d: "Ci racconti obiettivo, tono, formati e dove vivranno i contenuti. Mezz'ora del tuo tempo, non di più.", c: "#9A4A0B" },
-                { Icon: Users, t: "2 · Il volto giusto", d: "Selezioniamo dal registro la persona consenziente più adatta, categoria d'uso verificata, royalty alla persona inclusa.", c: "#B0472B" },
+                { Icon: Users, t: "2 · Il volto giusto", d: "Selezioniamo dal registro la persona consenziente più adatta, consenso all'uso commerciale verificato, royalty alla persona inclusa.", c: "#B0472B" },
                 { Icon: PackageCheck, t: "3 · La consegna", d: "Ricevi i contenuti finiti, in alta risoluzione, ognuno con la sua prova di provenienza verificabile.", c: "#2F7563" },
               ].map(({ Icon, t, d, c }) => (
                 <div key={t} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
@@ -61,13 +61,13 @@ export default function StudioPage() {
         {/* Perché lo Studio */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-8 sm:px-8">
-            <span className="kicker text-verified">Perché lo Studio</span>
+            <span className="kicker">Perché lo Studio</span>
             <h2 className="mt-3 max-w-2xl text-balance text-2xl font-extrabold tracking-tight sm:text-3xl">
               La velocità dell&apos;AI, senza il rischio legale.
             </h2>
             <div className="mt-7 grid gap-x-8 gap-y-5 sm:grid-cols-3">
               {[
-                { Icon: ShieldCheck, t: "Consenso documentato", d: "Ogni volto ha firmato per la tua categoria d'uso. Lo dimostra un token pubblico." },
+                { Icon: ShieldCheck, t: "Consenso documentato", d: "Ogni volto ha firmato il consenso all'uso commerciale. Lo dimostra un token pubblico." },
                 { Icon: Fingerprint, t: "Fedeltà certificata", d: "Identity-lock sui tratti reali della persona: il volto è suo, non un'approssimazione." },
                 { Icon: Scale, t: "Zero cause", d: "Niente volti rubati, niente sintetico spacciato per vero: la prova di provenienza è nel file." },
               ].map(({ Icon, t, d }) => (

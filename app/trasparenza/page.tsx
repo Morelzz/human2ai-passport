@@ -58,7 +58,7 @@ export default async function TrasparenzaPage() {
         <section className="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-24">
           {/* Intro */}
           <div className="reveal mb-12 text-center">
-            <span className="kicker text-verified">Rapporto di trasparenza</span>
+            <span className="kicker">Rapporto di trasparenza</span>
             <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">La prova è nei numeri</h1>
             <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Ogni volto è una persona reale che ha acconsentito. Ogni generazione è tracciata e

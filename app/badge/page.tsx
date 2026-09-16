@@ -25,7 +25,7 @@ export default async function BadgePage({
 
         <main className="mx-auto max-w-2xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="mb-8">
-            <span className="kicker text-verified">Lo standard</span>
+            <span className="kicker">Lo standard</span>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
               Badge «Volto Verificato»
             </h1>

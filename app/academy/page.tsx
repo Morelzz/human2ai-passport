@@ -83,7 +83,7 @@ export default async function AcademyPage() {
 
         <main className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="kicker text-verified">SEMBLIC Academy</span>
+            <span className="kicker">SEMBLIC Academy</span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
               <KineticText text="Capire i propri diritti" />
               <span className="mt-1 block">

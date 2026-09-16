@@ -28,7 +28,7 @@ export default async function VerifyPage({
 
         <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
           <div className="mb-8">
-            <span className="kicker text-verified">Sigil</span>
+            <span className="kicker">Sigil</span>
             {/* Titolo in display sottile (Geist peso 200, tracking -0.04em) */}
             <h1 className="mt-2 text-4xl font-bold tracking-[-0.04em] sm:text-5xl">Verifica un contenuto</h1>
             <p className="mt-3 leading-relaxed text-muted">
