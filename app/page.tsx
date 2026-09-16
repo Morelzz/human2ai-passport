@@ -57,8 +57,7 @@ export default async function Home() {
       <main>
         <Hero count={approved.length} paidCount={paidCount} protectedFaces={protectedFaces} />
         <div className="sv"><Registry avatars={featured} total={approved.length} /></div>
-        {/* Niente .sv qui: la sezione e' PINNATA da ScrollTrigger e un antenato
-            con transform romperebbe il pin. Si anima da sola. */}
+        {/* Le card di Come funziona entrano una per una: .sv sta dentro, sulle card. */}
         <HowItWorks />
         <div className="sv"><WardSection /></div>
         <div className="sv"><Trust /></div>
