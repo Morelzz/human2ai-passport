@@ -9,12 +9,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 // [COME FUNZIONA], casa nuova: tre card chiare, numerate perche' l'ordine e'
 // un processo vero (persona, filtro, valore). Copy verbatim da SITE_COPY.
-// Su desktop la sezione resta pinnata e i passi entrano legati allo scroll,
+// Su desktop la sezione resta pinnata (alta uno schermo solo se le animazioni
+// sono permesse: ferma, senza pin, sarebbe un vuoto enorme) e i passi entrano legati allo scroll,
 // con la linea di avanzamento nei colori semantici; su mobile fade-up leggero;
 // con prefers-reduced-motion tutto statico.
 
 const STEPS = [
-  { n: "01", k: "La persona", t: "Una persona reale entra.", d: "Viene verificata, firma il proprio consenso e sceglie dove la sua immagine puo' vivere." },
+  { n: "01", k: "La persona", t: "Una persona reale entra.", d: "Viene verificata, firma il proprio consenso e sceglie dove la sua immagine può vivere." },
   { n: "02", k: "Il filtro", t: "Una richiesta arriva.", d: "Il sistema cerca una persona reale che ha acconsentito. Se non la trova, non genera. Punto." },
   { n: "03", k: "Il valore", t: "Il valore torna alla persona.", d: "A ogni utilizzo, chi ha messo il volto guadagna. Il valore creato dall'AI torna all'essere umano da cui nasce." },
 ];
@@ -48,12 +49,12 @@ export function HowItWorks() {
     <section
       ref={sectionRef}
       id="come-funziona"
-      className="mx-auto max-w-7xl scroll-mt-20 px-5 pt-20 sm:px-8 sm:pt-24 lg:flex lg:min-h-screen lg:flex-col lg:justify-center lg:pt-0"
+      className="mx-auto max-w-7xl scroll-mt-20 px-5 pt-20 sm:px-8 sm:pt-24 motion-safe:lg:flex motion-safe:lg:min-h-screen motion-safe:lg:flex-col motion-safe:lg:justify-center motion-safe:lg:pt-0"
     >
       <SectionTitle kicker="In tre passi">Come funziona</SectionTitle>
 
       {/* Linea di avanzamento: i colori dei tre passi (semantica, non decorazione) */}
-      <div className="mb-8 hidden h-px w-full max-w-3xl overflow-hidden rounded-full bg-border lg:block">
+      <div className="mb-8 hidden h-px w-full max-w-3xl overflow-hidden rounded-full bg-border motion-safe:lg:block">
         <div
           data-progress
           className="h-full w-full origin-left"

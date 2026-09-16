@@ -13,7 +13,7 @@ export function AiActStrip() {
       >
         <div>
           <span className="kicker">AI Act · in vigore dal 2 agosto 2026</span>
-          <p className="mt-2 text-balance text-[1.15rem] font-semibold leading-snug">La trasparenza che la legge chiede, Semblic la fa gia&apos;.</p>
+          <p className="mt-2 text-balance text-[1.15rem] font-semibold leading-snug">La trasparenza che la legge chiede, Semblic la fa già.</p>
           <p className="mt-1.5 max-w-md text-[0.92rem] leading-relaxed text-muted">Certificato, filigrana e consenso verificabile in ogni contenuto. E formazione per le aziende che devono adeguarsi.</p>
         </div>
         <div className="flex flex-wrap gap-3">

@@ -87,7 +87,7 @@ export function FaceCapture({ onDone }: { onDone: () => void }) {
           </label>
         ))}
       </div>
-      <p className="wf-hint">{count > 0 ? `${count} su ${FACE_POSES.length} foto del volto caricate` : "Carica la foto frontale (piu' angoli carichi, piu' robusta e' la protezione)."}</p>
+      <p className="wf-hint">{count > 0 ? `${count} su ${FACE_POSES.length} foto del volto caricate` : "Carica la foto frontale (più angoli carichi, più robusta è la protezione)."}</p>
       <p className="wf-hint">Cifrate. Solo tue. Mai vendute, mai usate per addestrare nulla.</p>
       {err && <p className="wf-err">{err}</p>}
       <button type="button" className="wf-btn" disabled={busy} onClick={submit}>

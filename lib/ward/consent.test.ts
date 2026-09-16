@@ -27,7 +27,7 @@ describe("monitoringConsentStatus", () => {
   it("attivo con scadenza futura -> active", () => {
     expect(monitoringConsentStatus({ ...base, expires_at: "2026-12-31T00:00:00.000Z" }, NOW)).toBe("active");
   });
-  it("revoca ha priorita' sulla scadenza", () => {
+  it("revoca ha priorità sulla scadenza", () => {
     expect(monitoringConsentStatus({ ...base, expires_at: "2099-01-01T00:00:00.000Z", revoked_at: "2026-06-05T00:00:00.000Z" }, NOW)).toBe("revoked");
   });
 });

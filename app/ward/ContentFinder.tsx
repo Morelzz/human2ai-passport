@@ -171,7 +171,7 @@ export function ContentFinder({
             )}
 
             <p className="mt-8 max-w-md text-[11px] leading-relaxed text-faint">
-              Ward trova e segnala. Decidi tu cosa fare: nessuna accusa automatica, nessuna cifra. La filigrana invisibile conferma quando una copia e&apos; davvero tua.
+              Ward trova e segnala. Decidi tu cosa fare: nessuna accusa automatica, nessuna cifra. La filigrana invisibile conferma quando una copia è davvero tua.
             </p>
           </div>
         </div>
@@ -220,7 +220,7 @@ function Card({ m, onSafe, onTakedown }: { m: FinderMatch; onSafe: () => void; o
         </div>
         <div className="mt-1.5 flex items-center gap-1.5 text-[10.5px]">
           {m.watermarkPresent ? (
-            <span className="inline-flex items-center gap-1" style={{ color: "#7FAE96" }}><BadgeCheck className="h-3 w-3" /> Filigrana: e&apos; tua</span>
+            <span className="inline-flex items-center gap-1" style={{ color: "#7FAE96" }}><BadgeCheck className="h-3 w-3" /> Filigrana: è tua</span>
           ) : (
             <span className="text-muted">{exposed ? "Piattaforma nota" : "Zona nascosta"} · Filigrana: no</span>
           )}
@@ -253,7 +253,7 @@ function EmptyState({ scanned }: { scanned: boolean }) {
       <div className="mt-3 text-sm font-medium">{scanned ? "Nessuna copia trovata" : "Non hai ancora controllato"}</div>
       <p className="mx-auto mt-1.5 max-w-xs text-xs leading-relaxed text-muted">
         {scanned
-          ? "La tua immagine non risulta copiata sul web, ed e' una buona notizia. Ward la ricontrolla quando vuoi."
+          ? "La tua immagine non risulta copiata sul web, ed è una buona notizia. Ward la ricontrolla quando vuoi."
           : "Avvia un controllo: Ward cerca su tutto il web le copie di questa immagine."}
       </p>
     </div>

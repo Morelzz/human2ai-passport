@@ -10,7 +10,7 @@ describe("buildDetectionPush", () => {
     expect(p.tag).toBe("ward-detection");
   });
 
-  it("usa il plurale col conteggio per piu' copie", () => {
+  it("usa il plurale col conteggio per più copie", () => {
     const p = buildDetectionPush(3);
     expect(p.title).toBe("Trovate 3 copie");
     expect(p.body).toContain("3 copie del tuo volto");

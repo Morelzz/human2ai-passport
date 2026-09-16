@@ -20,12 +20,12 @@ export const maxDuration = 20;
 // ──────────────────────────────────────────────────────────────────────────
 
 const SYSTEM = `Traduci una descrizione (parlata o scritta) di una foto da generare nelle scelte dello Studio Semblic.
-L'identita del volto e' bloccata dall'avatar reale: NON descrivere MAI viso, eta, etnia o identita. Solo fotorealismo.
+L'identità del volto è bloccata dall'avatar reale: NON descrivere MAI viso, età, etnia o identità. Solo fotorealismo.
 
 Rispondi SOLO con JSON valido:
 {"scene":"","pose":"","framing":"","expression":"","colorStyle":"","camera":"","lens":"","light":""}
 
-"scene" = SOLO la descrizione libera (azione, luogo, abbigliamento, atmosfera), SENZA i parametri tecnici qui sotto, che vanno nei loro campi. Italiano, massimo 300 caratteri. Se non c'e' descrizione, "".
+"scene" = SOLO la descrizione libera (azione, luogo, abbigliamento, atmosfera), SENZA i parametri tecnici qui sotto, che vanno nei loro campi. Italiano, massimo 300 caratteri. Se non c'è descrizione, "".
 
 Per OGNI campo scegli UNO dei valori elencati SOLO se la descrizione lo implica chiaramente, altrimenti "". Non forzare, non inventare valori fuori lista.
 

@@ -37,7 +37,7 @@ describe("verifyStripeSignature", () => {
     expect(verifyStripeSignature(payload, "t=123", SECRET, 300, now)).toBe(false);
   });
 
-  it("accetta piu' firme v1 se almeno una e' valida", () => {
+  it("accetta più firme v1 se almeno una è valida", () => {
     const good = crypto.createHmac("sha256", SECRET).update(`${now}.${payload}`).digest("hex");
     const header = `t=${now},v1=deadbeef,v1=${good}`;
     expect(verifyStripeSignature(payload, header, SECRET, 300, now)).toBe(true);

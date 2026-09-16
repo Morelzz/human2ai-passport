@@ -3,6 +3,7 @@ import { Tier } from "@/lib/types";
 import { AvatarTile } from "@/components/avatar/AvatarTile";
 import { SectionTitle } from "@/components/marketing/SectionTitle";
 import { Button } from "@/components/ui/button";
+import { articoloPlurale } from "@/lib/strings/articolo";
 
 export interface FeaturedAvatar {
   handle: string;
@@ -24,13 +25,13 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <SectionTitle
           kicker="Il registro"
-          subtitle="Volti veri, scelti e pagati. Ogni immagine qui sotto e' generata da Semblic con il consenso della persona che vedi."
+          subtitle="Volti veri, scelti e pagati. Ogni immagine qui sotto è generata da Semblic con il consenso della persona che vedi."
           className="mb-0 sm:mb-0"
         >
           Persone, non prompt.
         </SectionTitle>
         <Button asChild variant="secondary" className="hidden shrink-0 sm:inline-flex">
-          <Link href="/catalogo">Tutti i {total} volti</Link>
+          <Link href="/catalogo">Tutti {articoloPlurale(total)} {total} volti</Link>
         </Button>
       </div>
 
@@ -42,7 +43,7 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
 
       <div className="mt-6 sm:hidden">
         <Button asChild variant="secondary" size="md" className="w-full">
-          <Link href="/catalogo">Tutti i {total} volti</Link>
+          <Link href="/catalogo">Tutti {articoloPlurale(total)} {total} volti</Link>
         </Button>
       </div>
     </section>

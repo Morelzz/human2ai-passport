@@ -5,7 +5,7 @@ type Find = { sourceUrl: string; pageUrl: string | null; host: string | null };
 const f = (host: string, sourceUrl: string, pageUrl: string | null = null): Find => ({ host, sourceUrl, pageUrl });
 
 describe("isWhitelisted", () => {
-  it("match per host (l'intero dominio e' sicuro)", () => {
+  it("match per host (l'intero dominio è sicuro)", () => {
     expect(isWhitelisted(f("instagram.com", "https://instagram.com/a.jpg"), [{ type: "host", value: "instagram.com" }])).toBe(true);
   });
   it("match per url esatto (solo quella occorrenza)", () => {

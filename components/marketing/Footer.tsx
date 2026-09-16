@@ -1,15 +1,22 @@
 import Link from "next/link";
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/site";
 
-// Footer condiviso, casa nuova: chiaro, quattro colonne, wordmark gigante in
-// chiusura. Su token: dentro un'isola scura si ribalta da solo.
+// Footer condiviso, casa nuova: chiaro, marchio e quattro colonne di link (due
+// per riga sul telefono, niente colonna infinita), wordmark gigante in chiusura. Su token: dentro un'isola scura si ribalta da solo.
 const COLONNE: { titolo: string; colore: string; voci: { href: string; label: string }[] }[] = [
   {
     titolo: "Piattaforma", colore: "text-amber-ink",
     voci: [
-      { href: "/match", label: "Registro" }, { href: "/scansione", label: "La scansione" }, { href: "/prezzi", label: "Prezzi" },
-      { href: "/verify", label: "Sigil" }, { href: "/partner", label: "Diventa partner" }, { href: "/academy", label: "Academy" },
-      { href: "/studio", label: "Studio" }, { href: "/enterprise", label: "Enterprise" },
+      { href: "/catalogo", label: "Registro" }, { href: "/match", label: "Genera" }, { href: "/studio", label: "Studio" },
+      { href: "/enterprise", label: "Enterprise" }, { href: "/academy", label: "Academy" }, { href: "/prezzi", label: "Prezzi" },
+      { href: "/partner", label: "Diventa partner" },
+    ],
+  },
+  {
+    titolo: "Tutela", colore: "text-amber-ink",
+    voci: [
+      { href: "/signup/avatar", label: "Entra nel registro" }, { href: "/tutela", label: "Tutela dell'identità" },
+      { href: "/scansione", label: "La scansione" }, { href: "/ward", label: "Ward e Nemesis" }, { href: "/verify", label: "Sigil" },
     ],
   },
   {
@@ -31,17 +38,21 @@ export function Footer() {
   return (
     <footer className="mt-16 border-t border-border">
       <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 sm:px-8">
-        <div className="grid gap-10 sm:grid-cols-[1.3fr_1fr_1fr_1fr]">
-          <div className="max-w-xs">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
+          <div className="col-span-2 max-w-xs sm:col-span-4 lg:col-span-1">
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/semblic-mark.png" alt="" aria-hidden className="h-8 w-8 object-contain" />
               <span className="text-[0.85rem] font-bold tracking-[0.18em]">SEMBLIC</span>
             </div>
             <p className="mt-4 text-[0.95rem] leading-relaxed text-muted">
-              Il registro dei diritti d&apos;immagine. Il filtro di tutela umana sopra ogni IA generativa.
+              Il registro dei diritti d&apos;immagine. Il filtro di tutela umana sopra ogni AI generativa.
             </p>
-            <p className="kicker mt-4 text-[0.62rem] text-faint">Real humans · Real rights · Real earnings</p>
+            <p className="kicker mt-4 text-[0.62rem] text-faint">
+              {["Real humans", "Real rights", "Real earnings"].map((f, i) => (
+                <span key={f} className="whitespace-nowrap">{i > 0 && " · "}{f}</span>
+              ))}
+            </p>
             <a
               href={INSTAGRAM_URL}
               target="_blank"

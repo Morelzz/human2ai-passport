@@ -500,7 +500,7 @@ export default function MatchClient({ initialHandle = null }: { initialHandle?: 
       } else {
         const labels = describeDirection(dir);
         if (labels.length === 0) {
-          setError("Non ho trovato indicazioni da impostare, prova a essere piu' specifico");
+          setError("Non ho trovato indicazioni da impostare, prova a essere più specifico");
         } else {
           // Snapshot dei controlli correnti, poi applico solo i token presenti.
           const snap: ControlsSnap = { pose, framing, expression, colorStyle, camera, lens, light };

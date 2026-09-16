@@ -59,13 +59,13 @@ const PERCORSI_AZIENDE = [
     titolo: "Fotografia aumentata",
     strumenti: "Media team · content creator",
     descrizione:
-      "Mescolare set reale e AI: i tuoi operatori fotografici potenziati dalla generazione, gli scatti veri come base di continuita' per le immagini generate. Il tuo stile, moltiplicato.",
+      "Mescolare set reale e AI: i tuoi operatori fotografici potenziati dalla generazione, gli scatti veri come base di continuità per le immagini generate. Il tuo stile, moltiplicato.",
     livelli: 3,
   },
   {
     Icon: Scale,
     c: "#B0472B",
-    titolo: "Conformita' nell'uso quotidiano",
+    titolo: "Conformità nell'uso quotidiano",
     strumenti: "AI Act in pratica",
     descrizione:
       "Cosa dichiarare, come marcare, cosa non fare: le regole del 2 agosto 2026 tradotte in procedure semplici per chi ogni giorno pubblica contenuti generati.",
@@ -145,7 +145,7 @@ export default async function AcademyPage() {
                 </h2>
                 <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">
                   Il Regolamento europeo richiede alle aziende personale formato sugli strumenti AI
-                  che usa. La SEMBLIC Academy porta la formazione in azienda: percorsi a piu&apos;
+                  che usa. La SEMBLIC Academy porta la formazione in azienda: percorsi a più
                   livelli, sul serio, dagli strumenti di frontiera al metodo.
                 </p>
               </div>

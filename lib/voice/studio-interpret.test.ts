@@ -61,7 +61,7 @@ describe("interpretToStudio", () => {
 });
 
 describe("hasAnyControl", () => {
-  it("vero se almeno un controllo e' impostato", () => {
+  it("vero se almeno un controllo è impostato", () => {
     expect(hasAnyControl(interpretToStudio({ lens: "85mm" }))).toBe(true);
   });
   it("falso se nessun controllo (anche con sola scena)", () => {

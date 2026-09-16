@@ -11,7 +11,7 @@ describe("euclideanDistance", () => {
   it("calcola la distanza euclidea classica (3-4-5)", () => {
     expect(euclideanDistance([0, 0], [3, 4])).toBe(5);
   });
-  it("e' 0 per vettori identici", () => {
+  it("è 0 per vettori identici", () => {
     expect(euclideanDistance([1, 2, 3], [1, 2, 3])).toBe(0);
   });
 });
@@ -31,7 +31,7 @@ describe("bestDistance", () => {
 });
 
 describe("classify", () => {
-  it("confirmed quando la distanza e' bassa (<= 0.5 di default)", () => {
+  it("confirmed quando la distanza è bassa (<= 0.5 di default)", () => {
     const c = classify(0.2);
     expect(c.band).toBe("confirmed");
     expect(c.distance).toBe(0.2);
@@ -41,7 +41,7 @@ describe("classify", () => {
   it("review nella fascia intermedia (0.5 < d <= 0.6)", () => {
     expect(classify(0.55).band).toBe("review");
   });
-  it("oltre la soglia stessa-persona (0.6) e' discard: i sosia non entrano in review", () => {
+  it("oltre la soglia stessa-persona (0.6) è discard: i sosia non entrano in review", () => {
     // Verificato a terra (test Luca Agnelli): la fascia 0.6-0.68 ammetteva PERSONE
     // DIVERSE (il suo stesso profilo vs frontale era gia' a 0.62-0.71).
     expect(classify(0.62).band).toBe("discard");
@@ -59,12 +59,12 @@ describe("classify", () => {
     expect(classify(0.6).band).toBe("review");
     expect(classify(0.6000001).band).toBe("discard");
   });
-  it("Infinity (nessun volto / nessun ref) e' discard con score 0", () => {
+  it("Infinity (nessun volto / nessun ref) è discard con score 0", () => {
     const c = classify(Infinity);
     expect(c.band).toBe("discard");
     expect(c.score).toBe(0);
   });
-  it("lo score e' un intero 0-100 (colonna DB integer)", () => {
+  it("lo score è un intero 0-100 (colonna DB integer)", () => {
     const c = classify(0.42);
     expect(Number.isInteger(c.score)).toBe(true);
     expect(c.score).toBeGreaterThanOrEqual(0);

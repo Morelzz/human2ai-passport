@@ -17,7 +17,7 @@ describe("echoModel", () => {
     expect(echoModel("dall-e-3")).toBe(ECHO_DEFAULT_MODEL);
   });
 
-  it("il default e' fra i modelli ammessi", () => {
+  it("il default è fra i modelli ammessi", () => {
     expect(isEchoModel(ECHO_DEFAULT_MODEL)).toBe(true);
   });
 });

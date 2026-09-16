@@ -9,7 +9,7 @@ import { KineticText } from "@/components/motion/KineticText";
 export const metadata = {
   title: "AI Act, conformi dal giorno uno",
   description:
-    "Dal 2 agosto 2026 gli obblighi di trasparenza dell'AI Act sono legge: contenuti dichiarati, marcatura leggibile dalle macchine, persone tutelate. Semblic e' nata cosi'.",
+    "Dal 2 agosto 2026 gli obblighi di trasparenza dell'AI Act sono legge: contenuti dichiarati, marcatura leggibile dalle macchine, persone tutelate. Semblic è nata così.",
   alternates: { canonical: "/ai-act" },
 };
 
@@ -34,15 +34,15 @@ const MAPPA = [
   {
     Icon: ScanSearch,
     c: "#5B4FB8",
-    chiede: "Verificabilita'",
-    dettaglio: "La trasparenza vale se chiunque puo' controllare cosa ha davanti.",
-    risponde: "Sigil, il verificatore pubblico: incolli un contenuto e sai chi c'e' dietro, in un clic.",
+    chiede: "Verificabilità",
+    dettaglio: "La trasparenza vale se chiunque può controllare cosa ha davanti.",
+    risponde: "Sigil, il verificatore pubblico: incolli un contenuto e sai chi c'è dietro, in un clic.",
   },
   {
     Icon: ShieldCheck,
     c: "#B0472B",
     chiede: "Persone reali tutelate",
-    dettaglio: "I deepfake vanno dichiarati; l'identita' delle persone va protetta dagli abusi.",
+    dettaglio: "I deepfake vanno dichiarati; l'identità delle persone va protetta dagli abusi.",
     risponde: "Nessun volto senza consenso verificato e pagato; Ward trova le copie, Nemesis le fa rimuovere.",
   },
 ];
@@ -57,19 +57,19 @@ export default function AiActPage() {
           <div className="mx-auto max-w-2xl text-center">
             <span className="kicker text-verified">AI Act · in applicazione dal 2 agosto 2026</span>
             <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
-              <KineticText text="La trasparenza e'" />
+              <KineticText text="La trasparenza è" />
               <span className="mt-1 block">
                 <KineticText text="diventata legge." delay={0.2} />
               </span>
               <span className="mt-1 block">
-                <KineticText text="Noi eravamo gia' pronti" gradient delay={0.4} />
+                <KineticText text="Noi eravamo già pronti" gradient delay={0.4} />
                 <KineticText text="." delay={0.55} />
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Dal 2 agosto 2026 si applicano gli obblighi di trasparenza del Regolamento europeo
               sull&apos;intelligenza artificiale: i contenuti generati o modificati dall&apos;AI vanno
-              dichiarati e resi riconoscibili. Semblic non si e&apos; adeguata: e&apos; nata cosi&apos;.
+              dichiarati e resi riconoscibili. Semblic non si è adeguata: è nata così.
             </p>
           </div>
 
@@ -100,7 +100,7 @@ export default function AiActPage() {
           <Reveal>
             <p className="mx-auto mt-8 max-w-2xl rounded-2xl border border-dashed px-5 py-4 text-center text-sm leading-relaxed text-muted" style={{ borderColor: "rgba(242,169,59,0.4)", background: "rgba(242,169,59,0.06)" }}>
               Le sanzioni previste arrivano a 15 milioni di euro o al 3% del fatturato globale.
-              Per chi crea con Semblic la conformita&apos; non e&apos; un progetto: e&apos; il prodotto.
+              Per chi crea con Semblic la conformità non è un progetto: è il prodotto.
             </p>
           </Reveal>
 

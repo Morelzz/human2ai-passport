@@ -220,7 +220,7 @@ export async function POST(request: Request) {
   // rifiutato, o DOB illeggibile in revisione) non passa.
   if (profile?.adult_verified_method !== "document") {
     return NextResponse.json(
-      { error: "Per registrare il tuo volto devi completare la verifica d'identita (18+)." },
+      { error: "Per registrare il tuo volto devi completare la verifica d'identità (18+)." },
       { status: 403 },
     );
   }
@@ -325,7 +325,7 @@ export async function POST(request: Request) {
   if (rawRefs.length > 0 && refsStored === 0) {
     await admin.from("consent_events").delete().eq("avatar_id", id);
     await admin.from("avatars").delete().eq("id", id);
-    return NextResponse.json({ error: "Non siamo riusciti a salvare le tue foto, riprova (se persiste usa immagini piu' leggere o meno foto)." }, { status: 502 });
+    return NextResponse.json({ error: "Non siamo riusciti a salvare le tue foto, riprova (se persiste usa immagini più leggere o meno foto)." }, { status: 502 });
   }
 
   // Documento (fronte) + selfie nel bucket PRIVATO 'documents' sotto {uid}/avatar/

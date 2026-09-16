@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   const { data: av } = await q.maybeSingle();
   if (!av) return NextResponse.json({ error: "Avatar non trovato per questo account" }, { status: 404 });
   // Un volto in sola protezione (VETO) non puo' offrirsi per ingaggi.
-  if (av.protection_only) return NextResponse.json({ error: "Un volto protetto non puo' offrirsi per ingaggi" }, { status: 400 });
+  if (av.protection_only) return NextResponse.json({ error: "Un volto protetto non può offrirsi per ingaggi" }, { status: 400 });
 
   const { error } = await admin
     .from("avatars")

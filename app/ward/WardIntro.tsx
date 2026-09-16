@@ -18,7 +18,7 @@ const STEPS = [
   },
   {
     k: "Le tagga, non le giudica",
-    d: "Ogni ritrovamento ha un semaforo per dominio (zona nota o zona nascosta) e la lettura della filigrana invisibile, che conferma quando una copia e' davvero tua. Nessuna accusa automatica, nessuna cifra.",
+    d: "Ogni ritrovamento ha un semaforo per dominio (zona nota o zona nascosta) e la lettura della filigrana invisibile, che conferma quando una copia è davvero tua. Nessuna accusa automatica, nessuna cifra.",
   },
   {
     k: "Decidi tu",
@@ -41,7 +41,7 @@ export function WardIntro() {
       </h1>
       <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
         Ward cerca sul web le copie delle immagini che generi su Semblic. Le trova, le tagga e decidi tu cosa fare.{" "}
-        <span className="text-foreground">Niente foto da caricare, niente consenso:</span> Ward lavora sulle immagini che gia' possiedi.
+        <span className="text-foreground">Niente foto da caricare, niente consenso:</span> Ward lavora sulle immagini che già possiedi.
       </p>
 
       <div className="mt-7 flex flex-wrap gap-3">
@@ -75,15 +75,15 @@ export function WardIntro() {
           </div>
         </div>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-          Quando una copia e&apos; <span className="text-foreground">confermata tua</span>, Nemesis prepara una richiesta di rimozione (DMCA) gia&apos; pronta, con l&apos;indirizzo a cui inviarla e le prove allegate.{" "}
+          Quando una copia è <span className="text-foreground">confermata tua</span>, Nemesis prepara una richiesta di rimozione (DMCA) già pronta, con l&apos;indirizzo a cui inviarla e le prove allegate.{" "}
           <span className="text-foreground">Semblic prepara, tu invii:</span> nessun invio automatico, nessuna accusa. Poi segui lo stato, dalla bozza alla copia rimossa. Solo sulle copie confermate, il comando resta tuo.
         </p>
       </div>
 
       <p className="mt-10 max-w-xl text-sm leading-relaxed text-faint">
-        Cerchi invece di non essere generabile dalle AI? Quella e' la{" "}
+        Cerchi invece di non essere generabile dalle AI? Quella è la{" "}
         <Link href="/tutela" className="text-amber-ink underline-offset-2 hover:underline">
-          protezione identita&apos;
+          protezione identità
         </Link>
         , una cosa diversa: registri il tuo volto per restare fuori dal generativo.
       </p>

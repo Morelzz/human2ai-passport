@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
   // Uno scan consuma Google Vision: rate-limit per utente.
   const allowed = await allowRequest(`ward-content-scan:${user.id}`, 12, 60 * 60);
-  if (!allowed) return NextResponse.json({ error: "Troppe scansioni, riprova piu' tardi" }, { status: 429 });
+  if (!allowed) return NextResponse.json({ error: "Troppe scansioni, riprova più tardi" }, { status: 429 });
 
   const body = await request.json().catch(() => null);
   const generationId = String(body?.generationId ?? "").trim();

@@ -44,7 +44,7 @@ export function KycStep({ onVerified, diditEnabled, returnTo }: { onVerified: ()
       <div className="wf-live" aria-hidden><div className="wf-live-ring" /><div className="wf-live-face" /></div>
       <span className="wf-eyebrow">Passo 1, verifica</span>
       <h2 className="wf-title">Conferma che sei tu</h2>
-      <p className="wf-lede">Una verifica veloce (liveness e documento) prova che sei una persona reale e che questo volto e&apos; il tuo. Tiene fuori bot e impostori. Gratis.</p>
+      <p className="wf-lede">Una verifica veloce (liveness e documento) prova che sei una persona reale e che questo volto è il tuo. Tiene fuori bot e impostori. Gratis.</p>
       <div className="wf-feats"><span>Liveness</span><span>Documento</span><span>Face match</span></div>
       {err && <p className="wf-err">{err}</p>}
       <button type="button" className="wf-btn" disabled={busy} onClick={verify}>{busy ? (diditEnabled ? "Apro la verifica..." : "Verifica in corso...") : "Verificami gratis"}</button>
@@ -62,7 +62,7 @@ export function KycPending() {
       <div className="wf-live" aria-hidden><div className="wf-live-ring" /><div className="wf-live-face" /></div>
       <span className="wf-eyebrow">Passo 1, verifica</span>
       <h2 className="wf-title">Verifica in corso</h2>
-      <p className="wf-lede">Stiamo confermando la tua identita&apos;. Di solito e&apos; questione di un minuto. Appena e&apos; fatta puoi aggiungere le foto del volto e attivare la protezione.</p>
+      <p className="wf-lede">Stiamo confermando la tua identità. Di solito è questione di un minuto. Appena è fatta puoi aggiungere le foto del volto e attivare la protezione.</p>
       <button type="button" className="wf-btn" onClick={() => window.location.reload()}>Ho completato, ricarica</button>
     </div>
   );
@@ -91,7 +91,7 @@ export function WardConsentStep({ onActivated }: { onActivated: () => void }) {
     <div className="wf-card">
       <span className="wf-eyebrow">La chiave legale</span>
       <h2 className="wf-title">Consenso al monitoraggio</h2>
-      <p className="wf-lede">Permetti alla protezione identita&apos; di cercare il tuo volto sul web aperto, confrontandolo solo col tuo riferimento.</p>
+      <p className="wf-lede">Permetti alla protezione identità di cercare il tuo volto sul web aperto, confrontandolo solo col tuo riferimento.</p>
 
       <div className="wf-crows">
         <div className="wf-crow"><div className="wf-crow-t">Scansione del web aperto</div><div className="wf-crow-m">solo il tuo volto, mai quello di altri.</div></div>
@@ -120,7 +120,7 @@ export function WardConsentStep({ onActivated }: { onActivated: () => void }) {
       <div className="wf-legal">Consenso esplicito al trattamento del dato biometrico (GDPR Art.9). Puoi revocarlo in ogni momento: ferma subito ogni scansione e resta registrato. Testi in revisione legale.</div>
       <label className="wf-agree">
         <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
-        <span>Acconsento al monitoraggio del mio volto come descritto e confermo che e&apos; mio.</span>
+        <span>Acconsento al monitoraggio del mio volto come descritto e confermo che è mio.</span>
       </label>
       {err && <p className="wf-err">{err}</p>}
       <button type="button" className="wf-btn salvia" disabled={busy} onClick={activate}>{busy ? "Attivo..." : "Concedi il consenso e attiva"}</button>
@@ -134,7 +134,7 @@ export function WardActive() {
     <div className="wf-card wf-success">
       <div className="wf-shield">{SHIELD}</div>
       <h2 className="wf-title">Protezione attiva</h2>
-      <p className="wf-lede">La prima scansione e&apos; gia&apos; partita. Ti avvisiamo appena troviamo qualcosa, e Nemesis e&apos; pronto nel momento in cui vuoi colpire. Sei protetto.</p>
+      <p className="wf-lede">La prima scansione è già partita. Ti avvisiamo appena troviamo qualcosa, e Nemesis è pronto nel momento in cui vuoi colpire. Sei protetto.</p>
       <Link href="/account" className="wf-btn">Vai al tuo account</Link>
     </div>
   );

@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     if (ageReason === "no_dob") {
       return NextResponse.json({ error: "Conferma la tua data di nascita per continuare.", code: "age_unverified" }, { status: 403 });
     }
-    return NextResponse.json({ error: "SEMBLIC e' riservato ai maggiorenni." }, { status: 403 });
+    return NextResponse.json({ error: "SEMBLIC è riservato ai maggiorenni." }, { status: 403 });
   }
 
   // Rivalida: l'avatar esiste, è SOUL, ha consenso attivo e copre la categoria d'uso.
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
       {
         error:
           veto === "protected_face"
-            ? "Questo volto e' registrato in sola protezione: la generazione e' vietata."
+            ? "Questo volto è registrato in sola protezione: la generazione è vietata."
             : "Consenso revocato: generazione bloccata",
       },
       { status: 403 }

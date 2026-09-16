@@ -56,7 +56,7 @@ export function WardSection() {
             </div>
             <div className="min-w-0">
               <span className="kicker text-[0.6rem] text-faint">Immagine generata · certificato</span>
-              <p className="mt-1.5 text-[1.05rem] font-semibold leading-tight">3 copie trovate, 1 gia' sicura</p>
+              <p className="mt-1.5 text-[1.05rem] font-semibold leading-tight">3 copie trovate, 1 già sicura</p>
             </div>
           </div>
           <ul className="flex flex-col gap-2.5">

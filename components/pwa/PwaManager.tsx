@@ -224,7 +224,7 @@ function InstallPrompt({
           </span>
         </div>
         <p style={{ fontSize: "0.85rem", color: colors.muted, lineHeight: 1.6, margin: "0 0 1.2rem" }}>
-          A schermata Home, a tutto schermo. Cosi' gli avvisi Ward ti arrivano anche ad app chiusa.
+          A schermata Home, a tutto schermo. Così gli avvisi Ward ti arrivano anche ad app chiusa.
         </p>
 
         {ios && !canPrompt ? (
@@ -311,7 +311,7 @@ const STEPS = [
   { chip: "Avatar", title: "Il tuo avatar", body: "Il volto che registri e rivendichi come tuo. Tutto parte da qui." },
   { chip: "Genera", title: "Genera col tuo consenso", body: "Crei contenuti dal tuo avatar, sempre alle tue condizioni." },
   { chip: "Proteggi", title: "Ward, il tuo radar", body: "Trova dove appare il tuo volto e con Nemesis lo fa rimuovere." },
-  { chip: "Fiducia", title: "Verifica e fiducia", body: "Chiunque puo' controllare che il tuo consenso sia reale." },
+  { chip: "Fiducia", title: "Verifica e fiducia", body: "Chiunque può controllare che il tuo consenso sia reale." },
 ];
 
 function Tutorial({ onDone }: { onDone: () => void }) {

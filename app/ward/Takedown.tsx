@@ -155,7 +155,7 @@ export function Takedown({ matchId, host, onClose }: { matchId: string; host: st
               </div>
 
               <p className="mt-5 text-[10.5px] leading-relaxed text-faint">
-                Questo documento non e&apos; consulenza legale. Semblic prepara la richiesta, l&apos;invio spetta a te.
+                Questo documento non è consulenza legale. Semblic prepara la richiesta, l&apos;invio spetta a te.
               </p>
             </div>
           )}

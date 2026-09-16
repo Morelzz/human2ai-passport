@@ -8,7 +8,7 @@ import { joinScene, collectResults, dictationError } from "./dictation";
 // ──────────────────────────────────────────────────────────────────────────
 
 describe("joinScene", () => {
-  it("usa l'aggiunta quando la base e' vuota", () => {
+  it("usa l'aggiunta quando la base è vuota", () => {
     expect(joinScene("", "che balla in spiaggia")).toBe("che balla in spiaggia");
   });
 
@@ -24,7 +24,7 @@ describe("joinScene", () => {
     expect(joinScene("che balla", "  in spiaggia  ")).toBe("che balla in spiaggia");
   });
 
-  it("lascia invariata la base se l'aggiunta e' vuota o solo spazi", () => {
+  it("lascia invariata la base se l'aggiunta è vuota o solo spazi", () => {
     expect(joinScene("che balla", "")).toBe("che balla");
     expect(joinScene("che balla", "   ")).toBe("che balla");
   });
@@ -48,7 +48,7 @@ describe("collectResults", () => {
     expect(collectResults([])).toEqual({ final: "", interim: "" });
   });
 
-  it("accumula piu' segmenti interim", () => {
+  it("accumula più segmenti interim", () => {
     const out = collectResults([
       { transcript: "lu", isFinal: false },
       { transcript: "ce", isFinal: false },

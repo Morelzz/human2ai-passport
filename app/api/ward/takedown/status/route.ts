@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Devi accedere" }, { status: 401 });
 
   const allowed = await allowRequest(`ward-takedown-status:${user.id}`, 60, 60 * 60);
-  if (!allowed) return NextResponse.json({ error: "Troppe richieste, riprova piu' tardi" }, { status: 429 });
+  if (!allowed) return NextResponse.json({ error: "Troppe richieste, riprova più tardi" }, { status: 429 });
 
   const body = await request.json().catch(() => null);
   const actionId = String(body?.actionId ?? "").trim();

@@ -62,7 +62,7 @@ describe("ECHO cost-plus (modello 2026-06-29)", () => {
     expect(s.net_cents).toBeLessThanOrEqual(s.markup_cents);
   });
 
-  it("la categoria NON influenza piu' il prezzo (cost-plus puro)", () => {
+  it("la categoria NON influenza più il prezzo (cost-plus puro)", () => {
     const a = splitEcho("Luxury", "1024x1024", "high");
     const b = splitEcho("Food", "1024x1024", "high");
     expect(a.gross_cents).toBe(b.gross_cents);

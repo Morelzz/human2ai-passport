@@ -96,8 +96,8 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
         <div className="card rounded-2xl p-8 text-center">
           <p className="text-lg font-extrabold text-amber-ink">Volto protetto</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Il tuo volto e&apos; registrato in sola protezione. Dentro Semblic non puo&apos; essere generato:
-            e&apos; una garanzia, applicata dai nostri sistemi. Se qualcuno prova a usarlo, te lo segnaliamo.
+            Il tuo volto è registrato in sola protezione. Dentro Semblic non può essere generato:
+            è una garanzia, applicata dai nostri sistemi. Se qualcuno prova a usarlo, te lo segnaliamo.
           </p>
           <p className="mt-3 text-[0.72rem] leading-relaxed text-faint">
             Fuori da Semblic offriamo allerta precoce e rimozione assistita: un impegno serio, non una garanzia che
@@ -113,7 +113,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
     return (
       <section className="mx-auto max-w-md px-5 py-14 sm:px-8">
         <div className="card rounded-2xl p-8 text-center">
-          <p className="text-lg font-extrabold text-foreground">Hai gia&apos; un volto nel registro</p>
+          <p className="text-lg font-extrabold text-foreground">Hai già un volto nel registro</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Non puoi al tempo stesso concedere e proteggere lo stesso volto. Se vuoi passare alla sola protezione,
             scrivici dai contatti e ti aiutiamo.
@@ -127,20 +127,20 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
   return (
     <section className="mx-auto max-w-xl px-5 py-14 sm:px-8">
       <span className="kicker text-amber-ink">Protezione del volto</span>
-      <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Registra il tuo volto perche&apos; non venga generato</h1>
+      <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Registra il tuo volto perché non venga generato</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
-        Confermiamo che il volto e&apos; il tuo (come per un documento), poi lo mettiamo in <span className="text-foreground">sola protezione</span>:
-        dentro Semblic nessuno potra&apos; generarlo, in nessuna categoria. Non creiamo nessun avatar, nessun repertorio:
+        Confermiamo che il volto è il tuo (come per un documento), poi lo mettiamo in <span className="text-foreground">sola protezione</span>:
+        dentro Semblic nessuno potrà generarlo, in nessuna categoria. Non creiamo nessun avatar, nessun repertorio:
         solo un&apos;impronta difensiva del tuo volto.
       </p>
       <p className="mt-2 rounded-xl border border-amber/40 bg-amber-soft p-3 text-[0.74rem] leading-relaxed text-faint">
-        Dentro Semblic la non generazione e&apos; una garanzia (controllo sui nostri sistemi). Fuori, offriamo allerta
+        Dentro Semblic la non generazione è una garanzia (controllo sui nostri sistemi). Fuori, offriamo allerta
         precoce e rimozione assistita: best effort, non la promessa che il volto non compaia mai altrove. Testi in revisione legale.
       </p>
 
       <form onSubmit={submit} className="mt-8 flex flex-col gap-7">
         <div>
-          <p className="mb-1.5 text-sm font-semibold text-muted">Documento d&apos;identita&apos; <span className="font-normal text-faint">· serve a confermare che il volto e&apos; tuo</span></p>
+          <p className="mb-1.5 text-sm font-semibold text-muted">Documento d&apos;identità <span className="font-normal text-faint">· serve a confermare che il volto è tuo</span></p>
           <div className="grid grid-cols-2 gap-3">
             <PickBox label="Fronte" hint="il lato con la foto" slot={docFront} aspect="3/2" onPick={(f) => setDocFront(slotFrom(f))} />
             <PickBox label="Retro" hint="facoltativo" slot={docBack} aspect="3/2" onPick={(f) => setDocBack(slotFrom(f))} />
@@ -178,7 +178,7 @@ export default function ProteggiClient({ alreadyProtected, hasPublicAvatar }: { 
               </label>
             ))}
           </div>
-          <p className="mt-2 text-xs text-faint">{photoCount > 0 ? `${photoCount} su ${POSES.length} pose caricate` : "Carica almeno una posa frontale (piu' ne carichi, piu' robusta e' la protezione)."}</p>
+          <p className="mt-2 text-xs text-faint">{photoCount > 0 ? `${photoCount} su ${POSES.length} pose caricate` : "Carica almeno una posa frontale (più ne carichi, più robusta è la protezione)."}</p>
         </div>
 
         <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-3.5">

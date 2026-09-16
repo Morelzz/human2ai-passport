@@ -9,7 +9,7 @@ interface Props {
 export const metadata = {
   title: "Segnala un abuso",
   description:
-    "Hai visto un volto usato senza consenso? Segnalalo a Semblic: ogni segnalazione apre un flusso di verifica tracciato che puo' portare alla rimozione.",
+    "Hai visto un volto usato senza consenso? Segnalalo a Semblic: ogni segnalazione apre un flusso di verifica tracciato che può portare alla rimozione.",
   alternates: { canonical: "/report" },
 };
 

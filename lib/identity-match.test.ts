@@ -31,7 +31,7 @@ describe("classifyIdentityMatch", () => {
     expect(v.selfiePhoto).toBeNull();
   });
 
-  it("entrambi i legami forti -> strong, score = legame piu' debole", () => {
+  it("entrambi i legami forti -> strong, score = legame più debole", () => {
     const v = classifyIdentityMatch(result(0.35, 0.4));
     expect(v.verdict).toBe("strong");
     expect(v.docSelfie?.band).toBe("strong");
@@ -40,7 +40,7 @@ describe("classifyIdentityMatch", () => {
     expect(v.score).toBe(88);
   });
 
-  it("un legame da rivedere -> review (comanda il legame piu' debole)", () => {
+  it("un legame da rivedere -> review (comanda il legame più debole)", () => {
     const v = classifyIdentityMatch(result(0.35, 0.55));
     expect(v.verdict).toBe("review");
     expect(v.score).toBe(62);
@@ -52,7 +52,7 @@ describe("classifyIdentityMatch", () => {
     expect(v.score).toBe(18);
   });
 
-  it("manca un volto su un legame -> inconcludente anche se l'altro e' forte", () => {
+  it("manca un volto su un legame -> inconcludente anche se l'altro è forte", () => {
     const v = classifyIdentityMatch(result(0.35, null));
     expect(v.verdict).toBe("inconclusive");
     expect(v.score).toBeNull();

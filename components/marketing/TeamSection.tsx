@@ -21,7 +21,7 @@ const MEMBERS: Member[] = [
   { name: "Riccardo Tirincanti", role: "Founder", accent: "#9A4A0B",
     bio: "Fondatore di Semblic e dello standard SEMBLIC-SCAN. Guida la visione del registro dei diritti d'immagine." },
   { name: "In arrivo", role: "Docente", accent: "#2F7563", soon: true,
-    bio: "Terra' i percorsi su consenso, provenienza e tutela dell'identita nell'era generativa." },
+    bio: "Terrà i percorsi su consenso, provenienza e tutela dell'identità nell'era generativa." },
   { name: "In arrivo", role: "Docente", accent: "#B0472B", soon: true,
     bio: "Una nuova figura si unisce presto al team dei docenti." },
 ];

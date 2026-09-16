@@ -73,7 +73,7 @@ describe("contentVerdict (verdetto per immagine, non biometrico)", () => {
   it("partial lontano = review (un ritaglio o edit resta significativo)", () => {
     expect(contentVerdict("partial", "ffffffffffffffff", ORIG, 8)).toBe("review");
   });
-  it("solo-simile (visuallySimilar) col phash lontano = discard: e' rumore, sosia a caso", () => {
+  it("solo-simile (visuallySimilar) col phash lontano = discard: è rumore, sosia a caso", () => {
     expect(contentVerdict("similar", "ffffffffffffffff", ORIG, 8)).toBe("discard");
   });
   it("nessun match-kind e phash lontano = discard", () => {
@@ -176,7 +176,7 @@ describe("runContentScan: pipeline + tag + whitelist", () => {
 });
 
 describe("runContentScan: niente gate consenso", () => {
-  it("procede diretta al job (l'asset e' nostro, nessun consenso da chiedere)", async () => {
+  it("procede diretta al job (l'asset è nostro, nessun consenso da chiedere)", async () => {
     const m = memRepo([]);
     const cap = capturingProvider([{ url: "https://x.io/a.jpg", host: "x.io", matchKind: "full" }]);
     const res = await runContentScan("gen-1", {
@@ -197,7 +197,7 @@ describe("runContentScan: discovery fallita", () => {
     const m = memRepo([]);
     const p: DiscoveryProvider = {
       name: "down", enabled: true,
-      async find() { throw new Error("vision giu'"); },
+      async find() { throw new Error("vision giù"); },
     };
     const res = await runContentScan("gen-1", {
       repo: m.repo, audit, discovery: p,

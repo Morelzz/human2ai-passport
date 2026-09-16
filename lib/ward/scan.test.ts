@@ -64,7 +64,7 @@ function anglesProvider(byAngle: Record<number, string[]>) {
 const okGate = async () => ({ ok: true as const, consentId: "k1", onMatch: "notify" as const });
 
 describe("runScan: gate (A2.1)", () => {
-  it("non scansiona se il consenso non e' attivo", async () => {
+  it("non scansiona se il consenso non è attivo", async () => {
     const m = memRepo([[0, 0]]);
     const d = provider(["https://a.test/1.jpg"]);
     const res = await runScan("av1", {
@@ -275,12 +275,12 @@ describe("runScan: discovery multi-angolo (union)", () => {
     expect(degraded).toContain("ward.discovery_angle_failed");
   });
 
-  it("se TUTTI gli angoli falliscono lo scan e' un errore (discovery_failed)", async () => {
+  it("se TUTTI gli angoli falliscono lo scan è un errore (discovery_failed)", async () => {
     const m = memRepo([[0, 0]]);
     const p: DiscoveryProvider = {
       name: "alldown",
       enabled: true,
-      async find() { throw new Error("vision giu'"); },
+      async find() { throw new Error("vision giù"); },
     };
     const res = await runScan("av1", {
       repo: m.repo, audit, gate: okGate, discovery: p,

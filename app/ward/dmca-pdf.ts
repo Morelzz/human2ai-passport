@@ -28,7 +28,7 @@ export async function downloadDmcaPdf(notice: DmcaNotice, host: string | null) {
   doc.setFontSize(8);
   doc.setTextColor(140);
   doc.text(
-    "Questo documento non e' consulenza legale. Semblic prepara la richiesta, l'invio spetta a te.",
+    "Questo documento non è consulenza legale. Semblic prepara la richiesta, l'invio spetta a te.",
     margin,
     812,
   );

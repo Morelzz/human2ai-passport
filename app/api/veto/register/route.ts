@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     if (Array.isArray(raw)) descriptors = raw.filter(isValidDescriptor);
   } catch { /* nessun descrittore valido */ }
   if (descriptors.length === 0) {
-    return NextResponse.json({ error: "Non sono riuscito a leggere il tuo volto dalle foto. Carica foto piu' nitide e frontali." }, { status: 400 });
+    return NextResponse.json({ error: "Non sono riuscito a leggere il tuo volto dalle foto. Carica foto più nitide e frontali." }, { status: 400 });
   }
 
   const docFront = form.get("document_front");
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
     .eq("owner_id", uid)
     .maybeSingle();
   if (existing && !existing.protection_only) {
-    return NextResponse.json({ error: "Hai gia' un avatar nel registro: non puoi proteggere e concedere lo stesso volto. Scrivici per assistenza." }, { status: 409 });
+    return NextResponse.json({ error: "Hai già un avatar nel registro: non puoi proteggere e concedere lo stesso volto. Scrivici per assistenza." }, { status: 409 });
   }
 
   const today = new Date().toISOString().slice(0, 10);

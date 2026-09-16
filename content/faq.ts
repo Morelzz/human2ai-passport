@@ -31,7 +31,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Quanto guadagno quando il mio volto viene usato?",
-    a: "Una quota di ogni generazione commerciale: il prezzo copre il costo del motore piu' un ricarico, e il 45% di quel ricarico e' tuo. Le royalty si accumulano nel tuo wallet e le incassi al raggiungimento della soglia. Ogni utilizzo è tracciato e lo vedi nel tuo storico.",
+    a: "Una quota di ogni generazione commerciale: il prezzo copre il costo del motore più un ricarico, e il 45% di quel ricarico è tuo. Le royalty si accumulano nel tuo wallet e le incassi al raggiungimento della soglia. Ogni utilizzo è tracciato e lo vedi nel tuo storico.",
   },
   {
     q: "Chi può usare il mio volto, e per cosa?",

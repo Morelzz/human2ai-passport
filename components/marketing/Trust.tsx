@@ -10,8 +10,8 @@ export function Trust() {
   return (
     <section className="mx-auto grid max-w-7xl items-center gap-8 px-5 pt-20 sm:px-8 sm:pt-24 lg:grid-cols-2 lg:gap-14">
       <div>
-        <SectionTitle kicker="Sigil, il verificatore" subtitle="Carica un'immagine: Sigil legge la filigrana invisibile e il certificato, e ti dice se e' nata in Semblic e con quale consenso. Non chiediamo fiducia: la rendiamo verificabile." className="mb-6 sm:mb-7">
-          Verifica chi c&apos;e&apos; dietro a un contenuto.
+        <SectionTitle kicker="Sigil, il verificatore" subtitle="Carica un'immagine: Sigil legge la filigrana invisibile e il certificato, e ti dice se è nata in Semblic e con quale consenso. Non chiediamo fiducia: la rendiamo verificabile." className="mb-6 sm:mb-7">
+          Verifica chi c&apos;è dietro a un contenuto.
         </SectionTitle>
         <Button asChild variant="ink" size="lg"><Link href="/verify">Verifica con Sigil</Link></Button>
       </div>

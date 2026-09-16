@@ -36,7 +36,7 @@ export default async function CatalogoPage() {
               {avatars.length} {avatars.length === 1 ? "volto" : "volti"} nel registro
             </h1>
             <p className="max-w-[54ch] text-pretty text-[1.05rem] leading-relaxed text-muted">
-              Ogni volto e&apos; una persona vera, verificata e consenziente. Tocca un volto per vederne il passaporto pubblico.
+              Ogni volto è una persona vera, verificata e consenziente. Tocca un volto per vederne il passaporto pubblico.
               {revocati > 0 && ` ${revocati === 1 ? "Una persona ha cambiato idea: il sistema ha obbedito." : `${revocati} persone hanno cambiato idea: il sistema ha obbedito.`}`}
             </p>
           </div>

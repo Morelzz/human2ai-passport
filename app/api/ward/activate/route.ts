@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   const avatar = avatars?.[0];
   if (!avatar || !avatar.protection_only) {
     return NextResponse.json(
-      { error: "Serve prima un'identita protetta: completa le foto del volto." },
+      { error: "Serve prima un'identità protetta: completa le foto del volto." },
       { status: 409 },
     );
   }

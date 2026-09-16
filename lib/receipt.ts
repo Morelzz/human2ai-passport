@@ -51,7 +51,7 @@ export async function buildComplianceReceipt(
 
   return {
     issuer: "Semblic",
-    document: "Ricevuta di conformita' del consenso",
+    document: "Ricevuta di conformità del consenso",
     certificate: gen.certificate,
     issued_at: issuedAtIso,
     subject: {
@@ -69,9 +69,9 @@ export async function buildComplianceReceipt(
     },
     verification_url: `${base}/verify`,
     statement:
-      "Questa generazione e' stata prodotta tramite Semblic dal percorso di consenso verificato: il volto " +
+      "Questa generazione è stata prodotta tramite Semblic dal percorso di consenso verificato: il volto " +
       "appartiene a una persona reale presente nel registro, che ha prestato consenso all'uso commerciale " +
-      "della propria immagine al momento della generazione. Il certificato e' verificabile su " +
+      "della propria immagine al momento della generazione. Il certificato è verificabile su " +
       `${base}/verify.`,
   };
 }

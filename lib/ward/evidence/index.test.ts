@@ -56,7 +56,7 @@ describe("captureEvidence", () => {
     expect(f.inserted[0].whois).toEqual(who);
   });
 
-  it("cattura l'immagine se non c'e' pageUrl", async () => {
+  it("cattura l'immagine se non c'è pageUrl", async () => {
     const f = fakes();
     let captured = "";
     const capture = async (url: string) => {

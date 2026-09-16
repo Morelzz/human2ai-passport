@@ -150,7 +150,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           )}
           {isPublicFigure && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber/50 bg-[rgba(12,15,23,0.55)] px-3 py-1 text-[0.7rem] font-semibold tracking-wide text-[#F2A93B] backdrop-blur-md">
-              <Sparkles className="h-3.5 w-3.5" /> Notorieta' verificata
+              <Sparkles className="h-3.5 w-3.5" /> Notorietà verificata
             </span>
           )}
           {availableForBooking && status === "ATTIVO" && (
@@ -207,7 +207,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           <div className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="shrink-0 font-mono text-[1.4rem] font-semibold leading-none tracking-[-0.02em] text-faint">01</span>
             <span aria-hidden className="h-6 w-px shrink-0 bg-border" />
-            <p className="kicker">Atto di proprieta'</p>
+            <p className="kicker">Atto di proprietà</p>
           </div>
           <div className="mb-5 mt-3 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.55), var(--hairline) 38%, transparent 80%)" }} />
 
@@ -300,7 +300,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
             <p className="kicker text-verified">Ingaggi reali</p>
           </div>
           <p className="mb-3 text-sm leading-relaxed text-muted">
-            {avatar.alias} e&apos; disponibile per uno shooting reale con la persona vera. Semblic fa da garante: l&apos;AI non sostituisce i modelli, gli procura lavoro.
+            {avatar.alias} è disponibile per uno shooting reale con la persona vera. Semblic fa da garante: l&apos;AI non sostituisce i modelli, gli procura lavoro.
           </p>
           <Link
             href={`/contatti?ingaggio=${avatar.handle}`}

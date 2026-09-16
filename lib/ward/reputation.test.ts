@@ -8,7 +8,7 @@ describe("domainReputation", () => {
     expect(domainReputation("m.facebook.com")).toBe("exposed");
     expect(domainReputation("x.com")).toBe("exposed");
   });
-  it("tutto il resto e' 'obscure' (default prudente)", () => {
+  it("tutto il resto è 'obscure' (default prudente)", () => {
     expect(domainReputation("dark-forum.ru")).toBe("obscure");
     expect(domainReputation("random-site.xyz")).toBe("obscure");
   });
@@ -20,7 +20,7 @@ describe("domainReputation", () => {
     expect(domainReputation("instagram.com.evil.ru")).toBe("obscure");
     expect(domainReputation("notinstagram.com")).toBe("obscure");
   });
-  it("KNOWN_PLATFORMS e' non vuoto e tutto lowercase", () => {
+  it("KNOWN_PLATFORMS è non vuoto e tutto lowercase", () => {
     expect(KNOWN_PLATFORMS.length).toBeGreaterThan(10);
     expect(KNOWN_PLATFORMS.every((d) => d === d.toLowerCase())).toBe(true);
   });
