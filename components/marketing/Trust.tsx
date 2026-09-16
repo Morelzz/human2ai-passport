@@ -23,8 +23,8 @@ export function Trust() {
         <div className="flex items-center gap-3 rounded-2xl bg-verified-soft p-4">
           <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full bg-verified" />
           <div className="min-w-0">
-            <p className="text-[0.98rem] font-semibold text-on-verified">Nata in Semblic, consenso attivo</p>
-            <p className="text-[0.82rem] text-[#2E6F5B]">Gabriella · certificato c4468df7 · 14 settembre 2026</p>
+            <p className="text-[0.98rem] font-semibold text-foreground">Nata in Semblic, consenso attivo</p>
+            <p className="text-[0.82rem] text-verified">Gabriella · certificato c4468df7 · 14 settembre 2026</p>
           </div>
         </div>
       </div>
