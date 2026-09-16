@@ -136,7 +136,7 @@ export default function ReportClient({ initialHandle, initialCert }: Props) {
           borderRadius: 9999,
           border: "none",
           background: canSubmit && !busy ? "var(--amber-c)" : "var(--hairline)",
-          color: canSubmit && !busy ? "var(--on-amber-c)" : "var(--text-faint)",
+          color: canSubmit && !busy ? "var(--on-amber-c)" : "var(--text-muted)",
           fontWeight: 600,
           fontSize: "0.95rem",
           cursor: canSubmit && !busy ? "pointer" : "not-allowed",
