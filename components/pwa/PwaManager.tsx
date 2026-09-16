@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 import { colors, radius, buttonPrimary } from "@/lib/ui";
+import { createClient } from "@/lib/supabase-browser";
 import {
   isStandalone,
   isIOS,
@@ -90,8 +91,14 @@ export function PwaManager() {
       setOverlay(null);
       return;
     }
-    const t = setTimeout(() => setOverlay(pickNext()), 1400);
-    return () => clearTimeout(t);
+    // Solo nell'area loggata: chi arriva sulla presentazione pubblica di Ward
+    // non deve trovarsi un tutorial sopra la pagina che sta leggendo.
+    let vivo = true;
+    const t = setTimeout(async () => {
+      const { data } = await createClient().auth.getSession().catch(() => ({ data: { session: null } }));
+      if (vivo && data.session) setOverlay(pickNext());
+    }, 1400);
+    return () => { vivo = false; clearTimeout(t); };
     // installAvailable rientra: se l'evento arriva dopo, rivaluta.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onWard, installAvailable]);
@@ -202,7 +209,7 @@ function InstallPrompt({
   onDismiss: () => void;
 }) {
   return (
-    <div style={{ ...backdrop, alignItems: "flex-end", justifyContent: "center" }}>
+    <div data-theme="dark" style={{ ...backdrop, alignItems: "flex-end", justifyContent: "center" }}>
       <div style={sheet}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.7rem", marginBottom: "0.9rem" }}>
           <span
@@ -219,7 +226,7 @@ function InstallPrompt({
           >
             <ShieldGlyph color={colors.onAmber} />
           </span>
-          <span style={{ fontSize: "1.05rem", color: colors.text, fontWeight: 300, letterSpacing: "-0.02em" }}>
+          <span style={{ fontSize: "1.05rem", color: colors.text, fontWeight: 700, letterSpacing: "-0.02em" }}>
             Installa Semblic
           </span>
         </div>
@@ -262,7 +269,7 @@ function InstallPrompt({
 
 function PushOptIn({ onEnable, onDismiss }: { onEnable: () => void; onDismiss: () => void }) {
   return (
-    <div style={{ ...backdrop, alignItems: "center", justifyContent: "center" }}>
+    <div data-theme="dark" style={{ ...backdrop, alignItems: "center", justifyContent: "center" }}>
       <div style={{ ...sheet, textAlign: "center" }}>
         <span
           style={{
@@ -282,7 +289,7 @@ function PushOptIn({ onEnable, onDismiss }: { onEnable: () => void; onDismiss: (
           style={{
             fontSize: "1.3rem",
             color: colors.text,
-            fontWeight: 200,
+            fontWeight: 700,
             letterSpacing: "-0.04em",
             margin: "0 0 0.6rem",
             lineHeight: 1.2,
@@ -320,7 +327,7 @@ function Tutorial({ onDone }: { onDone: () => void }) {
   const s = STEPS[step];
 
   return (
-    <div style={{ ...backdrop, alignItems: "flex-end", justifyContent: "center" }}>
+    <div data-theme="dark" style={{ ...backdrop, alignItems: "flex-end", justifyContent: "center" }}>
       <div style={sheet}>
         {/* Riga dei 4 macro-intenti: si accende quello corrente. */}
         <div style={{ display: "flex", gap: "0.4rem", marginBottom: "1.2rem" }}>
@@ -346,15 +353,15 @@ function Tutorial({ onDone }: { onDone: () => void }) {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-          <span style={{ fontSize: "0.7rem", color: colors.amber, letterSpacing: "0.08em" }}>
-            PASSO {step + 1} / {STEPS.length}
+          <span style={{ fontSize: "0.75rem", color: colors.amber, fontWeight: 600 }}>
+            Passo {step + 1} di {STEPS.length}
           </span>
           <button onClick={onDone} style={{ background: "none", border: "none", color: colors.faint, fontSize: "0.78rem", cursor: "pointer" }}>
             Salta
           </button>
         </div>
 
-        <h3 style={{ fontSize: "1.15rem", color: colors.text, fontWeight: 300, letterSpacing: "-0.02em", margin: "0 0 0.5rem" }}>
+        <h3 style={{ fontSize: "1.25rem", color: colors.text, fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 0.5rem" }}>
           {s.title}
         </h3>
         <p style={{ fontSize: "0.85rem", color: colors.muted, lineHeight: 1.6, margin: "0 0 1.3rem" }}>{s.body}</p>

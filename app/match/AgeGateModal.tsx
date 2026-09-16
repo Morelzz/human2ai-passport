@@ -34,7 +34,7 @@ export function AgeGateModal({ onClose, onConfirmed }: { onClose: () => void; on
     <div style={{ position: "fixed", inset: 0, zIndex: 60, background: "rgba(8,10,16,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
       <div className="glass" style={{ width: "100%", maxWidth: 380, borderRadius: 18, padding: "1.4rem 1.2rem" }}>
         <p style={{ color: "#F2A93B", fontSize: "0.65rem", letterSpacing: "0.16em", textTransform: "uppercase", margin: "0 0 0.5rem" }}>Una verifica veloce</p>
-        <h3 style={{ fontWeight: 300, letterSpacing: "-0.02em", fontSize: "1.3rem", margin: "0 0 0.5rem" }}>Prima di continuare</h3>
+        <h3 style={{ fontWeight: 700, letterSpacing: "-0.02em", fontSize: "1.3rem", margin: "0 0 0.5rem" }}>Prima di continuare</h3>
         <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
           Per legge dobbiamo sapere che hai almeno 18 anni. Inserisci la tua data di nascita: la chiediamo una volta sola.
         </p>
