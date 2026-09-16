@@ -250,7 +250,7 @@ export default async function AccountPage() {
         {volt !== null && (
           <div style={{ background: "radial-gradient(55% 42% at 97% -10%, rgba(242,169,59,0.12), transparent 60%), var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
             <div>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
+              <p className="kicker" style={{ margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
                 <span aria-hidden style={{ fontSize: "1.4rem" }}>⚡</span>
                 <span style={{ color: volt <= 0 ? "var(--blocked-c)" : volt < LOW_BALANCE_THRESHOLD ? "var(--amber-c)" : "var(--text)", fontSize: "2.6rem", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1 }}>
@@ -277,7 +277,7 @@ export default async function AccountPage() {
             è il nome interno: in pubblico si parla solo di "volto protetto". */}
         {protection && (
           <div style={{ background: "var(--surface)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È PROTETTO</p>
+            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO VOLTO È PROTETTO</p>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--verified-c)", display: "inline-block", flexShrink: 0 }} />
@@ -366,7 +366,7 @@ export default async function AccountPage() {
 
         {role === "seller" && (
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO AVATAR</p>
+            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO AVATAR</p>
             {myAvatar ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
                 {/* Stato del Soul */}
@@ -403,7 +403,7 @@ export default async function AccountPage() {
 
         {role === "seller" && myAvatar && (
           <div style={{ background: "radial-gradient(55% 38% at 97% -10%, rgba(127,174,150,0.12), transparent 60%), var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO WALLET</p>
+            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO WALLET</p>
 
             {/* Revenue-hero: il guadagno in grande (dolore #1 risolto), col passo
                 degli ultimi 30 giorni e gli utilizzi totali. */}
@@ -449,7 +449,7 @@ export default async function AccountPage() {
             {/* Storico payout (ledger tracciabile) */}
             {payouts.length > 0 && (
               <div style={{ marginTop: "1.5rem", borderTop: "1px solid var(--hairline)", paddingTop: "1.2rem" }}>
-                <p style={{ color: "var(--text-muted)", fontSize: "0.76rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>STORICO PAYOUT</p>
+                <p className="kicker" style={{ margin: "0 0 0.8rem" }}>STORICO PAYOUT</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {payouts.map((p) => (
                     <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -473,7 +473,7 @@ export default async function AccountPage() {
             ricerca compatibile (e se la tabella match_searches esiste). */}
         {role === "seller" && myAvatar && demand && demand.compatible > 0 && (
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>IL TUO VOLTO È STATO CERCATO</p>
+            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO VOLTO È STATO CERCATO</p>
 
             <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", marginBottom: "0.3rem" }}>
               <span style={{ color: "var(--text)", fontSize: "2.1rem", fontWeight: 700, letterSpacing: "-0.04em" }}>{demand.compatible}</span>
@@ -503,7 +503,7 @@ export default async function AccountPage() {
 
         {myGenerations.length > 0 && (
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>I MIEI CONTENUTI</p>
+            <p className="kicker" style={{ margin: "0 0 0.8rem" }}>I MIEI CONTENUTI</p>
             <div aria-hidden style={{ height: 1, background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 38%, transparent 80%)", margin: "0 0 1rem" }} />
             <ContentsGrid items={gridItems} shareVariant="buyer" />
             <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>

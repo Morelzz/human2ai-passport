@@ -6,7 +6,7 @@ import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 
 // Griglia "I miei contenuti" con FILTRI (categoria, motore, avatar) e regola
 // anti-limbo: si mostrano 6 elementi, "Carica altri" ne aggiunge 6 (mai scroll
-// infinito). Doppio pulsante Scarica (viola) + Condividi (teal) su ogni card.
+// infinito). Doppio pulsante Scarica (ambra) + Condividi (verde) su ogni card.
 // Client: filtra/pagina sull'elenco già caricato dal server.
 
 export type GridItem = {
@@ -27,6 +27,8 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
   const [engine, setEngine] = useState("");
   const [avatar, setAvatar] = useState("");
   const [visible, setVisible] = useState(PAGE);
+  // Immagini che non si caricano (file sparito dallo storage): segnaposto, mai il testo alt.
+  const [rotte, setRotte] = useState<Set<string>>(() => new Set());
 
   // Opzioni dei filtri: solo i valori presenti nei contenuti reali.
   const cats = useMemo(() => [...new Set(items.map((i) => i.category).filter(Boolean))] as string[], [items]);
@@ -83,12 +85,22 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
         <p className="text-sm text-muted">Nessun contenuto con questi filtri.</p>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {shown.map((g) => (
               <div key={g.id} className="overflow-hidden rounded-xl border border-border bg-surface">
-                {g.image_url && (
+                {g.image_url && !rotte.has(g.id) ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={g.image_url} alt="contenuto" className="block aspect-[3/4] w-full bg-elevated object-cover" />
+                  <img
+                    src={g.image_url}
+                    alt={`Contenuto generato con ${g.alias}`}
+                    loading="lazy"
+                    onError={() => setRotte((s) => new Set(s).add(g.id))}
+                    className="block aspect-[3/4] w-full bg-[var(--hairline)] object-cover"
+                  />
+                ) : (
+                  <div className="flex aspect-[3/4] w-full items-center justify-center bg-[var(--hairline)] px-4 text-center text-[0.75rem] text-faint">
+                    Anteprima non disponibile
+                  </div>
                 )}
                 <div className="p-3">
                   <div className="mb-0.5 flex items-center justify-between gap-1.5">
@@ -98,30 +110,30 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                     )}
                   </div>
                   <p className="mb-2 text-[0.7rem] text-faint">
-                    {g.category ?? "-"} · {new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
+                    {g.category ? `${g.category} · ` : ""}{new Date(g.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short" })}
                   </p>
                   {g.certificate && (
                     <>
                       {/* Tasto grande Modifica (Semblic Editor) sopra Scarica/Condividi */}
-                      <a href={`/studio/edit/${g.certificate}`} className="mb-1.5 block w-full rounded-lg bg-amber px-2 py-2 text-center text-[0.74rem] font-bold text-on-amber transition-[filter] hover:brightness-110">
-                        ✦ Modifica
+                      <a href={`/studio/edit/${g.certificate}`} className="mb-1.5 block w-full rounded-full bg-amber px-2 py-2 text-center text-[0.78rem] font-semibold text-on-amber transition-colors hover:bg-amber-hover">
+                        Modifica
                       </a>
                       {/* Ward: cerca le copie di QUESTA immagine sul web. Tasto vero
                           e prominente (solo buyer, e' il suo asset). */}
                       {shareVariant === "buyer" && (
-                        <a href={`/ward/content/${g.id}`} className="mb-1.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-amber/50 bg-amber-soft px-2 py-2 text-[0.74rem] font-bold text-amber-ink transition-colors hover:bg-amber-soft">
+                        <a href={`/ward/content/${g.id}`} className="mb-1.5 flex w-full items-center justify-center gap-1.5 rounded-full border border-amber/50 bg-amber-soft px-2 py-2 text-[0.78rem] font-semibold text-amber-ink transition-colors hover:border-amber">
                           <ScanSearch className="h-3.5 w-3.5" aria-hidden /> Ward
                         </a>
                       )}
-                      <div className="flex gap-1.5">
-                        <a href={`/api/content/${g.certificate}`} className="flex-1 rounded-lg border border-amber/50 bg-amber-soft px-2 py-1.5 text-center text-[0.72rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft">
+                      <div className="flex items-center justify-center gap-4 py-1">
+                        <a href={`/api/content/${g.certificate}`} className="text-[0.8rem] font-semibold text-muted underline-offset-2 transition-colors hover:text-foreground hover:underline">
                           Scarica
                         </a>
                         <ShareStoryButton
                           query={`cert=${encodeURIComponent(g.certificate)}&v=${shareVariant}`}
                           filename={`semblic-story-${g.certificate.slice(0, 8)}.png`}
                           label="Condividi"
-                          className="flex-1 rounded-lg border border-verified/50 bg-verified-soft px-2 py-1.5 text-center text-[0.72rem] font-semibold text-verified transition-colors hover:bg-verified-soft disabled:opacity-50"
+                          className="text-[0.8rem] font-semibold text-muted underline-offset-2 transition-colors hover:text-foreground hover:underline disabled:opacity-50"
                         />
                       </div>
                       {/* Fase 3.3: ricevuta di conformita' come pagina stampabile
@@ -140,7 +152,7 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
           {visible < filtered.length && (
             <button
               onClick={() => setVisible((v) => v + PAGE)}
-              className="mt-4 w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground"
+              className="mt-4 w-full rounded-full border border-border bg-surface px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-foreground"
             >
               Carica altri ({filtered.length - visible} rimasti)
             </button>

@@ -77,7 +77,7 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
         {/* Identity kit — immutabile, fissato alla creazione */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", margin: "0 0 0.3rem" }}>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: 0 }}>IDENTITY KIT</p>
+            <p className="kicker" style={{ margin: 0 }}>IDENTITY KIT</p>
             <span style={{ fontSize: "0.62rem", fontWeight: 700, color: "var(--amber-ink)", background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 999, padding: "0.1rem 0.5rem", letterSpacing: "0.04em" }}>IMMUTABILE</span>
           </div>
           <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1.2rem", lineHeight: 1.5 }}>
@@ -112,7 +112,7 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
           <>
             {/* Uso commerciale: consenso sì/no (modello senza categorie) */}
             <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>USO COMMERCIALE</p>
+              <p className="kicker" style={{ margin: "0 0 0.3rem" }}>USO COMMERCIALE</p>
               <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
                 Decidi se il tuo volto può essere usato per generazioni commerciali. È un sì o no, niente più categorie. Vale solo per il futuro.
               </p>
@@ -132,7 +132,7 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
                 Nascosto per i volti in sola protezione (VETO). */}
             {!protectionOnly && (
               <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
-                <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", letterSpacing: "0.06em", margin: "0 0 0.3rem" }}>INGAGGI REALI</p>
+                <p className="kicker" style={{ margin: "0 0 0.3rem" }}>INGAGGI REALI</p>
                 <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
                   Permetti ai brand di contattarti, tramite Semblic, per uno shooting reale con la persona vera. Appare un badge sul tuo passport. Il consenso non cambia.
                 </p>

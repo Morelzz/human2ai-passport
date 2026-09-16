@@ -35,7 +35,7 @@ export default function AnchorPanel() {
 
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-      <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 0.8rem" }}>ANCORAGGIO ON-CHAIN (BASE)</p>
+      <p className="kicker" style={{ margin: "0 0 0.8rem" }}>ANCORAGGIO ON-CHAIN (BASE)</p>
 
       {!cfg ? (
         <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: 0 }}>Verifica configurazione…</p>

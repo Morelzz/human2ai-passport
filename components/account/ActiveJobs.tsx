@@ -63,7 +63,7 @@ export function ActiveJobs({ initial }: { initial: ActiveJob[] }) {
 
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-      <p style={{ color: "var(--text-muted)", fontSize: "0.8rem", letterSpacing: "0.06em", margin: "0 0 1rem" }}>GENERAZIONI IN CORSO</p>
+      <p className="kicker" style={{ margin: "0 0 1rem" }}>GENERAZIONI IN CORSO</p>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
         {jobs.map((j) => {
           const s = STATUS[j.status] ?? STATUS.pending;
