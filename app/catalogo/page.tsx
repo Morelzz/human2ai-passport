@@ -58,6 +58,18 @@ export default async function CatalogoPage() {
                 a={{ handle: a.handle, alias: a.alias, gallery_urls: a.gallery_urls, revoked_at: a.revoked_at, gender: (a as { gender?: string | null }).gender ?? null }}
               />
             ))}
+            {/* Ultima tessera: l'invito. Chiude la griglia e dice cosa fare dopo. */}
+            <Link
+              href="/signup/avatar"
+              className="group relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-[18px] border border-dashed border-edge bg-surface bg-[radial-gradient(90%_55%_at_100%_0%,var(--amber-soft),transparent_70%)] p-4 transition-colors hover:border-amber focus-ring sm:p-5"
+            >
+              <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-soft text-[1.4rem] font-semibold leading-none text-amber-ink transition-transform group-hover:scale-110">+</span>
+              <span className="flex flex-col gap-1.5">
+                <span className="text-[1.15rem] font-bold leading-tight tracking-[-0.02em] sm:text-[1.3rem]">Il tuo volto qui</span>
+                <span className="text-[0.85rem] leading-snug text-muted">Verifica, consenso firmato e una quota a ogni utilizzo.</span>
+                <span className="mt-1 text-[0.85rem] font-semibold text-amber-ink">Entra nel registro</span>
+              </span>
+            </Link>
           </div>
         )}
       </main>

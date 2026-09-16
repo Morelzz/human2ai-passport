@@ -1,5 +1,6 @@
 import { ClipboardList, Users, PackageCheck, ShieldCheck, Fingerprint, Scale } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { InquiryForm } from "@/components/business/InquiryForm";
@@ -107,6 +108,7 @@ export default function StudioPage() {
             </div>
           </section>
         </Reveal>
+        <Footer />
       </div>
     </div>
   );

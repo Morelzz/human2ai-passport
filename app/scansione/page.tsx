@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Building2, Users, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { SediMap } from "@/components/marketing/SediMap";
@@ -261,6 +262,7 @@ export default async function ScansionePage() {
             </div>
           </section>
         </Reveal>
+        <Footer />
       </div>
     </div>
   );

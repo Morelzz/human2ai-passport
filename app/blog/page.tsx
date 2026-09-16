@@ -1,5 +1,6 @@
 import { listPosts } from "@/lib/blog";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { BlogList } from "./BlogList";
 
 export const metadata = {
@@ -36,6 +37,7 @@ export default async function BlogIndexPage() {
             <BlogList posts={posts} />
           )}
         </section>
+        <Footer />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { Check, ArrowRight } from "lucide-react";
 import { splitEcho, formatEur } from "@/lib/wallet";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 
@@ -30,10 +31,10 @@ export default function PrezziPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        {/* Hero — il principio, grande */}
+        {/* Hero: il principio, grande */}
         <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker text-verified">Prezzi</span>
-          <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-6xl">
+          <span className="kicker">Prezzi</span>
+          <h1 className="mt-4 text-balance text-[2.6rem] font-bold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
             <KineticText text="Chi mette il volto" />{" "}
             <KineticText text="non paga mai" gradient delay={0.3} />
             <KineticText text="." delay={0.45} />
@@ -49,12 +50,12 @@ export default function PrezziPage() {
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-6 sm:px-8">
             <div className="grid gap-4 sm:grid-cols-2">
-              {/* Sellers — gratis sempre */}
+              {/* Sellers: gratis sempre */}
               <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-9">
-                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#7FAE96,transparent)]" />
+                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,var(--verified-c),transparent)]" />
                 <span className="kicker text-verified">Metti il tuo volto</span>
                 <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-5xl font-extrabold">€0</span>
+                  <span className="text-5xl font-bold tracking-[-0.04em]">0 €</span>
                   <span className="text-sm font-semibold text-muted">per sempre</span>
                 </div>
                 <p className="mt-2 text-sm font-bold text-verified">Sei tu il valore. Non il cliente.</p>
@@ -79,12 +80,12 @@ export default function PrezziPage() {
                 </div>
               </div>
 
-              {/* Buyers — a consumo */}
+              {/* Buyers: a consumo */}
               <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-9">
-                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#F2A93B,transparent)]" />
+                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,var(--amber-c),transparent)]" />
                 <span className="kicker">Generi contenuti</span>
                 <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-5xl font-extrabold">a consumo</span>
+                  <span className="text-5xl font-bold tracking-[-0.04em]">a consumo</span>
                 </div>
                 <p className="mt-2 text-sm font-bold text-amber-ink">Paghi solo quello che generi.</p>
                 <ul className="mt-6 flex flex-col gap-3">
@@ -92,7 +93,7 @@ export default function PrezziPage() {
                     "Volti reali, verificati e consenzienti",
                     "Licenza d'uso commerciale, full-res",
                     "Certificato verificabile + filigrana invisibile su ogni output",
-                    "Prezzo per categoria d'uso (qui sotto)",
+                    "Prezzo in chiaro prima di generare (qui sotto)",
                     "La persona dietro il volto viene pagata, sempre",
                   ].map((f) => (
                     <li key={f} className="flex gap-2.5 text-sm leading-snug text-muted">
@@ -115,26 +116,26 @@ export default function PrezziPage() {
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-14 sm:px-8">
             <div className="text-center">
-              <span className="kicker text-blocked">Quanto costa generare</span>
-              <h2 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
+              <span className="kicker">Quanto costa generare</span>
+              <h2 className="mt-2 text-balance text-[1.7rem] font-bold leading-tight tracking-[-0.03em] sm:text-4xl">
                 Paghi quanto costa, più un piccolo ricarico equo.
               </h2>
-              <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
+              <p className="mx-auto mt-3 max-w-xl text-pretty text-sm leading-relaxed text-muted sm:text-base">
                 Il prezzo parte dal costo reale del motore. Sopra, un ricarico onesto: una parte a noi,
-                una parte sempre alla persona. Più la risoluzione è alta più costa, mai oltre 2 €.
+                una parte sempre alla persona. Più la risoluzione è alta più costa, mai oltre {"2 €"}.
               </p>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
               {MODES.map((m) => {
                 const s = splitEcho(null, m.size, m.quality);
                 return (
-                  <div key={m.label} className="card transition-colors hover:border-amber/60 rounded-2xl p-6">
+                  <div key={m.label} className="card rounded-2xl p-4 transition-colors hover:border-amber/60 sm:p-6">
                     <p className="kicker text-muted">{m.label}</p>
-                    <div className="mt-2 text-3xl font-extrabold">{formatEur(s.gross_cents)}</div>
+                    <div className="mt-2 text-[1.6rem] font-bold tracking-[-0.03em] sm:text-3xl">{formatEur(s.gross_cents)}</div>
                     <p className="mt-1 text-xs text-faint">{m.detail}</p>
-                    <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
-                      <span className="text-sm font-bold text-verified">Alla persona</span>
-                      <span className="text-sm font-extrabold text-verified">{formatEur(s.net_cents)}</span>
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-x-2 border-t border-border pt-3">
+                      <span className="text-[0.8rem] font-semibold text-verified sm:text-sm">Alla persona</span>
+                      <span className="text-sm font-bold text-verified">{formatEur(s.net_cents)}</span>
                     </div>
                   </div>
                 );
@@ -149,9 +150,9 @@ export default function PrezziPage() {
           </section>
         </Reveal>
 
-        {/* Studio / Enterprise — parliamone */}
+        {/* Studio / Enterprise: parliamone */}
         <Reveal>
-          <section className="mx-auto max-w-3xl px-5 pb-24 pt-4 sm:px-8">
+          <section className="mx-auto max-w-3xl px-5 pb-8 pt-4 sm:px-8">
             <div className="flex flex-col gap-3">
               {[
                 {
@@ -168,11 +169,11 @@ export default function PrezziPage() {
                 <Link
                   key={r.href}
                   href={r.href}
-                  className="group flex items-center gap-4 rounded-full border border-border bg-surface py-4 pl-6 pr-5 transition-all hover:border-amber/60 hover:bg-amber-soft"
+                  className="group flex items-center gap-4 rounded-3xl border border-border bg-surface py-4 pl-5 pr-4 transition-all hover:border-amber/60 hover:bg-amber-soft sm:pl-6 sm:pr-5"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-extrabold">{r.label} <span className="ml-1.5 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-muted">su misura</span></p>
-                    <p className="mt-0.5 truncate text-xs text-faint sm:text-sm">{r.d}</p>
+                    <p className="text-sm font-bold">{r.label} <span className="ml-1.5 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-muted">su misura</span></p>
+                    <p className="mt-0.5 text-xs leading-snug text-faint sm:text-sm">{r.d}</p>
                   </div>
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border transition-colors group-hover:border-amber/60 group-hover:bg-amber-soft">
                     <ArrowRight className="h-4 w-4 text-muted transition-colors group-hover:text-foreground" />
@@ -185,6 +186,7 @@ export default function PrezziPage() {
             </p>
           </section>
         </Reveal>
+        <Footer />
       </div>
     </div>
   );

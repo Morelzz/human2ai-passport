@@ -1,5 +1,6 @@
 import { Camera, FileSignature, MapPin, Coins, Repeat, Handshake } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { ApplyForm } from "./ApplyForm";
@@ -113,6 +114,7 @@ export default function PartnerPage() {
             </div>
           </section>
         </Reveal>
+        <Footer />
       </div>
     </div>
   );

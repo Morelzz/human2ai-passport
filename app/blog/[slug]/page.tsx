@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPost, listPosts } from "@/lib/blog";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { ShareBar } from "../ShareBar";
 import { siteUrl } from "@/lib/site";
 
@@ -151,6 +152,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             )}
           </footer>
         </article>
+        <Footer />
       </div>
     </div>
   );

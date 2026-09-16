@@ -19,7 +19,7 @@ export function AvatarTile({ a, className = "", priority = false }: { a: TileAva
   // 720: basta per la tile piu' grande a 2x/3x, e pesa un quinto dell'originale.
   const src = sampleSrc(portraitFor(a), 720);
   const revoked = !!a.revoked_at;
-  const chip = revoked ? "Revocato" : a.gender === "donna" ? "Verificata" : "Verificato";
+  const chip = revoked ? "Revocato" : a.gender?.toLowerCase() === "donna" ? "Verificata" : "Verificato";
   return (
     <Link
       href={`/passport/${a.handle}`}

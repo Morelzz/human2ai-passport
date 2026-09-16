@@ -4,6 +4,7 @@ import { getPublicAvatars, countProtectedFaces } from "@/lib/registry";
 import { countBlockedThisMonth } from "@/lib/blocked";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { PublicRoadmapCompact } from "@/components/marketing/PublicRoadmap";
 
 export const metadata = {
@@ -158,6 +159,7 @@ export default async function TrasparenzaPage() {
             verificabile dal suo certificato in <Link href="/verify" className="text-verified hover:underline">/verify</Link>.
           </p>
         </section>
+        <Footer />
       </div>
     </div>
   );

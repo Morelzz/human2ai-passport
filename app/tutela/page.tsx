@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ScanFace, Fingerprint, ShieldCheck, BadgeCheck, Lock, History, ArrowRight } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 
@@ -138,6 +139,7 @@ export default function TutelaPage() {
             </div>
           </section>
         </Reveal>
+        <Footer />
       </div>
     </div>
   );

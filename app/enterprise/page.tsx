@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Lock, CalendarRange, UserCheck, BadgeCheck, HeartHandshake, RefreshCcw } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { InquiryForm } from "@/components/business/InquiryForm";
@@ -124,6 +125,7 @@ export default function EnterprisePage() {
             </div>
           </section>
         </Reveal>
+        <Footer />
       </div>
     </div>
   );

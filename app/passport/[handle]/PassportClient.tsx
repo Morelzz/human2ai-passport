@@ -92,7 +92,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const royaltyEur = (avatar.royalty_accrued_cents / 100).toFixed(2);
+  const royaltyEur = (avatar.royalty_accrued_cents / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" });
   // Regola unica: avatar con galleria -> ritratto reale (watermarkato) via
   // route interna; gli altri l'avatar-art. Vale per Mario e per gli ambassador.
   // 720 basta per il riquadro (440px di altezza): su 4G pesa la meta' dell'originale.
@@ -105,19 +105,64 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
     REVOKED: "Revoca del consenso",
   };
 
+  // Il pulsante per generare e la scheda ingaggi stanno sotto il ritratto nella
+  // colonna fissa su desktop, e dopo il repertorio sul telefono: stesso blocco,
+  // due posti, uno solo visibile per taglio.
+  const azioni = (dove: "lato" | "flusso") => (
+    <div className={dove === "lato" ? "hidden lg:block" : "lg:hidden"}>
+      {status === "ATTIVO" && (
+        <div className="mt-5 lg:mt-4">
+          <Link
+            href={`/match?avatar=${avatar.handle}`}
+            className="block w-full rounded-full bg-amber px-8 py-5 text-center text-[1.15rem] font-bold tracking-[-0.01em] text-on-amber transition-colors hover:bg-amber-hover sm:text-[1.3rem] lg:py-4 lg:text-[1.1rem]"
+          >
+            Genera con questo avatar
+          </Link>
+          <p className="mt-2 text-center text-xs text-faint">
+            Vai dritto alla generazione: {avatar.alias} è già selezionat{avatar.gender?.toLowerCase() === "donna" ? "a" : "o"}, il consenso resta il filtro.
+          </p>
+        </div>
+      )}
+
+      {/* B3 fase "ora": CTA ingaggio reale verso il contatto esistente. Solo per
+          avatar ATTIVI e disponibili. Nessun nuovo flusso di booking. */}
+      {availableForBooking && status === "ATTIVO" && (
+        <div className="card mt-4 rounded-2xl p-5">
+          <div className="mb-2 flex items-center gap-2">
+            <Handshake className="h-4 w-4 text-verified" />
+            <p className="kicker text-verified">Ingaggi reali</p>
+          </div>
+          <p className="mb-3 text-sm leading-relaxed text-muted">
+            {avatar.alias} è disponibile per uno shooting reale con la persona vera. Semblic fa da garante: l&apos;AI non sostituisce i modelli, gli procura lavoro.
+          </p>
+          <Link
+            href={`/contatti?ingaggio=${avatar.handle}`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-verified/50 bg-verified-soft px-5 py-2 text-sm font-bold text-verified transition-colors hover:bg-verified-soft"
+          >
+            Richiedi un ingaggio
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+
   return (
-    <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
+    <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14 lg:max-w-6xl">
       {/* Back: il passport è una scheda del catalogo, serve una via d'uscita
           chiara su mobile (prima si restava incastrati dentro l'avatar). */}
       <Link href="/catalogo" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> Tutti i volti
       </Link>
+      {/* Desktop: due colonne. A sinistra il volto resta fermo mentre si
+          scorrono le sezioni del passaporto a destra. Telefono: una colonna. */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start lg:gap-8">
+      <div className="lg:sticky lg:top-24">
       {/* Header: hero cinematic (base vetro). Il volto a tutto campo, i badge
           in alto su vetro scuro, e il blocco identita in un pannello di vetro
           ancorato in basso: la foto respira sopra, il testo resta leggibile
           sotto in ogni tema. */}
       <motion.div custom={0} variants={fade} initial={false} animate="show"
-        className="relative h-[440px] overflow-hidden rounded-3xl border border-border sm:h-[480px]">
+        className="relative h-[440px] overflow-hidden rounded-3xl border border-border sm:h-[480px] lg:aspect-[3/4] lg:h-auto">
         {/* Ritratto a tutto campo (foto reale watermarkata o avatar-art). Per i
             revocati il volto e' desaturato: l'identita e' "spenta". */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -197,10 +242,13 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           </div>
         </div>
       </motion.div>
+      {azioni("lato")}
+      </div>
 
+      <div className="min-w-0">
       {/* Atto di proprietà */}
       <motion.div custom={1} variants={fade} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-        className="card relative mt-4 overflow-hidden rounded-2xl p-6">
+        className="card relative mt-4 overflow-hidden rounded-2xl p-6 lg:mt-0">
         <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(55% 38% at 94% -6%, rgba(242,169,59,0.12), transparent 60%)" }} />
         <div className="relative">
           {/* Header editoriale: indice 01 + etichetta + hairline tramonto */}
@@ -250,7 +298,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       {/* Repertorio */}
       {galleryCount > 0 && (
         <Card i={1} label="Repertorio: esempi generati">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className={`grid grid-cols-2 gap-3 ${galleryCount % 4 === 0 ? "sm:grid-cols-4" : "sm:grid-cols-3"}`}>
             {Array.from({ length: galleryCount }).map((_, idx) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img key={idx} src={sampleSrc(`/api/sample/${avatar.handle}/${idx}`, 720)} alt={`esempio ${idx + 1}`} loading="lazy"
@@ -265,51 +313,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
 
       {/* CTA: dal volto alla generazione, senza passare dal brief. Solo per
           avatar ATTIVI: un consenso revocato non è generabile, niente pulsante. */}
-      {status === "ATTIVO" && (
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.45 }}
-          className="mt-5"
-        >
-          <Link
-            href={`/match?avatar=${avatar.handle}`}
-            className="block w-full rounded-full bg-amber px-8 py-5 text-center text-[1.15rem] font-bold tracking-[-0.01em] text-on-amber transition-colors hover:bg-amber-hover sm:text-[1.3rem]"
-          >
-            Genera con questo avatar
-          </Link>
-          <p className="mt-2 text-center text-xs text-faint">
-            Vai dritto alla generazione: {avatar.alias} è già selezionat{avatar.gender === "Donna" ? "a" : "o"}, il consenso resta il filtro.
-          </p>
-        </motion.div>
-      )}
-
-      {/* B3 fase "ora": CTA ingaggio reale verso il contatto esistente. Solo per
-          avatar ATTIVI e disponibili. Nessun nuovo flusso di booking. */}
-      {availableForBooking && status === "ATTIVO" && (
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.45 }}
-          className="card mt-4 rounded-2xl p-5"
-        >
-          <div className="mb-2 flex items-center gap-2">
-            <Handshake className="h-4 w-4 text-verified" />
-            <p className="kicker text-verified">Ingaggi reali</p>
-          </div>
-          <p className="mb-3 text-sm leading-relaxed text-muted">
-            {avatar.alias} è disponibile per uno shooting reale con la persona vera. Semblic fa da garante: l&apos;AI non sostituisce i modelli, gli procura lavoro.
-          </p>
-          <Link
-            href={`/contatti?ingaggio=${avatar.handle}`}
-            className="inline-flex items-center gap-1.5 rounded-full border border-verified/50 bg-verified-soft px-5 py-2 text-sm font-bold text-verified transition-colors hover:bg-verified-soft"
-          >
-            Richiedi un ingaggio
-          </Link>
-        </motion.div>
-      )}
+      {azioni("flusso")}
 
       {/* Identity kit */}
       <Card i={2} index="02" label="Identity kit" badge="Immutabile" accent="teal">
@@ -317,7 +321,11 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           {(Object.keys(IDENTITY_KIT) as (keyof typeof IDENTITY_KIT)[]).map((field) => (
             <div key={field}>
               <p className="mb-0.5 text-[0.7rem] text-muted">{IDENTITY_LABELS[field]}</p>
-              <p className="text-sm font-semibold capitalize">{avatar[field] ?? "—"}</p>
+              {avatar[field] ? (
+                <p className="text-sm font-semibold capitalize">{avatar[field]}</p>
+              ) : (
+                <p className="text-sm text-faint">Non indicato</p>
+              )}
             </div>
           ))}
         </div>
@@ -453,7 +461,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         <div className="card relative overflow-hidden rounded-2xl p-5">
           <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(70% 60% at 100% 0%, rgba(242,169,59,0.12), transparent 60%)" }} />
           <p className="kicker relative mb-2">Royalty maturate</p>
-          <p className="relative text-3xl font-bold leading-none tracking-[-0.04em] text-amber-ink sm:text-5xl">€{royaltyEur}</p>
+          <p className="relative text-3xl font-bold leading-none tracking-[-0.04em] text-amber-ink sm:text-5xl">{royaltyEur}</p>
         </div>
       </div>
 
@@ -472,6 +480,8 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
           <AlertTriangle className="h-4 w-4" />
           Questo avatar non rappresenta una persona consenziente? <span className="font-semibold text-blocked">Segnala un abuso</span>
         </Link>
+      </div>
+      </div>
       </div>
     </main>
   );

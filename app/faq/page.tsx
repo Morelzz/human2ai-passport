@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { FAQ_ITEMS } from "@/content/faq";
 import { SiteNav } from "@/components/marketing/SiteNav";
+import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 
 export const metadata = {
@@ -75,6 +76,7 @@ export default function FaqPage() {
             </p>
           </div>
         </section>
+        <Footer />
       </div>
 
       {/* Schema FAQPage (stessa fonte dei contenuti visibili) */}
