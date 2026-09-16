@@ -144,7 +144,7 @@ export default function OrgAvatars({ avatars, kyb = null }: { avatars: OrgAvatar
                 <div style={{ display: "flex", gap: "1.2rem", marginTop: "0.6rem", flexWrap: "wrap" }}>
                   {a.soul_ref && <span style={{ color: colors.teal, fontSize: "0.74rem", fontWeight: 700 }}>Soul attivo</span>}
                   <span style={{ color: colors.faint, fontSize: "0.74rem" }}>{a.usage_count.toLocaleString("it-IT")} utilizzi</span>
-                  <span style={{ color: colors.faint, fontSize: "0.74rem" }}>€{(a.royalty_accrued_cents / 100).toFixed(2)} royalty</span>
+                  <span style={{ color: colors.faint, fontSize: "0.74rem" }}>{(a.royalty_accrued_cents / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" })} di royalty</span>
                 </div>
 
                 {pendingConsent && <ConsentLink token={a.consent_token!} />}
