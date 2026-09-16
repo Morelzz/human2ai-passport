@@ -112,7 +112,7 @@ export default async function VoltPage({
                       <button
                         disabled
                         title={VOLT_STRINGS["recharge.soon"]}
-                        className="mt-4 w-full cursor-not-allowed rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-muted"
+                        className="mt-4 w-full cursor-not-allowed rounded-full border border-border bg-surface px-4 py-2.5 text-sm font-bold text-muted"
                       >
                         {voltStr("recharge.cta", { n: FMT.format(p.volt + p.bonus), prezzo: (p.priceCents / 100).toLocaleString("it-IT", { minimumFractionDigits: 2 }) })}
                       </button>

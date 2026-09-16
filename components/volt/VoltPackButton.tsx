@@ -42,7 +42,7 @@ export function VoltPackButton({
       <button
         onClick={buy}
         disabled={loading}
-        className={`mt-4 w-full rounded-xl px-4 py-2.5 text-sm font-bold transition disabled:opacity-60 ${
+        className={`mt-4 w-full rounded-full px-4 py-2.5 text-sm font-bold transition disabled:opacity-60 ${
           popular
             ? "bg-amber text-on-amber hover:bg-amber-hover"
             : "border border-border bg-surface text-foreground hover:bg-white/[0.07]"

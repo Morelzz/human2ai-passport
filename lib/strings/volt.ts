@@ -19,7 +19,7 @@ export const VOLT_STRINGS = {
   "recharge.packs.popular": "Il più scelto",
   "recharge.legal.microline":
     "I VOLT sono crediti prepagati per i servizi SEMBLIC. Si applicano i Termini.",
-  "recharge.cta": "Ricarica {n} ⚡ · € {prezzo}",
+  "recharge.cta": "Ricarica {n} ⚡ · {prezzo}\u00a0€",
   "recharge.soon": "Il pagamento online arriva a breve. Intanto scrivici: ti accreditiamo noi.",
 
   // 4.3 Conferma ricarica
