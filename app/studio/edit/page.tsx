@@ -19,7 +19,7 @@ export default async function EditorLanding() {
   const {
     data: { user },
   } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Fstudio%2Fedit");
 
   const admin = createServerClient();
   const { data: gens } = await admin

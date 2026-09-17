@@ -23,7 +23,7 @@ export default async function EditPage({ params }: { params: Promise<{ cert: str
   const {
     data: { user },
   } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect(`/login?next=${encodeURIComponent(`/studio/edit/${cert}`)}`);
 
   const admin = createServerClient();
   const { data: gen } = await admin

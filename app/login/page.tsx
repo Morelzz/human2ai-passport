@@ -8,7 +8,8 @@ import { Field, Shell, submitClass, authErrorMessage } from "../auth-ui";
 
 // Accetta solo path interni (niente open redirect): "/x" si', "//x" o "http..." no.
 function safeNext(raw: string | null): string | null {
-  return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : null;
+  // "/\host" per il browser vale come "//host": anche quello e' un sito esterno.
+  return raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.startsWith("/\\") ? raw : null;
 }
 
 export default function LoginPage() {

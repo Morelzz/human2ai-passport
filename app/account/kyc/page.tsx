@@ -9,7 +9,7 @@ export const metadata = { title: "Verifiche identità (KYC)" };
 export default async function KycReviewPage() {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Faccount%2Fkyc");
 
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
   if (profile?.role !== "admin") redirect("/account");

@@ -8,7 +8,7 @@ export default async function VerifyIdentityPage() {
   const supabase = await createAuthClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Faccount%2Fverify");
 
   const { data: profile } = await supabase
     .from("profiles")

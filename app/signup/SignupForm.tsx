@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils";
 
 // Accetta solo path interni (niente open redirect).
 function safeNext(raw: string | null): string | null {
-  return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : null;
+  // "/\host" per il browser vale come "//host": anche quello e' un sito esterno.
+  return raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.startsWith("/\\") ? raw : null;
 }
 
 export default function SignupForm() {

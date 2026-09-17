@@ -15,10 +15,11 @@ export const metadata = {
 export default async function MatchPage({ searchParams }: { searchParams: Promise<{ avatar?: string }> }) {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
-  if (!user) redirect("/login");
   // CTA dal passport: /match?avatar=<handle> apre direttamente la generazione
   // con quel volto selezionato, saltando il brief.
   const { avatar } = await searchParams;
+  // Dopo l'accesso si torna qui, con lo stesso volto gia' scelto.
+  if (!user) redirect(`/login?next=${encodeURIComponent(avatar ? `/match?avatar=${avatar}` : "/match")}`);
 
   return (
     <div

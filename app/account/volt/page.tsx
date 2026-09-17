@@ -41,7 +41,7 @@ export default async function VoltPage({
   const {
     data: { user },
   } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Faccount%2Fvolt");
 
   const balance = await voltBalance(user.id);
   const txs = balance === null ? [] : await voltTransactions(user.id, 30);

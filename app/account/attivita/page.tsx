@@ -33,7 +33,7 @@ function formatDate(d: string) {
 export default async function AttivitaPage() {
   const supabase = await createAuthClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Faccount%2Fattivita");
 
   const admin = createServerClient();
   // Tutti gli avatar di cui l'utente è proprietario (seller = 1, enterprise = N).

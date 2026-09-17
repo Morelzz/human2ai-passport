@@ -7,7 +7,7 @@ import NewAvatarClient from "./NewAvatarClient";
 export default async function NewAvatarPage() {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Faccount%2Favatar");
 
   const { data: profile } = await auth
     .from("profiles")

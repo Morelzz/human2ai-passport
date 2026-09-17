@@ -15,7 +15,7 @@ export const metadata = {
 export default async function EnterpriseRegisterPage() {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Fenterprise%2Fregister");
 
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
   const role = profile?.role ?? "buyer";

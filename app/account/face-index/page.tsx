@@ -11,7 +11,7 @@ export const metadata = { title: "Indice volti del registro" };
 export default async function FaceIndexPage() {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Faccount%2Fface-index");
 
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
   if (profile?.role !== "admin") redirect("/account");

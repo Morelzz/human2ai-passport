@@ -7,7 +7,7 @@ import ConsentClient from "./ConsentClient";
 export default async function ConsentPage() {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Faccount%2Fconsent");
 
   const admin = createServerClient();
   const { data: avatar } = await admin
