@@ -342,6 +342,20 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 }
 .ward-scanglow { box-shadow: inset 0 0 0 1px rgba(242,169,59,0.5), inset 0 0 40px rgba(242,169,59,0.18); }
 
+/* Crea: il set al lavoro. Linea di sviluppo che scorre sull'anteprima sfocata. */
+@keyframes set-scan { 0% { top: 10%; } 50% { top: 88%; } 100% { top: 10%; } }
+.set-scan {
+  position: absolute; left: 0; right: 0; top: 50%; height: 2px; pointer-events: none;
+  background: linear-gradient(90deg, rgba(226,154,46,0), #F2A93B, rgba(226,154,46,0));
+  box-shadow: 0 0 26px 4px rgba(242,169,59,0.5);
+  animation: set-scan 3.2s ease-in-out infinite;
+}
+@keyframes set-giro { to { transform: rotate(360deg); } }
+.set-giro { animation: set-giro 0.9s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .set-scan, .set-giro { animation: none; } }
+.senza-barra { scrollbar-width: none; }
+.senza-barra::-webkit-scrollbar { display: none; }
+
 /* ── Casa nuova (2026-09-14): mattoni condivisi della pelle chiara ──
    Nel layer components: le utility Tailwind (rounded-*, p-*, ...) li vincono. */
 @layer components {

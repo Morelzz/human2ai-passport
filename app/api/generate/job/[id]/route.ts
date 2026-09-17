@@ -25,7 +25,20 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   }
 
   const jobParams = (job.params as { category?: string | null; echoSize?: string } | null) ?? null;
+  // A job concluso serve anche l'id della generazione: la pagina Crea ci porta
+  // Ward (/ward/content/[id]). Cercato per certificato, solo tra quelle del buyer.
+  let generationId: string | undefined;
+  if (job.status === "done" && job.certificate) {
+    const { data: gen } = await admin
+      .from("generations")
+      .select("id")
+      .eq("certificate", job.certificate)
+      .eq("buyer_id", user.id)
+      .maybeSingle();
+    generationId = gen?.id ?? undefined;
+  }
   return NextResponse.json({
+    generation_id: generationId,
     status: job.status, // pending | running | done | error
     error: job.status === "error" ? job.error : undefined,
     category: jobParams?.category ?? null,

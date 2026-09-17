@@ -107,7 +107,7 @@ export function priceForEcho(size?: string | null, quality?: string | null): num
 }
 
 // Compat: il prezzo ECHO ora NON dipende dalla categoria (cost-plus puro). La
-// firma resta per i chiamanti (MatchClient/route); `category` e' ignorata.
+// firma resta per i chiamanti (route); `category` e' ignorata.
 export function grossForEcho(_category: string | null, size?: string | null, quality?: string | null): number {
   return priceForEcho(size, quality);
 }
