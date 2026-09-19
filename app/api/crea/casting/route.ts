@@ -5,7 +5,7 @@ import { allowRequest } from "@/lib/rate-limit";
 import { getPublicAvatars } from "@/lib/registry";
 import { portraitFor } from "@/lib/sample-galleries";
 import { sampleSrc } from "@/lib/sample-size";
-import { leggiScena, scegliVolti, type Candidato } from "@/lib/casting";
+import { leggiScena, nomiNellaScena, scegliConFissi, type Candidato } from "@/lib/casting";
 import { logMatchSearch } from "@/lib/searches";
 
 export const runtime = "nodejs";
@@ -23,6 +23,7 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => null);
   const scena = String(body?.scena ?? "").trim();
+  const sceltoHandle = typeof body?.scelto === "string" ? body.scelto.trim() : "";
   if (scena.length < 4) return NextResponse.json({ error: "Scrivi cosa succede nella foto" }, { status: 400 });
 
   let lettura;
@@ -34,11 +35,16 @@ export async function POST(request: Request) {
 
   const admin = createServerClient();
   const registro = (await getPublicAvatars(admin)).filter((a) => !a.revoked_at && (a as { commercial_consent?: boolean | null }).commercial_consent !== false);
-  const scelte = scegliVolti(lettura, registro as unknown as Candidato[]);
+  const candidati = registro as unknown as Candidato[];
+  // Persone fisse: il volto gia' scelto (sempre il primo) e quelle chieste per nome nella frase.
+  const scelto = sceltoHandle ? candidati.find((c) => c.handle === sceltoHandle) : undefined;
+  const fissi = [...(scelto ? [scelto] : []), ...nomiNellaScena(scena, candidati)];
+  const scelte = scegliConFissi(lettura, candidati, fissi);
+  const fisso = (h: string | null) => Boolean(h && fissi.some((f) => f.handle === h));
 
   // La domanda resta nelle statistiche del registro (forma, mai chi cerca):
-  // i volti che mancano diventano visibili.
-  for (const p of lettura.persone) {
+  // i volti che mancano diventano visibili. Le persone chieste per nome non sono una ricerca.
+  if (!fissi.length) for (const p of lettura.persone) {
     const { ruolo: _ruolo, ...attrs } = p;
     void _ruolo;
     logMatchSearch(admin, { attrs: attrs as unknown as Record<string, unknown>, category: null, matched: scelte.some((s) => s.handle), resultsCount: scelte.filter((s) => s.handle).length });
@@ -53,6 +59,7 @@ export async function POST(request: Request) {
     folla: lettura.folla,
     persone: scelte.map((s) => ({
       ruolo: s.ruolo,
+      fisso: fisso(s.handle),
       corrispondenza: s.corrispondenza,
       differenze: s.differenze,
       volto: volto(s.handle),

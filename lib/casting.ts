@@ -111,8 +111,8 @@ function adatti(attrs: PromptAttributes, candidati: Candidato[], presi: Set<stri
     .sort((a, b) => b.r.score - a.r.score || (a.c.usage_count ?? 0) - (b.c.usage_count ?? 0) || Math.random() - 0.5);
 }
 
-export function scegliVolti(lettura: LetturaScena, candidati: Candidato[]): Scelta[] {
-  const presi = new Set<string>();
+export function scegliVolti(lettura: LetturaScena, candidati: Candidato[], giaPresi: Iterable<string> = []): Scelta[] {
+  const presi = new Set<string>(giaPresi);
   return lettura.persone.map((p) => {
     const { ruolo, ...attrs } = p;
     let lista = adatti(attrs, candidati, presi);
@@ -141,4 +141,77 @@ export function scegliVolti(lettura: LetturaScena, candidati: Candidato[]): Scel
       alternative: lista.slice(1, 4).map((x) => x.c.handle),
     };
   });
+}
+
+// ── Persone chieste per nome, e il volto gia' scelto ──────────────────────────
+// "Gabriella e Stella che brindano al bar": se nella frase c'e' il nome di una
+// persona del registro scritto con la maiuscola, si usa proprio lei. La
+// maiuscola serve perche' "stella" o "random" sono anche parole comuni.
+
+function senzaAccenti(t: string): string {
+  return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+export function nomiNellaScena(scena: string, candidati: Candidato[]): Candidato[] {
+  const testo = senzaAccenti(scena);
+  const trovati: { c: Candidato; pos: number }[] = [];
+  for (const c of candidati) {
+    const alias = senzaAccenti(c.alias.trim());
+    if (alias.length < 3) continue;
+    // alias intero ("Luca Agnelli") o solo il nome ("Luca"), a parola intera e con la maiuscola
+    const forme = [...new Set([alias, alias.split(/\s+/)[0]])].filter((f) => f.length >= 3 && /^\p{Lu}/u.test(f));
+    let pos = -1;
+    for (const f of forme) {
+      const re = new RegExp(`(^|[^\\p{L}])${f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|[^\\p{L}])`, "u");
+      const m = re.exec(testo);
+      if (m) { pos = m.index; break; }
+    }
+    if (pos >= 0) trovati.push({ c, pos });
+  }
+  // nell'ordine in cui compaiono nella frase; uno solo per nome ripetuto fra due persone
+  trovati.sort((a, b) => a.pos - b.pos);
+  const visti = new Set<string>();
+  return trovati.filter((t) => (visti.has(t.c.alias) ? false : (visti.add(t.c.alias), true))).map((t) => t.c).slice(0, MAX_PROTAGONISTI);
+}
+
+// Assegna le persone fisse (il volto gia' scelto, poi quelle chieste per nome)
+// ai ruoli letti nella scena, e sceglie dal registro solo per i ruoli restanti.
+// Una persona fissa prende il ruolo che le somiglia di piu' (o quello che la
+// nomina); se la lettura ha meno ruoli delle persone fisse, se ne aggiungono.
+export function scegliConFissi(lettura: LetturaScena, candidati: Candidato[], fissi: Candidato[]): Scelta[] {
+  const unici = fissi.filter((f, i) => fissi.findIndex((x) => x.handle === f.handle) === i).slice(0, MAX_PROTAGONISTI);
+  if (unici.length === 0) return scegliVolti(lettura, candidati);
+  const ruoli = [...lettura.persone];
+  const assegnati = new Map<number, Candidato>();
+  for (const f of unici) {
+    let migliore = -1;
+    let punti = -Infinity;
+    ruoli.forEach((r, i) => {
+      if (assegnati.has(i)) return;
+      const { ruolo, ...attrs } = r;
+      const nomina = senzaAccenti(ruolo.toLowerCase()).includes(senzaAccenti(f.alias.toLowerCase().split(/\s+/)[0]));
+      const v = scoreAvatar(f, attrs);
+      // Chi e' stato scelto o chiamato per nome vale piu' dei dettagli indovinati
+      // dalla lettura: prende un ruolo della scena, meglio se del suo genere.
+      const genereOk = !attrs.gender || attrs.gender === f.gender;
+      const p = (nomina ? 1000 : 0) + (v.allowed ? 100 + v.score : 0) + (genereOk ? 10 : 1);
+      if (p > punti) { punti = p; migliore = i; }
+    });
+    if (migliore >= 0) assegnati.set(migliore, f);
+    else if (ruoli.length < MAX_PROTAGONISTI) {
+      ruoli.push({ ruolo: f.alias, gender: null, ethnicity: null, hair_color: null, age_min: null, age_max: null, eye_color: null, height: null, body_type: null });
+      assegnati.set(ruoli.length - 1, f);
+    }
+  }
+  const restanti = ruoli.map((r, i) => ({ r, i })).filter((x) => !assegnati.has(x.i));
+  const altre = scegliVolti({ persone: restanti.map((x) => x.r), folla: lettura.folla }, candidati, unici.map((f) => f.handle));
+  // Il volto gia' scelto resta il primo da sinistra, poi l'ordine della scena.
+  const tutte = ruoli.map((r, i) => {
+    const f = assegnati.get(i);
+    if (f) return { i, s: { ruolo: r.ruolo, handle: f.handle, alias: f.alias, corrispondenza: "esatto" as const, differenze: [], alternative: [] } };
+    return { i, s: altre[restanti.findIndex((x) => x.i === i)] };
+  });
+  const primo = unici[0].handle;
+  tutte.sort((a, b) => (a.s.handle === primo ? -1 : b.s.handle === primo ? 1 : a.i - b.i));
+  return tutte.map((x) => x.s).slice(0, MAX_PROTAGONISTI);
 }

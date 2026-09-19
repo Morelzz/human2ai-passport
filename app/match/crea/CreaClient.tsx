@@ -69,7 +69,7 @@ export function CreaClient({
   const [dubbio, setDubbio] = useState<{ ruolo: string; volto: Volto; differenze: string[] } | null>(null);
   const [inScena, setInScena] = useState<string | null>(null);
   // Scena di gruppo: la proposta del casting (prima di spendere) e il gruppo al lavoro.
-  const [propostaGruppo, setPropostaGruppo] = useState<{ ruolo: string; volto: Volto; vicino: boolean }[] | null>(null);
+  const [propostaGruppo, setPropostaGruppo] = useState<{ ruolo: string; volto: Volto; vicino: boolean; fisso: boolean }[] | null>(null);
   const [inGruppo, setInGruppo] = useState<Volto[] | null>(null);
   const vivo = useRef(true);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -147,18 +147,29 @@ export function CreaClient({
     setMiglioro(false);
   }
 
-  async function casting() {
-    if (scena.trim().length < 4) { setSceltaAperta(true); return; }
+  // Casting: legge la scena e sceglie i volti. Con un volto gia' scelto (fisso)
+  // quel volto resta; se la scena ha una persona sola si scatta subito con lui,
+  // se ne ha di piu' si propone la scena di gruppo con lui per primo.
+  async function casting(fisso?: Volto) {
+    if (scena.trim().length < 4) { if (fisso) await genera(fisso, sceltoDaSemblic); else setSceltaAperta(true); return; }
     setCastingInCorso(true);
     setErrore(null);
     setDubbio(null);
     setPropostaGruppo(null);
     try {
-      const res = await fetch("/api/crea/casting", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ scena }) });
+      const res = await fetch("/api/crea/casting", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ scena, scelto: fisso?.handle }) });
       const j = await res.json();
       setCastingInCorso(false);
-      if (!res.ok) { setErrore(j.error ?? "Non riesco a scegliere il volto, sceglilo tu"); return; }
-      const persone = (j.persone ?? []) as { ruolo: string; corrispondenza: "esatto" | "vicino" | null; differenze: string[]; volto: Volto | null }[];
+      if (!res.ok) {
+        if (fisso) { await genera(fisso, sceltoDaSemblic); return; } // il volto c'e' gia': non si blocca nessuno
+        setErrore(j.error ?? "Non riesco a scegliere il volto, sceglilo tu");
+        return;
+      }
+      const persone = (j.persone ?? []) as { ruolo: string; fisso?: boolean; corrispondenza: "esatto" | "vicino" | null; differenze: string[]; volto: Volto | null }[];
+      if (fisso && (persone.length === 0 || (persone.length === 1 && persone[0].volto?.handle === fisso.handle))) {
+        await genera(fisso, sceltoDaSemblic);
+        return;
+      }
       if (persone.length === 0) {
         setErrore("In questa scena non c'è nessuno. Semblic mette in scena persone vere del registro: scrivi chi c'è nella foto.");
         return;
@@ -168,13 +179,14 @@ export function CreaClient({
           ruolo: p.ruolo,
           volto: p.volto ? volti.find((x) => x.handle === p.volto!.handle) ?? p.volto : null,
           vicino: p.corrispondenza === "vicino",
+          fisso: Boolean(p.fisso),
         }));
         const manca = lista.find((x) => !x.volto);
         if (manca) {
           setErrore(`Nel registro non c'è ancora nessuno per "${manca.ruolo}". Riscrivi la scena, o scegli tu un volto solo.`);
           return;
         }
-        setPropostaGruppo(lista as { ruolo: string; volto: Volto; vicino: boolean }[]);
+        setPropostaGruppo(lista as { ruolo: string; volto: Volto; vicino: boolean; fisso: boolean }[]);
         return;
       }
       const p = persone[0];
@@ -193,6 +205,7 @@ export function CreaClient({
       await genera(v, true);
     } catch {
       setCastingInCorso(false);
+      if (fisso) { await genera(fisso, sceltoDaSemblic); return; }
       setErrore("Non riesco a scegliere il volto, sceglilo tu");
     }
   }
@@ -221,6 +234,8 @@ export function CreaClient({
     const volto = override ?? volti.find((v) => v.handle === scelto) ?? null;
     if (!volto) { await casting(); return; }
     if (!(scena.trim().length >= 3 || riferimenti.length > 0)) return;
+    // Volto scelto e Genera premuto: prima si legge la scena, magari ci sono altre persone.
+    if (!override) { await casting(volto); return; }
     const perSemblic = dalCasting || (sceltoDaSemblic && !override);
     setInGruppo(null);
     await avvia({ handle: volto.handle, ...corpoScatto() }, volto, perSemblic, null);
@@ -378,7 +393,11 @@ export function CreaClient({
           onVariante={() => {
             const g = esito.persone && esito.persone.length > 1 ? esito.persone.map((p) => volti.find((v) => v.handle === p.handle)).filter((v): v is Volto => Boolean(v)) : null;
             if (g && g.length > 1) void generaGruppo(g, Boolean(esito.dalCasting));
-            else void genera();
+            else {
+              const v = volti.find((x) => x.handle === esito.handle);
+              if (v) void genera(v, Boolean(esito.dalCasting));
+              else void genera();
+            }
           }}
           onNuovo={() => { setFase("componi"); suInizio(); }}
           onCambiaPersona={() => { setFase("componi"); setSceltaAperta(true); suInizio(); }}
@@ -698,7 +717,7 @@ export function CreaClient({
                 disabled={!puoGenerare || castingInCorso}
                 className="inline-flex h-[52px] items-center gap-2 rounded-full bg-amber px-6 text-[1rem] font-bold text-on-amber transition-colors hover:bg-amber-hover disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {castingInCorso ? "Scelgo il volto…" : "Genera"}
+                {castingInCorso ? (volto ? "Leggo la scena…" : "Scelgo il volto…") : "Genera"}
                 {icona.su}
               </button>
             </div>
@@ -753,7 +772,9 @@ export function CreaClient({
                   {propostaGruppo.map((x, i) => (
                     <span key={x.volto.handle}>
                       {i > 0 ? (i === n - 1 ? " e " : ", ") : ""}
-                      <strong className="font-semibold text-foreground">{x.volto.alias}</strong> per &quot;{x.ruolo}&quot;{x.vicino ? " (la persona più vicina)" : ""}
+                      <strong className="font-semibold text-foreground">{x.volto.alias}</strong>
+                      {!x.fisso && x.ruolo.toLowerCase() !== x.volto.alias.toLowerCase() ? <> per &quot;{x.ruolo}&quot;</> : null}
+                      {x.vicino && !x.fisso ? " (la persona più vicina)" : ""}
                     </span>
                   ))}
                 </p>
@@ -768,9 +789,10 @@ export function CreaClient({
                 type="button"
                 onClick={() => {
                   const lista = propostaGruppo.map((x) => x.volto);
-                  setSceltoDaSemblic(true);
+                  const daSemblic = propostaGruppo.every((x) => !x.fisso);
+                  setSceltoDaSemblic(daSemblic);
                   setInScena("gruppo");
-                  void generaGruppo(lista, true);
+                  void generaGruppo(lista, daSemblic);
                 }}
                 className="inline-flex h-11 items-center gap-2 rounded-full bg-amber px-5 text-[0.92rem] font-bold text-on-amber transition-colors hover:bg-amber-hover"
               >
@@ -778,7 +800,7 @@ export function CreaClient({
               </button>
               <button
                 type="button"
-                onClick={() => { const x = propostaGruppo[0]; setPropostaGruppo(null); setScelto(x.volto.handle); setSceltoDaSemblic(true); setInScena(x.ruolo); void genera(x.volto, true); }}
+                onClick={() => { const x = propostaGruppo[0]; setPropostaGruppo(null); setScelto(x.volto.handle); setSceltoDaSemblic(!x.fisso); setInScena(x.fisso ? null : x.ruolo); void genera(x.volto, !x.fisso); }}
                 className="h-11 rounded-full border border-border px-4 text-[0.88rem] font-semibold"
               >
                 Solo {propostaGruppo[0].volto.alias} · {saldo !== null ? `${FMT.format(livello.volt)} ⚡` : formatEur(livello.volt)}
