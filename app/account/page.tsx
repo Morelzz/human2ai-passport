@@ -163,6 +163,13 @@ export default async function AccountPage() {
     }
   }
 
+  // Operatori: quanti messaggi del modulo contatti aspettano risposta.
+  let messaggiAperti = 0;
+  if (role === "admin") {
+    const { count } = await admin2.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "open");
+    messaggiAperti = count ?? 0;
+  }
+
   // Saldo VOLT (null = sistema non configurato: la card si nasconde).
   const volt = await voltBalance(user.id);
 
@@ -377,6 +384,9 @@ export default async function AccountPage() {
             </Link>
             <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Segnalazioni di abuso
+            </Link>
+            <Link href="/account/messaggi" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
+              Messaggi dal sito{messaggiAperti ? ` · ${messaggiAperti} da rispondere` : ""}
             </Link>
             <Link href="/account/face-index" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
               Indice volti del registro

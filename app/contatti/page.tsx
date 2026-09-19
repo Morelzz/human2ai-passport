@@ -16,13 +16,17 @@ export const metadata = {
 // F2 — pagina /contatti: form pubblico contact_messages + recapiti.
 // B3: ?ingaggio=<handle> pre-compila il form per una richiesta di ingaggio reale.
 // ?tema=formazione pre-compila la richiesta di formazione aziendale (da /academy#aziende).
-export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string; tema?: string }> }) {
-  const { ingaggio, tema } = await searchParams;
+export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string; tema?: string; oggetto?: string }> }) {
+  const { ingaggio, tema, oggetto } = await searchParams;
   const prefill = ingaggio
     ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Semblic.` }
     : tema === "formazione"
       ? { subject: "Formazione aziendale AI", message: "Vorrei portare la formazione della SEMBLIC Academy nella mia azienda. Ci interessa il percorso su: " }
-      : undefined;
+      : oggetto === "privacy"
+        ? { subject: "Privacy" }
+        : oggetto === "legale"
+          ? { subject: "Legale" }
+          : undefined;
   // Sedi per la mappa (riuso della stessa fonte di /scansione; fallback Studio Void).
   const sedi = await getSedi();
   return (
@@ -54,9 +58,8 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
                   <span className="flex h-9 w-9 items-center justify-center rounded-full border border-amber/50 bg-amber-soft">
                     <Mail className="h-4 w-4 text-amber-ink" />
                   </span>
-                  <p className="mt-3 text-sm font-bold">Email</p>
-                  <p className="mt-1 text-sm text-muted">hello@semblic.example</p>
-                  <p className="mt-1 font-mono text-[0.68rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</p>
+                  <p className="mt-3 text-sm font-bold">Rispondiamo noi</p>
+                  <p className="mt-1 text-sm text-muted">Ogni messaggio del modulo arriva a una persona del team, che ti risponde all&apos;email che ci lasci.</p>
                 </div>
                 <div className="card rounded-2xl p-5">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full border border-verified/35 bg-verified-soft">
@@ -64,7 +67,6 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
                   </span>
                   <p className="mt-3 text-sm font-bold">Sede</p>
                   <p className="mt-1 text-sm text-muted">Rimini, Italia</p>
-                  <p className="mt-1 font-mono text-[0.68rem] text-faint">[DA CONFERMARE: indirizzo completo]</p>
                 </div>
                 <a
                   href="https://www.instagram.com/semblic"

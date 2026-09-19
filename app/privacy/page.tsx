@@ -86,17 +86,22 @@ export default function PrivacyPage() {
             <Section title="Fornitori che ci aiutano (sub-processor)">
               Per erogare il servizio ci appoggiamo a fornitori selezionati, che trattano i dati solo per nostro conto e
               limitatamente a ciò che serve: <strong className="text-foreground">Supabase</strong>{" "}(database, autenticazione
-              e archiviazione cifrata delle foto), <strong className="text-foreground">Anthropic (Claude)</strong>, solo se
-              scegli di far analizzare le foto per pre-compilare l&apos;identikit, <strong className="text-foreground">OpenAI</strong>{" "}(ECHO, gpt-image) per la generazione delle immagini quando autorizzata.
+              e archiviazione cifrata delle foto), <strong className="text-foreground">Didit</strong>{" "}(verifica
+              dell&apos;identità), <strong className="text-foreground">Anthropic (Claude)</strong>{" "}per analizzare le foto e
+              pre-compilare l&apos;identikit, solo se lo scegli, e per leggere il testo della scena che scrivi e scegliere i
+              volti adatti (il testo, mai le foto), <strong className="text-foreground">OpenAI</strong>{" "}(ECHO, gpt-image) per
+              la generazione delle immagini quando autorizzata, <strong className="text-foreground">Higgsfield</strong>{" "}per
+              trasformare uno scatto certificato in video, solo con il consenso al video della persona, e{" "}
+              <strong className="text-foreground">Google Cloud Vision</strong>{" "}per cercare online le copie delle immagini dei
+              volti protetti da Ward.
               Alcuni di questi fornitori hanno sede fuori dall&apos;UE: i trasferimenti avvengono con le garanzie previste dal
               GDPR. Non cediamo i tuoi dati a nessun altro e non li usiamo per addestrare modelli senza il tuo consenso.
             </Section>
             <Section title="Contatti e DPO">
-              Per qualsiasi richiesta sulla privacy: <span className="text-foreground">privacy@semblic.example</span>{" "}
-              <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>.
+              Per qualsiasi richiesta sulla privacy (accesso, rettifica, cancellazione, opposizione):{" "}
+              <a href="/contatti?oggetto=privacy" className="text-amber-ink underline underline-offset-4">scrivici dal modulo contatti</a>, oggetto Privacy.
               Responsabile della protezione dei dati (DPO):{" "}
               <span className="font-mono text-[0.78rem] text-faint">[DA AVVOCATO: nomina del DPO se dovuta ex Art. 37, probabile, dato il trattamento biometrico su larga scala]</span>.
-              Puoi anche scriverci dalla pagina <a href="/contatti" className="text-amber-ink underline">/contatti</a>.
             </Section>
           </div>
         </main>

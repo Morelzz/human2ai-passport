@@ -10,6 +10,8 @@ export const CONTACT_SUBJECTS: readonly string[] = [
   "Ingaggio reale",
   "Stampa",
   "Partner",
+  "Formazione aziendale AI",
+  "Privacy",
   "Legale",
   "Altro",
 ];

@@ -44,8 +44,8 @@ export default function CookiePage() {
             </Section>
             <Section title="Titolare e contatti">
               Il titolare del trattamento è indicato nell&apos;<Link href="/privacy" className="text-amber-ink underline">informativa privacy</Link>.
-              Per qualsiasi domanda sui cookie: <span className="text-foreground">privacy@semblic.example</span>{" "}
-              <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>.
+              Per qualsiasi domanda sui cookie:{" "}
+              <a href="/contatti?oggetto=privacy" className="text-amber-ink underline underline-offset-4">scrivici dal modulo contatti</a>, oggetto Privacy.
             </Section>
           </div>
         </main>

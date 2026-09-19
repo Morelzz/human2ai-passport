@@ -65,9 +65,8 @@ export default function TerminiPage() {
               responsabilità, manleva, legge applicabile e foro competente, volutamente non redatte in bozza]</span>
             </Section>
             <Section title="Contatti">
-              Per questioni contrattuali: <span className="text-foreground">legal@semblic.example</span>{" "}
-              <span className="font-mono text-[0.78rem] text-faint">[DA CONFERMARE: indirizzo definitivo]</span>,
-              o dalla pagina <a href="/contatti" className="text-amber-ink underline">/contatti</a>.
+              Per questioni contrattuali:{" "}
+              <a href="/contatti?oggetto=legale" className="text-amber-ink underline underline-offset-4">scrivici dal modulo contatti</a>, oggetto Legale.
             </Section>
           </div>
         </main>
