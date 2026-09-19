@@ -18,7 +18,9 @@ export function Anima({ certificate, alias, immagine, conVolt, gruppo = false }:
   const [livello, setLivello] = useState<LivelloVideo>("standard");
   const [errore, setErrore] = useState<string | null>(null);
   const [manca, setManca] = useState<number | null>(null);
-  const [video, setVideo] = useState<{ url: string; certificate?: string; secondi: number } | null>(null);
+  const [video, setVideo] = useState<{ url: string; certificate?: string; secondi: number; somiglianza?: number; fotogrammi?: number } | null>(null);
+  // Dove si trova il video: in fila, in lavorazione dal motore, o al controllo dei volti.
+  const [passo, setPasso] = useState<"coda" | "lavoro" | "controllo">("coda");
   const [inizio, setInizio] = useState(0);
   const [adesso, setAdesso] = useState(0);
   const vivo = useRef(true);
@@ -56,14 +58,22 @@ export function Anima({ certificate, alias, immagine, conVolt, gruppo = false }:
     setInizio(t0);
     setAdesso(t0);
     setFase("lavoro");
+    setPasso("coda");
     const id = String(j.id);
     while (vivo.current && Date.now() - t0 < 15 * 60 * 1000) {
       await new Promise((r) => setTimeout(r, 5000));
       if (!vivo.current) return;
       let s: Record<string, unknown>;
       try { s = await (await fetch(`/api/anima/${id}`)).json(); } catch { continue; }
+      if (s.status === "running" && (s.fase === "coda" || s.fase === "lavoro" || s.fase === "controllo")) setPasso(s.fase);
       if (s.status === "done" && s.video_url) {
-        setVideo({ url: String(s.video_url), certificate: s.certificate ? String(s.certificate) : undefined, secondi: Math.round((Date.now() - t0) / 1000) });
+        setVideo({
+          url: String(s.video_url),
+          certificate: s.certificate ? String(s.certificate) : undefined,
+          secondi: Math.round((Date.now() - t0) / 1000),
+          somiglianza: typeof s.identity_score === "number" ? s.identity_score : undefined,
+          fotogrammi: typeof s.frames_checked === "number" ? s.frames_checked : undefined,
+        });
         setFase("pronto");
         return;
       }
@@ -129,7 +139,7 @@ export function Anima({ certificate, alias, immagine, conVolt, gruppo = false }:
                 <div>
                   <span className="kicker">Anima</span>
                   <h2 id="anima-titolo" className="mt-2 text-[2rem] font-bold leading-none tracking-[-0.04em] sm:text-[2.4rem]">
-                    {fase === "pronto" ? "Si muove." : fase === "lavoro" ? "Stiamo animando." : "Dai vita allo scatto."}
+                    {fase === "pronto" ? "Si muove." : fase === "lavoro" ? (passo === "controllo" ? "Ultimo controllo." : "Stiamo animando.") : "Dai vita allo scatto."}
                   </h2>
                 </div>
                 {fase !== "lavoro" && (
@@ -204,8 +214,21 @@ export function Anima({ certificate, alias, immagine, conVolt, gruppo = false }:
               {fase === "lavoro" && (
                 <div className="mt-4 flex flex-col gap-3">
                   <p className="text-[0.95rem] leading-relaxed text-muted">
-                    Il motore {LIVELLI[livello].l} sta mettendo in movimento lo scatto di {alias}. Puoi chiudere la pagina: il video ti aspetta fra i tuoi contenuti.
+                    {passo === "controllo"
+                      ? "Video pronto. Ora lo controlliamo fotogramma per fotogramma: nessun volto protetto deve comparire, e le persone devono restare se stesse."
+                      : `Il motore ${LIVELLI[livello].l} sta mettendo in movimento lo scatto di ${alias}. Puoi chiudere la pagina: il video ti aspetta fra i tuoi contenuti.`}
                   </p>
+                  <ol className="flex flex-wrap gap-2 text-[0.82rem]" aria-label="Avanzamento">
+                    {(["coda", "lavoro", "controllo"] as const).map((p, i) => {
+                      const ordine = ["coda", "lavoro", "controllo"].indexOf(passo);
+                      const stato = i < ordine ? "fatto" : i === ordine ? "ora" : "dopo";
+                      return (
+                        <li key={p} className={`rounded-full px-3 py-1 ${stato === "ora" ? "bg-amber text-on-amber font-semibold" : stato === "fatto" ? "bg-verified-soft text-on-verified" : "border border-border text-muted"}`}>
+                          {p === "coda" ? "In fila" : p === "lavoro" ? "Il motore anima" : "Controllo dei volti"}
+                        </li>
+                      );
+                    })}
+                  </ol>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={immagine} alt="" className="h-64 w-full rounded-2xl object-cover brightness-[0.7] blur-[4px] sm:hidden" />
                 </div>
@@ -215,9 +238,16 @@ export function Anima({ certificate, alias, immagine, conVolt, gruppo = false }:
                 <div className="mt-4 flex flex-col gap-4">
                   <video src={video.url} autoPlay loop muted playsInline controls className="w-full rounded-2xl sm:hidden" />
                   <p className="text-[0.95rem] text-muted">{alias} · {secondi} secondi · {LIVELLI[livello].l} · senza audio · pronto in {video.secondi} secondi</p>
-                  {video.certificate && (
-                    <span className="self-start rounded-full bg-verified-soft px-3 py-1.5 text-[0.85rem] font-semibold text-on-verified">Video certificato {video.certificate.slice(0, 8)}</span>
-                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {video.certificate && (
+                      <span className="rounded-full bg-verified-soft px-3 py-1.5 text-[0.85rem] font-semibold text-on-verified">Video certificato {video.certificate.slice(0, 8)}</span>
+                    )}
+                    {video.somiglianza !== undefined && (
+                      <span className="rounded-full border border-border px-3 py-1.5 text-[0.85rem] text-foreground" title="Misurata fotogramma per fotogramma con le foto verificate">
+                        Somiglianza {video.somiglianza}%{video.fotogrammi ? ` · ${video.fotogrammi} fotogrammi controllati` : ""}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-2.5">
                     <a href={video.url} download={`semblic-anima-${(video.certificate ?? "").slice(0, 8)}.mp4`} className="inline-flex h-[52px] items-center rounded-full bg-amber px-6 font-bold text-on-amber">Scarica MP4</a>
                     <button type="button" onClick={() => { setVideo(null); setFase("scheda"); }} className="h-[52px] rounded-full border border-edge bg-surface px-5 font-semibold">Rifai il movimento</button>

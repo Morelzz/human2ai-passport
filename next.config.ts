@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
     "@tensorflow/tfjs-backend-wasm",
     "sharp",
     "playwright",
+    // Anima: i fotogrammi dei video si estraggono con ffmpeg sul worker.
+    "ffmpeg-static",
   ],
   // Gate identità (anti-impersonazione): le route che confrontano il volto
   // caricato col volto verificato (KYC Didit) embeddano i volti SERVER-side con

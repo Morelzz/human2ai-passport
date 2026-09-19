@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { executeEchoJob, reapStaleJobs, type EchoJobRow } from "@/lib/echo-job";
+import { avanzaAnimazioni } from "@/lib/anima-job";
+import { animaConfigurata } from "@/lib/engines/anima";
 
 export const runtime = "nodejs";
 // Esegue la chiamata lunga a OpenAI: va lanciata su un host SENZA cap di durata
@@ -77,6 +79,12 @@ export async function POST(request: Request) {
 
   const concurrency = workerConcurrency();
 
+  // Anima: i video pronti si controllano fotogramma per fotogramma e si
+  // consegnano qui (lib/anima-job), in parallelo alle foto.
+  const video = animaConfigurata()
+    ? avanzaAnimazioni(admin).catch((e) => { console.error("[jobs/run] anima:", e instanceof Error ? e.message : e); return 0; })
+    : Promise.resolve(0);
+
   // Claim atomico di fino a N job (FOR UPDATE SKIP LOCKED nella RPC).
   let jobs: ClaimRow[] = [];
   const { data, error } = await admin.rpc("claim_generation_jobs", { p_max: concurrency });
@@ -89,7 +97,10 @@ export async function POST(request: Request) {
     jobs = (data ?? []) as ClaimRow[];
   }
 
-  if (jobs.length === 0) return NextResponse.json({ idle: true });
+  if (jobs.length === 0) {
+    const chiusi = await video;
+    return NextResponse.json(chiusi > 0 ? { idle: false, processed: 0, videos: chiusi } : { idle: true });
+  }
 
   // Esecuzione PARALLELA: ogni job ha il suo timeout (AbortController 4min in
   // generateEcho) → N gpt-image insieme = throughput senza serializzare la corsia.
@@ -101,7 +112,8 @@ export async function POST(request: Request) {
     ),
   );
 
+  const videos = await video;
   const jobIds = jobs.map((j) => j.id);
   // `jobId` singolare mantenuto per compatibilita' col poller vecchio gia' in esecuzione.
-  return NextResponse.json({ idle: false, processed: jobs.length, jobIds, jobId: jobIds[0] });
+  return NextResponse.json({ idle: false, processed: jobs.length, jobIds, jobId: jobIds[0], videos });
 }

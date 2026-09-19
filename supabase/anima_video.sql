@@ -32,7 +32,15 @@ create table if not exists animations (
   royalty_cents integer not null,
   cost_cents integer not null,
   created_at timestamptz not null default now(),
-  finished_at timestamptz
+  finished_at timestamptz,
+  -- Il worker prende la chiusura (running -> finishing): se muore a meta', dopo
+  -- 10 minuti il video torna in coda.
+  finishing_at timestamptz,
+  -- Controllo fotogramma per fotogramma (lib/anima-verifica): somiglianza della
+  -- persona che tiene peggio (mediana e minimo) e quanti fotogrammi puliti.
+  identity_score integer check (identity_score between 0 and 100),
+  identity_min integer check (identity_min between 0 and 100),
+  frames_checked integer
 );
 
 create index if not exists animations_buyer_idx on animations (buyer_id, created_at desc);
