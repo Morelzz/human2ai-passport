@@ -13,7 +13,7 @@ import { generateEcho } from "@/lib/engines/echo";
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
-import { riferimentoInCache, modoSomiglianza } from "@/lib/identity-score";
+import { riferimentoInCache, DISTANZA_STESSA_PERSONA } from "@/lib/identity-score";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 import { eseguiGruppo, dividiRoyalty, type Protagonista } from "@/lib/gruppo";
 import { refundJobVolt, type EchoJobRow } from "@/lib/echo-job";
@@ -54,7 +54,10 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
       persone,
       riferimenti,
       fotografia: p.photographic,
-      ripassa: modoSomiglianza() === "applica",
+      // Nei gruppi un passaggio per volto non basta sempre (prova dal vivo del
+      // 19/9: Gabriella 35% senza la sua frangia): chi resta sotto soglia si
+      // ripassa una volta, in qualunque modo di somiglianza.
+      ripassa: true,
       genera: async (prompt, immagini) => {
         const r = await generateEcho({ prompt, references: immagini, size: p.echoSize, quality: p.echoQuality });
         modello = r.model;
@@ -62,10 +65,21 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
       },
     });
 
+    // Somiglianza: anche dopo il ripasso una persona non e' "lei" (oltre la
+    // distanza della stessa persona, o il suo volto non si trova): la scena non si
+    // consegna e i crediti tornano. Una foto con il nome di qualcuno che non c'e'
+    // non esce. Misuratore non disponibile = non si blocca (come lo scatto singolo).
+    const persa = esito.misura?.persone.find((x) => x.distanza == null || x.distanza > DISTANZA_STESSA_PERSONA);
+    if (persa) {
+      const chi = gruppo.find((g) => g.handle === persa.chiave)?.alias ?? persa.chiave;
+      console.warn(`[ECHO gruppo ${job.id}] ${chi} non tenuta (d ${persa.distanza ?? "n/d"}) dopo ${esito.passaggi} passaggi: non consegnata`);
+      throw new Error(`La scena non ha tenuto il volto di ${chi}: non te la consegniamo e non ti addebitiamo nulla. Riprova con una scena più semplice o con i volti più in primo piano.`);
+    }
+
     // VETO: nessun volto protetto nello scatto finale (fail-closed, come lo scatto singolo).
     const verdetto = outputScanVerdict(await scanGeneratedImageForProtected(esito.png));
     if (verdetto === "unavailable") throw new Error("Verifica di tutela non disponibile ora: generazione annullata, riprova tra poco, nessun costo a tuo carico.");
-    if (verdetto === "regenerate") throw new Error("Nella scena e' comparso un volto registrato come protetto: generazione annullata per tutela, nessun costo a tuo carico.");
+    if (verdetto === "regenerate") throw new Error("Nella scena è comparso un volto registrato come protetto: generazione annullata per tutela, nessun costo a tuo carico.");
 
     const primo = gruppo[0];
     const cleanUrl = await uploadPublicImage("generations", `${primo.avatarId}/${crypto.randomUUID()}.png`, esito.png);

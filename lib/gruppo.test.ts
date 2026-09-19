@@ -7,7 +7,7 @@ const p = (alias: string): Protagonista => ({ avatarId: alias, handle: alias, al
 
 describe("scene di gruppo", () => {
   it("foto per persona entro il limite di 10 immagini", () => {
-    expect(fotoPerPersona(2)).toBe(3);
+    expect(fotoPerPersona(2)).toBe(4);
     expect(fotoPerPersona(3)).toBe(3);
     expect(fotoPerPersona(4)).toBe(2);
   });
@@ -15,8 +15,8 @@ describe("scene di gruppo", () => {
   it("il prompt della scena dichiara l'ordine e le immagini di ognuno", () => {
     const t = promptScena("al bar", [p("gabriella"), p("stella")]);
     expect(t).toContain("exactly 2 people");
-    expect(t).toContain("Person 1 (first from the LEFT) is exactly the person in reference images 1-3, gabriella identity");
-    expect(t).toContain("Person 2 (second from the LEFT) is exactly the person in reference images 4-6");
+    expect(t).toContain("Person 1 (first from the LEFT) is exactly the person in reference images 1-4, gabriella identity");
+    expect(t).toContain("Person 2 (second from the LEFT) is exactly the person in reference images 5-8");
     expect(promptPassaggio(1, 3)).toContain("second from the LEFT");
   });
 
@@ -48,7 +48,7 @@ describe("scene di gruppo", () => {
     const volti = async () => [{ x: 100, lato: 150, desc: [0] }, { x: 400, lato: 150, desc: [1] }];
     const r = await eseguiGruppo({ scena: "al bar", persone: [p("gabriella"), p("stella")], riferimenti: [null, null], genera, volti });
     expect(chiamate).toHaveLength(3); // scena + 2 passaggi
-    expect(chiamate[0].n).toBe(6); // 3 foto a testa
+    expect(chiamate[0].n).toBe(8); // 4 foto a testa
     expect(chiamate[1].primo).toBe("uscita1"); // il passaggio parte dalla scena
     expect(chiamate[2].primo).toBe("uscita2"); // e il secondo dal primo passaggio
     expect(chiamate[2].n).toBe(9); // la foto corrente + le 8 foto vere di Stella

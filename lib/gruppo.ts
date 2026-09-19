@@ -30,7 +30,8 @@ export type Genera = (prompt: string, immagini: Buffer[]) => Promise<{ png: Buff
 const ORDINALI = ["first", "second", "third", "fourth"];
 
 export function fotoPerPersona(n: number): number {
-  return Math.max(1, Math.min(3, Math.floor(MAX_IMMAGINI / n)));
+  // 2 persone: 4 foto a testa; 3: 3; 4: 2 (limite del motore: 10 immagini)
+  return Math.max(1, Math.min(4, Math.floor(MAX_IMMAGINI / n)));
 }
 
 // "The person is an Italian woman, apparent age 18-25. Their natural hair is blonde."
@@ -56,7 +57,7 @@ export function promptScena(scena: string, persone: Protagonista[], fotografia?:
   const pulita = scena.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
   return [
     `Photorealistic group photograph of exactly ${persone.length} people, standing or sitting side by side from left to right in this order. ${chi}`,
-    "Each person keeps their own face, eyes, eyebrows, nose, lips, hairline and distinctive features identical to their references.",
+    "Each person keeps their own face, eyes, eyebrows, nose, lips, hairline, hairstyle around the face (fringe or bangs, parting) and distinctive features identical to their references.",
     "All faces large, sharp, fully visible and inside the frame, turned roughly toward the camera. Nobody else in the foreground; any background people far away, out of focus and not recognizable.",
     fotografia ? fotografia.trim() : "",
     `Scene: ${pulita}.`,
@@ -66,8 +67,8 @@ export function promptScena(scena: string, persone: Protagonista[], fotografia?:
 export function promptPassaggio(posizione: number, totale: number): string {
   return [
     `Edit the FIRST image. It shows ${totale} people. Change ONLY the face of the person who is ${ORDINALI[posizione]} from the LEFT`,
-    "so that it is exactly the same person as in all the other reference images: same face shape, eyes, eyebrows, nose, lips, jaw and hairline.",
-    "Keep that person's expression, head angle, pose, hair length, clothes and accessories, and keep every other person, the light and the background completely unchanged. Photorealistic.",
+    "so that it is exactly the same person as in all the other reference images: same face shape, eyes, eyebrows, nose, lips, jaw, hairline and hairstyle around the face (fringe or bangs, parting, hair colour), exactly as in those references.",
+    "Keep that person's expression, head angle, pose, clothes and accessories, and keep every other person, the light and the background completely unchanged. Photorealistic.",
   ].join(" ");
 }
 
