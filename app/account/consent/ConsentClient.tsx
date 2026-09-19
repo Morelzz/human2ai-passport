@@ -8,18 +8,35 @@ import { IDENTITY_KIT, IDENTITY_LABELS } from "@/lib/types";
 interface Props {
   handle: string;
   commercialConsent: boolean;
+  videoConsent?: boolean | null; // null = colonna non ancora in DB: interruttore nascosto
   revokedAt: string | null;
   availableForBooking: boolean;
   protectionOnly?: boolean;
   kit: Record<keyof typeof IDENTITY_KIT, string | null>;
 }
 
-export default function ConsentClient({ handle, commercialConsent, revokedAt, availableForBooking, protectionOnly = false, kit }: Props) {
+export default function ConsentClient({ handle, commercialConsent, videoConsent = null, revokedAt, availableForBooking, protectionOnly = false, kit }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [booking, setBooking] = useState(availableForBooking);
   const [consent, setConsent] = useState(commercialConsent);
+  const [video, setVideo] = useState(videoConsent === true);
+
+  async function setVideoConsent(next: boolean) {
+    setBusy(true);
+    setError(null);
+    const res = await fetch("/api/avatar/consent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "set_video_consent", value: next }),
+    });
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) { setError(json.error ?? "Errore"); return; }
+    setVideo(next);
+    router.refresh();
+  }
 
   async function toggleBooking() {
     const next = !booking;
@@ -127,6 +144,29 @@ export default function ConsentClient({ handle, commercialConsent, revokedAt, av
                 </span>
               </button>
             </div>
+
+            {/* Video (Anima): un si' a parte, sopra al si' commerciale. Nascosto finche'
+                la colonna non c'e' (videoConsent null) e per i volti in sola protezione. */}
+            {videoConsent !== null && !protectionOnly && (
+              <div style={{ background: "var(--surface)", border: "1px solid var(--hairline-soft)", borderRadius: 16, padding: "1.5rem", marginBottom: "1.2rem" }}>
+                <p className="kicker" style={{ margin: "0 0 0.3rem" }}>VIDEO</p>
+                <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0 0 1rem", lineHeight: 1.5 }}>
+                  Con il sì, chi ha uno scatto certificato con il tuo volto può animarlo in un video di 5 o 10 secondi. Mai audio: la tua voce non si genera. Ogni video è controllato fotogramma per fotogramma e ti paga la tua parte.
+                </p>
+                <button type="button" role="switch" aria-checked={video} disabled={busy || (!consent && !video)} onClick={() => setVideoConsent(!video)}
+                  style={{ display: "flex", alignItems: "center", gap: "0.8rem", width: "100%", background: "transparent", border: "none", cursor: busy || (!consent && !video) ? "default" : "pointer", textAlign: "left", padding: 0, opacity: !consent && !video ? 0.55 : 1 }}>
+                  <span style={{ flex: "none", width: 40, height: 23, borderRadius: 999, background: video ? "var(--verified-c)" : "var(--hairline)", position: "relative", transition: "background 0.15s" }}>
+                    <span style={{ position: "absolute", top: 2, left: video ? 19 : 2, width: 19, height: 19, borderRadius: "50%", background: "#fff", transition: "left 0.15s" }} />
+                  </span>
+                  <span>
+                    <span style={{ display: "block", color: "var(--text)", fontSize: "0.85rem", fontWeight: 600 }}>Video: {video ? "consentito" : "non consentito"}</span>
+                    <span style={{ display: "block", color: "var(--text-faint)", fontSize: "0.72rem", marginTop: "0.2rem", lineHeight: 1.5 }}>
+                      {!consent && !video ? "Serve prima il sì all'uso commerciale." : "Puoi cambiare idea quando vuoi: blocca i video futuri, non quelli già fatti."}
+                    </span>
+                  </span>
+                </button>
+              </div>
+            )}
 
             {/* Ingaggi reali (B3): segnale opt-in. Il brand contatta via /contatti.
                 Nascosto per i volti in sola protezione (VETO). */}

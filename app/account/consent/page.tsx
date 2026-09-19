@@ -17,6 +17,9 @@ export default async function ConsentPage() {
     .maybeSingle();
 
   if (!avatar) redirect("/account");
+  // Consenso al video (anima_video.sql): lettura a parte, se la colonna manca l'interruttore non c'e'.
+  const { data: vid, error: vidErr } = await admin.from("avatars").select("video_consent").eq("owner_id", user.id).maybeSingle();
+  const videoConsent = vidErr ? null : Boolean((vid as { video_consent?: boolean } | null)?.video_consent);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
@@ -25,6 +28,7 @@ export default async function ConsentPage() {
     <ConsentClient
       handle={avatar.handle}
       commercialConsent={avatar.commercial_consent ?? true}
+      videoConsent={videoConsent}
       revokedAt={avatar.revoked_at}
       availableForBooking={avatar.available_for_booking ?? false}
       protectionOnly={avatar.protection_only ?? false}

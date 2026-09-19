@@ -12,7 +12,8 @@ export const runtime = "nodejs";
 type Action =
   | { type: "revoke_all" }
   | { type: "reactivate" }
-  | { type: "set_commercial_consent"; value: boolean };
+  | { type: "set_commercial_consent"; value: boolean }
+  | { type: "set_video_consent"; value: boolean };
 
 export async function POST(request: Request) {
   const auth = await createAuthClient();
@@ -81,6 +82,29 @@ export async function POST(request: Request) {
       avatar_id: avatar.id,
       event_type: value ? "GRANTED" : "CATEGORY_REMOVED",
       detail: value ? "Uso commerciale: consentito" : "Uso commerciale: non consentito",
+      occurred_at: today,
+    });
+    return NextResponse.json({ ok: true });
+  }
+
+  // Video (Anima): un si' a parte, che si da' solo sopra al si' commerciale.
+  if (action.type === "set_video_consent") {
+    const value = action.value === true;
+    if (value) {
+      const { data: comm } = await admin.from("avatars").select("commercial_consent").eq("id", avatar.id).maybeSingle();
+      if (comm?.commercial_consent === false) {
+        return NextResponse.json({ error: "Per dire sì al video serve prima il sì all'uso commerciale." }, { status: 409 });
+      }
+    }
+    const patch: Record<string, unknown> = { video_consent: value };
+    if (value) patch.video_consent_at = new Date().toISOString();
+    const { error: vErr } = await admin.from("avatars").update(patch).eq("id", avatar.id);
+    // Colonna assente = migrazione anima_video.sql non ancora applicata.
+    if (vErr) return NextResponse.json({ error: "Il consenso al video arriva a breve." }, { status: 503 });
+    await admin.from("consent_events").insert({
+      avatar_id: avatar.id,
+      event_type: value ? "GRANTED" : "CATEGORY_REMOVED",
+      detail: value ? "Video (Anima): consentito, senza audio" : "Video (Anima): non consentito",
       occurred_at: today,
     });
     return NextResponse.json({ ok: true });
