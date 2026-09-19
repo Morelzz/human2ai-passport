@@ -71,6 +71,7 @@ export function CreaClient({
   // Scena di gruppo: la proposta del casting (prima di spendere) e il gruppo al lavoro.
   const [propostaGruppo, setPropostaGruppo] = useState<{ ruolo: string; volto: Volto; vicino: boolean; fisso: boolean }[] | null>(null);
   const [inGruppo, setInGruppo] = useState<Volto[] | null>(null);
+  const [follaGruppo, setFollaGruppo] = useState(false); // la scena chiede anche gente sullo sfondo
   const vivo = useRef(true);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -186,6 +187,7 @@ export function CreaClient({
           setErrore(`Nel registro non c'è ancora nessuno per "${manca.ruolo}". Riscrivi la scena, o scegli tu un volto solo.`);
           return;
         }
+        setFollaGruppo(j.folla === true || persone.length > MAX_PERSONE_GRUPPO);
         setPropostaGruppo(lista as { ruolo: string; volto: Volto; vicino: boolean; fisso: boolean }[]);
         return;
       }
@@ -783,6 +785,9 @@ export function CreaClient({
             <p className="text-[0.85rem] leading-relaxed text-muted">
               Prima la scena, poi ogni volto rifatto con le foto verificate della sua persona: {scattiPerGruppo(n)} passaggi, qualche minuto.
               {" "}{formatEur(g.quote[n - 1])} a ciascuno.
+              {(follaGruppo || n === MAX_PERSONE_GRUPPO) && (
+                <> In primo piano ci sono al massimo {MAX_PERSONE_GRUPPO} persone vere del registro: il resto della gente resta sullo sfondo, sfocata e non riconoscibile.</>
+              )}
             </p>
             <div className="flex flex-wrap gap-2">
               <button

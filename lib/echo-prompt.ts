@@ -34,6 +34,9 @@ export function buildEchoPrompt(
   const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
   let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
+  // Protagonisti e folla (19/9/2026): l'unico volto riconoscibile e' quello con
+  // il consenso; chiunque altro resta sullo sfondo, piccolo e sfocato.
+  base += " This person is the only recognizable face in the image: any other people stay in the background, small, out of focus and not recognizable.";
   if (identityText) base += ` ${identityText}`;
   if (poseText) base += ` The person's body pose: ${poseText}.`;
   const clauses = extras.map(clauseForExtra);
