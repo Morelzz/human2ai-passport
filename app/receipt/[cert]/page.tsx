@@ -94,6 +94,9 @@ export default async function ReceiptPage({ params }: Props) {
             {/* Il consenso oggi e' si/no: la categoria compare solo sulle generazioni che l'avevano */}
             {r.generation.category && <Field label="Categoria d&apos;uso">{r.generation.category}</Field>}
             <Field label="Modalità">{MODALITA[r.generation.mode] ?? r.generation.mode}</Field>
+            {r.likeness.score !== null && (
+              <Field label="Somiglianza verificata">{r.likeness.score}% con le foto verificate di {r.subject.alias ?? "questa persona"}</Field>
+            )}
           </div>
 
           {/* Esito consenso */}

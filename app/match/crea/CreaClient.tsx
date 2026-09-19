@@ -225,6 +225,7 @@ export function CreaClient({
         const nuovo: Esito = {
           certificate: String(pj.certificate),
           generationId: pj.generation_id ? String(pj.generation_id) : undefined,
+          somiglianza: typeof pj.identity_score === "number" ? pj.identity_score : undefined,
           alias: v.alias,
           handle: v.handle,
           size: pj.size ? String(pj.size) : livello.size,

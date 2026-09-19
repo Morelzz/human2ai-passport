@@ -28,6 +28,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   // A job concluso serve anche l'id della generazione: la pagina Crea ci porta
   // Ward (/ward/content/[id]). Cercato per certificato, solo tra quelle del buyer.
   let generationId: string | undefined;
+  let identityScore: number | undefined;
   if (job.status === "done" && job.certificate) {
     const { data: gen } = await admin
       .from("generations")
@@ -36,9 +37,15 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       .eq("buyer_id", user.id)
       .maybeSingle();
     generationId = gen?.id ?? undefined;
+    if (generationId) {
+      const { data: s } = await admin.from("generations").select("identity_score").eq("id", generationId).maybeSingle();
+      const v = (s as { identity_score?: unknown } | null)?.identity_score;
+      if (typeof v === "number") identityScore = v;
+    }
   }
   return NextResponse.json({
     generation_id: generationId,
+    identity_score: identityScore,
     status: job.status, // pending | running | done | error
     error: job.status === "error" ? job.error : undefined,
     category: jobParams?.category ?? null,

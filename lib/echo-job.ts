@@ -19,6 +19,7 @@ import { generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/ech
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
+import { riferimentoInCache, misuraScatto, migliore, modoSomiglianza, verdetto as verdettoSomiglianza, type MisuraSomiglianza } from "@/lib/identity-score";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 
@@ -253,13 +254,23 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     const extraMeta: ExtraMeta[] = (p.extras ?? []).map((e) => ({ role: e.role, desc: e.desc }));
     const references = [...identity.slice(0, 10 - extraBuffers.length), ...extraBuffers];
 
+    // Somiglianza misurata (lib/identity-score): descrittori delle foto vere,
+    // solo in memoria. Se il misuratore non e' disponibile la generazione va
+    // avanti uguale: misurare non deve mai fermare uno scatto.
+    const riferimento = await riferimentoInCache(job.handle, identity).catch(() => null);
+    const modo = modoSomiglianza();
+
     // La chiamata lunga (può durare minuti): qui NON c'è cap di durata.
     // Fase 2.3 (VETO): dopo ogni generazione, scan dei volti generati contro
     // l'indice protetti; se somiglia a un protetto, scarta e rigenera (limite
     // tentativi). Lo scan gira su WASM (worker) ed e' fail-closed: se non puo'
     // verificare i volti protetti, la generazione viene annullata (CRIT-7).
+    // Poi la somiglianza: in modo "applica", sotto soglia o con un volto
+    // sconosciuto riconoscibile si rifa' una volta e si consegna il migliore.
     const MAX_ATTEMPTS = 2;
     let result!: Awaited<ReturnType<typeof generateEcho>>;
+    let scelto: { result: Awaited<ReturnType<typeof generateEcho>>; misura: MisuraSomiglianza | null } | null = null;
+    let costoTentativi = 0;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       result = await generateEcho({
         prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText, p.identityText, p.photographic),
@@ -267,6 +278,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
         size: p.echoSize,
         quality: p.echoQuality,
       });
+      costoTentativi += echoCostCentsFromUsage(result.usage) ?? 0;
       const scan = await scanGeneratedImageForProtected(result.png);
       const verdict = outputScanVerdict(scan);
       if (verdict === "unavailable") {
@@ -274,18 +286,30 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
         // protetti -> non rilasciamo l'immagine (riprovare non aiuta, e' una indisponibilita').
         throw new Error("Verifica di tutela non disponibile ora: generazione annullata, riprova tra poco, nessun costo a tuo carico.");
       }
-      if (verdict === "release") break;
-      // verdict === "regenerate": un volto somiglia a un protetto -> nuovo tentativo.
-      console.warn(`[ECHO job ${job.id}] output somiglia a un volto protetto (dist ${scan.distance?.toFixed(3)}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
-      if (attempt === MAX_ATTEMPTS) {
-        throw new Error("Il risultato somigliava a un volto registrato come protetto: generazione annullata per tutela, nessun costo a tuo carico.");
+      if (verdict === "regenerate") {
+        // Un volto somiglia a un protetto -> nuovo tentativo.
+        console.warn(`[ECHO job ${job.id}] output somiglia a un volto protetto (dist ${scan.distance?.toFixed(3)}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
+        if (attempt === MAX_ATTEMPTS) {
+          if (scelto) break; // c'e' gia' un tentativo pulito: si consegna quello
+          throw new Error("Il risultato somigliava a un volto registrato come protetto: generazione annullata per tutela, nessun costo a tuo carico.");
+        }
+        continue;
       }
+      const misura = riferimento ? await misuraScatto(result.png, [riferimento]) : null;
+      if (!scelto || migliore(misura, scelto.misura)) scelto = { result, misura };
+      if (modo !== "applica" || !misura || verdettoSomiglianza(misura).ok || attempt === MAX_ATTEMPTS) break;
+      console.warn(`[ECHO job ${job.id}] somiglianza sotto soglia (${verdettoSomiglianza(misura).motivi.join(",")}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
     }
+    if (!scelto) throw new Error("Nessun risultato consegnabile.");
+    result = scelto.result;
+    const misuraFinale = scelto.misura;
+    const esitoPersona = misuraFinale?.persone[0] ?? null;
 
     // Carica il PNG pulito (il download imporrà la filigrana invisibile).
     const cleanUrl = await uploadPublicImage("generations", `${job.avatar_id}/${crypto.randomUUID()}.png`, result.png);
 
-    const engineCostCents = echoCostCentsFromUsage(result.usage);
+    // Costo reale: tutti i tentativi pagati al motore, non solo quello consegnato.
+    const engineCostCents = costoTentativi > 0 ? costoTentativi : echoCostCentsFromUsage(result.usage);
     const { gross_cents, fee_cents, royalty_cents, surcharge_cents } = p.pricing;
 
     // Credenziale d'uscita: hash anonimo (nessun dato biometrico) — seme del C2PA.
@@ -324,6 +348,16 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     if (ph?.framing) meta.framing = ph.framing;
     if (ph?.expression) meta.expression = ph.expression;
     await admin.from("generations").update(meta).eq("id", genId);
+    // Somiglianza misurata: update A PARTE (colonne di identity_score.sql). Se la
+    // migrazione non c'e' ancora fallisce in silenzio senza toccare il resto.
+    if (misuraFinale) {
+      await admin.from("generations").update({
+        identity_score: esitoPersona?.percentuale ?? null,
+        identity_distance: esitoPersona?.distanza ?? null,
+        identity_extra_faces: misuraFinale.sconosciuti,
+      }).eq("id", genId);
+      console.log(`[ECHO job ${job.id}] somiglianza ${esitoPersona?.percentuale ?? "n/d"}% (d ${esitoPersona?.distanza ?? "n/d"}), volti sconosciuti ${misuraFinale.sconosciuti}, modo ${modo}`);
+    }
 
     // Accredita la royalty NETTA + incrementa utilizzi.
     const { data: av } = await admin

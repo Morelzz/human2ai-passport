@@ -7,6 +7,7 @@ import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 export interface Esito {
   certificate: string;
   generationId?: string;
+  somiglianza?: number; // % misurata con le foto verificate (lib/identity-score)
   alias: string;
   handle: string;
   size?: string;
@@ -49,7 +50,13 @@ export function Risultato({
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CC6B2" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M20 6 9 17l-5-5" /></svg>
             Certificato {esito.certificate.slice(0, 8)}
           </span>
-          <span className="inline-flex h-[30px] items-center rounded-full bg-[rgba(12,15,23,0.68)] px-3 text-[0.8rem] text-[#F2E9D8]">Filigrana invisibile</span>
+          {esito.somiglianza !== undefined ? (
+            <span title={`Misurata con le foto verificate di ${esito.alias}`} className="inline-flex h-[30px] items-center rounded-full bg-[rgba(12,15,23,0.68)] px-3 text-[0.8rem] text-[#F2E9D8]">
+              Somiglianza {esito.somiglianza}%
+            </span>
+          ) : (
+            <span className="inline-flex h-[30px] items-center rounded-full bg-[rgba(12,15,23,0.68)] px-3 text-[0.8rem] text-[#F2E9D8]">Filigrana invisibile</span>
+          )}
         </div>
       </div>
 

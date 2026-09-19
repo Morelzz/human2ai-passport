@@ -14,6 +14,8 @@ export type ComplianceReceipt = {
   issued_at: string;
   subject: { handle: string | null; alias: string | null; registry_url: string | null };
   generation: { date: string; category: string | null; mode: string };
+  // Somiglianza misurata con le foto verificate della persona (null = non misurata).
+  likeness: { score: number | null };
   consent: {
     verified_person: boolean;
     consent_since: string | null;
@@ -44,6 +46,11 @@ export async function buildComplianceReceipt(
 
   const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
   const base = siteUrl();
+  // Lettura a parte: la colonna arriva con identity_score.sql; se manca, niente numero.
+  const { data: somiglianza } = await admin.from("generations").select("identity_score").eq("certificate", cert).maybeSingle();
+  const score = typeof (somiglianza as { identity_score?: unknown } | null)?.identity_score === "number"
+    ? (somiglianza as { identity_score: number }).identity_score
+    : null;
   const category = gen.category ?? null;
   // Modello senza categorie (Fase 2/4): l'uso è autorizzato se la persona acconsente
   // all'uso commerciale. Al momento della generazione il gate del consenso l'ha già imposto.
@@ -60,6 +67,7 @@ export async function buildComplianceReceipt(
       registry_url: av?.handle ? `${base}/passport/${av.handle}` : null,
     },
     generation: { date: String(gen.created_at).slice(0, 10), category, mode: gen.mode ?? "commercial" },
+    likeness: { score },
     consent: {
       verified_person: true, // l'avatar e' nel registro consensuale verificato
       consent_since: av?.consent_start ?? null,
