@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { geistOgFonts } from "@/lib/og-fonts";
+import { ogFonts } from "@/lib/og-fonts";
 import { checkIcon } from "@/lib/og-icons";
 import { OG, OG_SIZE, OgCornice, OgPillola, ogMarchio } from "@/lib/og-casa";
 
@@ -14,12 +14,12 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export default async function Image() {
-  const [fonts, marchio] = await Promise.all([geistOgFonts(), ogMarchio()]);
+  const [fonts, marchio] = await Promise.all([ogFonts(), ogMarchio()]);
   return new ImageResponse(
     (
       <OgCornice occhiello="Registro dei volti" marchioUri={marchio}>
         <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-          <div style={{ display: "flex", flexDirection: "column", fontSize: 88, letterSpacing: "-0.045em", lineHeight: 1.02 }}>
+          <div style={{ display: "flex", flexDirection: "column", fontSize: 88, fontWeight: 700, letterSpacing: "-0.045em", lineHeight: 1.02 }}>
             <div style={{ display: "flex", color: OG.crema }}>Real Humans. Real Rights.</div>
             <div style={{ display: "flex", color: OG.ambra }}>Real Earnings.</div>
           </div>

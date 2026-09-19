@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { geistOgFonts } from "@/lib/og-fonts";
+import { ogFonts } from "@/lib/og-fonts";
 import { OG, OG_SIZE, OgCornice, OgPillola, ogMarchio } from "@/lib/og-casa";
 
 // OG card dedicata di /trasparenza, nella cornice della casa nuova. Le due
@@ -12,12 +12,12 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export default async function Image() {
-  const [fonts, marchio] = await Promise.all([geistOgFonts(), ogMarchio()]);
+  const [fonts, marchio] = await Promise.all([ogFonts(), ogMarchio()]);
   return new ImageResponse(
     (
       <OgCornice occhiello="Rapporto di trasparenza" marchioUri={marchio}>
         <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-          <div style={{ display: "flex", flexDirection: "column", fontSize: 92, letterSpacing: "-0.045em", lineHeight: 1.02 }}>
+          <div style={{ display: "flex", flexDirection: "column", fontSize: 92, fontWeight: 700, letterSpacing: "-0.045em", lineHeight: 1.02 }}>
             <div style={{ display: "flex", color: OG.crema }}>La prova</div>
             <div style={{ display: "flex", color: OG.ambra }}>è nei numeri.</div>
           </div>

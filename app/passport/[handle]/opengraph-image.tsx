@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { isPublicAvatar } from "@/lib/registry";
 import { TIER_CONFIG, Tier } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
-import { geistOgFonts } from "@/lib/og-fonts";
+import { ogFonts } from "@/lib/og-fonts";
 import { checkIcon, crossIcon } from "@/lib/og-icons";
 import { OG, OG_SIZE, OgCornice, OgPillola, ogMarchio } from "@/lib/og-casa";
 
@@ -27,13 +27,13 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
   const revoked = Boolean(avatar.revoked_at);
   const tier = TIER_CONFIG[avatar.tier as Tier] ?? { label: avatar.tier };
   const stato = revoked ? OG.corallo : OG.verde;
-  const [fonts, marchio] = await Promise.all([geistOgFonts(), ogMarchio()]);
+  const [fonts, marchio] = await Promise.all([ogFonts(), ogMarchio()]);
 
   return new ImageResponse(
     (
       <OgCornice occhiello="Passaporto del volto" destra={truncateToken(avatar.token_hash)} marchioUri={marchio}>
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          <div style={{ display: "flex", fontSize: 128, letterSpacing: "-0.05em", lineHeight: 0.95, color: revoked ? OG.tenue : OG.crema }}>
+          <div style={{ display: "flex", fontSize: 128, fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 0.95, color: revoked ? OG.tenue : OG.crema }}>
             {avatar.alias}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
