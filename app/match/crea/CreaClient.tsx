@@ -61,6 +61,12 @@ export function CreaClient({
   const [saldo, setSaldo] = useState<number | null>(null);
   const [proposta, setProposta] = useState<string | null>(null);
   const [miglioro, setMiglioro] = useState(false);
+  // Casting automatico: se non scegli nessuno, alla pressione di Genera sceglie
+  // Semblic dal registro (lib/casting) e poi lo dice.
+  const [sceltoDaSemblic, setSceltoDaSemblic] = useState(false);
+  const [castingInCorso, setCastingInCorso] = useState(false);
+  const [dubbio, setDubbio] = useState<{ ruolo: string; volto: Volto; differenze: string[] } | null>(null);
+  const [inScena, setInScena] = useState<string | null>(null);
   const vivo = useRef(true);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -86,7 +92,7 @@ export function CreaClient({
   const formatoSel = FORMATI.find((f) => f.v === formato) ?? FORMATI[0];
   const regiaAttiva = [inquadratura !== "auto", espressione !== "auto", posa !== "nessuna"].filter(Boolean).length;
   const avvisoFoto = terminiNonFoto(scena);
-  const puoGenerare = Boolean(volto) && (scena.trim().length >= 3 || riferimenti.length > 0);
+  const puoGenerare = scena.trim().length >= 3 || (Boolean(volto) && riferimenti.length > 0);
   const riepilogo = `${lookSel.l} · ${formatoSel.l} · ${livello.l}`;
   const miniatura = volto?.src ?? volti[0]?.src ?? "";
 
@@ -137,9 +143,50 @@ export function CreaClient({
     setMiglioro(false);
   }
 
-  async function genera() {
-    if (!volto) { setSceltaAperta(true); return; }
-    if (!puoGenerare) return;
+  async function casting() {
+    if (scena.trim().length < 4) { setSceltaAperta(true); return; }
+    setCastingInCorso(true);
+    setErrore(null);
+    setDubbio(null);
+    try {
+      const res = await fetch("/api/crea/casting", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ scena }) });
+      const j = await res.json();
+      setCastingInCorso(false);
+      if (!res.ok) { setErrore(j.error ?? "Non riesco a scegliere il volto, sceglilo tu"); return; }
+      const persone = (j.persone ?? []) as { ruolo: string; corrispondenza: "esatto" | "vicino" | null; differenze: string[]; volto: Volto | null }[];
+      if (persone.length === 0) {
+        setErrore("In questa scena non c'è nessuno. Semblic mette in scena persone vere del registro: scrivi chi c'è nella foto.");
+        return;
+      }
+      if (persone.length > 1) {
+        setErrore(`Questa scena ha ${persone.length} persone. Le scene di gruppo stanno arrivando: per ora scegli una persona sola, o riscrivi la scena con una protagonista.`);
+        return;
+      }
+      const p = persone[0];
+      const v = p.volto ? volti.find((x) => x.handle === p.volto!.handle) ?? p.volto : null;
+      if (!v) {
+        setErrore(`Nel registro non c'è ancora nessuno per "${p.ruolo}". Scegli tu un volto, o riscrivi la scena.`);
+        return;
+      }
+      if (p.corrispondenza === "vicino") {
+        setDubbio({ ruolo: p.ruolo, volto: v, differenze: p.differenze });
+        return;
+      }
+      setScelto(v.handle);
+      setSceltoDaSemblic(true);
+      setInScena(p.ruolo);
+      await genera(v, true);
+    } catch {
+      setCastingInCorso(false);
+      setErrore("Non riesco a scegliere il volto, sceglilo tu");
+    }
+  }
+
+  async function genera(override?: Volto, dalCasting = false) {
+    const volto = override ?? volti.find((v) => v.handle === scelto) ?? null;
+    if (!volto) { await casting(); return; }
+    if (!(scena.trim().length >= 3 || riferimenti.length > 0)) return;
+    const perSemblic = dalCasting || (sceltoDaSemblic && !override);
     setPannello(null);
     setErrore(null);
     setVoltGate(null);
@@ -204,10 +251,10 @@ export function CreaClient({
       return;
     }
     setStatoSet("coda");
-    await segui(String(j.jobId), volto, volt, t0);
+    await segui(String(j.jobId), volto, volt, t0, perSemblic);
   }
 
-  async function segui(jobId: string, v: Volto, volt: { spent: number } | undefined, t0: number) {
+  async function segui(jobId: string, v: Volto, volt: { spent: number } | undefined, t0: number, perSemblic = false) {
     const limite = t0 + 20 * 60 * 1000;
     while (vivo.current && Date.now() < limite) {
       await new Promise((r) => setTimeout(r, 3000));
@@ -226,6 +273,7 @@ export function CreaClient({
           certificate: String(pj.certificate),
           generationId: pj.generation_id ? String(pj.generation_id) : undefined,
           somiglianza: typeof pj.identity_score === "number" ? pj.identity_score : undefined,
+          dalCasting: perSemblic,
           alias: v.alias,
           handle: v.handle,
           size: pj.size ? String(pj.size) : livello.size,
@@ -260,7 +308,7 @@ export function CreaClient({
   if (fase === "set" && volto) {
     return (
       <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12">
-        <SulSet alias={volto.alias} ritratto={volto.src} stato={statoSet} inizio={inizio} riepilogo={riepilogo} volt={saldo !== null ? livello.volt : null} />
+        <SulSet alias={volto.alias} ritratto={volto.src} stato={statoSet} inizio={inizio} riepilogo={riepilogo} volt={saldo !== null ? livello.volt : null} inScena={sceltoDaSemblic ? inScena : null} />
       </main>
     );
   }
@@ -271,8 +319,9 @@ export function CreaClient({
           esito={esito}
           sessione={sessione}
           onScegli={setEsito}
-          onVariante={genera}
+          onVariante={() => genera()}
           onNuovo={() => { setFase("componi"); suInizio(); }}
+          onCambiaPersona={() => { setFase("componi"); setSceltaAperta(true); suInizio(); }}
           varianteVolt={saldo !== null ? livello.volt : null}
         />
       </main>
@@ -468,21 +517,27 @@ export function CreaClient({
               type="button"
               onClick={() => setSceltaAperta(true)}
               className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full pr-3 text-[0.95rem] font-semibold transition-colors ${
-                volto ? "bg-amber-soft pl-1 text-on-amber" : "border border-dashed border-amber pl-3.5 text-amber-ink"
+                volto ? "bg-amber-soft pl-1 text-on-amber" : "border border-amber/50 bg-surface pl-3 text-amber-ink"
               }`}
             >
               {volto ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={volto.src} alt="" className="h-8 w-8 rounded-full object-cover object-top" />
               ) : null}
-              {volto ? volto.alias : "Scegli un volto"}
+              {!volto && icona.stella}
+              {volto ? volto.alias : "Semblic sceglie per te"}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m6 9 6 6 6-6" /></svg>
             </button>
             {volto && (
               <span className="hidden items-center gap-1.5 text-[0.85rem] text-verified sm:inline-flex">
                 <i aria-hidden className="h-1.5 w-1.5 rounded-full bg-verified" />
-                consenso attivo
+                {sceltoDaSemblic ? "scelta da Semblic" : "consenso attivo"}
               </span>
+            )}
+            {volto && sceltoDaSemblic && (
+              <button type="button" onClick={() => { setScelto(null); setSceltoDaSemblic(false); }} className="hidden text-[0.85rem] font-semibold text-amber-ink hover:underline sm:inline">
+                fai scegliere di nuovo
+              </button>
             )}
             <span className="flex gap-2 sm:hidden">{pillole}{bottoneRif}</span>
             <button
@@ -511,9 +566,9 @@ export function CreaClient({
               {bottoneMic}
               <button
                 type="button"
-                onClick={genera}
-                disabled={Boolean(volto) && !puoGenerare}
-                aria-label={volto ? `Genera, ${prezzo}` : "Scegli un volto"}
+                onClick={() => genera()}
+                disabled={!puoGenerare || castingInCorso}
+                aria-label={`Genera, ${prezzo}`}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber text-on-amber transition-opacity disabled:opacity-40"
               >
                 {icona.su}
@@ -579,11 +634,11 @@ export function CreaClient({
               </span>
               <button
                 type="button"
-                onClick={genera}
-                disabled={Boolean(volto) && !puoGenerare}
+                onClick={() => genera()}
+                disabled={!puoGenerare || castingInCorso}
                 className="inline-flex h-[52px] items-center gap-2 rounded-full bg-amber px-6 text-[1rem] font-bold text-on-amber transition-colors hover:bg-amber-hover disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {volto ? "Genera" : "Scegli un volto"}
+                {castingInCorso ? "Scelgo il volto…" : "Genera"}
                 {icona.su}
               </button>
             </div>
@@ -619,6 +674,31 @@ export function CreaClient({
           onChange={(e) => { aggiungiRiferimento(e.target.files?.[0]); e.currentTarget.value = ""; }}
         />
       </div>
+
+      {dubbio && (
+        <div className="card mt-4 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={dubbio.volto.src} alt="" className="h-14 w-11 shrink-0 rounded-xl object-cover object-top" />
+            <p className="text-[0.92rem] leading-snug">
+              Nel registro non c&apos;è ancora qualcuno esattamente come &quot;{dubbio.ruolo}&quot;. La persona più vicina è <strong>{dubbio.volto.alias}</strong>
+              {dubbio.differenze.length ? `, con ${dubbio.differenze.join(" e ")} diversi` : ""}.
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <button
+              type="button"
+              onClick={() => { const d = dubbio; setDubbio(null); setScelto(d.volto.handle); setSceltoDaSemblic(true); setInScena(d.ruolo); void genera(d.volto, true); }}
+              className="h-10 rounded-full bg-amber px-4 text-[0.88rem] font-bold text-on-amber"
+            >
+              Usa {dubbio.volto.alias}
+            </button>
+            <button type="button" onClick={() => { setDubbio(null); setSceltaAperta(true); }} className="h-10 rounded-full border border-border px-4 text-[0.88rem] font-semibold">
+              Scelgo io
+            </button>
+          </div>
+        </div>
+      )}
 
       {(errore || voltGate) && (
         <div className="mt-4 flex flex-col gap-3">
@@ -712,7 +792,7 @@ export function CreaClient({
         <SceltaVolto
           volti={volti}
           scelto={scelto}
-          onScegli={(h) => { setScelto(h); setSceltaAperta(false); setErrore(null); }}
+          onScegli={(h) => { setScelto(h); setSceltoDaSemblic(false); setSceltaAperta(false); setErrore(null); setDubbio(null); }}
           onChiudi={() => setSceltaAperta(false)}
         />
       )}

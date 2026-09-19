@@ -16,6 +16,7 @@ export function SulSet({
   inizio,
   riepilogo,
   volt,
+  inScena = null,
 }: {
   alias: string;
   ritratto: string;
@@ -23,6 +24,7 @@ export function SulSet({
   inizio: number;
   riepilogo: string;
   volt: number | null;
+  inScena?: string | null; // casting automatico: il ruolo nella scena per cui Semblic ha scelto il volto
 }) {
   const [adesso, setAdesso] = useState(inizio);
   useEffect(() => {
@@ -34,6 +36,7 @@ export function SulSet({
   const accettato = stato !== "invio";
 
   const passi: { t: string; d: string; fatto: boolean; attivo: boolean; nota?: string }[] = [
+    ...(inScena ? [{ t: "Volto scelto per la scena", d: `${alias} dal registro, per \"${inScena}\"`, fatto: true, attivo: false }] : []),
     { t: "Consenso verificato", d: `${alias} ha detto sì all'uso commerciale, ed è ancora così`, fatto: accettato, attivo: !accettato },
     { t: "Identità agganciata", d: "Le sue foto verificate guidano il volto", fatto: accettato, attivo: false },
     { t: "Scena composta", d: riepilogo, fatto: accettato, attivo: false },

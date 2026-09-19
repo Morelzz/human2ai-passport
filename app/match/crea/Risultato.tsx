@@ -8,6 +8,7 @@ export interface Esito {
   certificate: string;
   generationId?: string;
   somiglianza?: number; // % misurata con le foto verificate (lib/identity-score)
+  dalCasting?: boolean; // il volto l'ha scelto Semblic (casting automatico)
   alias: string;
   handle: string;
   size?: string;
@@ -27,6 +28,7 @@ export function Risultato({
   onScegli,
   onVariante,
   onNuovo,
+  onCambiaPersona,
   varianteVolt,
 }: {
   esito: Esito;
@@ -34,6 +36,7 @@ export function Risultato({
   onScegli: (e: Esito) => void;
   onVariante: () => void;
   onNuovo: () => void;
+  onCambiaPersona?: () => void;
   varianteVolt: number | null;
 }) {
   const img = `/api/content/${esito.certificate}`;
@@ -68,6 +71,14 @@ export function Risultato({
         <p className="mt-3 text-pretty text-[1rem] leading-relaxed text-muted">
           {esito.alias} · {esito.riepilogo}
         </p>
+        {esito.dalCasting && (
+          <p className="mt-2 flex flex-wrap items-center gap-x-2 text-[0.92rem] text-muted">
+            <span>Nella foto c&apos;è <strong className="text-foreground">{esito.alias}</strong>: Semblic ha scelto questo volto per la tua scena.</span>
+            {onCambiaPersona && (
+              <button type="button" onClick={onCambiaPersona} className="font-semibold text-amber-ink hover:underline">Cambia persona</button>
+            )}
+          </p>
+        )}
 
         <div className="mt-6 flex flex-wrap gap-2.5">
           <a
