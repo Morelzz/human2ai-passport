@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Check, ArrowRight } from "lucide-react";
-import { splitEcho, formatEur } from "@/lib/wallet";
+import { formatEur } from "@/lib/wallet";
+import { FORMATI, qualitaPer } from "@/app/match/crea/opzioni";
+import { prezzoGruppo, scattiPerGruppo, MAX_PERSONE_GRUPPO } from "@/lib/gruppo-prezzi";
+import { LIVELLI, DURATE, prezzoAnima } from "@/lib/engines/anima-prezzi";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
@@ -14,16 +17,19 @@ export const metadata = {
 };
 
 // Pagina /prezzi: modello COST-PLUS (deciso 2026-06-29). Il prezzo parte dal
-// costo reale del motore (gpt-image-2) + un piccolo ricarico equo, diviso tra
-// noi e la persona. I numeri sono LIVE da lib/wallet (splitEcho), fonte unica:
-// se cambiano le tariffe, la pagina cambia da sola. Le modalità (risoluzione/
-// qualità) corrispondono a quelle generabili nello Studio.
-const MODES = [
-  { label: "Standard", detail: "1024 px, qualità media", size: "1024x1024", quality: "medium" },
-  { label: "Alta", detail: "1024 px, alta qualità", size: "1024x1024", quality: "high" },
-  { label: "2K", detail: "2048 px", size: "2048x2048", quality: "high" },
-  { label: "4K", detail: "fino a 3840 px", size: "3840x2160", quality: "high" },
-] as const;
+// costo reale del motore + un piccolo ricarico equo, diviso tra noi e la
+// persona. Fonte UNICA con la pagina Crea (19/9/2026): foto da qualitaPer
+// (formati e qualita' di Crea), scene di gruppo da lib/gruppo-prezzi, video da
+// lib/engines/anima-prezzi. Se cambia una tariffa, cambia qui da sola.
+const QUALITA = ["bozza", "alta", "massima"] as const;
+const TABELLA = FORMATI.map((f) => ({ formato: f, livelli: qualitaPer(f.v) }));
+const ALTA_VERTICALE = qualitaPer("verticale").find((q) => q.v === "alta")!;
+const GRUPPI = Array.from({ length: MAX_PERSONE_GRUPPO - 1 }, (_, i) => i + 2).map((n) => ({
+  n,
+  prezzo: prezzoGruppo({ gross_cents: ALTA_VERTICALE.volt, fee_cents: ALTA_VERTICALE.volt - ALTA_VERTICALE.royaltyCents, net_cents: ALTA_VERTICALE.royaltyCents, surcharge_cents: 0 }, n),
+}));
+const VIDEO = (["rapido", "standard", "cinema"] as const).map((l) => ({ livello: LIVELLI[l], durate: DURATE.map((d) => ({ d, p: prezzoAnima(l, d) })) }));
+const eur = (c: number) => formatEur(c);
 
 export default function PrezziPage() {
   return (
@@ -112,7 +118,7 @@ export default function PrezziPage() {
           </section>
         </Reveal>
 
-        {/* Quanto costa generare */}
+        {/* Quanto costa generare: foto, scene di gruppo, video */}
         <Reveal>
           <section className="mx-auto max-w-5xl px-5 py-14 sm:px-8">
             <div className="text-center">
@@ -122,29 +128,111 @@ export default function PrezziPage() {
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-pretty text-sm leading-relaxed text-muted sm:text-base">
                 Il prezzo parte dal costo reale del motore. Sopra, un ricarico onesto: una parte a noi,
-                una parte sempre alla persona. Più la risoluzione è alta più costa, mai oltre {"2 €"}.
+                una parte sempre alla persona. Gli stessi numeri che vedi in Crea prima di premere Genera.
               </p>
             </div>
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-              {MODES.map((m) => {
-                const s = splitEcho(null, m.size, m.quality);
-                return (
-                  <div key={m.label} className="card rounded-2xl p-4 transition-colors hover:border-amber/60 sm:p-6">
-                    <p className="kicker text-muted">{m.label}</p>
-                    <div className="mt-2 text-[1.6rem] font-bold tracking-[-0.03em] sm:text-3xl">{formatEur(s.gross_cents)}</div>
-                    <p className="mt-1 text-xs text-faint">{m.detail}</p>
-                    <div className="mt-4 flex flex-wrap items-center justify-between gap-x-2 border-t border-border pt-3">
-                      <span className="text-[0.8rem] font-semibold text-verified sm:text-sm">Alla persona</span>
-                      <span className="text-sm font-bold text-verified">{formatEur(s.net_cents)}</span>
-                    </div>
-                  </div>
-                );
-              })}
+
+            {/* Foto: formato x qualita' */}
+            <div className="mt-10">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="text-[1.15rem] font-bold tracking-[-0.02em]">Una foto</h3>
+                <span className="text-xs text-faint">Una foto non supera mai 2 €. In verde la parte alla persona.</span>
+              </div>
+              <div className="card mt-3 overflow-hidden rounded-2xl">
+                <table className="w-full border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-[0.78rem] text-muted">
+                      <th className="px-3 py-3 font-semibold sm:px-5">Qualità</th>
+                      {TABELLA.map((t) => (
+                        <th key={t.formato.v} className="px-2 py-3 font-semibold sm:px-5">{t.formato.l}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {QUALITA.map((q, i) => (
+                      <tr key={q} className={i < QUALITA.length - 1 ? "border-b border-border" : ""}>
+                        <td className="px-3 py-3 align-top sm:px-5">
+                          <span className="block font-semibold">{q === "massima" ? "Stampa" : TABELLA[0].livelli[i].l}</span>
+                          <span className="block text-xs text-faint">{TABELLA[0].livelli[i].desc}</span>
+                        </td>
+                        {TABELLA.map((t) => {
+                          const l = t.livelli[i];
+                          return (
+                            <td key={t.formato.v} className="px-2 py-3 align-top tabular-nums sm:px-5">
+                              <span className="block font-bold">{eur(l.volt)}</span>
+                              <span className="block text-xs font-semibold text-verified">{eur(l.royaltyCents)}</span>
+                              <span className="hidden text-[0.7rem] text-faint sm:block">{l.size.replace("x", "×")}{q === "massima" ? ` · ${l.l.replace("Stampa ", "")}` : ""}</span>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
+
+            <div className="mt-10 grid gap-4 lg:grid-cols-2">
+              {/* Scene di gruppo */}
+              <div className="card rounded-2xl p-5 sm:p-6">
+                <h3 className="text-[1.15rem] font-bold tracking-[-0.02em]">Scena di gruppo</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted">
+                  Prima la scena, poi ogni volto rifatto con le foto verificate della sua persona: con N persone il motore lavora N+1 volte.
+                  La parte delle persone si divide in parti uguali. Esempi in Alta, verticale:
+                </p>
+                <ul className="mt-4 flex flex-col divide-y divide-border">
+                  {GRUPPI.map((g) => (
+                    <li key={g.n} className="flex items-baseline justify-between gap-3 py-2.5 tabular-nums">
+                      <span className="text-sm font-semibold">{g.n} persone <span className="font-normal text-faint">· {scattiPerGruppo(g.n)} passaggi</span></span>
+                      <span className="text-right text-sm">
+                        <span className="font-bold">{eur(g.prezzo.gross_cents)}</span>
+                        <span className="ml-2 text-xs font-semibold text-verified">{eur(g.prezzo.quote[g.n - 1])} a testa</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs leading-relaxed text-faint">In primo piano al massimo {MAX_PERSONE_GRUPPO} persone vere: il resto della gente resta sullo sfondo, non riconoscibile.</p>
+              </div>
+
+              {/* Anima: video */}
+              <div className="card rounded-2xl p-5 sm:p-6">
+                <h3 className="text-[1.15rem] font-bold tracking-[-0.02em]">Anima, lo scatto diventa video</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted">
+                  Da uno scatto certificato, con il sì al video della persona. Mai audio. Ogni video è controllato fotogramma per fotogramma prima di arrivarti.
+                </p>
+                <div className="mt-4 overflow-hidden rounded-xl border border-border">
+                  <table className="w-full border-collapse text-left text-sm tabular-nums">
+                    <thead>
+                      <tr className="border-b border-border text-[0.78rem] text-muted">
+                        <th className="px-3 py-2.5 font-semibold">Livello</th>
+                        {DURATE.map((d) => <th key={d} className="px-3 py-2.5 font-semibold">{d} secondi</th>)}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {VIDEO.map((v, i) => (
+                        <tr key={v.livello.v} className={i < VIDEO.length - 1 ? "border-b border-border" : ""}>
+                          <td className="px-3 py-2.5 align-top">
+                            <span className="block font-semibold">{v.livello.l}</span>
+                            <span className="block text-xs text-faint">{v.livello.desc}</span>
+                          </td>
+                          {v.durate.map((x) => (
+                            <td key={x.d} className="px-3 py-2.5 align-top">
+                              <span className="block font-bold">{eur(x.p.gross_cents)}</span>
+                              <span className="block text-xs font-semibold text-verified">{eur(x.p.royalty_cents)}</span>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
             <div className="mx-auto mt-6 max-w-2xl text-center">
               <p className="text-xs leading-relaxed text-faint">
-                Il prezzo è mostrato in chiaro prima di generare. Si paga con crediti prepagati, una
-                sola ricarica per tante generazioni: nessun abbonamento obbligatorio.
+                Il prezzo è mostrato in chiaro prima di generare. Si paga con crediti prepagati (1 ⚡ = 1 centesimo), una
+                sola ricarica per tante generazioni: nessun abbonamento obbligatorio. Se qualcosa va storto, i crediti tornano da soli.
               </p>
             </div>
           </section>
