@@ -5,6 +5,7 @@ import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Hero } from "@/components/marketing/Hero";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
+import { IlSet } from "@/components/marketing/IlSet";
 import { Trust } from "@/components/marketing/Trust";
 import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
 import { WardSection } from "@/components/marketing/WardSection";
@@ -59,6 +60,7 @@ export default async function Home() {
         <div className="sv"><Registry avatars={featured} total={approved.length} /></div>
         {/* Le card di Come funziona entrano una per una: .sv sta dentro, sulle card. */}
         <HowItWorks />
+        <IlSet />
         <div className="sv"><WardSection /></div>
         <div className="sv"><Trust /></div>
         <div className="sv"><ToolsBusiness /></div>

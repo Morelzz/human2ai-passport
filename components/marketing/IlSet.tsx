@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { SectionTitle } from "@/components/marketing/SectionTitle";
+import { IlSetVideo } from "@/components/marketing/IlSetVideo";
 
-// [IL SET, OGGI] (mockup 19/9/2026, in attesa dell'ok di Morelz prima di
-// entrare in home): cosa sa fare Crea adesso, in quattro schede. Una grande
-// scena di gruppo, il video che si muove, e due schede di testo per il casting
-// e la somiglianza misurata. I media arrivano da fuori (props): nessun volto
-// del registro finisce in home senza il suo ok.
+// [IL SET, OGGI] (19/9/2026, ok di Morelz "Vai su tutto"): cosa sa fare Crea
+// adesso, in quattro schede. Una grande scena di gruppo (Gabriella e Stella,
+// somiglianza misurata 82% e 82%), il video che si muove (Gabriella, 93%), e
+// due schede di testo per il casting e la somiglianza misurata. I media stanno
+// nel bucket pubblico "assets" di Supabase come quelli dell'hero: fuori dal
+// repo pubblico, rimovibili quando si vuole.
+const BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/assets`;
+const MEDIA = {
+  gruppo: `${BASE}/il-set-gruppo.jpg`,
+  video: `${BASE}/il-set-anima.mp4`,
+  poster: `${BASE}/il-set-anima-poster.jpg`,
+};
 
-export function IlSet({ gruppo, video, poster }: { gruppo: string; video: string; poster: string }) {
+export function IlSet({ gruppo = MEDIA.gruppo, video = MEDIA.video, poster = MEDIA.poster }: { gruppo?: string; video?: string; poster?: string }) {
   return (
     <section id="il-set" className="mx-auto max-w-7xl scroll-mt-20 px-5 pt-20 sm:px-8 sm:pt-24">
       <div className="sv">
@@ -22,7 +30,7 @@ export function IlSet({ gruppo, video, poster }: { gruppo: string; video: string
         <div data-theme="dark" className="isola sv flex w-[84vw] flex-col sm:w-auto lg:col-span-7">
           <div className="relative aspect-[4/3] w-full overflow-hidden lg:aspect-auto lg:h-[440px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={gruppo} alt="Due persone del registro nella stessa foto, al tavolino di un bar" className="h-full w-full object-cover object-[center_30%]" />
+            <img src={gruppo} alt="Due persone del registro nella stessa foto, al tavolino di un bar" loading="lazy" decoding="async" width={896} height={1120} className="h-full w-full object-cover object-[center_30%]" />
             <div className="absolute bottom-3 left-3 flex flex-wrap gap-2">
               {["Gabriella 82%", "Stella 82%"].map((c) => (
                 <span key={c} className="rounded-full bg-[rgba(12,15,23,0.7)] px-3 py-1.5 text-[0.8rem] text-[#F2E9D8]">{c}</span>
@@ -41,7 +49,7 @@ export function IlSet({ gruppo, video, poster }: { gruppo: string; video: string
         {/* Anima: il video */}
         <div data-theme="dark" className="isola sv flex w-[84vw] flex-col sm:w-auto lg:col-span-5" style={{ animationRange: "entry 10% entry 50%" }}>
           <div className="relative aspect-[4/3] w-full overflow-hidden lg:aspect-auto lg:h-[440px]">
-            <video src={video} poster={poster} autoPlay muted loop playsInline className="h-full w-full object-cover object-[center_20%]" />
+            <IlSetVideo src={video} poster={poster} className="h-full w-full object-cover object-[center_20%]" />
             <span className="absolute left-3 top-3 rounded-full bg-amber px-2.5 py-1 text-[0.72rem] font-bold text-on-amber">Anima</span>
           </div>
           <div className="flex flex-col gap-2 p-6 sm:p-7">
