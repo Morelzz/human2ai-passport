@@ -19,6 +19,7 @@ import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { logBlockedRequest } from "@/lib/blocked";
 import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
 import { spendVolt, grantVolt } from "@/lib/volt";
+import { spesaMotoreOggi, sforaTetto, tettoGiorno } from "@/lib/tetto-giorno";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
@@ -194,6 +195,13 @@ export async function POST(request: Request) {
     // §6.3): se il job poi fallisce, il worker storna. Id job pre-generato per
     // legare il movimento. Sistema non configurato → si procede senza addebito
     // (transizione pre-migrazione, mai un blocco).
+    // Tetto di spesa giornaliero sul motore (lib/tetto-giorno): prima di
+    // spendere VOLT e crediti OpenAI.
+    const tetto = tettoGiorno();
+    if (tetto > 0 && sforaTetto(await spesaMotoreOggi(admin), surcharge_cents, tetto)) {
+      console.warn(`[generate] tetto giornaliero raggiunto (${tetto} cent stimati)`);
+      return NextResponse.json({ error: "Per oggi il set ha finito l'energia: riprova domani. Non ti abbiamo addebitato nulla.", code: "daily_cap" }, { status: 503 });
+    }
     const jobId = crypto.randomUUID();
     let voltBalanceAfter: number | null = null;
     const spent = await spendVolt(user.id, gross_cents, `ECHO:${jobId}`);
