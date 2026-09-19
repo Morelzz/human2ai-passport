@@ -16,6 +16,17 @@ export type ComplianceReceipt = {
   generation: { date: string; category: string | null; mode: string };
   // Somiglianza misurata con le foto verificate della persona (null = non misurata).
   likeness: { score: number | null };
+  // Scena di gruppo: TUTTE le persone nella foto, da sinistra, ognuna col suo
+  // consenso e la sua somiglianza. Assente negli scatti con una persona sola.
+  people?: {
+    handle: string;
+    alias: string;
+    registry_url: string;
+    likeness: number | null;
+    consent_since: string | null;
+    revoked: boolean;
+    revoked_at: string | null;
+  }[];
   consent: {
     verified_person: boolean;
     consent_since: string | null;
@@ -39,7 +50,7 @@ export async function buildComplianceReceipt(
   const admin = createServerClient();
   const { data: gen } = await admin
     .from("generations")
-    .select("certificate, category, mode, created_at, avatars(handle, alias, consent_start, commercial_consent, revoked_at)")
+    .select("id, certificate, category, mode, created_at, avatars(handle, alias, consent_start, commercial_consent, revoked_at)")
     .eq("certificate", cert)
     .maybeSingle();
   if (!gen) return null;
@@ -52,6 +63,23 @@ export async function buildComplianceReceipt(
     ? (somiglianza as { identity_score: number }).identity_score
     : null;
   const category = gen.category ?? null;
+
+  // Scena di gruppo (generation_people, gruppi.sql): se la tabella manca, nessuno.
+  type RigaGruppo = {
+    identity_score: number | null;
+    avatars: { handle: string; alias: string; consent_start: string | null; revoked_at: string | null } | { handle: string; alias: string; consent_start: string | null; revoked_at: string | null }[] | null;
+  };
+  const { data: gp } = await admin
+    .from("generation_people")
+    .select("posizione, identity_score, avatars(handle, alias, consent_start, revoked_at)")
+    .eq("generation_id", gen.id)
+    .order("posizione");
+  const people = ((gp ?? []) as RigaGruppo[]).flatMap((r) => {
+    const a = Array.isArray(r.avatars) ? r.avatars[0] : r.avatars;
+    return a
+      ? [{ handle: a.handle, alias: a.alias, registry_url: `${base}/passport/${a.handle}`, likeness: r.identity_score, consent_since: a.consent_start, revoked: Boolean(a.revoked_at), revoked_at: a.revoked_at }]
+      : [];
+  });
   // Modello senza categorie (Fase 2/4): l'uso è autorizzato se la persona acconsente
   // all'uso commerciale. Al momento della generazione il gate del consenso l'ha già imposto.
   const inScope = av?.commercial_consent !== false;
@@ -68,6 +96,7 @@ export async function buildComplianceReceipt(
     },
     generation: { date: String(gen.created_at).slice(0, 10), category, mode: gen.mode ?? "commercial" },
     likeness: { score },
+    ...(people.length > 1 ? { people } : {}),
     consent: {
       verified_person: true, // l'avatar e' nel registro consensuale verificato
       consent_since: av?.consent_start ?? null,
@@ -76,7 +105,12 @@ export async function buildComplianceReceipt(
       revoked_at: av?.revoked_at ?? null,
     },
     verification_url: `${base}/verify`,
-    statement:
+    statement: people.length > 1
+      ? "Questa generazione è stata prodotta tramite Semblic dal percorso di consenso verificato: ognuno dei " +
+        `${people.length} volti appartiene a una persona reale presente nel registro, che ha prestato consenso ` +
+        "all'uso commerciale della propria immagine al momento della generazione. Il certificato è verificabile su " +
+        `${base}/verify.`
+      :
       "Questa generazione è stata prodotta tramite Semblic dal percorso di consenso verificato: il volto " +
       "appartiene a una persona reale presente nel registro, che ha prestato consenso all'uso commerciale " +
       "della propria immagine al momento della generazione. Il certificato è verificabile su " +

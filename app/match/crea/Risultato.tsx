@@ -4,12 +4,14 @@ import Link from "next/link";
 import { formatEur } from "@/lib/wallet";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 import { Anima } from "./Anima";
+import { nomi } from "./opzioni";
 
 export interface Esito {
   certificate: string;
   generationId?: string;
   somiglianza?: number; // % misurata con le foto verificate (lib/identity-score)
   dalCasting?: boolean; // il volto l'ha scelto Semblic (casting automatico)
+  persone?: { handle: string; alias: string; somiglianza: number | null }[]; // scena di gruppo, da sinistra
   alias: string;
   handle: string;
   size?: string;
@@ -43,6 +45,8 @@ export function Risultato({
   const img = `/api/content/${esito.certificate}`;
   const [w, h] = (esito.size ?? "1024x1536").split("x").map(Number);
   const proporzione = w && h ? `${w} / ${h}` : "2 / 3";
+  const gruppo = esito.persone && esito.persone.length > 1 ? esito.persone : null;
+  const chip = "inline-flex h-[30px] items-center rounded-full bg-[rgba(12,15,23,0.68)] px-3 text-[0.8rem] text-[#F2E9D8]";
 
   return (
     <section className="grid gap-8 lg:grid-cols-[minmax(0,520px)_1fr] lg:gap-14">
@@ -54,12 +58,18 @@ export function Risultato({
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CC6B2" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M20 6 9 17l-5-5" /></svg>
             Certificato {esito.certificate.slice(0, 8)}
           </span>
-          {esito.somiglianza !== undefined ? (
-            <span title={`Misurata con le foto verificate di ${esito.alias}`} className="inline-flex h-[30px] items-center rounded-full bg-[rgba(12,15,23,0.68)] px-3 text-[0.8rem] text-[#F2E9D8]">
+          {gruppo ? (
+            gruppo.map((p) => (
+              <span key={p.handle} title={`Somiglianza misurata con le foto verificate di ${p.alias}`} className={chip}>
+                {p.alias}{p.somiglianza !== null ? ` ${p.somiglianza}%` : ""}
+              </span>
+            ))
+          ) : esito.somiglianza !== undefined ? (
+            <span title={`Misurata con le foto verificate di ${esito.alias}`} className={chip}>
               Somiglianza {esito.somiglianza}%
             </span>
           ) : (
-            <span className="inline-flex h-[30px] items-center rounded-full bg-[rgba(12,15,23,0.68)] px-3 text-[0.8rem] text-[#F2E9D8]">Filigrana invisibile</span>
+            <span className={chip}>Filigrana invisibile</span>
           )}
         </div>
       </div>
@@ -72,7 +82,18 @@ export function Risultato({
         <p className="mt-3 text-pretty text-[1rem] leading-relaxed text-muted">
           {esito.alias} · {esito.riepilogo}
         </p>
-        {esito.dalCasting && (
+        {gruppo && (
+          <p className="mt-2 flex flex-wrap items-center gap-x-2 text-[0.92rem] text-muted">
+            <span>
+              Nella foto ci sono <strong className="text-foreground">{nomi(gruppo.map((p) => p.alias))}</strong>: ogni volto è rifatto con le foto verificate della sua persona, uno alla volta.
+              {esito.dalCasting ? " I volti li ha scelti Semblic per la tua scena." : ""}
+            </span>
+            {esito.dalCasting && onCambiaPersona && (
+              <button type="button" onClick={onCambiaPersona} className="font-semibold text-amber-ink hover:underline">Scegli tu le persone</button>
+            )}
+          </p>
+        )}
+        {esito.dalCasting && !gruppo && (
           <p className="mt-2 flex flex-wrap items-center gap-x-2 text-[0.92rem] text-muted">
             <span>Nella foto c&apos;è <strong className="text-foreground">{esito.alias}</strong>: Semblic ha scelto questo volto per la tua scena.</span>
             {onCambiaPersona && (
@@ -106,7 +127,7 @@ export function Risultato({
           />
         </div>
 
-        <Anima certificate={esito.certificate} alias={esito.alias} immagine={img} conVolt={Boolean(esito.spent)} />
+        <Anima certificate={esito.certificate} alias={esito.alias} immagine={img} conVolt={Boolean(esito.spent)} gruppo={Boolean(gruppo)} />
 
         <div className="card mt-3 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
@@ -130,8 +151,9 @@ export function Risultato({
             </span>
           </div>
           <div className="flex flex-col gap-1 rounded-[20px] bg-verified-soft p-4">
-            <span className="text-[0.8rem] text-on-verified">A {esito.alias}</span>
+            <span className="text-[0.8rem] text-on-verified">{gruppo ? `Alle ${gruppo.length} persone` : `A ${esito.alias}`}</span>
             <span className="text-[1.1rem] font-bold text-on-verified">{formatEur(esito.royaltyCents ?? 0)}</span>
+            {gruppo && <span className="text-[0.75rem] text-on-verified">in parti uguali</span>}
           </div>
           <Link
             href={esito.generationId ? `/ward/content/${esito.generationId}` : "/account"}
@@ -146,7 +168,9 @@ export function Risultato({
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[0.92rem] font-semibold">
           <a href={`/receipt/${esito.certificate}`} target="_blank" rel="noopener" className="text-amber-ink hover:underline">Ricevuta di conformità</a>
           <Link href="/verify" className="text-amber-ink hover:underline">Verifica con Sigil</Link>
-          <Link href={`/passport/${esito.handle}`} className="text-amber-ink hover:underline">Passaporto di {esito.alias}</Link>
+          {(gruppo ?? [{ handle: esito.handle, alias: esito.alias }]).map((p) => (
+            <Link key={p.handle} href={`/passport/${p.handle}`} className="text-amber-ink hover:underline">Passaporto di {p.alias}</Link>
+          ))}
         </div>
 
         <span className="mt-7 text-[0.85rem] font-semibold text-muted">Da questa sessione</span>

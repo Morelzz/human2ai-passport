@@ -38,6 +38,15 @@ export interface EchoPricing {
   fee_cents: number;
   royalty_cents: number;
   surcharge_cents: number;
+  quote?: number[]; // scene di gruppo: royalty di ogni protagonista, stesso ordine di gruppo
+}
+
+// Scena di gruppo (lib/gruppo): un protagonista, da sinistra a destra.
+export interface PersonaGruppo {
+  avatarId: string;
+  handle: string;
+  alias: string;
+  identityText: string | null;
 }
 
 // Tutto ciò che serve al worker per generare, serializzato nel job.params.
@@ -60,6 +69,9 @@ export interface EchoJobParams {
     colorStyle?: string | null; framing?: string | null; expression?: string | null;
   };
   pricing: EchoPricing;
+  // Scena di gruppo "un volto alla volta": 2-4 protagonisti. Il primo e'
+  // anche l'avatar del job (job.avatar_id / job.handle).
+  gruppo?: PersonaGruppo[];
 }
 
 // Riga minima del job che il worker consuma.
@@ -177,7 +189,7 @@ export async function prepareExtras(rawExtras: unknown): Promise<EchoExtra[]> {
 // Storno VOLT idempotente di un job (la spesa e' avvenuta all'enqueue, ref
 // ECHO:<id>). grantVolt e' no-op su un refund job:<id> gia' presente (fix
 // volt_idempotency); storniamo solo se la spesa esiste davvero.
-async function refundJobVolt(admin: Admin, jobId: string, buyerId: string, grossCents: number | undefined): Promise<void> {
+export async function refundJobVolt(admin: Admin, jobId: string, buyerId: string, grossCents: number | undefined): Promise<void> {
   if (!grossCents || grossCents <= 0) return;
   try {
     const { grantVolt } = await import("@/lib/volt");
@@ -231,6 +243,12 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     .from("generation_jobs")
     .update({ status: "running", started_at: nowIso(), attempts: (job.attempts ?? 0) + 1 })
     .eq("id", job.id);
+
+  // Scena di gruppo: percorso a parte (lib/echo-gruppo-job), stessi controlli.
+  if ((job.params.gruppo?.length ?? 0) >= 2) {
+    const { executeGruppoJob } = await import("@/lib/echo-gruppo-job");
+    return executeGruppoJob(admin, job);
+  }
 
   try {
     const p = job.params;

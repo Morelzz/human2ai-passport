@@ -10,7 +10,7 @@ type Fase = "chiusa" | "scheda" | "lavoro" | "pronto";
 // ANIMA dentro Crea (mockup approvato il 19/9): lo scatto appena fatto diventa
 // un video breve. Tre livelli (Rapido, Standard, Cinema), audio mai generato,
 // serve il consenso al video della persona (lo dice il server: 403 no_video_consent).
-export function Anima({ certificate, alias, immagine, conVolt }: { certificate: string; alias: string; immagine: string; conVolt: boolean }) {
+export function Anima({ certificate, alias, immagine, conVolt, gruppo = false }: { certificate: string; alias: string; immagine: string; conVolt: boolean; gruppo?: boolean }) {
   const [fase, setFase] = useState<Fase>("chiusa");
   const [movimento, setMovimento] = useState<string>("respira");
   const [libero, setLibero] = useState("");
@@ -99,7 +99,7 @@ export function Anima({ certificate, alias, immagine, conVolt }: { certificate: 
             <span className="text-[1.15rem] font-bold tracking-[-0.02em]">Anima questo scatto</span>
             <span className="rounded-full bg-amber px-2.5 py-0.5 text-[0.72rem] font-bold text-on-amber">Novità</span>
           </span>
-          <span className="text-[0.9rem] leading-snug text-muted">Un video di 5 o 10 secondi che parte da questa foto. Stessa persona, consenso al video, certificato come la foto.</span>
+          <span className="text-[0.9rem] leading-snug text-muted">Un video di 5 o 10 secondi che parte da questa foto. {gruppo ? "Stesse persone, consenso al video di ognuna, certificato come la foto." : "Stessa persona, consenso al video, certificato come la foto."}</span>
         </span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E29A2E" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
       </button>
@@ -141,7 +141,7 @@ export function Anima({ certificate, alias, immagine, conVolt }: { certificate: 
 
               {fase === "scheda" && (
                 <>
-                  <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">Tu dici come si muove {alias}, il resto lo fa il set. Senza audio: la voce di una persona non si genera mai.</p>
+                  <p className="mt-3 text-[0.95rem] leading-relaxed text-muted">Tu dici come {gruppo ? "si muovono" : "si muove"} {alias}, il resto lo fa il set. Senza audio: la voce di una persona non si genera mai.</p>
                   <p className="mt-5 text-[0.85rem] font-semibold text-muted">Come si muove</p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {MOVIMENTI.map((m) => (
@@ -177,7 +177,7 @@ export function Anima({ certificate, alias, immagine, conVolt }: { certificate: 
                             <span className="text-[0.92rem] font-bold tabular-nums">{cifra(p.gross_cents)}</span>
                           </span>
                           <span className="text-[0.78rem] text-muted">{LIVELLI[v].desc}</span>
-                          <span className="text-[0.78rem] text-verified">{formatEur(p.royalty_cents)} a {alias}</span>
+                          <span className="text-[0.78rem] text-verified">{formatEur(p.royalty_cents)} {gruppo ? "divisi fra" : "a"} {alias}</span>
                         </button>
                       );
                     })}

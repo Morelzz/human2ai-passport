@@ -29,7 +29,7 @@ export function modoSomiglianza(): ModoSomiglianza {
   return process.env.SOMIGLIANZA_MODO === "applica" ? "applica" : "osserva";
 }
 
-export interface Volto { desc: number[]; lato: number }
+export interface Volto { desc: number[]; lato: number; x?: number } // x = centro del volto, per l'ordine da sinistra
 export interface Riferimento { chiave: string; rif: number[][]; coerenza: number | null }
 
 export function distanza(a: number[], b: number[]): number {
@@ -113,7 +113,7 @@ export function migliore(a: MisuraSomiglianza | null, b: MisuraSomiglianza | nul
 
 // ── Lato server (face-api) ──────────────────────────────────────────────────
 
-async function voltiIn(img: Buffer): Promise<Volto[]> {
+export async function voltiIn(img: Buffer): Promise<Volto[]> {
   const { loadFaceApi } = await import("@/lib/ward/matching/embed");
   const faceapi = await loadFaceApi();
   const sharpMod = await import("sharp");
@@ -121,11 +121,11 @@ async function voltiIn(img: Buffer): Promise<Volto[]> {
   const { data, info } = await sharp(img).rotate().removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const t = faceapi.tf.tensor3d(new Uint8Array(data), [info.height, info.width, 3]);
   try {
-    const dets: { descriptor: Float32Array; detection: { box: { width: number } } }[] = await faceapi
+    const dets: { descriptor: Float32Array; detection: { box: { width: number; x: number } } }[] = await faceapi
       .detectAllFaces(t, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
       .withFaceLandmarks()
       .withFaceDescriptors();
-    return dets.map((d) => ({ desc: Array.from(d.descriptor), lato: Math.round(d.detection.box.width) }));
+    return dets.map((d) => ({ desc: Array.from(d.descriptor), lato: Math.round(d.detection.box.width), x: Math.round(d.detection.box.x + d.detection.box.width / 2) }));
   } finally {
     t.dispose();
   }

@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase";
+import { conQuoteDiGruppo, quoteDi } from "@/lib/gruppo-quote";
 
 // Statistiche revenue del creatore (dolore #1: le royalty non si vedevano).
 // Tutto derivato dalle generations commerciali sul suo avatar: zero migrazioni.
@@ -36,7 +37,16 @@ export async function revenueStatsFor(avatarId: string, now: Date): Promise<Reve
     .gte("created_at", since)
     .order("created_at", { ascending: false });
   if (error) return null;
-  const rows = (data ?? []) as UsageRow[];
+  // Scene di gruppo: la sua parte, anche nelle foto dove non e' il primo.
+  const rows = await conQuoteDiGruppo((data ?? []) as UsageRow[], await quoteDi(admin, [avatarId]), async (ids) => {
+    const { data: altre } = await admin
+      .from("generations")
+      .select("id, certificate, category, tier, royalty_cents, created_at")
+      .in("id", ids)
+      .eq("mode", "commercial")
+      .gte("created_at", since);
+    return (altre ?? []) as UsageRow[];
+  });
 
   const cut30 = now.getTime() - 30 * DAY_MS;
   let last30 = 0;

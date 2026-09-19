@@ -20,6 +20,7 @@ import { logBlockedRequest } from "@/lib/blocked";
 import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
 import { spendVolt, grantVolt } from "@/lib/volt";
 import { spesaMotoreOggi, sforaTetto, tettoGiorno } from "@/lib/tetto-giorno";
+import { MAX_PERSONE_GRUPPO, prezzoGruppo } from "@/lib/gruppo-prezzi";
 import sharp from "sharp";
 
 export const runtime = "nodejs";
@@ -86,6 +87,12 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ error: "SEMBLIC è riservato ai maggiorenni." }, { status: 403 });
   }
+
+  // Scena di gruppo (2-4 persone del registro): percorso a parte, sempre commerciale.
+  const gruppo: string[] = Array.isArray(body?.gruppo)
+    ? [...new Set((body.gruppo as unknown[]).map((h) => String(h ?? "").trim()).filter(Boolean))]
+    : [];
+  if (gruppo.length >= 2) return accodaGruppo(admin, user.id, body, gruppo, category);
 
   // Rivalida: l'avatar esiste, è SOUL, ha consenso attivo e copre la categoria d'uso.
   const { data: avatar } = await admin
@@ -456,5 +463,109 @@ export async function POST(request: Request) {
     royalty_cents: net_cents,
     surcharge_cents,
     volt: voltCharged || syncCost > 0 ? { spent: voltCharged ? syncCost : 0, balance: voltBalanceAfter } : undefined,
+  });
+}
+
+// ── SCENA DI GRUPPO → ASINCRONA ─────────────────────────────────────────────
+// Stessi controlli dello scatto singolo per OGNI persona (veto, consenso
+// commerciale, foto vere), prezzo di lib/gruppo-prezzi, poi il job in coda:
+// lo esegue il worker con lib/echo-gruppo-job.
+async function accodaGruppo(
+  admin: ReturnType<typeof createServerClient>,
+  userId: string,
+  body: Record<string, unknown>,
+  handles: string[],
+  category: string | null,
+) {
+  if (body?.mode === "preview") return NextResponse.json({ error: "Le scene di gruppo non hanno l'anteprima" }, { status: 400 });
+  if (handles.length > MAX_PERSONE_GRUPPO) {
+    return NextResponse.json({ error: `Una scena di gruppo ha al massimo ${MAX_PERSONE_GRUPPO} persone riconoscibili.` }, { status: 400 });
+  }
+  if (!isEchoConfigured()) return NextResponse.json({ error: "Motore ECHO non configurato" }, { status: 503 });
+
+  // La tabella delle persone nello scatto deve esistere (migrazione gruppi.sql):
+  // senza, le royalty delle altre persone non avrebbero dove stare. NB: GET, non
+  // HEAD: su una tabella assente HEAD risponde 204 senza errore (provato il 19/9).
+  const { error: senzaTabella } = await admin.from("generation_people").select("generation_id").limit(1);
+  if (senzaTabella) {
+    return NextResponse.json({ error: "Le scene di gruppo non sono ancora attive.", code: "gruppo_non_attivo" }, { status: 503 });
+  }
+
+  const { data: righe } = await admin
+    .from("avatars")
+    .select("id, handle, alias, revoked_at, commercial_consent, protection_only, gender, age_range, ethnicity, hair_color, eye_color, height, body_type, tattoos, facial_hair")
+    .in("handle", handles);
+  const avatars = handles.map((h) => (righe ?? []).find((r) => r.handle === h));
+  if (avatars.some((a) => !a)) return NextResponse.json({ error: "Una delle persone della scena non esiste" }, { status: 404 });
+  for (const a of avatars as NonNullable<(typeof avatars)[number]>[]) {
+    const veto = avatarVetoReason(a);
+    if (veto) {
+      logBlockedRequest(admin, { source: "generate", reason: veto, category });
+      return NextResponse.json({ error: `"${a.alias}" non è disponibile: la generazione è bloccata.` }, { status: 403 });
+    }
+    if (a.commercial_consent === false) {
+      logBlockedRequest(admin, { source: "generate", reason: "no_commercial_consent", category });
+      return NextResponse.json({ error: `"${a.alias}" non ha autorizzato l'uso commerciale del proprio volto` }, { status: 403 });
+    }
+    const foto = await getReferenceSet(a.handle);
+    if (foto.length === 0) return NextResponse.json({ error: `"${a.alias}" non ha ancora le foto verificate per il motore` }, { status: 400 });
+  }
+  const persone = avatars as NonNullable<(typeof avatars)[number]>[];
+
+  const scene = String(body?.scene ?? body?.prompt ?? "").trim();
+  const echoSize = isEchoSize(body?.echoSize) ? body.echoSize : "1024x1024";
+  const echoQuality = isEchoQuality(body?.echoQuality) ? body.echoQuality : "high";
+  // In gruppo niente inquadratura ed espressione del singolo: camera, lente, luce e colore si.
+  const photo = {
+    camera: validEnum(CAMERAS, body?.camera),
+    lens: validEnum(LENSES, body?.lens),
+    light: validEnum(LIGHTS, body?.light),
+    colorStyle: validEnum(COLOR_STYLES, body?.colorStyle),
+    framing: null,
+    expression: null,
+  };
+  const prezzo = prezzoGruppo(splitEcho(category, echoSize, echoQuality), persone.length);
+  const params = {
+    scene,
+    category,
+    echoSize,
+    echoQuality,
+    extras: [],
+    poseText: null,
+    identityText: identityPromptFor(persone[0]),
+    photographic: photographicSegment(photo),
+    photo,
+    pricing: { gross_cents: prezzo.gross_cents, fee_cents: prezzo.fee_cents, royalty_cents: prezzo.royalty_cents, surcharge_cents: prezzo.surcharge_cents, quote: prezzo.quote },
+    gruppo: persone.map((a) => ({ avatarId: a.id, handle: a.handle, alias: a.alias, identityText: identityPromptFor(a) })),
+  };
+
+  const tetto = tettoGiorno();
+  if (tetto > 0 && sforaTetto(await spesaMotoreOggi(admin), prezzo.surcharge_cents, tetto)) {
+    console.warn(`[generate] tetto giornaliero raggiunto (${tetto} cent stimati)`);
+    return NextResponse.json({ error: "Per oggi il set ha finito l'energia: riprova domani. Non ti abbiamo addebitato nulla.", code: "daily_cap" }, { status: 503 });
+  }
+  const jobId = crypto.randomUUID();
+  const spent = await spendVolt(userId, prezzo.gross_cents, `ECHO:${jobId}`);
+  if (!spent.ok && spent.reason === "insufficient") {
+    return NextResponse.json(
+      { error: "Saldo VOLT insufficiente", volt: { needed: prezzo.gross_cents, balance: spent.balance ?? 0, missing: prezzo.gross_cents - (spent.balance ?? 0) } },
+      { status: 402 }
+    );
+  }
+  const { data: job, error: jobErr } = await admin
+    .from("generation_jobs")
+    .insert({ id: jobId, engine: "echo", buyer_id: userId, avatar_id: persone[0].id, handle: persone[0].handle, params })
+    .select("id")
+    .single();
+  if (jobErr || !job) {
+    if (spent.ok) await grantVolt(userId, prezzo.gross_cents, "refund", `job:${jobId}`);
+    return NextResponse.json({ error: "Coda non disponibile: riprova" }, { status: 503 });
+  }
+  return NextResponse.json({
+    ok: true, mode: "async", jobId: job.id,
+    alias: persone.map((a) => a.alias).join(" e "),
+    gruppo: persone.map((a) => ({ handle: a.handle, alias: a.alias })),
+    gross_cents: prezzo.gross_cents, fee_cents: prezzo.fee_cents, royalty_cents: prezzo.royalty_cents, surcharge_cents: prezzo.surcharge_cents,
+    volt: spent.ok ? { spent: prezzo.gross_cents, balance: spent.balance } : undefined,
   });
 }

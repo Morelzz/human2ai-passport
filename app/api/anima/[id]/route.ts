@@ -5,6 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { uploadPublicImage } from "@/lib/storage";
 import { grantVolt } from "@/lib/volt";
 import { statoVideo, type StatoVideo } from "@/lib/engines/anima";
+import { dividiRoyalty } from "@/lib/gruppo-prezzi";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -57,11 +58,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const url = await uploadPublicImage("generations", `${a.avatar_id}/video/${id}.mp4`, video, "video/mp4");
     const certificate = crypto.createHash("sha256").update(`${a.avatar_id}|${id}|anima|${a.movement}|${new Date().toISOString().slice(0, 10)}`).digest("hex");
 
-    const { data: av } = await admin.from("avatars").select("usage_count, royalty_accrued_cents").eq("id", a.avatar_id).maybeSingle();
-    await admin.from("avatars").update({
-      usage_count: (av?.usage_count ?? 0) + 1,
-      royalty_accrued_cents: (av?.royalty_accrued_cents ?? 0) + a.royalty_cents,
-    }).eq("id", a.avatar_id);
+    // Scena di gruppo: la parte delle persone si divide fra tutte, come per la foto.
+    const { data: nellaFoto } = await admin.from("generation_people").select("avatar_id, posizione").eq("generation_id", a.source_generation_id).order("posizione");
+    const chi: string[] = nellaFoto && nellaFoto.length > 1 ? nellaFoto.map((r) => r.avatar_id as string) : [a.avatar_id];
+    const quote = dividiRoyalty(a.royalty_cents, chi.length);
+    for (let i = 0; i < chi.length; i++) {
+      const { data: av } = await admin.from("avatars").select("usage_count, royalty_accrued_cents").eq("id", chi[i]).maybeSingle();
+      await admin.from("avatars").update({
+        usage_count: (av?.usage_count ?? 0) + 1,
+        royalty_accrued_cents: (av?.royalty_accrued_cents ?? 0) + quote[i],
+      }).eq("id", chi[i]);
+    }
 
     await admin.from("animations").update({ status: "done", video_url: url, certificate, finished_at: new Date().toISOString() }).eq("id", id);
     return NextResponse.json({ status: "done", video_url: url, certificate, seconds: a.seconds, gross_cents: a.gross_cents, royalty_cents: a.royalty_cents });

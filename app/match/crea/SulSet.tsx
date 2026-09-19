@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { nomi } from "./opzioni";
 
 export type StatoSet = "invio" | "coda" | "lavoro";
 
@@ -17,6 +18,7 @@ export function SulSet({
   riepilogo,
   volt,
   inScena = null,
+  gruppo = null,
 }: {
   alias: string;
   ritratto: string;
@@ -25,6 +27,7 @@ export function SulSet({
   riepilogo: string;
   volt: number | null;
   inScena?: string | null; // casting automatico: il ruolo nella scena per cui Semblic ha scelto il volto
+  gruppo?: string[] | null; // scena di gruppo: i nomi, da sinistra
 }) {
   const [adesso, setAdesso] = useState(inizio);
   useEffect(() => {
@@ -35,14 +38,18 @@ export function SulSet({
   const orologio = `${String(Math.floor(secondi / 60)).padStart(2, "0")}:${String(secondi % 60).padStart(2, "0")}`;
   const accettato = stato !== "invio";
 
+  const chi = gruppo && gruppo.length > 1 ? nomi(gruppo) : null;
   const passi: { t: string; d: string; fatto: boolean; attivo: boolean; nota?: string }[] = [
-    ...(inScena ? [{ t: "Volto scelto per la scena", d: `${alias} dal registro, per \"${inScena}\"`, fatto: true, attivo: false }] : []),
-    { t: "Consenso verificato", d: `${alias} ha detto sì all'uso commerciale, ed è ancora così`, fatto: accettato, attivo: !accettato },
-    { t: "Identità agganciata", d: "Le sue foto verificate guidano il volto", fatto: accettato, attivo: false },
+    ...(inScena && !chi ? [{ t: "Volto scelto per la scena", d: `${alias} dal registro, per \"${inScena}\"`, fatto: true, attivo: false }] : []),
+    ...(inScena && chi ? [{ t: "Volti scelti per la scena", d: `${chi} dal registro`, fatto: true, attivo: false }] : []),
+    chi
+      ? { t: "Consenso verificato", d: `${chi} hanno detto sì all'uso commerciale, ed è ancora così`, fatto: accettato, attivo: !accettato }
+      : { t: "Consenso verificato", d: `${alias} ha detto sì all'uso commerciale, ed è ancora così`, fatto: accettato, attivo: !accettato },
+    { t: chi ? "Identità agganciate" : "Identità agganciata", d: chi ? "Le foto verificate di ogni persona guidano il suo volto" : "Le sue foto verificate guidano il volto", fatto: accettato, attivo: false },
     { t: "Scena composta", d: riepilogo, fatto: accettato, attivo: false },
     {
       t: "Sviluppo dell'immagine",
-      d: stato === "coda" ? "In fila per il motore, tocca a te a momenti" : "Il motore sta disegnando lo scatto",
+      d: stato === "coda" ? "In fila per il motore, tocca a te a momenti" : chi ? "Prima la scena, poi un volto alla volta" : "Il motore sta disegnando lo scatto",
       fatto: false,
       attivo: accettato,
       nota: stato === "coda" ? "in coda" : stato === "lavoro" ? "in corso" : undefined,
@@ -69,7 +76,7 @@ export function SulSet({
           <span aria-hidden className="set-scan" />
           <div className="absolute inset-x-0 top-[42%] flex flex-col items-center gap-1.5 text-center">
             <span className="text-[1.05rem] font-semibold text-foreground">{accettato ? "Sviluppo in corso" : "Preparo il set"}</span>
-            <span className="text-[0.85rem] text-muted">di solito meno di un minuto</span>
+            <span className="text-[0.85rem] text-muted">{chi ? "qualche minuto: un passaggio per ogni volto" : "di solito meno di un minuto"}</span>
           </div>
         </div>
         <p className="px-1 text-[0.85rem] leading-relaxed text-muted">
@@ -81,7 +88,7 @@ export function SulSet({
         <span className="kicker">Scatto in lavorazione</span>
         <h1 className="mt-3 text-balance text-[2.3rem] font-bold leading-[1.02] tracking-[-0.045em] sm:text-[3.1rem]">Stiamo girando la tua scena.</h1>
         <p className="mt-3 max-w-[52ch] text-pretty text-[1rem] leading-relaxed text-muted">
-          Ogni passaggio viene registrato. Alla fine lo scatto esce con il suo certificato, e {alias} riceve la sua parte.
+          Ogni passaggio viene registrato. Alla fine lo scatto esce con il suo certificato, e {chi ? "ogni persona riceve" : `${alias} riceve`} la sua parte.
         </p>
 
         <ol className="mt-7 flex flex-col">

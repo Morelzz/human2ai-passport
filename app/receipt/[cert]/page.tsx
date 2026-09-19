@@ -82,10 +82,22 @@ export default async function ReceiptPage({ params }: Props) {
             <Field label="Certificato">
               <code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontSize: "0.8rem", wordBreak: "break-all" }}>{r.certificate}</code>
             </Field>
-            <Field label="Persona del registro">
-              {r.subject.alias ?? "Avatar"}{r.subject.handle ? <span style={{ color: "#6b7280", fontWeight: 400 }}> · @{r.subject.handle}</span> : null}
-            </Field>
-            {r.subject.registry_url && (
+            {r.people ? (
+              <Field label={`Persone del registro nella foto (${r.people.length}, da sinistra)`}>
+                {r.people.map((p) => (
+                  <span key={p.handle} style={{ display: "block", marginBottom: "0.3rem" }}>
+                    {p.alias}<span style={{ color: "#6b7280", fontWeight: 400 }}> · @{p.handle}</span>
+                    {p.likeness !== null && <span style={{ color: "#6b7280", fontWeight: 400 }}> · somiglianza {p.likeness}%</span>}
+                    {" "}<a href={p.registry_url} className="receipt-link" style={{ fontWeight: 400 }}>passaporto</a>
+                  </span>
+                ))}
+              </Field>
+            ) : (
+              <Field label="Persona del registro">
+                {r.subject.alias ?? "Avatar"}{r.subject.handle ? <span style={{ color: "#6b7280", fontWeight: 400 }}> · @{r.subject.handle}</span> : null}
+              </Field>
+            )}
+            {!r.people && r.subject.registry_url && (
               <Field label="Passaporto pubblico">
                 <a href={r.subject.registry_url} className="receipt-link">{r.subject.registry_url}</a>
               </Field>
@@ -94,7 +106,7 @@ export default async function ReceiptPage({ params }: Props) {
             {/* Il consenso oggi e' si/no: la categoria compare solo sulle generazioni che l'avevano */}
             {r.generation.category && <Field label="Categoria d&apos;uso">{r.generation.category}</Field>}
             <Field label="Modalità">{MODALITA[r.generation.mode] ?? r.generation.mode}</Field>
-            {r.likeness.score !== null && (
+            {!r.people && r.likeness.score !== null && (
               <Field label="Somiglianza verificata">{r.likeness.score}% con le foto verificate di {r.subject.alias ?? "questa persona"}</Field>
             )}
           </div>
@@ -103,9 +115,21 @@ export default async function ReceiptPage({ params }: Props) {
           <div style={{ marginTop: "1.8rem", border: "1px solid #e3e6ea", borderRadius: 12, padding: "1.2rem 1.3rem", background: "#fafbfc" }}>
             <p style={{ margin: "0 0 0.9rem", fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "#6b7280" }}>Esito del consenso</p>
             <ConsentLine ok label="Persona reale verificata nel registro" />
-            <ConsentLine ok label={`Consenso prestato dal ${fmtDate(r.consent.consent_since)}`} />
+            {r.people ? (
+              r.people.map((p) => (
+                <ConsentLine
+                  key={p.handle}
+                  ok={!p.revoked}
+                  label={p.revoked
+                    ? `${p.alias}: consenso dal ${fmtDate(p.consent_since)}, revocato dal ${fmtDate(p.revoked_at)} (questa generazione passata resta autorizzata)`
+                    : `${p.alias}: consenso prestato dal ${fmtDate(p.consent_since)}, attivo alla data di emissione`}
+                />
+              ))
+            ) : (
+              <ConsentLine ok label={`Consenso prestato dal ${fmtDate(r.consent.consent_since)}`} />
+            )}
             <ConsentLine ok={r.consent.category_in_scope} label={r.consent.category_in_scope ? "Categoria nell'ambito autorizzato" : "Categoria fuori dall'ambito corrente"} />
-            {r.consent.revoked ? (
+            {r.people ? null : r.consent.revoked ? (
               <ConsentLine ok={false} label={`Consenso revocato dal ${fmtDate(r.consent.revoked_at)} (revoca prospettica: questa generazione passata resta autorizzata)`} />
             ) : (
               <ConsentLine ok label="Consenso attivo alla data di emissione" />

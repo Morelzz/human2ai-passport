@@ -52,7 +52,7 @@ export async function POST(req: Request) {
   const supabase = createServerClient();
   const { data: gen } = await supabase
     .from("generations")
-    .select("created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, commercial_consent, protection_only)")
+    .select("id, created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, commercial_consent, protection_only)")
     .eq("certificate", cert)
     .maybeSingle();
 
@@ -88,10 +88,24 @@ export async function POST(req: Request) {
     events = (ev ?? []).reverse();
   }
 
+  // Scena di gruppo: le ALTRE persone nella foto (da sinistra). Chi nel frattempo
+  // e' passato in sola protezione non compare mai (VETO): nessuna identita'.
+  type RigaGruppo = { avatars: { handle: string; alias: string; revoked_at: string | null; protection_only: boolean | null } | { handle: string; alias: string; revoked_at: string | null; protection_only: boolean | null }[] | null };
+  const { data: gp } = await supabase
+    .from("generation_people")
+    .select("posizione, avatars(handle, alias, revoked_at, protection_only)")
+    .eq("generation_id", gen.id)
+    .order("posizione");
+  const others = ((gp ?? []) as RigaGruppo[])
+    .map((r) => (Array.isArray(r.avatars) ? r.avatars[0] : r.avatars))
+    .filter((a): a is NonNullable<typeof a> => Boolean(a) && a!.handle !== av?.handle && !a!.protection_only)
+    .map((a) => ({ handle: a.handle, alias: a.alias, status: a.revoked_at ? "REVOCATO" : "ATTIVO", has_portrait: galleryFromRow(a.handle, undefined).length > 0 }));
+
   return NextResponse.json({
     valid: true,
     marked: true,
     type: "content",
+    ...(others.length ? { others } : {}),
     certificate: gen.certificate,
     alias: av?.alias ?? null,
     handle: av?.handle ?? null,

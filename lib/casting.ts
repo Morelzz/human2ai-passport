@@ -27,7 +27,7 @@ Rispondi SOLO con JSON valido:
 {
   "persone": [
     {
-      "ruolo": "chi e' nella scena, 2-5 parole in italiano",
+      "ruolo": "chi e' nella scena, 2-5 parole in italiano, con il genere e le parole della frase (\"due amiche\" -> \"amica\", non \"amico\")",
       "gender": "uomo" | "donna" | null,
       "ethnicity": stringa breve in italiano | null,
       "hair_color": "neri"|"castani"|"biondi"|"rossi"|"grigi"|"rasati" | null,

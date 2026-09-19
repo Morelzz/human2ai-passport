@@ -9,12 +9,13 @@ import { joinScene } from "@/lib/voice/dictation";
 import { AgeGateModal } from "../AgeGateModal";
 import {
   LOOKS, FORMATI, INQUADRATURE, ESPRESSIONI, POSE, IDEE, RUOLI,
-  qualitaPer, terminiNonFoto, ridimensiona,
+  qualitaPer, terminiNonFoto, ridimensiona, nomi,
   type FormatoVal, type QualitaVal, type Idea,
 } from "./opzioni";
 import { SceltaVolto, type Volto } from "./SceltaVolto";
 import { SulSet, type StatoSet } from "./SulSet";
 import { Risultato, type Esito } from "./Risultato";
+import { MAX_PERSONE_GRUPPO, prezzoGruppo, scattiPerGruppo } from "@/lib/gruppo-prezzi";
 
 export interface Scatto { certificate: string; image_url: string | null; alias: string }
 
@@ -67,6 +68,9 @@ export function CreaClient({
   const [castingInCorso, setCastingInCorso] = useState(false);
   const [dubbio, setDubbio] = useState<{ ruolo: string; volto: Volto; differenze: string[] } | null>(null);
   const [inScena, setInScena] = useState<string | null>(null);
+  // Scena di gruppo: la proposta del casting (prima di spendere) e il gruppo al lavoro.
+  const [propostaGruppo, setPropostaGruppo] = useState<{ ruolo: string; volto: Volto; vicino: boolean }[] | null>(null);
+  const [inGruppo, setInGruppo] = useState<Volto[] | null>(null);
   const vivo = useRef(true);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -148,6 +152,7 @@ export function CreaClient({
     setCastingInCorso(true);
     setErrore(null);
     setDubbio(null);
+    setPropostaGruppo(null);
     try {
       const res = await fetch("/api/crea/casting", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ scena }) });
       const j = await res.json();
@@ -159,7 +164,17 @@ export function CreaClient({
         return;
       }
       if (persone.length > 1) {
-        setErrore(`Questa scena ha ${persone.length} persone. Le scene di gruppo stanno arrivando: per ora scegli una persona sola, o riscrivi la scena con una protagonista.`);
+        const lista = persone.slice(0, MAX_PERSONE_GRUPPO).map((p) => ({
+          ruolo: p.ruolo,
+          volto: p.volto ? volti.find((x) => x.handle === p.volto!.handle) ?? p.volto : null,
+          vicino: p.corrispondenza === "vicino",
+        }));
+        const manca = lista.find((x) => !x.volto);
+        if (manca) {
+          setErrore(`Nel registro non c'è ancora nessuno per "${manca.ruolo}". Riscrivi la scena, o scegli tu un volto solo.`);
+          return;
+        }
+        setPropostaGruppo(lista as { ruolo: string; volto: Volto; vicino: boolean }[]);
         return;
       }
       const p = persone[0];
@@ -182,11 +197,50 @@ export function CreaClient({
     }
   }
 
+  function corpoScatto() {
+    return {
+      mode: "commercial",
+      category: null,
+      scene: scena.trim(),
+      engine: "echo",
+      echoSize: livello.size,
+      echoQuality: livello.quality,
+      extraRefs: riferimenti.map((r) => ({ data: r.dataUrl, desc: "", role: r.role })),
+      pose: posa,
+      framing: inquadratura === "auto" ? null : inquadratura,
+      expression: espressione === "auto" ? null : espressione,
+      colorStyle: lookSel.colorStyle,
+      camera: lookSel.camera,
+      lens: lookSel.lens,
+      light: null,
+      styleId: null,
+    };
+  }
+
   async function genera(override?: Volto, dalCasting = false) {
     const volto = override ?? volti.find((v) => v.handle === scelto) ?? null;
     if (!volto) { await casting(); return; }
     if (!(scena.trim().length >= 3 || riferimenti.length > 0)) return;
     const perSemblic = dalCasting || (sceltoDaSemblic && !override);
+    setInGruppo(null);
+    await avvia({ handle: volto.handle, ...corpoScatto() }, volto, perSemblic, null);
+  }
+
+  // Scena di gruppo "un volto alla volta": niente riferimenti, posa, inquadratura
+  // ed espressione del singolo; look e formato restano.
+  async function generaGruppo(lista: Volto[], dalCasting: boolean) {
+    if (lista.length < 2 || scena.trim().length < 3) return;
+    setPropostaGruppo(null);
+    setInGruppo(lista);
+    await avvia(
+      { handle: lista[0].handle, gruppo: lista.map((v) => v.handle), ...corpoScatto(), extraRefs: [], pose: "nessuna", framing: null, expression: null },
+      lista[0],
+      dalCasting,
+      lista,
+    );
+  }
+
+  async function avvia(corpo: Record<string, unknown>, volto: Volto, perSemblic: boolean, gruppo: Volto[] | null) {
     setPannello(null);
     setErrore(null);
     setVoltGate(null);
@@ -202,24 +256,7 @@ export function CreaClient({
       res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          handle: volto.handle,
-          mode: "commercial",
-          category: null,
-          scene: scena.trim(),
-          engine: "echo",
-          echoSize: livello.size,
-          echoQuality: livello.quality,
-          extraRefs: riferimenti.map((r) => ({ data: r.dataUrl, desc: "", role: r.role })),
-          pose: posa,
-          framing: inquadratura === "auto" ? null : inquadratura,
-          expression: espressione === "auto" ? null : espressione,
-          colorStyle: lookSel.colorStyle,
-          camera: lookSel.camera,
-          lens: lookSel.lens,
-          light: null,
-          styleId: null,
-        }),
+        body: JSON.stringify(corpo),
       });
       j = await res.json();
     } catch {
@@ -251,10 +288,10 @@ export function CreaClient({
       return;
     }
     setStatoSet("coda");
-    await segui(String(j.jobId), volto, volt, t0, perSemblic);
+    await segui(String(j.jobId), volto, volt, t0, perSemblic, gruppo);
   }
 
-  async function segui(jobId: string, v: Volto, volt: { spent: number } | undefined, t0: number, perSemblic = false) {
+  async function segui(jobId: string, v: Volto, volt: { spent: number } | undefined, t0: number, perSemblic = false, gruppo: Volto[] | null = null) {
     const limite = t0 + 20 * 60 * 1000;
     while (vivo.current && Date.now() < limite) {
       await new Promise((r) => setTimeout(r, 3000));
@@ -274,7 +311,10 @@ export function CreaClient({
           generationId: pj.generation_id ? String(pj.generation_id) : undefined,
           somiglianza: typeof pj.identity_score === "number" ? pj.identity_score : undefined,
           dalCasting: perSemblic,
-          alias: v.alias,
+          persone: gruppo
+            ? (Array.isArray(pj.persone) && pj.persone.length ? (pj.persone as Esito["persone"]) : gruppo.map((g) => ({ handle: g.handle, alias: g.alias, somiglianza: null })))
+            : undefined,
+          alias: gruppo ? nomi(gruppo.map((g) => g.alias)) : v.alias,
           handle: v.handle,
           size: pj.size ? String(pj.size) : livello.size,
           grossCents: Number(pj.gross_cents ?? 0),
@@ -305,6 +345,22 @@ export function CreaClient({
   }
 
   // ── Viste del set e del risultato ──────────────────────────────────────────
+  if (fase === "set" && inGruppo) {
+    return (
+      <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12">
+        <SulSet
+          alias={nomi(inGruppo.map((v) => v.alias))}
+          ritratto={inGruppo[0].src}
+          stato={statoSet}
+          inizio={inizio}
+          riepilogo={`${riepilogo} · ${inGruppo.length} persone`}
+          volt={saldo !== null ? livello.volt * scattiPerGruppo(inGruppo.length) : null}
+          inScena={sceltoDaSemblic ? "gruppo" : null}
+          gruppo={inGruppo.map((v) => v.alias)}
+        />
+      </main>
+    );
+  }
   if (fase === "set" && volto) {
     return (
       <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12">
@@ -319,10 +375,14 @@ export function CreaClient({
           esito={esito}
           sessione={sessione}
           onScegli={setEsito}
-          onVariante={() => genera()}
+          onVariante={() => {
+            const g = esito.persone && esito.persone.length > 1 ? esito.persone.map((p) => volti.find((v) => v.handle === p.handle)).filter((v): v is Volto => Boolean(v)) : null;
+            if (g && g.length > 1) void generaGruppo(g, Boolean(esito.dalCasting));
+            else void genera();
+          }}
           onNuovo={() => { setFase("componi"); suInizio(); }}
           onCambiaPersona={() => { setFase("componi"); setSceltaAperta(true); suInizio(); }}
-          varianteVolt={saldo !== null ? livello.volt : null}
+          varianteVolt={saldo !== null ? livello.volt * (esito.persone && esito.persone.length > 1 ? scattiPerGruppo(esito.persone.length) : 1) : null}
         />
       </main>
     );
@@ -556,7 +616,7 @@ export function CreaClient({
             <textarea
               id="frase"
               value={scena}
-              onChange={(e) => { setScena(e.target.value); setProposta(null); }}
+              onChange={(e) => { setScena(e.target.value); setProposta(null); setPropostaGruppo(null); }}
               onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); genera(); } }}
               placeholder="Cosa succede nella foto? Es. cammina in centro al tramonto"
               rows={2}
@@ -674,6 +734,62 @@ export function CreaClient({
           onChange={(e) => { aggiungiRiferimento(e.target.files?.[0]); e.currentTarget.value = ""; }}
         />
       </div>
+
+      {propostaGruppo && (() => {
+        const n = propostaGruppo.length;
+        const g = prezzoGruppo({ gross_cents: livello.volt, fee_cents: livello.volt - livello.royaltyCents, net_cents: livello.royaltyCents, surcharge_cents: 0 }, n);
+        return (
+          <div className="card mt-4 flex flex-col gap-4 p-4 sm:p-5">
+            <div className="flex items-center gap-3.5">
+              <div className="flex shrink-0 -space-x-3">
+                {propostaGruppo.map((x) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={x.volto.handle} src={x.volto.src} alt="" className="h-14 w-11 rounded-xl object-cover object-top ring-2 ring-[var(--surface)]" />
+                ))}
+              </div>
+              <div className="min-w-0">
+                <p className="text-[1rem] font-bold tracking-[-0.01em]">Scena di gruppo: {n} persone del registro</p>
+                <p className="text-[0.88rem] leading-snug text-muted">
+                  {propostaGruppo.map((x, i) => (
+                    <span key={x.volto.handle}>
+                      {i > 0 ? (i === n - 1 ? " e " : ", ") : ""}
+                      <strong className="font-semibold text-foreground">{x.volto.alias}</strong> per &quot;{x.ruolo}&quot;{x.vicino ? " (la persona più vicina)" : ""}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </div>
+            <p className="text-[0.85rem] leading-relaxed text-muted">
+              Prima la scena, poi ogni volto rifatto con le foto verificate della sua persona: {scattiPerGruppo(n)} passaggi, qualche minuto.
+              {" "}{formatEur(g.quote[n - 1])} a ciascuno.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const lista = propostaGruppo.map((x) => x.volto);
+                  setSceltoDaSemblic(true);
+                  setInScena("gruppo");
+                  void generaGruppo(lista, true);
+                }}
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-amber px-5 text-[0.92rem] font-bold text-on-amber transition-colors hover:bg-amber-hover"
+              >
+                Crea la scena · {saldo !== null ? `${FMT.format(g.gross_cents)} ⚡` : formatEur(g.gross_cents)}
+              </button>
+              <button
+                type="button"
+                onClick={() => { const x = propostaGruppo[0]; setPropostaGruppo(null); setScelto(x.volto.handle); setSceltoDaSemblic(true); setInScena(x.ruolo); void genera(x.volto, true); }}
+                className="h-11 rounded-full border border-border px-4 text-[0.88rem] font-semibold"
+              >
+                Solo {propostaGruppo[0].volto.alias} · {saldo !== null ? `${FMT.format(livello.volt)} ⚡` : formatEur(livello.volt)}
+              </button>
+              <button type="button" onClick={() => { setPropostaGruppo(null); setSceltaAperta(true); }} className="h-11 px-2 text-[0.88rem] font-semibold text-amber-ink hover:underline">
+                Scelgo io
+              </button>
+            </div>
+          </div>
+        );
+      })()}
 
       {dubbio && (
         <div className="card mt-4 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">

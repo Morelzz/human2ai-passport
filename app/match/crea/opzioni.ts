@@ -162,3 +162,9 @@ export function ridimensiona(file: File, max = 1024): Promise<string> {
     img.src = url;
   });
 }
+
+// "Gabriella", "Gabriella e Stella", "Gabriella, Stella e Marco"
+export function nomi(lista: string[]): string {
+  if (lista.length <= 1) return lista[0] ?? "";
+  return `${lista.slice(0, -1).join(", ")} e ${lista[lista.length - 1]}`;
+}

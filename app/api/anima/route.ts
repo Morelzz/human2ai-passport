@@ -79,6 +79,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `${avatar.alias} non ha ancora dato il consenso al video.`, code: "no_video_consent" }, { status: 403 });
   }
 
+  // Scena di gruppo: anche le altre persone nella foto devono poter andare in video.
+  const { data: nellaFoto } = await admin.from("generation_people").select("avatar_id").eq("generation_id", gen.id);
+  const altri = (nellaFoto ?? []).map((r) => r.avatar_id as string).filter((x) => x !== avatar.id);
+  if (altri.length) {
+    const { data: loro } = await admin
+      .from("avatars")
+      .select("id, alias, revoked_at, protection_only, commercial_consent, video_consent")
+      .in("id", altri);
+    for (const id of altri) {
+      const x = (loro ?? []).find((r) => r.id === id);
+      if (!x || avatarVetoReason(x) || x.commercial_consent === false) {
+        logBlockedRequest(admin, { source: "anima", reason: (x && avatarVetoReason(x)) ?? "no_commercial_consent", category: null });
+        return NextResponse.json({ error: "Una delle persone nella foto non è più disponibile." }, { status: 403 });
+      }
+      if (x.video_consent !== true) {
+        logBlockedRequest(admin, { source: "anima", reason: "no_video_consent", category: null });
+        return NextResponse.json({ error: `${x.alias} non ha ancora dato il consenso al video.`, code: "no_video_consent" }, { status: 403 });
+      }
+    }
+  }
+
   const prezzo = prezzoAnima(livello, secondi);
   const id = crypto.randomUUID();
   const spesa = await spendVolt(user.id, prezzo.gross_cents, `ANIMA:${id}`);

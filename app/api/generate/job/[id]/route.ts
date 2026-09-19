@@ -29,6 +29,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   // Ward (/ward/content/[id]). Cercato per certificato, solo tra quelle del buyer.
   let generationId: string | undefined;
   let identityScore: number | undefined;
+  // Scena di gruppo: chi c'e' nella foto, da sinistra, con la sua somiglianza.
+  let persone: { handle: string; alias: string; somiglianza: number | null }[] | undefined;
   if (job.status === "done" && job.certificate) {
     const { data: gen } = await admin
       .from("generations")
@@ -41,11 +43,25 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       const { data: s } = await admin.from("generations").select("identity_score").eq("id", generationId).maybeSingle();
       const v = (s as { identity_score?: unknown } | null)?.identity_score;
       if (typeof v === "number") identityScore = v;
+      const gruppo = (job.params as { gruppo?: unknown[] } | null)?.gruppo;
+      if (Array.isArray(gruppo) && gruppo.length > 1) {
+        const { data: gp } = await admin
+          .from("generation_people")
+          .select("posizione, identity_score, avatars(handle, alias)")
+          .eq("generation_id", generationId)
+          .order("posizione");
+        type Riga = { identity_score: number | null; avatars: { handle: string; alias: string } | { handle: string; alias: string }[] | null };
+        persone = ((gp ?? []) as Riga[]).flatMap((r) => {
+          const a = Array.isArray(r.avatars) ? r.avatars[0] : r.avatars;
+          return a ? [{ handle: a.handle, alias: a.alias, somiglianza: r.identity_score }] : [];
+        });
+      }
     }
   }
   return NextResponse.json({
     generation_id: generationId,
     identity_score: identityScore,
+    persone,
     status: job.status, // pending | running | done | error
     error: job.status === "error" ? job.error : undefined,
     category: jobParams?.category ?? null,

@@ -43,6 +43,8 @@ interface VerifyResult {
   // Esteso (esito "autorità"): consenso commerciale corrente + catena del consenso.
   commercial_consent?: boolean | null;
   has_portrait?: boolean;
+  // Scena di gruppo: le altre persone del registro nella stessa foto.
+  others?: { handle: string; alias: string; status: string; has_portrait: boolean }[];
   events?: Array<{ event_type: string; detail: string | null; occurred_at: string }>;
   face?: {
     scanned: boolean;
@@ -426,6 +428,30 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                         ? <span className="kicker text-verified">Consenso attivo</span>
                         : <span className="kicker text-blocked">Consenso revocato</span>}
                     </div>
+                  </div>
+                </div>
+              )}
+              {result.type === "content" && result.others && result.others.length > 0 && (
+                <div className="-mt-2 mb-5 rounded-2xl border border-border p-4">
+                  <p className="kicker mb-3 text-faint">Nella stessa foto, dal registro</p>
+                  <div className="flex flex-wrap gap-4">
+                    {result.others.map((o) => (
+                      <div key={o.handle} className="flex items-center gap-3">
+                        {o.has_portrait ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={`/api/sample/${o.handle}/0`} alt={o.alias} className="h-12 w-12 rounded-xl object-cover" />
+                        ) : (
+                          <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-soft text-lg font-bold text-amber-ink">{o.alias.charAt(0)}</span>
+                        )}
+                        <div>
+                          <p className="m-0 font-semibold text-foreground">{o.alias}</p>
+                          <p className="m-0 text-[0.8rem] text-faint">@{o.handle}</p>
+                          {o.status === "ATTIVO"
+                            ? <span className="kicker text-verified">Consenso attivo</span>
+                            : <span className="kicker text-blocked">Consenso revocato</span>}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

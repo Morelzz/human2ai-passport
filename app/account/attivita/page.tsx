@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { conQuoteDiGruppo, quoteDi } from "@/lib/gruppo-quote";
 import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
@@ -53,7 +54,20 @@ export default async function AttivitaPage() {
       .not("certificate", "is", null)
       .order("created_at", { ascending: false })
       .limit(30);
-    feed = (gens ?? []) as FeedGen[];
+    // Scene di gruppo: la parte dei suoi volti, anche dove non sono i primi da sinistra.
+    const quote = await quoteDi(admin, ids);
+    feed = (await conQuoteDiGruppo((gens ?? []) as FeedGen[], quote, async (altri) => {
+      const { data: g2 } = await admin
+        .from("generations")
+        .select("id, certificate, category, royalty_cents, created_at")
+        .in("id", altri)
+        .not("certificate", "is", null);
+      // il volto mostrato e' il suo, non quello del primo da sinistra
+      return ((g2 ?? []) as Omit<FeedGen, "avatars">[]).map((g) => {
+        const suo = myAvatars.find((a) => quote.some((q) => q.generation_id === g.id && q.avatar_id === a.id));
+        return { ...g, avatars: suo ? { alias: suo.alias, handle: suo.handle } : null };
+      });
+    })).slice(0, 30);
   }
 
   const totalRoyalty = myAvatars.reduce((s, a) => s + (a.royalty_accrued_cents ?? 0), 0);
