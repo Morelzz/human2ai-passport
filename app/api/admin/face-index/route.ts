@@ -3,6 +3,7 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { getPublicAvatars } from "@/lib/registry";
 import { isValidDescriptor, loadFaceIndex, saveFaceIndex } from "@/lib/face-index";
+import { eOperatore } from "@/lib/operatori";
 
 // Indice volti del registro — riservato agli operatori (role 'admin').
 // GET:  avatar pubblici + URL delle foto sorgente (ritratto pubblico se
@@ -19,7 +20,7 @@ async function requireAdmin() {
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return { ok: false as const, error: "Non autenticato", status: 401 };
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") return { ok: false as const, error: "Riservato agli operatori", status: 403 };
+  if (!eOperatore(profile?.role, user.email)) return { ok: false as const, error: "Riservato agli operatori", status: 403 };
   return { ok: true as const };
 }
 

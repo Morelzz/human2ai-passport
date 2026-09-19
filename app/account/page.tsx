@@ -20,6 +20,7 @@ import { ContentsGrid, type GridItem } from "@/components/account/ContentsGrid";
 import { VideoStrip, type VideoItem } from "@/components/account/VideoStrip";
 import { voltBalance, LOW_BALANCE_THRESHOLD } from "@/lib/volt";
 import { ActiveJobs, type ActiveJob } from "@/components/account/ActiveJobs";
+import { eOperatore } from "@/lib/operatori";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -163,9 +164,11 @@ export default async function AccountPage() {
     }
   }
 
+  // Operatore: ruolo admin oppure email nella lista SEMBLIC_OPERATORI (lib/operatori).
+  const operatore = eOperatore(role, user.email);
   // Operatori: quanti messaggi del modulo contatti aspettano risposta.
   let messaggiAperti = 0;
-  if (role === "admin") {
+  if (operatore) {
     const { count } = await admin2.from("contact_messages").select("id", { count: "exact", head: true }).eq("status", "open");
     messaggiAperti = count ?? 0;
   }
@@ -371,7 +374,7 @@ export default async function AccountPage() {
           </div>
         )}
 
-        {role === "admin" && (
+        {operatore && (
           <>
             <Link href="/account/kyc" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
               Verifiche identità (KYC)

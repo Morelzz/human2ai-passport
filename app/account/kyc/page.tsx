@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import KycClient from "./KycClient";
+import { eOperatore } from "@/lib/operatori";
 
 export const metadata = { title: "Verifiche identità (KYC)" };
 
@@ -12,7 +13,7 @@ export default async function KycReviewPage() {
   if (!user) redirect("/login?next=%2Faccount%2Fkyc");
 
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/account");
+  if (!eOperatore(profile?.role, user.email)) redirect("/account");
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">

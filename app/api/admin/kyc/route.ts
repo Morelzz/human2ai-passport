@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { grantWelcomeVoltOnce } from "@/lib/volt";
+import { eOperatore } from "@/lib/operatori";
 
 // Coda di revisione KYC — riservata agli operatori (role 'admin').
 // GET:  profili con kyc_status='pending' + URL FIRMATI temporanei (1 ora)
@@ -18,7 +19,7 @@ async function requireAdmin() {
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return { ok: false as const, error: "Non autenticato", status: 401 };
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") return { ok: false as const, error: "Riservato agli operatori", status: 403 };
+  if (!eOperatore(profile?.role, user.email)) return { ok: false as const, error: "Riservato agli operatori", status: 403 };
   return { ok: true as const };
 }
 

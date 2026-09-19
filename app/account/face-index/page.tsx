@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import FaceIndexClient from "./FaceIndexClient";
+import { eOperatore } from "@/lib/operatori";
 
 export const metadata = { title: "Indice volti del registro" };
 
@@ -14,7 +15,7 @@ export default async function FaceIndexPage() {
   if (!user) redirect("/login?next=%2Faccount%2Fface-index");
 
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/account");
+  if (!eOperatore(profile?.role, user.email)) redirect("/account");
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">

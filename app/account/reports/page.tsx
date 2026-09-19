@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import ReportsClient from "./ReportsClient";
+import { eOperatore } from "@/lib/operatori";
 
 // Coda di moderazione delle segnalazioni — riservata agli operatori (role 'admin').
 export default async function ReportsPage() {
@@ -10,7 +11,7 @@ export default async function ReportsPage() {
   if (!user) redirect("/login?next=%2Faccount%2Freports");
 
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/account");
+  if (!eOperatore(profile?.role, user.email)) redirect("/account");
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">

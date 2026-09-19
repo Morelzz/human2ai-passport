@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { listSoulIds } from "@/lib/higgsfield";
+import { eOperatore } from "@/lib/operatori";
 
 // Elenca i Soul ID dell'account Higgsfield, per collegarli agli avatar.
 // Riservato a creatori/admin autenticati. Le credenziali stanno solo lato server.
@@ -14,7 +15,7 @@ export async function GET() {
     .select("role")
     .eq("id", user.id)
     .single();
-  if (profile?.role !== "seller" && profile?.role !== "admin") {
+  if (profile?.role !== "seller" && !eOperatore(profile?.role, user.email)) {
     return NextResponse.json({ error: "Non autorizzato" }, { status: 403 });
   }
 

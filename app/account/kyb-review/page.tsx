@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import KybReviewClient from "./KybReviewClient";
+import { eOperatore } from "@/lib/operatori";
 
 // Coda di revisione KYB (aziende) — riservata agli operatori (role 'admin').
 export default async function KybReviewPage() {
@@ -10,7 +11,7 @@ export default async function KybReviewPage() {
   if (!user) redirect("/login?next=%2Faccount%2Fkyb-review");
 
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/account");
+  if (!eOperatore(profile?.role, user.email)) redirect("/account");
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">

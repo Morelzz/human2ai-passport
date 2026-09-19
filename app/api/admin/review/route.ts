@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { eOperatore } from "@/lib/operatori";
 
 // Coda di revisione manuale degli operatori (Enterprise).
 // Solo gli account 'admin' (operatori) possono vedere e decidere.
@@ -9,7 +10,7 @@ async function requireAdmin() {
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return { ok: false as const, error: "Non autenticato", status: 401 };
   const { data: profile } = await auth.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") return { ok: false as const, error: "Riservato agli operatori", status: 403 };
+  if (!eOperatore(profile?.role, user.email)) return { ok: false as const, error: "Riservato agli operatori", status: 403 };
   return { ok: true as const };
 }
 
