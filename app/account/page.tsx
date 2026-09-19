@@ -17,6 +17,7 @@ import VoltGrantPanel from "./VoltGrantPanel";
 import { revenueStatsFor, type RevenueStats } from "@/lib/account-stats";
 import { RoyaltyCharts } from "@/components/account/RoyaltyCharts";
 import { ContentsGrid, type GridItem } from "@/components/account/ContentsGrid";
+import { VideoStrip, type VideoItem } from "@/components/account/VideoStrip";
 import { voltBalance, LOW_BALANCE_THRESHOLD } from "@/lib/volt";
 import { ActiveJobs, type ActiveJob } from "@/components/account/ActiveJobs";
 
@@ -131,6 +132,36 @@ export default async function AccountPage() {
       alias: av?.alias ?? "Avatar", handle: av?.handle ?? "",
     };
   });
+
+  // Video Anima del buyer (tabella di anima_video.sql: se manca, nessun video).
+  // select("*"): le colonne del controllo possono arrivare dopo.
+  let myVideos: VideoItem[] = [];
+  {
+    const { data: vids, error: vidErr } = await admin2
+      .from("animations")
+      .select("*")
+      .eq("buyer_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(12);
+    if (!vidErr && vids?.length) {
+      const cert = new Map(myGenerations.map((g) => [g.id, g.certificate]));
+      myVideos = (vids as Record<string, unknown>[]).map((v) => {
+        const c = cert.get(String(v.source_generation_id));
+        return {
+          id: String(v.id),
+          status: v.status as VideoItem["status"],
+          video_url: (v.video_url as string | null) ?? null,
+          poster: c ? `/api/content/${c}` : null,
+          certificate: (v.certificate as string | null) ?? null,
+          seconds: Number(v.seconds ?? 5),
+          somiglianza: typeof v.identity_score === "number" ? v.identity_score : null,
+          fotogrammi: typeof v.frames_checked === "number" ? v.frames_checked : null,
+          errore: (v.error as string | null) ?? null,
+          created_at: String(v.created_at),
+        };
+      });
+    }
+  }
 
   // Saldo VOLT (null = sistema non configurato: la card si nasconde).
   const volt = await voltBalance(user.id);
@@ -505,6 +536,7 @@ export default async function AccountPage() {
           <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
             <p className="kicker" style={{ margin: "0 0 0.8rem" }}>I MIEI CONTENUTI</p>
             <div aria-hidden style={{ height: 1, background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 38%, transparent 80%)", margin: "0 0 1rem" }} />
+            <VideoStrip items={myVideos} />
             <ContentsGrid items={gridItems} shareVariant="buyer" />
             <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
               Ogni contenuto è certificato e la persona reale è stata remunerata.
