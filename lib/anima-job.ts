@@ -22,7 +22,7 @@ import { dividiRoyalty } from "@/lib/gruppo-prezzi";
 import { getReferenceSet } from "@/lib/references";
 import { riferimentoInCache, misuraScatto } from "@/lib/identity-score";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
-import { fotogrammi } from "@/lib/video-fotogrammi";
+import { conCertificato, fotogrammi } from "@/lib/video-fotogrammi";
 import { verificaVideo, punteggioVideo } from "@/lib/anima-verifica";
 
 type Admin = ReturnType<typeof createServerClient>;
@@ -103,8 +103,14 @@ export async function chiudiAnimazione(admin: Admin, a: RigaAnima, sorgente: str
     return "riprova";
   }
 
-  const url = await uploadPublicImage("generations", `${a.avatar_id}/video/${a.id}.mp4`, video, "video/mp4");
   const certificate = crypto.createHash("sha256").update(`${a.avatar_id}|${a.id}|anima|${a.movement}|${new Date().toISOString().slice(0, 10)}`).digest("hex");
+  // Il certificato va anche dentro il file (metadati): Sigil lo legge dal video
+  // scaricato. Se la scrittura non riesce il video esce lo stesso, certificato nel registro.
+  const marcato = await conCertificato(video, certificate).catch((e) => {
+    console.warn(`[ANIMA ${a.id}] certificato nel file non scritto`, e instanceof Error ? e.message : e);
+    return video;
+  });
+  const url = await uploadPublicImage("generations", `${a.avatar_id}/video/${a.id}.mp4`, marcato, "video/mp4");
 
   const quote = dividiRoyalty(a.royalty_cents, Math.max(1, persone.length));
   for (let i = 0; i < persone.length; i++) {

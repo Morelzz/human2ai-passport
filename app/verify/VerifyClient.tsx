@@ -153,8 +153,36 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
     qualityRef.current = null;
   }
 
+  // Video Anima: il certificato sta nei metadati del file. Si legge qui, sul
+  // dispositivo; al server va solo il certificato.
+  async function onVideo(file: File) {
+    reset();
+    setPreview((old) => {
+      if (old) URL.revokeObjectURL(old);
+      return null;
+    });
+    setBusy(true);
+    setStage("Cerco il certificato nel video…");
+    try {
+      const { leggiMarchio } = await import("@/lib/video-marchio");
+      const cert = leggiMarchio(new Uint8Array(await file.arrayBuffer()));
+      if (cert) {
+        const res = await fetch(`/api/verify?token=${encodeURIComponent(cert)}`);
+        setResult({ ...(await res.json()), source: "token" });
+      } else {
+        setResult({ valid: false, source: "image", wm_checked: true, medium: "video" });
+      }
+    } catch {
+      setResult({ valid: false, source: "image", wm_checked: false, medium: "video" });
+    }
+    setStage(null);
+    setBusy(false);
+  }
+
   async function onFile(file: File) {
-    if (busy || filtering || !file.type.startsWith("image/")) return;
+    if (busy || filtering) return;
+    if (file.type.startsWith("video/")) return onVideo(file);
+    if (!file.type.startsWith("image/")) return;
     reset();
     setPreview((old) => {
       if (old) URL.revokeObjectURL(old);
@@ -353,7 +381,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
             <span className="px-8 text-center text-[0.8rem] leading-relaxed text-faint">
               <span aria-hidden className="mb-2 block text-4xl font-bold text-muted">⌖</span>{" "}
               Trascina qui un&apos;immagine
-              <span className="block text-[0.7rem]">o tocca per sceglierla</span>
+              <span className="block text-[0.7rem]">o un video Anima, o tocca per sceglierlo</span>
             </span>
           )}
           {busy && (
@@ -361,9 +389,9 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           )}
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,video/mp4"
             disabled={busy}
-            aria-label={preview ? "Carica un'altra immagine da verificare" : "Carica un'immagine da verificare"}
+            aria-label={preview ? "Carica un'altra immagine o un video da verificare" : "Carica un'immagine o un video da verificare"}
             className="sr-only"
             onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.currentTarget.value = ""; }}
           />
@@ -375,6 +403,7 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           <span className="text-muted"> sul tuo dispositivo</span>. L&apos;analisi del volto avviene comunque tutta
           sul tuo dispositivo: al server arriva solo un vettore numerico, mai conservato.
           La filigrana sopravvive ai PNG scaricati da Semblic; screenshot e ricompressioni possono cancellarla.
+          I video Anima portano il certificato dentro il file: si legge sul tuo dispositivo, il video non viene inviato.
         </p>
       </div>
 
@@ -691,10 +720,14 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
           ) : (
             <>
               <h2 className={`m-0 text-[1.05rem] font-bold tracking-[-0.01em] ${result.marked ? "text-amber-ink" : "text-blocked"}`}>
-                {result.source === "token" ? "Non valido" : result.marked ? "Filigrana trovata, certificato sconosciuto" : "Nessuna filigrana"}
+                {result.medium === "video" ? "Nessun certificato nel video" : result.source === "token" ? "Non valido" : result.marked ? "Filigrana trovata, certificato sconosciuto" : "Nessuna filigrana"}
               </h2>
               <p className="mt-1 text-[0.82rem] leading-relaxed text-muted">
-                {result.source === "token"
+                {result.medium === "video"
+                  ? result.wm_checked
+                    ? "Questo file non porta un certificato Semblic. I video Anima lo hanno dentro il file originale scaricato da Semblic: una piattaforma che ricomprime il video lo toglie."
+                    : "Non sono riuscito a leggere il file. Prova con il video originale scaricato da Semblic."
+                  : result.source === "token"
                   ? "Questo codice non corrisponde a nessun avatar né contenuto nel registro."
                   : result.marked
                     ? "L'immagine porta una filigrana Semblic, ma il certificato non risulta nel registro: segnalacelo."

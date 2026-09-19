@@ -12,7 +12,7 @@ vi.mock("@/lib/volt", () => ({ grantVolt: async (user: string, cents: number, _t
 vi.mock("@/lib/references", () => ({ getReferenceSet: async () => [Buffer.from("foto")] }));
 vi.mock("@/lib/identity-score", () => ({ riferimentoInCache: async (k: string) => ({ chiave: k, rif: [[0]], coerenza: null }), misuraScatto: async () => null }));
 vi.mock("@/lib/face-scan-server", () => ({ scanGeneratedImageForProtected: async () => ({}), outputScanVerdict: () => "release" }));
-vi.mock("@/lib/video-fotogrammi", () => ({ fotogrammi: async () => [] }));
+vi.mock("@/lib/video-fotogrammi", () => ({ fotogrammi: async () => [], conCertificato: async (v: Buffer) => v }));
 vi.mock("@/lib/anima-verifica", () => ({
   verificaVideo: async (_v: Buffer, _s: number, _r: unknown[], chiavi: string[]) =>
     esitoVerifica === "ok"

@@ -3,9 +3,10 @@
 // si cancella sempre. Gira sul worker (Railway, next start), non su Vercel.
 
 import { execFile } from "node:child_process";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { testoMarchio } from "@/lib/video-marchio";
 
 // Un fotogramma a meta' di ogni secondo, piu' uno vicino alla fine: in 5 s
 // sono 6 controlli, in 10 s 11. I volti che girano o cambiano a meta' video
@@ -37,6 +38,23 @@ export async function fotogrammi(video: Buffer, secondi: number): Promise<{ t: n
       const png = await ffmpeg(["-loglevel", "error", "-ss", String(t), "-i", file, "-frames:v", "1", "-f", "image2pipe", "-vcodec", "png", "-"]);
       if (png.length > 1000) out.push({ t, png });
     }
+    return out;
+  } finally {
+    await rm(dir, { recursive: true, force: true }).catch(() => {});
+  }
+}
+
+// Scrive il certificato nei metadati del file (senza ricodificare: -c copy) e
+// mette l'indice in testa (faststart), cosi' Sigil lo trova subito.
+export async function conCertificato(video: Buffer, certificate: string): Promise<Buffer> {
+  const dir = await mkdtemp(path.join(tmpdir(), "anima-"));
+  const dentro = path.join(dir, "v.mp4");
+  const fuori = path.join(dir, "c.mp4");
+  try {
+    await writeFile(dentro, video);
+    await ffmpeg(["-loglevel", "error", "-y", "-i", dentro, "-map", "0", "-c", "copy", "-metadata", `comment=${testoMarchio(certificate)}`, "-movflags", "+faststart", fuori]);
+    const out = await readFile(fuori);
+    if (out.length < video.length * 0.9) throw new Error("file marcato troppo piccolo");
     return out;
   } finally {
     await rm(dir, { recursive: true, force: true }).catch(() => {});
