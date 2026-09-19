@@ -39,7 +39,23 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Come faccio a sapere se un contenuto è stato fatto col consenso?",
-    a: "Ogni contenuto autorizzato esce con un certificato verificabile e una filigrana invisibile. Carichi l'immagine (o incolli il token) su /verify e ottieni la risposta: chi c'è dietro, cosa ha consentito, quando.",
+    a: "Ogni contenuto autorizzato esce con un certificato verificabile e una filigrana invisibile. Carichi l'immagine (o incolli il token) su /verify e ottieni la risposta: chi c'è dietro, cosa ha consentito, quando. I video portano il certificato dentro il file: Sigil lo legge sul tuo dispositivo, senza caricare il video da nessuna parte.",
+  },
+  {
+    q: "Se scrivo solo la scena, chi sceglie il volto?",
+    a: "Semblic. Scrivi cosa succede, per esempio una ragazza bionda che corre in un campo, e il casting sceglie dal registro una persona vera che corrisponde e ha dato il consenso, dando la precedenza a chi è stato scelto meno. Se nessuno corrisponde del tutto te lo dice prima di generare. Puoi anche chiamare le persone per nome, con la maiuscola: Gabriella e Stella al bar.",
+  },
+  {
+    q: "Posso fare una foto con più persone del registro?",
+    a: "Sì, fino a quattro in primo piano. Prima si compone la scena, poi ogni volto viene rifatto con le foto verificate della sua persona, uno alla volta, e ognuno viene misurato. Il prezzo è quello di tanti scatti quanti sono i passaggi, e la parte delle persone si divide in parti uguali. Il resto della gente resta sullo sfondo, non riconoscibile.",
+  },
+  {
+    q: "Posso trasformare uno scatto in un video?",
+    a: "Sì, con Anima: dallo scatto certificato nasce un video di 5 o 10 secondi. Serve un secondo sì, quello al video, che la persona dà o toglie dal suo account. Il video non ha mai audio, perché la voce di una persona non si genera. Prima di arrivarti viene controllato fotogramma per fotogramma: se compare un volto protetto viene annullato e i crediti tornano indietro.",
+  },
+  {
+    q: "Quanto somiglia il risultato alla persona vera?",
+    a: "Lo misuriamo invece di prometterlo. Ogni scatto viene confrontato con le foto verificate della persona e la percentuale compare sul risultato e sulla ricevuta; nei video la misura si fa su ogni fotogramma controllato. Le impronte del volto usate per il confronto restano solo nella memoria del server, al massimo un'ora, e non vengono mai salvate: si salva soltanto la percentuale.",
   },
   {
     q: "Cosa succede se qualcuno usa il mio volto senza permesso?",
