@@ -10,10 +10,11 @@ describe("anima", () => {
   });
 
   it("l'audio resta sempre spento e la risoluzione e' 720p", () => {
-    const c = corpoPer("https://x/y.png", "respira", 5);
+    const c = corpoPer("cinema", "https://x/y.png", "respira", 5);
     expect(c.generate_audio).toBe(false);
     expect(c.resolution).toBe("720p");
     expect(c.duration).toBe(5);
+    expect(corpoPer("rapido", "https://x/y.png", "respira", 10)).not.toHaveProperty("generate_audio");
   });
 
   it("i movimenti pronti diventano prompt in inglese, il testo libero passa con la coda fissa", () => {
@@ -27,10 +28,14 @@ describe("anima", () => {
   });
 
   it("prezzo: costo + ricarico, la persona prende il 45% del ricarico", () => {
-    const p = prezzoAnima(5);
+    const p = prezzoAnima("cinema", 5);
     expect(p.gross_cents).toBeGreaterThan(p.cost_cents);
     expect(p.fee_cents + p.royalty_cents).toBe(p.gross_cents);
-    expect(prezzoAnima(10).gross_cents).toBeGreaterThan(p.gross_cents);
+    expect(prezzoAnima("cinema", 10).gross_cents).toBeGreaterThan(p.gross_cents);
+    // Rapido 5 s: 0,21 $ -> 20 cent di costo -> 30 VOLT
+    expect(prezzoAnima("rapido", 5).gross_cents).toBe(30);
+    expect(prezzoAnima("standard", 5).gross_cents).toBe(78);
+    expect(prezzoAnima("cinema", 5).gross_cents).toBe(321);
   });
 
   it("durate ammesse", () => {

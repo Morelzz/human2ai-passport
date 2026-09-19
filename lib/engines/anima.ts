@@ -8,32 +8,19 @@
 //   da quello all'immagine (decisione di Morelz, 19/9/2026);
 // - audio SEMPRE spento: la voce di una persona non e' coperta dal consenso,
 //   e un motore che "inventa" una voce la imiterebbe;
-// - solo Seedance 2.5 a 720p (scelta di Morelz, 19/9/2026).
+// - tre livelli (19/9/2026, Morelz: Seedance e' pesante, servono piu' possibilita'):
+//   Rapido (Kling 2.5 Turbo), Standard (Kling 3.0 Turbo), Cinema (Seedance 2.5).
 //
 // Prima prova vera (19/9): Gabriella c4468df7, 5 s, 786x1178, 3 minuti, identita' tenuta.
 // Documentazione: https://docs.higgsfield.ai/docs/llms.txt
 
-import { USD_TO_EUR } from "@/lib/engines/echo-cost";
+import { LIVELLI, MOVIMENTI, type Durata, type LivelloVideo } from "@/lib/engines/anima-prezzi";
+export { DURATE, isDurata, isLivello, prezzoAnima, costoSeedanceUsd, LIVELLI, MOVIMENTI, type Durata, type LivelloVideo } from "@/lib/engines/anima-prezzi";
 
 const BASE = "https://api.higgsfield.ai";
-export const ENDPOINT_ANIMA = "bytedance/seedance-2.5/image-to-video";
-export const DURATE = [5, 10] as const;
-export type Durata = (typeof DURATE)[number];
 
-export function isDurata(v: unknown): v is Durata {
-  return v === 5 || v === 10;
-}
-
-// Movimenti pronti. L'etichetta e' per l'utente, il prompt va al motore.
-export const MOVIMENTI = [
-  { v: "respira", l: "Respira e guarda in camera", prompt: "breathes calmly, slowly turns the gaze to the camera and gives a soft natural smile, subtle handheld camera, gentle push in" },
-  { v: "cammina", l: "Cammina verso di te", prompt: "walks slowly toward the camera with natural confident steps, the camera gently tracks backwards" },
-  { v: "sorride", l: "Si volta e sorride", prompt: "turns the head from profile toward the camera and breaks into a genuine smile" },
-  { v: "vento", l: "Vento tra i capelli", prompt: "a light breeze moves the hair and the clothes, the person stays still with a calm expression, slow cinematic camera" },
-  { v: "orbita", l: "Camera che gira intorno", prompt: "the camera slowly orbits around the person, who stays still and keeps looking into the lens" },
-] as const;
-
-const CODA = "Photorealistic, the same person with the same face and the same outfit, natural motion, no text, no logos.";
+// La coda protegge la somiglianza (misure del 19/9: il volto tiene finche' resta in quadro).
+const CODA = "Photorealistic, the same person with the same face and the same outfit, natural motion, the face stays visible and inside the frame, steady camera, no text, no logos.";
 
 // Richieste che non passano mai, qualunque cosa dica il motore: nudita' e
 // sessualizzazione, violenza, cambio d'eta'. Il volto e' di una persona reale.
@@ -54,29 +41,6 @@ export function promptPer(movimento: string): string {
   return `${base}. ${CODA}`;
 }
 
-// Seedance 2.5 a token (dal loro /estimate, 19/9/2026): token = ceil(secondi x
-// larghezza x altezza x 24 / 1024), 0,0214 $ ogni 1000 token a 480p/720p,
-// prima di eventuali sconti del conto. La prima prova e' uscita 786x1178.
-export function costoSeedanceUsd(secondi: number, larghezza = 786, altezza = 1178): number {
-  const token = Math.ceil((secondi * larghezza * altezza * 24) / 1024);
-  return Math.round((token / 1000) * 0.0214 * 1000) / 1000;
-}
-
-// PROPOSTA di prezzo, da confermare con Morelz: costo del motore + ricarico
-// x1,5; del ricarico il 45% va alla persona (come per le foto). Niente tetto a
-// 2 euro: il video costa piu' di una foto gia' in partenza.
-export const RICARICO_VIDEO = 1.5;
-export const QUOTA_PERSONA = 0.45;
-
-export interface PrezzoVideo { gross_cents: number; fee_cents: number; royalty_cents: number; cost_cents: number }
-
-export function prezzoAnima(secondi: Durata): PrezzoVideo {
-  const cost = Math.ceil(costoSeedanceUsd(secondi) * USD_TO_EUR * 100);
-  const gross = Math.ceil(cost * RICARICO_VIDEO);
-  const royalty = Math.round((gross - cost) * QUOTA_PERSONA);
-  return { gross_cents: gross, fee_cents: gross - royalty, royalty_cents: royalty, cost_cents: cost };
-}
-
 function intestazioni(): Record<string, string> {
   const id = process.env.HIGGSFIELD_API_KEY;
   const segreto = process.env.HIGGSFIELD_API_SECRET;
@@ -88,12 +52,16 @@ export function animaConfigurata(): boolean {
   return Boolean(process.env.HIGGSFIELD_API_KEY && process.env.HIGGSFIELD_API_SECRET);
 }
 
-export function corpoPer(immagine: string, movimento: string, secondi: Durata): Record<string, unknown> {
-  return { prompt: promptPer(movimento), image_url: immagine, duration: secondi, resolution: "720p", generate_audio: false, output_format: "mp4" };
+// Corpo per il motore del livello. Audio sempre spento dove il motore lo prevede.
+export function corpoPer(livello: LivelloVideo, immagine: string, movimento: string, secondi: Durata): Record<string, unknown> {
+  const base = { prompt: promptPer(movimento), image_url: immagine, duration: secondi };
+  if (livello === "cinema") return { ...base, resolution: "720p", generate_audio: false, output_format: "mp4" };
+  if (livello === "standard") return { ...base, resolution: "720p" };
+  return base;
 }
 
-export async function inviaVideo(immagine: string, movimento: string, secondi: Durata): Promise<{ requestId: string }> {
-  const res = await fetch(`${BASE}/${ENDPOINT_ANIMA}`, { method: "POST", headers: intestazioni(), body: JSON.stringify(corpoPer(immagine, movimento, secondi)) });
+export async function inviaVideo(livello: LivelloVideo, immagine: string, movimento: string, secondi: Durata): Promise<{ requestId: string }> {
+  const res = await fetch(`${BASE}/${LIVELLI[livello].endpoint}`, { method: "POST", headers: intestazioni(), body: JSON.stringify(corpoPer(livello, immagine, movimento, secondi)) });
   const j = (await res.json().catch(() => ({}))) as { request_id?: string; detail?: unknown };
   if (!res.ok || !j.request_id) throw new Error(`Higgsfield ${res.status}: ${JSON.stringify(j.detail ?? j).slice(0, 200)}`);
   return { requestId: j.request_id };

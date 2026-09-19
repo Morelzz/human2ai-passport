@@ -27,6 +27,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   const esito = () => ({ status: a.status, video_url: a.video_url ?? undefined, certificate: a.certificate ?? undefined, error: a.error ?? undefined, seconds: a.seconds, gross_cents: a.gross_cents, royalty_cents: a.royalty_cents });
   if (a.status === "done" || a.status === "error" || a.status === "finishing") return NextResponse.json(esito());
 
+  if (!a.provider_request_id) return NextResponse.json({ status: "running", fase: "coda" });
   let s: StatoVideo;
   try {
     s = await statoVideo(String(a.provider_request_id));

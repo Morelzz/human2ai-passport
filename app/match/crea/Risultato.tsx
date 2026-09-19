@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { formatEur } from "@/lib/wallet";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
+import { Anima } from "./Anima";
 
 export interface Esito {
   certificate: string;
@@ -105,7 +106,9 @@ export function Risultato({
           />
         </div>
 
-        <div className="card mt-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <Anima certificate={esito.certificate} alias={esito.alias} immagine={img} conVolt={Boolean(esito.spent)} />
+
+        <div className="card mt-3 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
             <span className="text-[1.05rem] font-bold tracking-[-0.02em]">Ritocca luce e colore</span>
             <span className="text-[0.9rem] leading-snug text-muted">Nell&apos;editor: preset, formati per i social e ingrandimento, senza toccare il volto.</span>

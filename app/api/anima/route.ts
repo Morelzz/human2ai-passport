@@ -7,11 +7,11 @@ import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
 import { avatarVetoReason } from "@/lib/avatar-gate";
 import { logBlockedRequest } from "@/lib/blocked";
 import { spendVolt, grantVolt } from "@/lib/volt";
-import { animaConfigurata, inviaVideo, isDurata, movimentoVietato, prezzoAnima, MOVIMENTI } from "@/lib/engines/anima";
+import { animaConfigurata, inviaVideo, isDurata, isLivello, movimentoVietato, prezzoAnima, MOVIMENTI, LIVELLI, type LivelloVideo } from "@/lib/engines/anima";
 
 export const runtime = "nodejs";
 
-// ANIMA: uno scatto certificato del buyer diventa un video breve (Seedance 2.5).
+// ANIMA: uno scatto certificato del buyer diventa un video breve (Rapido, Standard o Cinema).
 // Controlli nello stesso ordine di /api/generate, piu' uno: il consenso AL VIDEO
 // della persona. L'invio al motore e' veloce (torna un request id): il video lo
 // segue /api/anima/[id], che a fine lavoro lo copia da noi e lo certifica.
@@ -28,6 +28,7 @@ export async function POST(request: Request) {
   const certificate = String(body?.certificate ?? "").trim();
   const movimento = String(body?.movimento ?? "").trim();
   const secondi = Number(body?.secondi);
+  const livello: LivelloVideo = isLivello(body?.livello) ? body.livello : "standard";
   if (!certificate) return NextResponse.json({ error: "Scatto mancante" }, { status: 400 });
   if (!isDurata(secondi)) return NextResponse.json({ error: "Durata non valida" }, { status: 400 });
   const pronto = MOVIMENTI.some((m) => m.v === movimento);
@@ -60,11 +61,13 @@ export async function POST(request: Request) {
   }
 
   // La persona: niente veto, consenso commerciale e consenso al video.
-  const { data: avatar } = await admin
+  const { data: avatar, error: avErr } = await admin
     .from("avatars")
     .select("id, alias, revoked_at, protection_only, commercial_consent, video_consent")
     .eq("id", gen.avatar_id)
     .maybeSingle();
+  // Colonna video_consent assente = migrazione anima_video.sql non ancora applicata.
+  if (avErr) return NextResponse.json({ error: "Anima non è ancora attiva" }, { status: 503 });
   if (!avatar) return NextResponse.json({ error: "Volto inesistente" }, { status: 404 });
   const veto = avatarVetoReason(avatar);
   if (veto || avatar.commercial_consent === false) {
@@ -76,7 +79,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `${avatar.alias} non ha ancora dato il consenso al video.`, code: "no_video_consent" }, { status: 403 });
   }
 
-  const prezzo = prezzoAnima(secondi);
+  const prezzo = prezzoAnima(livello, secondi);
   const id = crypto.randomUUID();
   const spesa = await spendVolt(user.id, prezzo.gross_cents, `ANIMA:${id}`);
   if (!spesa.ok && spesa.reason === "insufficient") {
@@ -86,21 +89,14 @@ export async function POST(request: Request) {
     );
   }
 
-  let requestId: string;
-  try {
-    ({ requestId } = await inviaVideo(gen.image_url, movimento, secondi));
-  } catch (e) {
-    if (spesa.ok) await grantVolt(user.id, prezzo.gross_cents, "refund", `anima:${id}`);
-    console.error("[ANIMA] invio fallito", e instanceof Error ? e.message : e);
-    return NextResponse.json({ error: "Il motore video non ha accettato la richiesta. Non ti abbiamo addebitato nulla.", volt_refunded: spesa.ok ? prezzo.gross_cents : undefined }, { status: 502 });
-  }
-
+  // Prima si registra, poi si invia: se la registrazione non riesce il motore
+  // non viene mai chiamato (e quindi mai pagato).
   const { error: insErr } = await admin.from("animations").insert({
     id,
     buyer_id: user.id,
     avatar_id: avatar.id,
     source_generation_id: gen.id,
-    provider_request_id: requestId,
+    engine: LIVELLI[livello].endpoint,
     movement: movimento,
     seconds: secondi,
     ...prezzo,
@@ -111,9 +107,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Non riesco a registrare il video. Non ti abbiamo addebitato nulla." }, { status: 503 });
   }
 
+  let requestId: string;
+  try {
+    ({ requestId } = await inviaVideo(livello, gen.image_url, movimento, secondi));
+  } catch (e) {
+    console.error("[ANIMA] invio fallito", e instanceof Error ? e.message : e);
+    await admin.from("animations").update({ status: "error", error: "invio al motore fallito", finished_at: new Date().toISOString() }).eq("id", id);
+    if (spesa.ok) await grantVolt(user.id, prezzo.gross_cents, "refund", `anima:${id}`);
+    return NextResponse.json({ error: "Il motore video non ha accettato la richiesta. Non ti abbiamo addebitato nulla.", volt_refunded: spesa.ok ? prezzo.gross_cents : undefined }, { status: 502 });
+  }
+  await admin.from("animations").update({ provider_request_id: requestId }).eq("id", id);
+
   return NextResponse.json({
     id,
     alias: avatar.alias,
+    livello,
     gross_cents: prezzo.gross_cents,
     royalty_cents: prezzo.royalty_cents,
     volt: spesa.ok ? { spent: prezzo.gross_cents, balance: spesa.balance } : undefined,
