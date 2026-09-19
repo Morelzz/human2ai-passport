@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { isPublicAvatar } from "@/lib/registry";
 import { NextRequest, NextResponse } from "next/server";
+import { origineVideo } from "@/lib/video-certificato";
 
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
@@ -55,6 +56,34 @@ export async function GET(req: NextRequest) {
       generated_at: gen.created_at,
       category: gen.category ?? null,
     });
+  }
+
+  // 3. È il certificato di un VIDEO Anima? Si verifica attraverso lo scatto di partenza.
+  const video = await origineVideo(supabase, token);
+  if (video) {
+    const { data: src } = await supabase
+      .from("generations")
+      .select("category, avatars(handle, alias, tier, consent_start, revoked_at)")
+      .eq("certificate", video.sourceCertificate)
+      .maybeSingle();
+    const av = src ? (Array.isArray(src.avatars) ? src.avatars[0] : src.avatars) : null;
+    if (av) {
+      return NextResponse.json({
+        valid: true,
+        type: "content",
+        medium: "video",
+        certificate: token,
+        source_certificate: video.sourceCertificate,
+        alias: av.alias ?? null,
+        handle: av.handle ?? null,
+        tier: av.tier ?? null,
+        status: av.revoked_at ? "REVOCATO" : "ATTIVO",
+        consent_start: av.consent_start ?? null,
+        revoked_at: av.revoked_at ?? null,
+        generated_at: video.created_at,
+        category: src?.category ?? null,
+      });
+    }
   }
 
   return NextResponse.json({ valid: false });

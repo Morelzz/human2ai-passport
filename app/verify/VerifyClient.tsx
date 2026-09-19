@@ -45,6 +45,9 @@ interface VerifyResult {
   has_portrait?: boolean;
   // Scena di gruppo: le altre persone del registro nella stessa foto.
   others?: { handle: string; alias: string; status: string; has_portrait: boolean }[];
+  // Certificato di un video Anima: si verifica attraverso lo scatto di partenza.
+  medium?: "video";
+  source_certificate?: string;
   events?: Array<{ event_type: string; detail: string | null; occurred_at: string }>;
   face?: {
     scanned: boolean;
@@ -394,11 +397,13 @@ export default function VerifyClient({ initialToken = "" }: { initialToken?: str
                 </svg>
                 <div>
                   <h2 className="m-0 font-mono text-[0.95rem] font-bold tracking-wide text-verified">
-                    {result.type === "content" ? "GENERATO DA SEMBLIC" : "TOKEN VALIDO"}
+                    {result.type === "content" ? (result.medium === "video" ? "VIDEO GENERATO DA SEMBLIC" : "GENERATO DA SEMBLIC") : "TOKEN VALIDO"}
                   </h2>
                   <p className="m-0 text-[0.8rem] text-muted">
                     {result.type === "content"
-                      ? "Contenuto certificato: dietro c'è una persona reale, consenziente e pagata."
+                      ? result.medium === "video"
+                        ? "Video certificato, nato da uno scatto certificato: dietro c'è una persona reale, che ha detto sì anche al video ed è stata pagata."
+                        : "Contenuto certificato: dietro c'è una persona reale, consenziente e pagata."
                       : "Consenso verificato nel registro Semblic."}
                   </p>
                 </div>

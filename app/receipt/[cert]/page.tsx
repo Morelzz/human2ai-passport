@@ -14,7 +14,7 @@ export async function generateMetadata() {
 }
 
 // Il JSON della ricevuta resta tecnico (commercial, preview): qui si legge in italiano.
-const MODALITA: Record<string, string> = { commercial: "Uso commerciale", preview: "Anteprima" };
+const MODALITA: Record<string, string> = { commercial: "Uso commerciale", preview: "Anteprima", video: "Video (Anima), uso commerciale" };
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "n.d.";
@@ -106,7 +106,14 @@ export default async function ReceiptPage({ params }: Props) {
             {/* Il consenso oggi e' si/no: la categoria compare solo sulle generazioni che l'avevano */}
             {r.generation.category && <Field label="Categoria d&apos;uso">{r.generation.category}</Field>}
             <Field label="Modalità">{MODALITA[r.generation.mode] ?? r.generation.mode}</Field>
-            {!r.people && r.likeness.score !== null && (
+            {r.video && (
+              <Field label="Video">
+                {r.video.seconds} secondi, senza audio, dallo scatto certificato{" "}
+                <a href={r.video.source_receipt_url} className="receipt-link">{r.video.source_certificate.slice(0, 16)}</a>
+                {r.likeness.score !== null ? ` · somiglianza misurata fotogramma per fotogramma: ${r.likeness.score}%` : ""}
+              </Field>
+            )}
+            {!r.people && !r.video && r.likeness.score !== null && (
               <Field label="Somiglianza verificata">{r.likeness.score}% con le foto verificate di {r.subject.alias ?? "questa persona"}</Field>
             )}
           </div>

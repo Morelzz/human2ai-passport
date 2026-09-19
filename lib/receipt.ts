@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase";
 import { siteUrl } from "@/lib/site";
+import { origineVideo } from "@/lib/video-certificato";
 
 // Fase 3.3 (readiness enterprise): la RICEVUTA DI CONFORMITA' di una generazione.
 // Fonte UNICA condivisa da /api/receipt/[cert] (JSON, per l'archivio/API) e da
@@ -16,6 +17,9 @@ export type ComplianceReceipt = {
   generation: { date: string; category: string | null; mode: string };
   // Somiglianza misurata con le foto verificate della persona (null = non misurata).
   likeness: { score: number | null };
+  // Video Anima: nasce da uno scatto certificato; la somiglianza e' quella misurata
+  // fotogramma per fotogramma.
+  video?: { seconds: number; source_certificate: string; source_receipt_url: string };
   // Scena di gruppo: TUTTE le persone nella foto, da sinistra, ognuna col suo
   // consenso e la sua somiglianza. Assente negli scatti con una persona sola.
   people?: {
@@ -53,7 +57,20 @@ export async function buildComplianceReceipt(
     .select("id, certificate, category, mode, created_at, avatars(handle, alias, consent_start, commercial_consent, revoked_at)")
     .eq("certificate", cert)
     .maybeSingle();
-  if (!gen) return null;
+  if (!gen) {
+    // Non e' una foto: forse e' il certificato di un video Anima.
+    const v = await origineVideo(admin, cert);
+    if (!v || v.sourceCertificate === cert) return null;
+    const base = await buildComplianceReceipt(v.sourceCertificate, issuedAtIso);
+    if (!base) return null;
+    return {
+      ...base,
+      certificate: cert,
+      generation: { ...base.generation, date: v.created_at.slice(0, 10), mode: "video" },
+      likeness: { score: v.identityScore },
+      video: { seconds: v.seconds, source_certificate: v.sourceCertificate, source_receipt_url: `${siteUrl()}/receipt/${v.sourceCertificate}` },
+    };
+  }
 
   const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
   const base = siteUrl();
