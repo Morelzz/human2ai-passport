@@ -6,6 +6,7 @@ import { SediMap } from "@/components/marketing/SediMap";
 import { TeamSection } from "@/components/marketing/TeamSection";
 import { getSedi } from "@/lib/scan";
 import { ContactForm } from "./ContactForm";
+import { pianoPerId } from "@/lib/abbonamenti";
 
 export const metadata = {
   title: "Contatti e sedi",
@@ -16,14 +17,20 @@ export const metadata = {
 // F2 — pagina /contatti: form pubblico contact_messages + recapiti.
 // B3: ?ingaggio=<handle> pre-compila il form per una richiesta di ingaggio reale.
 // ?tema=formazione pre-compila la richiesta di formazione aziendale (da /academy#aziende).
-export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string; tema?: string; oggetto?: string }> }) {
-  const { ingaggio, tema, oggetto } = await searchParams;
+export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string; tema?: string; oggetto?: string; piano?: string }> }) {
+  const { ingaggio, tema, oggetto, piano } = await searchParams;
+  const pianoScelto = pianoPerId(piano);
   const prefill = ingaggio
     ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Semblic.` }
     : tema === "formazione"
       ? { subject: "Formazione aziendale AI", message: "Vorrei portare la formazione della SEMBLIC Academy nella mia azienda. Ci interessa il percorso su: " }
       : oggetto === "brand"
-        ? { subject: "Sono un brand", message: "Vorrei usare volti del registro Semblic per: " }
+        ? {
+            subject: "Sono un brand",
+            message: pianoScelto
+              ? `Vorrei il piano ${pianoScelto.nome} (${pianoScelto.foto} foto e ${pianoScelto.video} video al mese) con un volto del registro Semblic. Il nostro brand: `
+              : "Vorrei usare volti del registro Semblic per: ",
+          }
       : oggetto === "privacy"
         ? { subject: "Privacy" }
         : oggetto === "legale"

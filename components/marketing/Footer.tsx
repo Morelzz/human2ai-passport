@@ -7,7 +7,7 @@ const COLONNE: { titolo: string; colore: string; voci: { href: string; label: st
   {
     titolo: "Piattaforma", colore: "text-amber-ink",
     voci: [
-      { href: "/catalogo", label: "Registro" }, { href: "/match", label: "Genera" }, { href: "/studio", label: "Studio" },
+      { href: "/catalogo", label: "Registro" }, { href: "/match", label: "Genera" }, { href: "/brand", label: "Per i brand" }, { href: "/studio", label: "Studio" },
       { href: "/enterprise", label: "Enterprise" }, { href: "/academy", label: "Academy" }, { href: "/prezzi", label: "Prezzi" },
       { href: "/partner", label: "Diventa partner" },
     ],

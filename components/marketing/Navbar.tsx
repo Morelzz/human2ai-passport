@@ -24,6 +24,7 @@ const NAV: NavEntry[] = [
   { label: "Avatar", href: "/catalogo" },
   { label: "Genera", items: [
     { href: "/match", label: "Genera" },
+    { href: "/brand", label: "Per i brand" },
     { href: "/studio/edit", label: "Semblic Editor" },
     { heading: "Per le aziende" },
     { href: "/studio", label: "Studio" },

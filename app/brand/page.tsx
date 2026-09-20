@@ -7,14 +7,15 @@ import { Reveal } from "@/components/motion/Reveal";
 import { KineticText } from "@/components/motion/KineticText";
 import { IlSetVideo } from "@/components/marketing/IlSetVideo";
 import { qualitaPer } from "@/app/match/crea/opzioni";
+import { PIANI, contiPiano } from "@/lib/abbonamenti";
 import { prezzoGruppo } from "@/lib/gruppo-prezzi";
 import { prezzoAnima } from "@/lib/engines/anima-prezzi";
 import { formatEur } from "@/lib/wallet";
 
 // PAGINA PER I BRAND (20/9/2026): una promessa sola, per chi compra contenuti.
 // La home racconta il registro e il perche'; qui si vende il risultato: volti
-// veri, liberatoria inclusa, contenuti pronti oggi. Non e' ancora collegata al
-// menu: prima l'ok di Morelz.
+// veri, liberatoria inclusa, contenuti pronti oggi. Collegata dal menu Genera,
+// dal footer e dalla mappa del sito.
 export const metadata = {
   title: "Volti veri per le tue campagne",
   description:
@@ -139,6 +140,47 @@ export default function BrandPage() {
             <p className="mt-4 text-[0.9rem] text-muted">
               Campagne continuative, volto in esclusiva per un periodo, produzione affidata a noi:{" "}
               <Link href="/contatti?oggetto=brand" className="font-semibold text-amber-ink hover:underline">ne parliamo</Link>.
+            </p>
+          </section>
+        </Reveal>
+
+
+        {/* Il volto a noleggio */}
+        <Reveal>
+          <section id="abbonamenti" className="mx-auto max-w-7xl scroll-mt-20 px-5 py-10 sm:px-8">
+            <SectionTitle kicker="Il volto a noleggio" subtitle="Una persona del registro diventa il volto del tuo brand per un periodo: contenuti ogni mese, sempre lo stesso viso, con il consenso e il certificato di ogni file. La persona riceve la sua parte ogni mese.">
+              Quando un volto non ti serve una volta sola.
+            </SectionTitle>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {PIANI.map((p) => {
+                const c = contiPiano(p);
+                return (
+                  <div key={p.id} className="card flex flex-col gap-3 p-6 sm:p-7">
+                    <span className="kicker">{p.nome}</span>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-[2.2rem] font-bold leading-none tracking-[-0.04em]">{formatEur(p.prezzoCents)}</span>
+                      <span className="text-[0.9rem] text-muted">al mese</span>
+                    </div>
+                    <p className="text-[0.95rem] leading-relaxed text-foreground">
+                      {p.foto} foto in alta e {p.video === 1 ? "un video" : `${p.video} video`} da 5 secondi ogni mese, con lo stesso volto.
+                    </p>
+                    <p className="text-[0.88rem] leading-relaxed text-muted">{p.per}</p>
+                    <span className="mt-auto rounded-xl bg-verified-soft px-3 py-2 text-[0.85rem] font-semibold text-on-verified">
+                      {formatEur(c.personaCents)} al mese alla persona
+                    </span>
+                    <Link
+                      href={`/contatti?oggetto=brand&piano=${p.id}`}
+                      className="inline-flex h-11 items-center justify-center rounded-full border border-edge bg-surface text-[0.92rem] font-semibold transition-colors hover:border-amber/70"
+                    >
+                      Richiedi {p.nome}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-[0.88rem] leading-relaxed text-faint">
+              I piani si attivano parlando con noi: scegliamo insieme la persona, la disponibilità e l&apos;esclusiva.
+              Ogni contenuto resta certificato e verificabile come quelli a consumo.
             </p>
           </section>
         </Reveal>
