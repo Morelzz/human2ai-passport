@@ -20,11 +20,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Firma non valida" }, { status: 400 });
   }
 
-  let event: { type?: string; data?: { object?: Record<string, unknown> } };
+  let event: { type?: string; livemode?: boolean; data?: { object?: Record<string, unknown> } };
   try {
     event = JSON.parse(payload);
   } catch {
     return NextResponse.json({ error: "Payload non valido" }, { status: 400 });
+  }
+
+  // Difesa in profondita': con le chiavi di prova un pagamento con la carta finta
+  // accrediterebbe VOLT veri. Si accreditano solo gli eventi reali (livemode),
+  // salvo la leva interna STRIPE_CONSENTI_TEST=1 per le nostre prove.
+  if (event.livemode !== true && process.env.STRIPE_CONSENTI_TEST !== "1") {
+    console.warn("[stripe] evento non reale ignorato:", event.type);
+    return NextResponse.json({ received: true, ignorato: "non livemode" });
   }
 
   if (event.type === "checkout.session.completed") {

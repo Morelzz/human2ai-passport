@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
-import { createVoltCheckoutSession } from "@/lib/stripe";
+import { createVoltCheckoutSession, pagamentiAperti } from "@/lib/stripe";
 import { VOLT_PACKS } from "@/lib/volt";
 
 export const runtime = "nodejs";
@@ -15,6 +15,11 @@ export async function POST(request: Request) {
     data: { user },
   } = await auth.auth.getUser();
   if (!user) return NextResponse.json({ error: "Devi accedere" }, { status: 401 });
+
+  // Pagamenti chiusi finche' il conto Stripe non e' in modalita' reale.
+  if (!pagamentiAperti()) {
+    return NextResponse.json({ error: "I pagamenti sono in attivazione: torna tra poco." }, { status: 503 });
+  }
 
   const body = await request.json().catch(() => null);
   const packId = String(body?.packId ?? "").trim();

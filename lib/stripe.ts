@@ -4,8 +4,25 @@
 // l'account Stripe basta mettere la chiave in env: nessun deploy di codice.
 // Niente SDK: una chiamata REST form-encoded, zero dipendenze nuove.
 
+// Modalita' del conto Stripe collegato: "live" = si incassa davvero,
+// "test" = chiavi di prova (le carte finte funzionano), "assente" = nessuna chiave.
+export type ModalitaStripe = "live" | "test" | "assente";
+
+export function modalitaStripe(chiave: string | undefined = process.env.STRIPE_SECRET_KEY): ModalitaStripe {
+  if (!chiave) return "assente";
+  return chiave.startsWith("sk_test_") || chiave.startsWith("rk_test_") ? "test" : "live";
+}
+
+// Con chiavi di PROVA in produzione chiunque potrebbe pagare con la carta finta
+// 4242 e ricevere crediti veri (che bruciano il motore): i pagamenti si aprono
+// solo con chiavi reali. STRIPE_CONSENTI_TEST=1 e' la leva per le nostre prove.
+export function pagamentiAperti(modalita: ModalitaStripe = modalitaStripe(), consentiTest: string | undefined = process.env.STRIPE_CONSENTI_TEST): boolean {
+  if (modalita === "assente") return false;
+  return modalita === "live" || consentiTest === "1";
+}
+
 export function isStripeConfigured(): boolean {
-  return Boolean(process.env.STRIPE_SECRET_KEY);
+  return pagamentiAperti();
 }
 
 export interface CheckoutSession {
