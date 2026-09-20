@@ -33,7 +33,7 @@ const NAV: NavEntry[] = [
   { label: "Proteggi", items: [
     { href: "/tutela", label: "Tutela" },
     { href: "/scansione", label: "Scansione" },
-    { href: "/signup/avatar", label: "Entra nel registro" },
+    { href: "/entra", label: "Entra nel registro" },
     { href: "/ward", label: "Ward e Nemesis" },
     { href: "/verify", label: "Sigil" },
   ] },
@@ -160,7 +160,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
             <ThemeToggle />
             {/* Chi e' gia' dentro non ha bisogno di entrare nel registro: la sua azione e' generare. */}
             <Button asChild size="sm">
-              {firstName ? <Link href="/match">Genera</Link> : <Link href="/signup/avatar">Entra nel registro</Link>}
+              {firstName ? <Link href="/match">Genera</Link> : <Link href="/entra">Entra nel registro</Link>}
             </Button>
           </div>
         </div>
@@ -244,7 +244,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 <Button asChild variant="primary" size="lg" className="w-full">
                   {firstName
                     ? <Link href="/match" onClick={() => setOpen(false)}>Genera</Link>
-                    : <Link href="/signup/avatar" onClick={() => setOpen(false)}>Entra nel registro</Link>}
+                    : <Link href="/entra" onClick={() => setOpen(false)}>Entra nel registro</Link>}
                 </Button>
               </div>
             </motion.aside>

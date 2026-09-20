@@ -15,7 +15,7 @@ const COLONNE: { titolo: string; colore: string; voci: { href: string; label: st
   {
     titolo: "Tutela", colore: "text-amber-ink",
     voci: [
-      { href: "/signup/avatar", label: "Entra nel registro" }, { href: "/tutela", label: "Tutela dell'identità" },
+      { href: "/entra", label: "Entra nel registro" }, { href: "/tutela", label: "Tutela dell'identità" },
       { href: "/scansione", label: "La scansione" }, { href: "/ward", label: "Ward e Nemesis" }, { href: "/verify", label: "Sigil" },
     ],
   },
