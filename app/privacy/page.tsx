@@ -93,7 +93,9 @@ export default function PrivacyPage() {
               la generazione delle immagini quando autorizzata, <strong className="text-foreground">Higgsfield</strong>{" "}per
               trasformare uno scatto certificato in video, solo con il consenso al video della persona, e{" "}
               <strong className="text-foreground">Google Cloud Vision</strong>{" "}per cercare online le copie delle immagini dei
-              volti protetti da Ward.
+              volti protetti da Ward, <strong className="text-foreground">Vercel</strong>{" "}(hosting del sito e misura
+              delle visite senza cookie e senza identificatori) e <strong className="text-foreground">Railway</strong>{" "}(il
+              server che esegue le generazioni).
               Alcuni di questi fornitori hanno sede fuori dall&apos;UE: i trasferimenti avvengono con le garanzie previste dal
               GDPR. Non cediamo i tuoi dati a nessun altro e non li usiamo per addestrare modelli senza il tuo consenso.
             </Section>

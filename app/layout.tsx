@@ -6,6 +6,7 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { CookieBanner } from "@/components/legal/CookieBanner";
 import { PwaManager } from "@/components/pwa/PwaManager";
+import { VercelAnalytics } from "@/components/analytics/VercelAnalytics";
 import { siteUrl, INSTAGRAM_URL } from "@/lib/site";
 
 // Casa nuova: Instrument Sans per titoli e testo (pesi 400-700, variabile),
@@ -132,6 +133,8 @@ export default function RootLayout({
           <CookieBanner />
           {/* PWA: install prompt + opt-in avvisi + mini-tutorial, solo nell'area Ward */}
           <PwaManager />
+          {/* Misura delle visite senza cookie (vedi il componente) */}
+          <VercelAnalytics />
         </body>
       </html>
     </ViewTransitions>
