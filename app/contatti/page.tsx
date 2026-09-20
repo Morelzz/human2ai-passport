@@ -22,6 +22,8 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
     ? { subject: "Ingaggio reale", message: `Vorrei richiedere un ingaggio reale per il volto @${ingaggio} del registro Semblic.` }
     : tema === "formazione"
       ? { subject: "Formazione aziendale AI", message: "Vorrei portare la formazione della SEMBLIC Academy nella mia azienda. Ci interessa il percorso su: " }
+      : oggetto === "brand"
+        ? { subject: "Sono un brand", message: "Vorrei usare volti del registro Semblic per: " }
       : oggetto === "privacy"
         ? { subject: "Privacy" }
         : oggetto === "legale"
