@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Provalo senza registrarti (proposta)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F4EE; --surface:#FFFFFF; --edge:#D9D3C5; --scuro:#0C0F17;
+    --text:#17150F; --muted:#5B564B; --faint:#736D62;
+    --hairline:#E6E1D6; --hairline-soft:#EFEBE2;
+    --verified:#2F7563; --verified-soft:#E3F1EC;
+    --blocked:#B0472B; --blocked-soft:#F8E6E0;
+    --amber:#E29A2E; --amber-soft:#F8E9CF; --amber-ink:#9A4A0B; --on-amber:#412402;
+    --font:"Instrument Sans",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EFEBE2;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .foglio{max-width:1420px;margin:0 auto;padding:34px 22px 80px}
+  .titolone{font-size:30px;font-weight:700;letter-spacing:-.035em}
+  .sotto{color:var(--muted);font-size:15px;max-width:78ch;margin-top:8px}
+  .nota{background:#fff;border:1px solid var(--hairline);border-left:3px solid var(--amber);border-radius:12px;padding:12px 16px;color:var(--muted);font-size:13.5px;margin:18px 0 26px}
+  .nota b{color:var(--text)}
+  .etichetta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink);margin:34px 0 12px;display:block}
+  .schermi{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+  .desktop{flex:1 1 780px;min-width:0;border:1px solid var(--edge);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .telefono{flex:0 0 360px;border:1px solid var(--edge);border-radius:30px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .barra{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#EDE8DE;border-bottom:1px solid var(--hairline)}
+  .pallino{width:10px;height:10px;border-radius:50%;background:#D9D3C5}
+  .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .kicker{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;font-family:var(--font);font-weight:700;background:var(--amber);color:var(--on-amber);border-radius:999px;padding:13px 24px;font-size:14.5px}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--edge)}
+  .btn.sm{padding:9px 16px;font-size:13px}
+  .btn.chiaro{background:#F2E9D8;color:#17150F}
+
+  /* la fascia, dentro la home sotto l'hero */
+  .fascia{background:var(--scuro);color:#F2E9D8;border-radius:28px;margin:22px;padding:26px 28px;position:relative;overflow:hidden}
+  .fascia::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 55% at 92% -10%,rgba(226,154,46,.18),transparent 62%);pointer-events:none}
+  .fascia h2{font-size:29px;font-weight:700;letter-spacing:-.04em;line-height:1.08}
+  .fascia p.d{color:rgba(242,233,216,.7);font-size:14.5px;margin-top:8px;max-width:58ch}
+  .passi{display:grid;grid-template-columns:1fr 1fr auto;gap:20px;margin-top:20px;align-items:start;position:relative;z-index:1}
+  .passo .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--amber);margin-bottom:9px;display:block}
+  .volti{display:flex;gap:9px}
+  .vv{width:62px;text-align:center}
+  .vv i{display:block;width:62px;height:78px;border-radius:12px;background:linear-gradient(160deg,#4A4437,#20242E);border:2px solid transparent}
+  .vv.on i{border-color:var(--amber)}
+  .vv span{display:block;font-size:11px;color:rgba(242,233,216,.72);margin-top:5px}
+  .scene{display:flex;flex-wrap:wrap;gap:7px;max-width:330px}
+  .sc{border:1px solid rgba(242,233,216,.18);border-radius:999px;padding:7px 12px;font-size:12.5px;color:rgba(242,233,216,.8)}
+  .sc.on{background:rgba(226,154,46,.16);border-color:rgba(226,154,46,.5);color:#F2E9D8;font-weight:600}
+  .gratis{align-self:center}
+  .sotto-fascia{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;position:relative;z-index:1;font-size:12.5px;color:rgba(242,233,216,.55)}
+  .sotto-fascia b{color:rgba(242,233,216,.85)}
+
+  /* schermata risultato */
+  .risultato{display:grid;grid-template-columns:320px 1fr;gap:24px;padding:24px 26px 30px;align-items:start}
+  .anteprima{position:relative;aspect-ratio:2/3;border-radius:20px;overflow:hidden;border:1px solid var(--hairline);background:linear-gradient(160deg,#CFC7B6,#EDE8DE 55%,#D9D3C5)}
+  .filigrana{position:absolute;inset:0;display:grid;place-items:center;transform:rotate(-30deg)}
+  .filigrana span{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:rgba(255,255,255,.55);white-space:nowrap;line-height:2.6}
+  .cert{position:absolute;left:10px;bottom:10px;background:rgba(12,15,23,.7);color:#F2E9D8;border-radius:999px;padding:5px 11px;font-size:11.5px}
+  h1{font-size:40px;font-weight:700;letter-spacing:-.045em;line-height:1.02}
+  .testo{color:var(--muted);font-size:14.5px;margin-top:10px;max-width:52ch;line-height:1.6}
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:18px;padding:16px 18px;margin-top:16px}
+  .card h3{font-size:15px;font-weight:700;letter-spacing:-.02em}
+  .kv{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:8px 0;border-top:1px solid var(--hairline-soft)}
+  .kv:first-of-type{border-top:0}
+  .kv .k{color:var(--muted)}
+  .kv .v{font-weight:600}
+
+  .tel .fascia{margin:14px;padding:18px 16px;border-radius:22px}
+  .tel .fascia h2{font-size:22px}
+  .tel .passi{grid-template-columns:1fr;gap:16px}
+  .tel .gratis{align-self:stretch}
+  .tel .risultato{grid-template-columns:1fr;padding:16px}
+  .tel h1{font-size:28px}
+
+  .legenda{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:12px}
+  .voce{background:#fff;border:1px solid var(--hairline);border-radius:14px;padding:13px 15px}
+  .voce b{font-size:13.5px}
+  .voce p{color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.55}
+  .decidi{background:#fff;border:1px solid rgba(226,154,46,.4);border-radius:16px;padding:18px 20px;margin-top:18px}
+  .decidi h3{font-size:16px;font-weight:700;letter-spacing:-.02em}
+  .decidi li{font-size:13.5px;color:var(--muted);margin:8px 0 8px 18px;line-height:1.55}
+  .decidi li b{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="foglio">
+
+  <h1 class="titolone">Provalo senza registrarti</h1>
+  <p class="sotto">Oggi chi arriva su semblic.com deve credere sulla parola. Per vedere cosa sa fare il motore serve entrare, verificare la mail, comprare i VOLT: tre porte prima della magia. Questa proposta ne toglie tre su tre: <b>scegli un volto, scegli una scena, guarda.</b> La foto esce con la filigrana bene in vista e non si scarica: per averla pulita serve l'account. È la stessa cosa che fa un fotografo quando ti fa vedere i provini.</p>
+
+  <div class="nota"><b>Qui c'è una decisione tua, non solo un disegno.</b> Una prova gratis costa a noi: circa 4 centesimi di motore piu' la quota della persona nella foto, che secondo me va pagata lo stesso (se non la paghiamo, il "ogni utilizzo paga la persona" diventa falso). In fondo alla pagina c'è cosa mi serve da te.</div>
+
+  <span class="etichetta">1 · La fascia nella home, subito sotto l'hero</span>
+  <div class="schermi">
+    <div class="desktop">
+      <div class="barra"><i class="pallino"></i><i class="pallino"></i><i class="pallino"></i><span class="url">semblic.com</span></div>
+      <div class="fascia">
+        <span class="kicker" style="color:var(--amber)">PROVALO ADESSO</span>
+        <h2 style="margin-top:10px">Non devi crederci.<br/>Guardalo.</h2>
+        <p class="d">Scegli una persona vera del registro e una scena. In meno di un minuto hai la tua foto, con il certificato che dice chi c'è dentro e cosa ha autorizzato. Niente account, niente carta.</p>
+
+        <div class="passi">
+          <div class="passo">
+            <span class="n">1 · LA PERSONA</span>
+            <div class="volti">
+              <div class="vv on"><i></i><span>Gabriella</span></div>
+              <div class="vv"><i></i><span>Random</span></div>
+              <div class="vv"><i></i><span>Asia</span></div>
+              <div class="vv"><i></i><span>Luca</span></div>
+            </div>
+          </div>
+          <div class="passo">
+            <span class="n">2 · LA SCENA</span>
+            <div class="scene">
+              <span class="sc on">In un set di moda</span>
+              <span class="sc">Al bar, la mattina</span>
+              <span class="sc">In ufficio</span>
+              <span class="sc">Sul palco</span>
+              <span class="sc">In spiaggia al tramonto</span>
+              <span class="sc">Ritratto in studio</span>
+            </div>
+          </div>
+          <div class="gratis">
+            <button class="btn">Genera gratis ⚡</button>
+          </div>
+        </div>
+
+        <div class="sotto-fascia">
+          <span><b>Una prova al giorno.</b> Senza registrarti.</span>
+          <span><b>La persona viene pagata lo stesso.</b> Anche se a te non costa niente.</span>
+          <span><b>La foto esce con la filigrana.</b> Pulita si scarica dall'account.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="telefono tel">
+      <div class="barra"><i class="pallino"></i><span class="url">semblic.com</span></div>
+      <div class="fascia">
+        <span class="kicker" style="color:var(--amber)">PROVALO ADESSO</span>
+        <h2 style="margin-top:8px">Non devi crederci. Guardalo.</h2>
+        <div class="passi">
+          <div class="passo">
+            <span class="n">1 · LA PERSONA</span>
+            <div class="volti">
+              <div class="vv on"><i></i><span>Gabriella</span></div>
+              <div class="vv"><i></i><span>Random</span></div>
+              <div class="vv"><i></i><span>Asia</span></div>
+            </div>
+          </div>
+          <div class="passo">
+            <span class="n">2 · LA SCENA</span>
+            <div class="scene">
+              <span class="sc on">In un set di moda</span>
+              <span class="sc">Al bar</span>
+              <span class="sc">In ufficio</span>
+              <span class="sc">Sul palco</span>
+            </div>
+          </div>
+          <div class="gratis"><button class="btn" style="width:100%">Genera gratis ⚡</button></div>
+        </div>
+        <div class="sotto-fascia"><span><b>Una prova al giorno</b>, senza registrarti.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <span class="etichetta">2 · Quando è pronta</span>
+  <div class="desktop" style="max-width:900px">
+    <div class="barra"><i class="pallino"></i><i class="pallino"></i><i class="pallino"></i><span class="url">semblic.com/prova</span></div>
+    <div class="risultato">
+      <div class="anteprima">
+        <div class="filigrana"><span>SEMBLIC · PROVA &nbsp; SEMBLIC · PROVA<br/>SEMBLIC · PROVA &nbsp; SEMBLIC · PROVA<br/>SEMBLIC · PROVA &nbsp; SEMBLIC · PROVA</span></div>
+        <span class="cert">✓ Certificato 7f3a9c21</span>
+      </div>
+      <div>
+        <span class="kicker">LA TUA PROVA</span>
+        <h1 style="margin-top:8px">Questa è Gabriella.<br/>Ed è una persona vera.</h1>
+        <p class="testo">Non è un volto inventato: è una persona iscritta al registro, con documento verificato, che ha detto sì all'uso commerciale e che per questo scatto ha già ricevuto la sua quota. Il certificato è dentro i pixel: chiunque può controllarlo.</p>
+
+        <div class="card">
+          <h3>Cosa è successo davvero</h3>
+          <div class="kv"><span class="k">Persona</span><span class="v">Gabriella · consenso attivo dal 10/06/2026</span></div>
+          <div class="kv"><span class="k">Somiglianza misurata</span><span class="v">94%</span></div>
+          <div class="kv"><span class="k">Volti protetti nello scatto</span><span class="v">nessuno</span></div>
+          <div class="kv"><span class="k">Quota pagata a Gabriella</span><span class="v">0,04 €</span></div>
+          <div class="kv"><span class="k">Costo per te</span><span class="v">0,00 €</span></div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+          <button class="btn">Entra e scaricala pulita</button>
+          <button class="btn ghost">Vedi il passaporto di Gabriella</button>
+        </div>
+        <p style="font-size:12.5px;color:var(--faint);margin-top:12px">La prova gratis si ferma qui: una al giorno, con la filigrana. Dentro l'account la stessa foto esce pulita, in alta, col kit dei formati e la liberatoria.</p>
+      </div>
+    </div>
+  </div>
+
+  <span class="etichetta">Come la tengo sicura</span>
+  <div class="legenda">
+    <div class="voce"><b>Scene chiuse, niente testo libero</b><p>Sei scene scritte da noi, gia' passate dal filtro. Nessuno puo' scrivere quello che vuole su un volto vero senza nemmeno un account: e' la porta da cui entrerebbero i guai.</p></div>
+    <div class="voce"><b>Una al giorno, e un tetto al giorno</b><p>Una prova per browser e per IP ogni 24 ore, piu' un tetto complessivo giornaliero. Finito il tetto, la fascia dice "oggi le prove sono finite, torna domani" e resta il bottone per entrare.</p></div>
+    <div class="voce"><b>Solo volti che reggono</b><p>Solo persone con consenso attivo, foto di riferimento coerenti e nessuna revoca. La prova e' la prima impressione: non si gioca con un volto che esce male.</p></div>
+    <div class="voce"><b>Filigrana in faccia, non nascosta</b><p>La prova e' una prova: filigrana visibile, 720 pixel, niente download. Il certificato invisibile c'e' lo stesso, cosi' anche la prova e' verificabile su Sigil.</p></div>
+  </div>
+
+  <div class="decidi">
+    <h3>Le tre cose che devi dirmi tu</h3>
+    <ul>
+      <li><b>La persona la paghiamo?</b> Io dico di sì, dalla tasca di Semblic: circa 4 centesimi a prova. Se non la paghiamo, la frase "ogni utilizzo paga la persona" smette di essere vera, e quella frase è il prodotto. (Se dici no, la prova usa solo volti tuoi e dei founder che hanno accettato di fare da vetrina.)</li>
+      <li><b>Quanto siamo disposti a spendere al giorno?</b> La mia proposta: tetto a <b>200 prove al giorno</b>, cioè circa 16 euro al giorno nel caso peggiore (8 centesimi l'una fra motore e quota). Si alza o si abbassa da un numero solo.</li>
+      <li><b>Dove la mettiamo?</b> Io la metterei nella home subito sotto l'hero, e anche su una pagina sua (/prova) da mandare nelle inserzioni. Le campagne oggi portano a /inizia e /compra: /prova è una terza porta, quella per chi non ci conosce.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
