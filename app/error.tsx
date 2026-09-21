@@ -1,18 +1,47 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
+import { eUnPezzoMancante, possoRicaricare, CHIAVE_RICARICA } from "@/lib/pezzo-mancante";
 
 // Errore di casa: se una pagina si rompe, il visitatore resta dentro Semblic
 // (stessa voce della 404) invece di vedere la schermata grezza di Next.
 // Client component per contratto di Next: la barra completa (SiteNav) legge la
 // sessione lato server e qui non si puo' usare, quindi basta il marchio, come nel footer.
 export default function Errore({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  // Pagina scaduta dopo una pubblicazione: si ricarica da sola, una volta.
+  const [scaduta, setScaduta] = useState(false);
+
   useEffect(() => {
+    if (eUnPezzoMancante(error)) {
+      let ultima: string | null = null;
+      try {
+        ultima = sessionStorage.getItem(CHIAVE_RICARICA);
+      } catch {
+        // niente sessionStorage (finestra anonima, cookie bloccati): si prova lo stesso
+      }
+      if (possoRicaricare(Date.now(), ultima)) {
+        setScaduta(true);
+        try {
+          sessionStorage.setItem(CHIAVE_RICARICA, String(Date.now()));
+        } catch {}
+        Sentry.captureMessage("pagina scaduta dopo una pubblicazione: ricaricata da sola", "info");
+        window.location.reload();
+        return;
+      }
+    }
     Sentry.captureException(error);
   }, [error]);
+
+  if (scaduta) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-5">
+        <p className="text-[1.05rem] text-muted">C&apos;è una versione nuova del sito: la ricarico…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden">
