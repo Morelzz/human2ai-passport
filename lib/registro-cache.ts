@@ -16,7 +16,9 @@ import { createServerClient } from "@/lib/supabase";
 import { getPublicAvatars, countProtectedFaces, type PublicAvatar } from "@/lib/registry";
 
 export const TAG_REGISTRO = "registro";
-const VITA = 300; // secondi: rete di sicurezza se un punto di scrittura dimentica di revocare
+const VITA = 60; // secondi: rete di sicurezza se un punto di scrittura dimentica di
+// revocare. Tenuto basso apposta: una revoca deve sparire dalla vetrina subito, e
+// una lettura al minuto su una tabella da 13 righe non costa niente.
 
 export interface NumeriRegistro {
   volti: number;
