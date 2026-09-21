@@ -14,12 +14,12 @@
 import crypto from "crypto";
 import sharp from "sharp";
 import type { createServerClient } from "@/lib/supabase";
-import { getReferenceSet } from "@/lib/references";
+import { riferimentiScelti } from "@/lib/riferimenti-scelti";
 import { generaConRipiego, generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/echo";
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
-import { riferimentoInCache, misuraScatto, migliore, modoSomiglianza, verdetto as verdettoSomiglianza, type MisuraSomiglianza } from "@/lib/identity-score";
+import { misuraScatto, migliore, modoSomiglianza, verdetto as verdettoSomiglianza, type MisuraSomiglianza } from "@/lib/identity-score";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 
@@ -264,8 +264,11 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     const block = consentBlockReason(live as LiveConsentState | null);
     if (block) throw new Error(block);
 
-    // Identity-lock: reference reali e consensuali dell'avatar.
-    const identity = await getReferenceSet(job.handle);
+    // Identity-lock: le foto reali e consensuali dell'avatar, scelte fra le piu'
+    // coerenti fra loro (lib/riferimenti-scelti): una foto "di un'altra persona"
+    // sporcherebbe il volto.
+    const scelte = await riferimentiScelti(job.handle);
+    const identity = scelte.foto;
     if (identity.length === 0) throw new Error("reference-set assente per l'avatar");
 
     const extraBuffers = (p.extras ?? []).map((e) => Buffer.from(e.data, "base64"));
@@ -275,7 +278,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     // Somiglianza misurata (lib/identity-score): descrittori delle foto vere,
     // solo in memoria. Se il misuratore non e' disponibile la generazione va
     // avanti uguale: misurare non deve mai fermare uno scatto.
-    const riferimento = await riferimentoInCache(job.handle, identity).catch(() => null);
+    const riferimento = scelte.riferimento;
     const modo = modoSomiglianza();
 
     // La chiamata lunga (può durare minuti): qui NON c'è cap di durata.

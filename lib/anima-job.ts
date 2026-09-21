@@ -19,8 +19,8 @@ import { uploadPublicImage } from "@/lib/storage";
 import { grantVolt } from "@/lib/volt";
 import { statoVideo } from "@/lib/engines/anima";
 import { dividiRoyalty } from "@/lib/gruppo-prezzi";
-import { getReferenceSet } from "@/lib/references";
-import { riferimentoInCache, misuraScatto } from "@/lib/identity-score";
+import { riferimentiScelti } from "@/lib/riferimenti-scelti";
+import { misuraScatto } from "@/lib/identity-score";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
 import { conCertificato, fotogrammi } from "@/lib/video-fotogrammi";
 import { verificaVideo, punteggioVideo } from "@/lib/anima-verifica";
@@ -84,7 +84,7 @@ export async function chiudiAnimazione(admin: Admin, a: RigaAnima, sorgente: str
 
   const persone = await personeDi(admin, a);
   const riferimenti = [];
-  for (const p of persone) riferimenti.push(await riferimentoInCache(p.handle, await getReferenceSet(p.handle)).catch(() => null));
+  for (const p of persone) riferimenti.push((await riferimentiScelti(p.handle)).riferimento);
   const verifica = await verificaVideo(video, a.seconds, riferimenti, persone.map((p) => p.handle), {
     estrai: fotogrammi,
     scan: async (png) => outputScanVerdict(await scanGeneratedImageForProtected(png)),

@@ -8,12 +8,12 @@
 
 import crypto from "crypto";
 import type { createServerClient } from "@/lib/supabase";
-import { getReferenceSet } from "@/lib/references";
+import { riferimentiScelti } from "@/lib/riferimenti-scelti";
 import { generaConRipiego } from "@/lib/engines/echo";
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
-import { riferimentoInCache, DISTANZA_STESSA_PERSONA } from "@/lib/identity-score";
+import { DISTANZA_STESSA_PERSONA } from "@/lib/identity-score";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 import { eseguiGruppo, dividiRoyalty, type Protagonista } from "@/lib/gruppo";
 import { refundJobVolt, type EchoJobRow } from "@/lib/echo-job";
@@ -42,10 +42,10 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
     const persone: Protagonista[] = [];
     const riferimenti = [];
     for (const g of gruppo) {
-      const foto = await getReferenceSet(g.handle);
-      if (foto.length === 0) throw new Error(`reference-set assente per ${g.alias}`);
-      persone.push({ avatarId: g.avatarId, handle: g.handle, alias: g.alias, identityText: g.identityText, foto });
-      riferimenti.push(await riferimentoInCache(g.handle, foto).catch(() => null));
+      const scelte = await riferimentiScelti(g.handle);
+      if (scelte.foto.length === 0) throw new Error(`reference-set assente per ${g.alias}`);
+      persone.push({ avatarId: g.avatarId, handle: g.handle, alias: g.alias, identityText: g.identityText, foto: scelte.foto });
+      riferimenti.push(scelte.riferimento);
     }
 
     let modello = "";

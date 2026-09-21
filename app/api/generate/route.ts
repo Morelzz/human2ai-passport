@@ -10,6 +10,7 @@ import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
 import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
 import { generaConRipiego, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
+import { riferimentiScelti } from "@/lib/riferimenti-scelti";
 import { uploadPublicImage } from "@/lib/storage";
 import { allowRequest } from "@/lib/rate-limit";
 import { prepareExtras, identityPromptFor } from "@/lib/echo-job";
@@ -277,8 +278,8 @@ export async function POST(request: Request) {
     if (!isEchoConfigured()) {
       return NextResponse.json({ error: "Motore ECHO non configurato" }, { status: 503 });
     }
-    // Identity-lock: servono le reference reali e consensuali dell'avatar.
-    const identity = await getReferenceSet(handle);
+    // Identity-lock: le foto reali e consensuali, scelte fra le piu' coerenti.
+    const identity = (await riferimentiScelti(handle)).foto;
     if (identity.length === 0) {
       return NextResponse.json({ error: "ECHO non disponibile per questo avatar (reference-set assente)" }, { status: 400 });
     }
