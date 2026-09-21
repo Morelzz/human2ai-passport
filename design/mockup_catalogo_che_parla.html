@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Il catalogo che parla (proposta)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F4EE; --surface:#FFFFFF; --edge:#D9D3C5;
+    --text:#17150F; --muted:#5B564B; --faint:#736D62;
+    --hairline:#E6E1D6; --hairline-soft:#EFEBE2;
+    --verified:#2F7563; --verified-soft:#E3F1EC;
+    --blocked:#B0472B; --blocked-soft:#F8E6E0;
+    --amber:#E29A2E; --amber-soft:#F8E9CF; --amber-ink:#9A4A0B; --on-amber:#412402;
+    --font:"Instrument Sans",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EFEBE2;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .foglio{max-width:1420px;margin:0 auto;padding:34px 22px 80px}
+  .titolone{font-size:30px;font-weight:700;letter-spacing:-.035em}
+  .sotto{color:var(--muted);font-size:15px;max-width:76ch;margin-top:8px}
+  .nota{background:#fff;border:1px solid var(--hairline);border-left:3px solid var(--amber);border-radius:12px;padding:12px 16px;color:var(--muted);font-size:13.5px;margin:18px 0 26px}
+  .nota b{color:var(--text)}
+  .etichetta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink);margin:34px 0 12px;display:block}
+  .schermi{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+  .desktop{flex:1 1 820px;min-width:0;border:1px solid var(--edge);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .telefono{flex:0 0 370px;border:1px solid var(--edge);border-radius:30px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .barra{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#EDE8DE;border-bottom:1px solid var(--hairline)}
+  .pallino{width:10px;height:10px;border-radius:50%;background:#D9D3C5}
+  .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .kicker{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;cursor:pointer;font-family:var(--font);font-weight:700;background:var(--amber);color:var(--on-amber);border-radius:999px;padding:11px 20px;font-size:13.5px}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--edge)}
+  .btn.sm{padding:8px 15px;font-size:12.5px}
+
+  .testa{padding:26px 26px 0}
+  h1{font-size:34px;font-weight:700;letter-spacing:-.04em;line-height:1.05}
+  .intro{color:var(--muted);font-size:14.5px;max-width:56ch;margin-top:8px}
+
+  /* ── I FILTRI, la vera novità in testa ── */
+  .filtri{display:flex;gap:8px;padding:18px 26px 0;overflow-x:auto;scrollbar-width:none}
+  .filtri::-webkit-scrollbar{display:none}
+  .f{border:1px solid var(--hairline);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;display:flex;align-items:center;gap:7px}
+  .f.on{background:var(--text);color:#F7F4EE;border-color:var(--text)}
+  .f em{font-family:var(--mono);font-size:10.5px;font-style:normal;opacity:.7}
+
+  /* ── LA GRIGLIA ── */
+  .griglia{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:18px 26px 30px}
+  .volto{position:relative;border-radius:18px;overflow:hidden;background:#E7E1D3;border:1px solid var(--hairline);display:flex;flex-direction:column}
+  .foto{position:relative;aspect-ratio:3/4}
+  .foto .ph{position:absolute;inset:0;background:linear-gradient(160deg,#CFC7B6,#EDE8DE 55%,#D9D3C5)}
+  .foto .vel{position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(to top,rgba(0,0,0,.55),transparent)}
+  .foto .nome{position:absolute;left:12px;bottom:10px;color:#fff;font-size:15px;font-weight:700;text-shadow:0 1px 10px rgba(0,0,0,.5)}
+  .stato{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;background:rgba(255,255,255,.93);color:#17150F}
+  .stato i{width:6px;height:6px;border-radius:50%;background:var(--verified)}
+  .stato.no i{background:var(--blocked)}
+
+  /* la riga che PARLA */
+  .parla{background:#fff;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+  .cosa{display:flex;flex-wrap:wrap;gap:5px}
+  .b{border-radius:999px;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border:1px solid var(--hairline);color:var(--muted);background:#FCFBF8}
+  .b.si{background:var(--verified-soft);border-color:rgba(47,117,99,.25);color:var(--verified)}
+  .b.no{background:var(--blocked-soft);border-color:rgba(176,71,43,.22);color:var(--blocked)}
+  .b.am{background:var(--amber-soft);border-color:rgba(226,154,46,.35);color:var(--amber-ink)}
+  .riga{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .prezzo{font-size:12.5px;color:var(--faint)}
+  .prezzo b{color:var(--text);font-size:14px;font-weight:700;letter-spacing:-.02em}
+  .scegli{border:0;background:var(--amber);color:var(--on-amber);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer}
+  .scegli.off{background:transparent;color:var(--faint);border:1px solid var(--hairline);cursor:default}
+
+  .volto.spento .foto .ph{filter:grayscale(1);opacity:.65}
+
+  /* tessera invito */
+  .invito{border:1px dashed var(--edge);border-radius:18px;background:radial-gradient(90% 55% at 100% 0%,var(--amber-soft),transparent 70%),#fff;padding:16px;display:flex;flex-direction:column;justify-content:space-between;min-height:100%}
+  .invito .piu{width:38px;height:38px;border-radius:50%;background:var(--amber-soft);color:var(--amber-ink);display:grid;place-items:center;font-size:20px;font-weight:700}
+
+  .tel .testa{padding:18px 16px 0}
+  .tel h1{font-size:25px}
+  .tel .filtri{padding:14px 16px 0}
+  .tel .griglia{grid-template-columns:repeat(2,1fr);padding:14px 16px 24px;gap:10px}
+  .tel .foto .nome{font-size:13.5px}
+
+  .prima-dopo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+  .pd{background:#fff;border:1px solid var(--hairline);border-radius:14px;padding:14px 16px}
+  .pd h4{font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+  .pd li{font-size:13px;color:var(--muted);margin:5px 0 5px 16px}
+  .legenda{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px}
+  .voce{background:#fff;border:1px solid var(--hairline);border-radius:14px;padding:13px 15px}
+  .voce b{font-size:13.5px}
+  .voce p{color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.55}
+  @media(max-width:1100px){.prima-dopo{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="foglio">
+
+  <h1 class="titolone">Il catalogo che parla</h1>
+  <p class="sotto">Oggi ogni volto del registro dice due cose: "Verificata" e il nome. Chi arriva per comprare non sa se quella persona ha detto sì anche al video, quanto è stata usata, se è ancora disponibile o quanto costa. <b>Sono dati che abbiamo già tutti nel database</b>: qui escono fuori, e il catalogo smette di essere una galleria e diventa una vetrina.</p>
+
+  <div class="nota"><b>Da approvare prima di toccare il codice.</b> Nessun dato nuovo, nessuna colonna nuova: consenso commerciale, consenso video, utilizzi, revoca e prezzo del listino ci sono già. Qui si vedono.</div>
+
+  <span class="etichetta">Schermo grande · semblic.com/catalogo</span>
+  <div class="schermi">
+
+    <div class="desktop">
+      <div class="barra"><i class="pallino"></i><i class="pallino"></i><i class="pallino"></i><span class="url">semblic.com/catalogo</span></div>
+
+      <div class="testa">
+        <span class="kicker">IL REGISTRO</span>
+        <h1 style="margin-top:8px">11 volti nel registro</h1>
+        <p class="intro">Ogni volto è una persona vera, verificata e consenziente. Tocca un volto per vederne il passaporto pubblico.</p>
+      </div>
+
+      <div class="filtri">
+        <div class="f on">Tutti <em>11</em></div>
+        <div class="f">Donne <em>7</em></div>
+        <div class="f">Uomini <em>4</em></div>
+        <div class="f">Dicono sì al video <em>9</em></div>
+        <div class="f">Liberi adesso <em>10</em></div>
+        <div class="f">Mai usati <em>3</em></div>
+      </div>
+
+      <div class="griglia">
+
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATA</span><i class="vel"></i><span class="nome">Gabriella</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b si">VIDEO SÌ</span><span class="b am">USATA 18×</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli lei</button></div>
+          </div>
+        </div>
+
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATA</span><i class="vel"></i><span class="nome">Stella</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b si">VIDEO SÌ</span><span class="b am">USATA 7×</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli lei</button></div>
+          </div>
+        </div>
+
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATO</span><i class="vel"></i><span class="nome">Random</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b si">VIDEO SÌ</span><span class="b am">USATO 178×</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli lui</button></div>
+          </div>
+        </div>
+
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATA</span><i class="vel"></i><span class="nome">Asia</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b no">VIDEO NO</span><span class="b">MAI USATA</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli lei</button></div>
+          </div>
+        </div>
+
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATA</span><i class="vel"></i><span class="nome">Claire</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b si">VIDEO SÌ</span><span class="b">MAI USATA</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli lei</button></div>
+          </div>
+        </div>
+
+        <div class="volto spento">
+          <div class="foto"><i class="ph"></i><span class="stato no"><i></i> REVOCATO</span><i class="vel"></i><span class="nome">Marco</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b no">HA CHIESTO DI USCIRE</span></div>
+            <div class="riga"><span class="prezzo">Il sistema ha obbedito</span><button class="scegli off">Non generabile</button></div>
+          </div>
+        </div>
+
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATO</span><i class="vel"></i><span class="nome">Luca</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b no">VIDEO NO</span><span class="b am">USATO 3×</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli lui</button></div>
+          </div>
+        </div>
+
+        <div class="invito">
+          <span class="piu">+</span>
+          <div>
+            <div style="font-size:17px;font-weight:700;letter-spacing:-.02em;margin-top:14px">Il tuo volto qui</div>
+            <p style="font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:5px">Verifica, consenso firmato e una quota a ogni utilizzo.</p>
+            <button class="btn sm" style="margin-top:12px">Entra nel registro</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="telefono tel">
+      <div class="barra"><i class="pallino"></i><span class="url">catalogo</span></div>
+      <div class="testa">
+        <span class="kicker">IL REGISTRO</span>
+        <h1 style="margin-top:6px">11 volti nel registro</h1>
+      </div>
+      <div class="filtri">
+        <div class="f on">Tutti <em>11</em></div>
+        <div class="f">Donne <em>7</em></div>
+        <div class="f">Video <em>9</em></div>
+        <div class="f">Liberi <em>10</em></div>
+      </div>
+      <div class="griglia">
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATA</span><i class="vel"></i><span class="nome">Gabriella</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b si">VIDEO SÌ</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli</button></div>
+          </div>
+        </div>
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATA</span><i class="vel"></i><span class="nome">Stella</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b si">VIDEO SÌ</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli</button></div>
+          </div>
+        </div>
+        <div class="volto">
+          <div class="foto"><i class="ph"></i><span class="stato"><i></i> VERIFICATA</span><i class="vel"></i><span class="nome">Asia</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b si">FOTO SÌ</span><span class="b no">VIDEO NO</span></div>
+            <div class="riga"><span class="prezzo">da <b>0,24 €</b></span><button class="scegli">Scegli</button></div>
+          </div>
+        </div>
+        <div class="volto spento">
+          <div class="foto"><i class="ph"></i><span class="stato no"><i></i> REVOCATO</span><i class="vel"></i><span class="nome">Marco</span></div>
+          <div class="parla">
+            <div class="cosa"><span class="b no">È USCITO</span></div>
+            <div class="riga"><span class="prezzo">Obbedito</span><button class="scegli off">No</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span class="etichetta">Cosa cambia</span>
+  <div class="prima-dopo">
+    <div class="pd">
+      <h4>Adesso</h4>
+      <ul>
+        <li>Ogni tessera dice "Verificata" e il nome. Basta.</li>
+        <li>Non si sa chi ha detto sì al video: lo scopri solo quando provi a farlo.</li>
+        <li>Non si sa quanto costa: il prezzo sta su un'altra pagina.</li>
+        <li>Undici volti tutti uguali, senza un modo per restringere.</li>
+        <li>Il revocato sembra uguale agli altri, con un chip diverso.</li>
+      </ul>
+    </div>
+    <div class="pd">
+      <h4>Dopo</h4>
+      <ul>
+        <li>Ogni tessera dice cosa puoi fare con quella persona: foto, video, quante volte l'hanno scelta.</li>
+        <li>Il prezzo di partenza è lì, sotto il volto.</li>
+        <li>Sei filtri in testa, con i numeri veri dentro.</li>
+        <li>"Scegli lei" porta dritto al Crea con il volto già dentro.</li>
+        <li>Il revocato è in bianco e nero e dice la cosa giusta: il sistema ha obbedito.</li>
+      </ul>
+    </div>
+  </div>
+
+  <span class="etichetta">Le quattro aggiunte</span>
+  <div class="legenda">
+    <div class="voce"><b>I bollini</b><p>FOTO SÌ · VIDEO SÌ/NO · USATA N volte. Vengono da commercial_consent, video_consent e usage_count: zero lavoro sul database.</p></div>
+    <div class="voce"><b>Il prezzo sotto il volto</b><p>"da 0,24 €" è il prezzo vero dello scatto in Alta verticale, dalla stessa fonte del listino. Un prezzo nascosto non si nasconde.</p></div>
+    <div class="voce"><b>I filtri con i numeri</b><p>Donne, uomini, chi dice sì al video, chi è libero adesso, chi non è mai stato usato. Il numero dentro il filtro è il conteggio reale.</p></div>
+    <div class="voce"><b>"Scegli lei"</b><p>Dal catalogo al Crea con quel volto già scelto, senza passare dal passaporto. Il passaporto resta a un tocco sulla foto.</p></div>
+  </div>
+
+</div>
+</body>
+</html>
