@@ -41,7 +41,7 @@ export function IlSet({ gruppo = MEDIA.gruppo, video = MEDIA.video, poster = MED
             <span className="kicker text-amber">Scene di gruppo</span>
             <h3 className="text-[1.45rem] font-bold leading-tight tracking-[-0.02em]">Più persone vere, nella stessa foto.</h3>
             <p className="text-[0.95rem] leading-relaxed text-muted">
-              Prima la scena, poi ogni volto rifatto con le foto verificate della sua persona, uno alla volta. Ogni volto misurato, ogni persona pagata.
+              Una scena sola, con le foto verificate di ognuna. Ogni volto misurato, ogni persona pagata.
             </p>
           </div>
         </div>

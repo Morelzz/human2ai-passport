@@ -5,6 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { coerceEditState } from "@/lib/editor/types";
 import { renderEditedPng } from "@/lib/editor/render-pixels";
 import { embedStego } from "@/lib/stegano";
+import { riquadroTaglio, voltiConRiquadro } from "@/lib/kit-campagna";
 
 export const runtime = "nodejs";
 // La resa (upscale + pipeline sui pixel + provenienza) puo durare alcuni secondi.
@@ -68,23 +69,18 @@ export async function POST(request: Request) {
     // 3. resa delle modifiche (fedele all'anteprima)
     let edited = await renderEditedPng(buf, state);
 
-    // 4. crop al formato piattaforma (center crop sull'aspetto)
+    // 4. crop al formato piattaforma. NON al centro: il centro di un ritratto
+    //    verticale e' il petto, e il 16:9 tagliava la testa (visto il 21/9 sul
+    //    kit campagna). Si incornicia sui volti, con l'aria sopra (lib/kit-campagna).
     if (format) {
       const ar = FORMAT_AR[format];
       const m = await sharp(edited).metadata();
       const ew = m.width ?? 0;
       const eh = m.height ?? 0;
       if (ew > 0 && eh > 0) {
-        let cw: number;
-        let ch: number;
-        if (ew / eh > ar) {
-          ch = eh;
-          cw = Math.round(eh * ar);
-        } else {
-          cw = ew;
-          ch = Math.round(ew / ar);
-        }
-        edited = await sharp(edited).resize({ width: cw, height: ch, fit: "cover", position: "centre" }).png().toBuffer();
+        const volti = await voltiConRiquadro(edited);
+        const q = riquadroTaglio(ew, eh, Math.round(1000 * ar), 1000, volti);
+        edited = await sharp(edited).extract({ left: q.x, top: q.y, width: q.w, height: q.h }).png().toBuffer();
       }
     }
 

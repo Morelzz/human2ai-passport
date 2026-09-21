@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ScanSearch } from "lucide-react";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
+import { KitButton } from "@/components/content/KitButton";
 
 // Griglia "I miei contenuti" con FILTRI (categoria, motore, avatar) e regola
 // anti-limbo: si mostrano 6 elementi, "Carica altri" ne aggiunge 6 (mai scroll
@@ -136,6 +137,14 @@ export function ContentsGrid({ items, shareVariant = "buyer" }: { items: GridIte
                           className="text-[0.8rem] font-semibold text-muted underline-offset-2 transition-colors hover:text-foreground hover:underline disabled:opacity-50"
                         />
                       </div>
+                      {/* Kit campagna: i quattro tagli pronti + la liberatoria,
+                          in uno zip. Solo per chi ha comprato lo scatto. */}
+                      {shareVariant === "buyer" && (
+                        <KitButton
+                          certificate={g.certificate}
+                          className="mt-1 block w-full rounded-full border border-edge px-2 py-1.5 text-center text-[0.76rem] font-semibold text-muted transition-colors hover:border-amber/70 hover:text-foreground disabled:opacity-60"
+                        />
+                      )}
                       {/* Fase 3.3: ricevuta di conformita' come pagina stampabile
                           (Stampa -> Salva come PDF); dentro c'e' anche il download
                           JSON per l'archivio/API. */}

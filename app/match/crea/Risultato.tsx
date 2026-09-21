@@ -5,6 +5,7 @@ import { formatEur } from "@/lib/wallet";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 import { Anima } from "./Anima";
 import { nomi } from "./opzioni";
+import { KitButton } from "@/components/content/KitButton";
 
 export interface Esito {
   certificate: string;
@@ -85,7 +86,7 @@ export function Risultato({
         {gruppo && (
           <p className="mt-2 flex flex-wrap items-center gap-x-2 text-[0.92rem] text-muted">
             <span>
-              Nella foto ci sono <strong className="text-foreground">{nomi(gruppo.map((p) => p.alias))}</strong>: ogni volto è rifatto con le foto verificate della sua persona, uno alla volta.
+              Nella foto ci sono <strong className="text-foreground">{nomi(gruppo.map((p) => p.alias))}</strong>: la scena è fatta con le foto verificate di ognuna, e ogni volto è stato misurato.
               {esito.dalCasting ? " I volti li ha scelti Semblic per la tua scena." : ""}
             </span>
             {esito.dalCasting && onCambiaPersona && (
@@ -119,6 +120,11 @@ export function Risultato({
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M21 12a9 9 0 1 1-3-6.7L21 8" /><path d="M21 3v5h-5" /></svg>
             Crea una variante{varianteVolt !== null ? ` · ${varianteVolt} ⚡` : ""}
           </button>
+          <KitButton
+            certificate={esito.certificate}
+            label="Kit campagna"
+            className="inline-flex h-[52px] items-center rounded-full border border-edge bg-surface px-5 text-[0.98rem] font-semibold text-foreground transition-colors hover:border-amber/70 disabled:opacity-60"
+          />
           <ShareStoryButton
             query={`cert=${encodeURIComponent(esito.certificate)}&v=buyer`}
             filename={`semblic-story-${esito.certificate.slice(0, 8)}.png`}
