@@ -7,6 +7,12 @@ import { NextResponse, type NextRequest } from "next/server";
 const SUPABASE_ORIGIN = "https://ktjebfavzherochwhtis.supabase.co";
 const BLOG_CDN = "https://d8j0ntlcm91z4.cloudfront.net";
 
+// Il poster dell'hero e' l'elemento piu' grande della home (LCP). Lo chiediamo
+// con l'header HTTP e non con un <link> nella pagina: l'header arriva col primo
+// byte, prima che il browser legga una riga di HTML, e React non lo tocca
+// (dentro la pagina il preload spariva, 21/9/2026).
+const HERO_POSTER = `${SUPABASE_ORIGIN}/storage/v1/object/public/assets/hero-v3-poster.jpg`;
+
 function buildCsp(nonce: string): string {
   // script-src con nonce + strict-dynamic (Next inietta i suoi script col nonce).
   // style-src 'unsafe-inline': stili inline di librerie (framer-motion ecc.); il
@@ -62,13 +68,20 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // Necessario: forza il refresh della sessione.
-  await supabase.auth.getUser();
+  // Refresh della sessione SOLO se c'e' davvero una sessione: senza cookie di
+  // Supabase (il visitatore anonimo della home) sarebbe un giro di rete inutile
+  // prima di ogni pagina pubblica.
+  if (request.cookies.getAll().some((c) => c.name.startsWith("sb-"))) {
+    await supabase.auth.getUser();
+  }
 
   // Browser: SOLO report (non blocca). Quando i report sono puliti, rinominare
   // l'header in "Content-Security-Policy" per passare all'enforce.
   response.headers.set("Content-Security-Policy-Report-Only", csp);
   response.headers.set("x-nonce", nonce);
+  if (request.nextUrl.pathname === "/") {
+    response.headers.set("Link", `<${HERO_POSTER}>; rel=preload; as=image; fetchpriority=high`);
+  }
 
   return response;
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { eOperatore } from "@/lib/operatori";
+import { revocaRegistro } from "@/lib/registro-cache";
 
 // Coda di revisione manuale degli operatori (Enterprise).
 // Solo gli account 'admin' (operatori) possono vedere e decidere.
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
 
   const status = action === "approve" ? "approved" : "rejected";
   const { error } = await admin.from("avatars").update({ verification_status: status }).eq("id", avatarId);
+  if (!error) revocaRegistro(); // entra o esce dal registro pubblico
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true, status });

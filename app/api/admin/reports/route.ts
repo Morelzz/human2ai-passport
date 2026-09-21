@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { eOperatore } from "@/lib/operatori";
+import { revocaRegistro } from "@/lib/registro-cache";
 
 // Coda di moderazione delle segnalazioni di abuso — solo operatori (role 'admin').
 async function requireAdmin() {
@@ -60,6 +61,7 @@ export async function POST(request: Request) {
       .update({ verification_status: "rejected" })
       .eq("id", report.avatar_id);
     if (avErr) return NextResponse.json({ error: avErr.message }, { status: 500 });
+    revocaRegistro(); // il volto sparisce subito dalla vetrina
     avatarSuspended = true;
   }
 

@@ -1,23 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { preload } from "react-dom";
 import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 
-// Sorgenti su Supabase Storage pubblico (CDN), niente peso nel repo git.
-// Casa nuova (2026-09-14): il video dell'hero e' QUADRATO (generato con
-// Seedance 2.5, 720p): un solo file che sta bene sia nel riquadro desktop sia
-// sopra il titolo sul telefono. Poster del primo frame per LCP istantaneo.
-const BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/assets`;
-const POSTER = `${BASE}/hero-v3-poster.jpg`;
-const VIDEO = `${BASE}/hero-v3.mp4`; // 1:1, muto, ottimizzato
+import { HERO_POSTER as POSTER, HERO_VIDEO as VIDEO } from "@/lib/hero-media";
 
 // Riquadro video dell'hero: autoplay muto in loop (regole mobile rispettate:
 // muted + playsInline). Sul punto di loop una piccola transizione "dip-to-dark"
 // ammorbidisce lo stacco. Sotto prefers-reduced-motion resta il poster, fermo.
 export function HeroVideo({ className = "" }: { className?: string }) {
-  // Il poster e' l'LCP della home: lo chiediamo al browser subito, dall'<head>.
-  preload(POSTER, { as: "image", fetchPriority: "high" });
+  // Il poster e' l'LCP: il <link rel=preload> lo scrive il SERVER in
+  // app/page.tsx, in cima all'<head>. Qui NON si richiama preload() di
+  // react-dom: due sorgenti per lo stesso file si annullavano a vicenda e il
+  // preload spariva dall'HTML (21/9/2026).
   const reduce = useReducedMotionSafe();
   const seamRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);

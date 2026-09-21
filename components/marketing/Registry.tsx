@@ -36,8 +36,8 @@ export function Registry({ avatars, total }: { avatars: FeaturedAvatar[]; total:
       </div>
 
       <div className="riga-scorrevole -mx-5 mt-7 px-5 sm:mx-0 sm:mt-9 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 lg:grid-cols-4">
-        {avatars.map((a, i) => (
-          <AvatarTile key={a.handle} a={a} priority={i < 4} className="w-[170px] sm:w-auto" />
+        {avatars.map((a) => (
+          <AvatarTile key={a.handle} a={a} className="w-[170px] sm:w-auto" />
         ))}
       </div>
 

@@ -3,6 +3,7 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { deletePrefix } from "@/lib/storage";
 import { removeHandleFromFaceIndex } from "@/lib/face-index";
+import { revocaRegistro } from "@/lib/registro-cache";
 
 export const runtime = "nodejs";
 
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
       detail: `Revoca totale (kill-switch creatore)${purged > 0 ? ` · ${purged} foto-reference cancellate` : ""}`,
       occurred_at: today,
     });
+    revocaRegistro(); // la vetrina deve dire "Revocato" subito
     return NextResponse.json({ ok: true, references_deleted: purged, deindexed });
   }
 
@@ -72,6 +74,7 @@ export async function POST(request: Request) {
       detail: "Riattivazione consenso",
       occurred_at: today,
     });
+    revocaRegistro();
     return NextResponse.json({ ok: true });
   }
 

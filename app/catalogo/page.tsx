@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPublicAvatars } from "@/lib/registry";
+import { registroPubblico } from "@/lib/registro-cache";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
@@ -15,7 +15,7 @@ export const metadata = {
 // Catalogo, casa nuova: pagina chiara, griglia di tile 3:4. Attivi prima,
 // revocati in fondo ma visibili: la revoca rispettata e' parte del racconto.
 export default async function CatalogoPage() {
-  const avatars = (await getPublicAvatars()).sort((a, b) => {
+  const avatars = [...(await registroPubblico())].sort((a, b) => {
     const ra = a.revoked_at ? 1 : 0;
     const rb = b.revoked_at ? 1 : 0;
     if (ra !== rb) return ra - rb;

@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { getPublicAvatars, countProtectedFaces } from "@/lib/registry";
-import { createServerClient } from "@/lib/supabase";
+import { registroPubblico, numeriRegistro } from "@/lib/registro-cache";
 import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Hero } from "@/components/marketing/Hero";
@@ -17,17 +16,11 @@ import { galleryFromRow } from "@/lib/sample-galleries";
 
 
 export default async function Home() {
-  // Fonte UNICA del registro pubblico (lib/registry): stessi volti e stessi
-  // contatori di catalogo e trasparenza.
-  const approved = await getPublicAvatars();
-
-  // I numeri veri dell'hero, stessa fonte di /trasparenza: volti nel registro,
-  // generazioni pagate alle persone, volti protetti (VETO). Un solo client.
-  const sb = createServerClient();
-  const protectedFaces = await countProtectedFaces(sb);
-  // Le generazioni commerciali: ognuna ha pagato la persona del volto.
-  const { count: paidRaw } = await sb.from("generations").select("id", { count: "exact", head: true }).eq("mode", "commercial");
-  const paidCount = paidRaw ?? 0;
+  // Fonte UNICA del registro pubblico, in cache (lib/registro-cache): stessi
+  // volti e stessi contatori di catalogo e trasparenza. Le due letture partono
+  // insieme: prima erano tre giri sul DB in fila, e la pagina non partiva.
+  const [approved, numeri] = await Promise.all([registroPubblico(), numeriRegistro()]);
+  const { protetti: protectedFaces, pagate: paidCount } = numeri;
 
   // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
   // i volti REALI (con galleria: Mario/Random e gli ambassador) restano in
