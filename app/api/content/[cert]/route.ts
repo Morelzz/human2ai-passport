@@ -22,7 +22,7 @@ export async function GET(
   const admin = createServerClient();
   const { data: gen } = await admin
     .from("generations")
-    .select("image_url, buyer_id, avatars(alias)")
+    .select("image_url, buyer_id, avatars!generations_avatar_id_fkey(alias)")
     .eq("certificate", cert)
     .maybeSingle();
 

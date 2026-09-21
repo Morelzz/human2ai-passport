@@ -49,7 +49,7 @@ export default async function AttivitaPage() {
   if (ids.length > 0) {
     const { data: gens } = await admin
       .from("generations")
-      .select("id, certificate, category, royalty_cents, created_at, avatars(alias, handle)")
+      .select("id, certificate, category, royalty_cents, created_at, avatars!generations_avatar_id_fkey(alias, handle)")
       .in("avatar_id", ids)
       .not("certificate", "is", null)
       .order("created_at", { ascending: false })

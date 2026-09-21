@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   // 2. È il CERTIFICATO di un contenuto generato?
   const { data: gen } = await supabase
     .from("generations")
-    .select("created_at, category, avatars(handle, alias, tier, consent_start, revoked_at)")
+    .select("created_at, category, avatars!generations_avatar_id_fkey(handle, alias, tier, consent_start, revoked_at)")
     .eq("certificate", token)
     .maybeSingle();
 
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
   if (video) {
     const { data: src } = await supabase
       .from("generations")
-      .select("category, avatars(handle, alias, tier, consent_start, revoked_at)")
+      .select("category, avatars!generations_avatar_id_fkey(handle, alias, tier, consent_start, revoked_at)")
       .eq("certificate", video.sourceCertificate)
       .maybeSingle();
     const av = src ? (Array.isArray(src.avatars) ? src.avatars[0] : src.avatars) : null;

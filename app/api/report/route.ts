@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     targetType = "content";
     const { data: gen } = await admin
       .from("generations")
-      .select("avatar_id, avatars(handle)")
+      .select("avatar_id, avatars!generations_avatar_id_fkey(handle)")
       .eq("certificate", certificate)
       .maybeSingle();
     if (!gen) {

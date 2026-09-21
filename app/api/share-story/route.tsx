@@ -97,7 +97,7 @@ export async function GET(request: Request) {
     if (!cert) return new Response("cert mancante", { status: 400 });
     const { data: gen } = await sb
       .from("generations")
-      .select("certificate, image_url, created_at, avatars(*)")
+      .select("certificate, image_url, created_at, avatars!generations_avatar_id_fkey(*)")
       .eq("certificate", cert)
       .maybeSingle();
     const av = Array.isArray(gen?.avatars) ? gen?.avatars[0] : gen?.avatars;

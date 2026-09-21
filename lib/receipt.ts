@@ -54,7 +54,7 @@ export async function buildComplianceReceipt(
   const admin = createServerClient();
   const { data: gen } = await admin
     .from("generations")
-    .select("id, certificate, category, mode, created_at, avatars(handle, alias, consent_start, commercial_consent, revoked_at)")
+    .select("id, certificate, category, mode, created_at, avatars!generations_avatar_id_fkey(handle, alias, consent_start, commercial_consent, revoked_at)")
     .eq("certificate", cert)
     .maybeSingle();
   if (!gen) {

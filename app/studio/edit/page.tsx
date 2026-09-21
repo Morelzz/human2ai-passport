@@ -24,7 +24,7 @@ export default async function EditorLanding() {
   const admin = createServerClient();
   const { data: gens } = await admin
     .from("generations")
-    .select("id, certificate, image_url, category, created_at, avatars(alias)")
+    .select("id, certificate, image_url, category, created_at, avatars!generations_avatar_id_fkey(alias)")
     .eq("buyer_id", user.id)
     .eq("mode", "commercial")
     .not("certificate", "is", null)

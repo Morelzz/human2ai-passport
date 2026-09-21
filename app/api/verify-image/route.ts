@@ -52,7 +52,7 @@ export async function POST(req: Request) {
   const supabase = createServerClient();
   const { data: gen } = await supabase
     .from("generations")
-    .select("id, created_at, category, certificate, avatars(id, handle, alias, tier, consent_start, revoked_at, commercial_consent, protection_only)")
+    .select("id, created_at, category, certificate, avatars!generations_avatar_id_fkey(id, handle, alias, tier, consent_start, revoked_at, commercial_consent, protection_only)")
     .eq("certificate", cert)
     .maybeSingle();
 

@@ -31,7 +31,7 @@ export default async function MatchPage({ searchParams }: { searchParams: Promis
     getPublicAvatars(admin),
     admin
       .from("generations")
-      .select("certificate, image_url, avatars(alias)")
+      .select("certificate, image_url, avatars!generations_avatar_id_fkey(alias)")
       .eq("buyer_id", user.id)
       .eq("mode", "commercial")
       .not("certificate", "is", null)

@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   const admin = createServerClient();
   const { data: gen } = await admin
     .from("generations")
-    .select("id, buyer_id, image_url, avatars(alias)")
+    .select("id, buyer_id, image_url, avatars!generations_avatar_id_fkey(alias)")
     .eq("certificate", cert)
     .maybeSingle();
   if (!gen?.image_url || gen.buyer_id !== user.id) return new Response("Not found", { status: 404 });

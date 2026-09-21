@@ -113,7 +113,7 @@ export default async function AccountPage() {
   const admin2 = createServerClient();
   const { data: gens } = await admin2
     .from("generations")
-    .select("id, certificate, image_url, royalty_cents, gross_cents, category, tier, created_at, avatars(alias, handle)")
+    .select("id, certificate, image_url, royalty_cents, gross_cents, category, tier, created_at, avatars!generations_avatar_id_fkey(alias, handle)")
     .eq("buyer_id", user.id)
     .not("certificate", "is", null)
     .order("created_at", { ascending: false })

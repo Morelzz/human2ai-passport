@@ -28,7 +28,7 @@ export default async function EditPage({ params }: { params: Promise<{ cert: str
   const admin = createServerClient();
   const { data: gen } = await admin
     .from("generations")
-    .select("certificate, buyer_id, image_url, category, edit_state, avatars(alias)")
+    .select("certificate, buyer_id, image_url, category, edit_state, avatars!generations_avatar_id_fkey(alias)")
     .eq("certificate", cert)
     .maybeSingle();
 
