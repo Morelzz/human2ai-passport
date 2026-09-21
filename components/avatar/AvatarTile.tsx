@@ -15,7 +15,7 @@ export type TileAvatar = {
   gender?: string | null;
 };
 
-export function AvatarTile({ a, className = "", priority = false }: { a: TileAvatar; className?: string; priority?: boolean }) {
+export function AvatarTile({ a, className = "", priority = false, quadrato = false }: { a: TileAvatar; className?: string; priority?: boolean; quadrato?: boolean }) {
   // 720: basta per la tile piu' grande a 2x/3x, e pesa un quinto dell'originale.
   const src = sampleSrc(portraitFor(a), 720);
   const revoked = !!a.revoked_at;
@@ -23,7 +23,9 @@ export function AvatarTile({ a, className = "", priority = false }: { a: TileAva
   return (
     <Link
       href={`/passport/${a.handle}`}
-      className={`group relative block aspect-[3/4] overflow-hidden rounded-[18px] bg-[#E7E1D3] focus-ring ${className}`}
+      // quadrato: la tessera sta dentro una card che ha gia' i suoi angoli
+      // (catalogo che parla), quindi la foto non ne ha bisogno.
+      className={`group relative block aspect-[3/4] overflow-hidden bg-[#E7E1D3] focus-ring ${quadrato ? "" : "rounded-[18px]"} ${className}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img

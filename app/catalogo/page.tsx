@@ -3,8 +3,11 @@ import { registroPubblico } from "@/lib/registro-cache";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
-import { AvatarTile } from "@/components/avatar/AvatarTile";
+import { type TileAvatar } from "@/components/avatar/AvatarTile";
 import { Button } from "@/components/ui/button";
+import { CatalogoGriglia } from "./CatalogoGriglia";
+import { voltoCatalogo } from "@/lib/catalogo";
+import { splitEcho } from "@/lib/wallet";
 
 export const metadata = {
   title: "Avatar, il catalogo dei volti verificati",
@@ -24,6 +27,16 @@ export default async function CatalogoPage() {
     return gb - ga;
   });
   const revocati = avatars.filter((a) => a.revoked_at).length;
+
+  // Quello che si vede sulla tessera: foto si'/no, video si'/no, utilizzi.
+  const volti = avatars.map((a) => voltoCatalogo(a as Parameters<typeof voltoCatalogo>[0]));
+  const tile: Record<string, TileAvatar> = {};
+  for (const a of avatars) {
+    tile[a.handle] = { handle: a.handle, alias: a.alias, gallery_urls: a.gallery_urls, revoked_at: a.revoked_at, gender: (a as { gender?: string | null }).gender ?? null };
+  }
+  // "da X euro": lo scatto piu' economico del listino (bozza quadrata), dalla
+  // stessa funzione che fa pagare. Un prezzo vero non si nasconde.
+  const daCent = splitEcho(null, "1024x1024", "medium").gross_cents;
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
@@ -50,27 +63,7 @@ export default async function CatalogoPage() {
             <p className="text-[0.95rem] leading-relaxed text-muted">Ancora nessun volto nel registro. Le persone arrivano prima dell&apos;AI.</p>
           </div>
         ) : (
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-            {avatars.map((a, i) => (
-              <AvatarTile
-                key={a.handle}
-                priority={i < 4}
-                a={{ handle: a.handle, alias: a.alias, gallery_urls: a.gallery_urls, revoked_at: a.revoked_at, gender: (a as { gender?: string | null }).gender ?? null }}
-              />
-            ))}
-            {/* Ultima tessera: l'invito. Chiude la griglia e dice cosa fare dopo. */}
-            <Link
-              href="/signup/avatar"
-              className="group relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-[18px] border border-dashed border-edge bg-surface bg-[radial-gradient(90%_55%_at_100%_0%,var(--amber-soft),transparent_70%)] p-4 transition-colors hover:border-amber focus-ring sm:p-5"
-            >
-              <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-soft text-[1.4rem] font-semibold leading-none text-amber-ink transition-transform group-hover:scale-110">+</span>
-              <span className="flex flex-col gap-1.5">
-                <span className="text-[1.15rem] font-bold leading-tight tracking-[-0.02em] sm:text-[1.3rem]">Il tuo volto qui</span>
-                <span className="text-[0.85rem] leading-snug text-muted">Verifica, consenso firmato e una quota a ogni utilizzo.</span>
-                <span className="mt-1 text-[0.85rem] font-semibold text-amber-ink">Entra nel registro</span>
-              </span>
-            </Link>
-          </div>
+          <CatalogoGriglia volti={volti} tile={tile} daCent={daCent} />
         )}
       </main>
       <Footer />
