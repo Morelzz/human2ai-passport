@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Semblic Academy · Design Handoff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;700;800&family=Geist+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0C0F17; --surface:#141A24; --elevated:#1E2530; --edge:#2C3440;
+    --text:#F2E9D8; --muted:#ADA89E; --faint:#74716E;
+    --hairline:rgba(242,233,216,0.12); --hairline-soft:rgba(242,233,216,0.06);
+    --amber:#F2A93B; --amber-hover:#E29A2E; --on-amber:#412402;
+    --verified:#7FAE96; --blocked:#EE7A70;
+    --grad-tramonto:linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%);
+    --grad-aurora:linear-gradient(135deg,#F2A93B 0%,#C25C3A 42%,#0C0F17 100%);
+    --grad-fiducia:linear-gradient(135deg,#7FAE96 0%,#2E8B7E 100%);
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Geist",system-ui,sans-serif; -webkit-font-smoothing:antialiased;
+    line-height:1.7; position:relative; min-height:100vh;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(55% 45% at 18% -5%, rgba(242,169,59,0.16), transparent 70%),
+      radial-gradient(45% 40% at 95% 8%, rgba(238,122,112,0.10), transparent 70%),
+      radial-gradient(75% 55% at 50% 112%, rgba(127,174,150,0.09), transparent 72%);
+  }
+  .wrap{position:relative; z-index:1; max-width:1040px; margin:0 auto; padding:4rem 1.5rem 6rem;}
+  .mono{font-family:"Geist Mono",monospace;}
+  .kicker{display:inline-flex; align-items:center; gap:.6rem; font-family:"Geist Mono",monospace;
+    font-size:.66rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--amber);}
+  .kicker::before{content:""; width:.45rem; height:.45rem; border-radius:2px; background:currentColor; box-shadow:0 0 10px currentColor;}
+  h1{font-weight:200; letter-spacing:-.04em; line-height:.98; font-size:clamp(2.6rem,7vw,4.6rem); margin:1.1rem 0 .8rem;}
+  h2{font-weight:200; letter-spacing:-.03em; font-size:clamp(1.7rem,4vw,2.3rem); margin:0 0 .4rem;}
+  h3{font-weight:500; font-size:1.05rem; margin:0 0 .3rem;}
+  p{color:var(--muted); margin:.5rem 0;}
+  a{color:var(--amber); text-underline-offset:3px;}
+  strong{color:var(--text); font-weight:500;}
+  .lead{font-size:1.15rem; color:var(--muted); max-width:640px;}
+  section{margin-top:4.5rem;}
+  .sec-head{margin-bottom:1.6rem;}
+  .divider{height:1px; border:0; margin:0; background:linear-gradient(90deg,transparent,rgba(242,169,59,0.45) 35%,rgba(127,174,150,0.32) 65%,transparent); box-shadow:0 0 18px rgba(242,169,59,0.25);}
+  .glass{background:rgba(242,233,216,0.04); border:1px solid var(--hairline); border-radius:16px; padding:1.5rem; box-shadow:inset 0 1px 0 0 var(--hairline-soft), 0 14px 40px -18px rgba(0,0,0,.55);}
+  .grid{display:grid; gap:14px;}
+  .sw{border:1px solid var(--hairline); border-radius:12px; overflow:hidden;}
+  .sw .chip{height:74px;}
+  .sw .meta{padding:10px 12px; background:var(--surface);}
+  .sw .name{font-size:.82rem; font-weight:500;}
+  .sw .hex{font-family:"Geist Mono",monospace; font-size:.72rem; color:var(--faint);}
+  .grad-bar{height:64px; border-radius:12px; border:1px solid var(--hairline);}
+  .btn-primary{display:inline-block; background:var(--amber); color:var(--on-amber); font-weight:800; font-size:.9rem; border-radius:999px; padding:.8rem 1.6rem; text-decoration:none; border:none; cursor:pointer;}
+  .btn-ghost{display:inline-block; background:transparent; color:var(--text); border:1px solid var(--hairline); font-weight:700; font-size:.9rem; border-radius:999px; padding:.8rem 1.6rem; text-decoration:none; cursor:pointer;}
+  .badge{display:inline-flex; align-items:center; gap:.4rem; border-radius:999px; padding:.25rem .75rem; font-size:.72rem; font-weight:700; letter-spacing:.04em;}
+  .b-ver{color:var(--verified); background:rgba(127,174,150,.12); border:1px solid rgba(127,174,150,.3);}
+  .b-blo{color:var(--blocked); background:rgba(238,122,112,.12); border:1px solid rgba(238,122,112,.3);}
+  .b-amb{color:var(--amber); background:rgba(242,169,59,.12); border:1px solid rgba(242,169,59,.3);}
+  pre{background:var(--surface); border:1px solid var(--hairline-soft); border-radius:12px; padding:1rem 1.2rem; overflow-x:auto; font-family:"Geist Mono",monospace; font-size:.8rem; line-height:1.6; color:var(--text);}
+  code{font-family:"Geist Mono",monospace; font-size:.85em; color:var(--verified);}
+  ul{color:var(--muted); padding-left:1.2rem;} li{margin:.35rem 0;}
+  li::marker{color:var(--amber);}
+  table{width:100%; border-collapse:collapse; font-size:.9rem;}
+  td{padding:.55rem .4rem; border-bottom:1px solid var(--hairline-soft); color:var(--muted); vertical-align:top;}
+  td:first-child{color:var(--text); font-weight:500; white-space:nowrap; padding-right:1.2rem;}
+  .rules{counter-reset:r; list-style:none; padding:0;}
+  .rules li{counter-increment:r; position:relative; padding:.55rem 0 .55rem 2.4rem; border-bottom:1px solid var(--hairline-soft);}
+  .rules li::before{content:counter(r); position:absolute; left:0; top:.5rem; width:1.7rem; height:1.7rem; border-radius:999px; background:rgba(242,169,59,.12); border:1px solid rgba(242,169,59,.3); color:var(--amber); font-family:"Geist Mono",monospace; font-size:.78rem; display:flex; align-items:center; justify-content:center;}
+  .tag{font-size:.7rem; color:var(--faint); font-family:"Geist Mono",monospace;}
+  .foot{margin-top:5rem; padding-top:2rem; border-top:1px solid var(--hairline); color:var(--faint); font-size:.85rem;}
+  @media(max-width:560px){ .wrap{padding:3rem 1.1rem 4rem;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="kicker">SEMBLIC ACADEMY · DESIGN HANDOFF</span>
+    <h1>La stessa mano.<br>Una nuova pagina.</h1>
+    <p class="lead">Tutto quello che serve per costruire <strong>Semblic Academy</strong> (nome di lavoro) in sinergia col brand: palette, font, struttura, movimento e voce. Estratto dal codice reale di Semblic. Se hai un dubbio, la pagina che stai leggendo "è" il brand: copia da qui.</p>
+    <p class="tag">Aggiornato 2026-06-22 · sorgenti: app/globals.css, lib/ui.ts, app/layout.tsx</p>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="kicker">00</span><h2>In una riga</h2></div>
+    <div class="glass">
+      <p style="margin-top:0">Semblic è il <strong>registro dei volti consenzienti</strong>. Estetica <strong>dark first</strong>, premium, avanguardia, "caveau di banca". Tre colori base: <strong>Obsidian</strong> (sfondo), <strong>Lumen</strong> (testo), <strong>Amber</strong> (unica azione). Mai aspetto giocattolo, mai marketing generico.</p>
+      <p style="margin-bottom:0; color:var(--text); font-weight:500; letter-spacing:.02em">Real Humans. Real Rights. Real Earnings.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="kicker">01 · Stack</span><h2>L'ambiente di lavoro</h2></div>
+    <div class="glass">
+      <table>
+        <tr><td>Framework</td><td>Next.js 16 (App Router) + React 19</td></tr>
+        <tr><td>Linguaggio</td><td>TypeScript 5</td></tr>
+        <tr><td>Styling</td><td>Tailwind CSS v4 (config nel CSS: @import "tailwindcss" + @theme)</td></tr>
+        <tr><td>Font</td><td>Geist Sans (UI/testo) + Geist Mono (label/codice), via next/font/google</td></tr>
+        <tr><td>Animazioni</td><td>framer-motion 12 + CSS keyframes</td></tr>
+        <tr><td>Scroll / transizioni</td><td>lenis (smooth) + next-view-transitions</td></tr>
+        <tr><td>Icone</td><td>lucide-react (outline)</td></tr>
+      </table>
+      <p style="margin-bottom:0; font-size:.85rem">Una pagina di design non ha bisogno di segreti o .env: usa solo CSS, font e componenti.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="kicker">02 · Colore</span><h2>Palette</h2>
+      <p>Sistema a 8 token + 3 gradienti, tutto da Obsidian / Lumen / Amber. Tema scuro di default, tema chiaro su <code>data-theme="light"</code>. Amber e i testi su pieno sono costanti nei due temi.</p></div>
+
+    <h3 style="margin-bottom:.8rem">Superfici e testo</h3>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+      <div class="sw"><div class="chip" style="background:#0C0F17; border-bottom:1px solid var(--hairline)"></div><div class="meta"><div class="name">Obsidian / bg</div><div class="hex">#0C0F17</div></div></div>
+      <div class="sw"><div class="chip" style="background:#141A24"></div><div class="meta"><div class="name">Surface / card</div><div class="hex">#141A24</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1E2530"></div><div class="meta"><div class="name">Elevated / input</div><div class="hex">#1E2530</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2C3440"></div><div class="meta"><div class="name">Edge / linee</div><div class="hex">#2C3440</div></div></div>
+      <div class="sw"><div class="chip" style="background:#F2E9D8"></div><div class="meta"><div class="name">Lumen / testo</div><div class="hex">#F2E9D8</div></div></div>
+      <div class="sw"><div class="chip" style="background:#ADA89E"></div><div class="meta"><div class="name">Muted</div><div class="hex">#ADA89E</div></div></div>
+      <div class="sw"><div class="chip" style="background:#74716E"></div><div class="meta"><div class="name">Faint</div><div class="hex">#74716E</div></div></div>
+    </div>
+
+    <h3 style="margin:1.6rem 0 .8rem">Azione e stati</h3>
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+      <div class="sw"><div class="chip" style="background:#F2A93B"></div><div class="meta"><div class="name">Amber / azione</div><div class="hex">#F2A93B</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E29A2E"></div><div class="meta"><div class="name">Amber hover</div><div class="hex">#E29A2E</div></div></div>
+      <div class="sw"><div class="chip" style="background:#7FAE96"></div><div class="meta"><div class="name">Salvia / verificato</div><div class="hex">#7FAE96</div></div></div>
+      <div class="sw"><div class="chip" style="background:#EE7A70"></div><div class="meta"><div class="name">Coral / bloccato</div><div class="hex">#EE7A70</div></div></div>
+      <div class="sw"><div class="chip" style="background:#412402"></div><div class="meta"><div class="name">Testo su Amber</div><div class="hex">#412402</div></div></div>
+    </div>
+
+    <h3 style="margin:1.6rem 0 .8rem">Gradienti <span class="tag">solo sfondi/sezioni, mai sui bottoni</span></h3>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div><div class="grad-bar" style="background:var(--grad-tramonto)"></div><p class="tag" style="margin:.5rem 0 0">tramonto · amber → coral</p></div>
+      <div><div class="grad-bar" style="background:var(--grad-aurora)"></div><p class="tag" style="margin:.5rem 0 0">aurora · amber → obsidian</p></div>
+      <div><div class="grad-bar" style="background:var(--grad-fiducia)"></div><p class="tag" style="margin:.5rem 0 0">fiducia · salvia → teal</p></div>
+    </div>
+
+    <div class="glass" style="margin-top:1.6rem">
+      <h3>Regole colore non negoziabili</h3>
+      <ul style="margin-bottom:0">
+        <li>Una sola azione: <strong>Amber pieno</strong> (#F2A93B), testo sopra #412402. Mai gradienti sui bottoni.</li>
+        <li>Stati solo coral / salvia, e solo per <strong>significato</strong> (bloccato / verificato), mai per decoro.</li>
+        <li>Il testo è <strong>Lumen a opacità</strong>, mai grigi inventati. Bordi <strong>hairline</strong> (Lumen a 0.12), mai grigi pieni.</li>
+        <li>I gradienti vivono solo come <strong>sfondi di sezione</strong>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="kicker">03 · Tipografia</span><h2>Geist, e il display sottilissimo</h2>
+      <p>Geist Sans per testo e UI, Geist Mono per kicker e codice. La firma del brand sono i titoli ultra sottili: peso <strong>200</strong>, tracking <strong>-0.04em</strong>.</p></div>
+    <div class="glass">
+      <div style="font-weight:200; letter-spacing:-.04em; font-size:clamp(2.2rem,6vw,3.4rem); line-height:.95;">Persone reali.</div>
+      <div style="font-weight:200; letter-spacing:-.04em; font-size:clamp(2.2rem,6vw,3.4rem); line-height:.95; color:var(--muted)">Diritti reali.</div>
+      <p class="kicker" style="margin-top:1.4rem">KICKER MONO · USATO SOPRA LE SEZIONI</p>
+      <div style="margin-top:1.2rem; display:grid; gap:.3rem; font-size:.85rem; color:var(--muted)">
+        <div>Display hero: 48 a 64px, peso 200, tracking -0.04em</div>
+        <div>H2 sezione: 28 a 32px, peso 200 a 300</div>
+        <div>Corpo: 16px, line-height ~1.7 · Label/kicker: 11 a 12px mono, uppercase, tracking 0.18em</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="kicker">04 · Forma</span><h2>Geometria, vetro, componenti</h2>
+      <p>Bottoni a pillola (raggio pieno), card a raggio 16, bordi hairline, superfici in vetro. Tutto dal vivo qui sotto.</p></div>
+    <div class="glass">
+      <div style="display:flex; gap:.8rem; flex-wrap:wrap; align-items:center">
+        <a class="btn-primary">Azione primaria</a>
+        <a class="btn-ghost">Secondaria (ghost)</a>
+        <span class="badge b-ver">✓ Verificato</span>
+        <span class="badge b-blo">Bloccato</span>
+        <span class="badge b-amb">ECHO</span>
+      </div>
+      <p style="margin:1.4rem 0 .4rem; font-size:.85rem">Raggi: <code>sm 8 · md 10 · lg 16 · xl 20 · pill 999</code>. Card = lg. Bottoni = pillola.</p>
+      <p style="margin:0; font-size:.85rem">Questa scheda è una <code>.glass</code>: sfondo Lumen 0.04, bordo hairline, blur, ombra morbida.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="kicker">05 · Movimento e voce</span><h2>Soft, e in italiano</h2></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+      <div class="glass"><h3>Movimento</h3><ul style="margin-bottom:0">
+        <li>Reveal allo scroll con framer-motion, easing <code>[0.22,1,0.36,1]</code></li>
+        <li>Smooth scroll (lenis), transizioni di pagina (view transitions)</li>
+        <li>Focus sempre visibile (outline amber). Rispettare <code>prefers-reduced-motion</code></li>
+        <li>Vuoto che respira, atmosfera notturna (aloni radiali dietro al contenuto)</li>
+      </ul></div>
+      <div class="glass"><h3>Voce</h3><ul style="margin-bottom:0">
+        <li>Italiano, premium, sobrio, sicuro, mai gridato</li>
+        <li><strong>Mai trattini lunghi</strong> nei testi: virgole, due punti, parentesi</li>
+        <li>Sentence case, niente emoji nei testi di prodotto</li>
+        <li>Brand: SEMBLIC. Sezione: Semblic Academy (nome di lavoro)</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="kicker">06</span><h2>Le 10 regole d'oro</h2></div>
+    <ol class="rules">
+      <li>Dark first. Sfondo Obsidian #0C0F17, testo Lumen #F2E9D8.</li>
+      <li>Una sola azione: Amber pieno. Mai gradienti sui bottoni.</li>
+      <li>Stati solo salvia (ok) e coral (stop), per significato.</li>
+      <li>Bordi hairline (Lumen a opacità), mai grigi pieni.</li>
+      <li>Bottoni a pillola, card a raggio 16.</li>
+      <li>Titoli display peso 200, tracking -0.04em.</li>
+      <li>Font Geist Sans, kicker in Geist Mono.</li>
+      <li>Gradienti solo come sfondi di sezione (tramonto / aurora / fiducia).</li>
+      <li>Vuoto che respira, atmosfera cinematografica, reveal soft.</li>
+      <li>Copy italiano, niente trattini lunghi, niente aspetto giocattolo.</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="kicker">07</span><h2>File da usare e starter</h2></div>
+    <div class="glass">
+      <h3>Da consegnare con questa pagina</h3>
+      <ul>
+        <li><strong>app/globals.css</strong> — token CSS, glass, atmosfera, label, divider (la sorgente di verità)</li>
+        <li><strong>lib/ui.ts</strong> — gli stessi token in TS (colori, gradienti, raggi, bottoni, card, pill)</li>
+        <li><strong>app/layout.tsx</strong> — setup font Geist + ambiente (tema, smooth scroll, view transitions)</li>
+        <li>Opzionale: una pagina d'esempio (app/page.tsx) e components/marketing/CineBackground.tsx</li>
+      </ul>
+      <p style="font-size:.85rem">Da non consegnare: .env, chiavi, supabase/, node_modules. Per il design non servono.</p>
+      <h3 style="margin-top:1.4rem">Starter pagina Academy</h3>
+<pre>export default function AcademyPage() {
+  return (
+    &lt;main style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}&gt;
+      &lt;section style={{ maxWidth: 1100, margin: "0 auto", padding: "6rem 1.5rem" }}&gt;
+        &lt;p className="label-mono" style={{ color: "var(--amber-c)" }}&gt;SEMBLIC ACADEMY&lt;/p&gt;
+        &lt;h1 style={{ fontWeight: 200, letterSpacing: "-0.04em",
+          fontSize: "clamp(2.4rem,6vw,4rem)", lineHeight: 1 }}&gt;
+          Impara a usare i volti, nel rispetto delle persone.
+        &lt;/h1&gt;
+        &lt;a style={{ background: "var(--amber-c)", color: "var(--on-amber-c)",
+          fontWeight: 800, borderRadius: 999, padding: "0.85rem 1.6rem",
+          textDecoration: "none" }}&gt;Inizia il corso&lt;/a&gt;
+      &lt;/section&gt;
+    &lt;/main&gt;
+  );
+}</pre>
+    </div>
+  </section>
+
+  <div class="foot">
+    <p style="margin:0">Se hai un dubbio cromatico o di spaziatura, apri <code>globals.css</code>: lì c'è la verità. Costruisci su Obsidian, Lumen, Amber, font Geist, titoli sottilissimi, bottoni a pillola, card glass, gradienti solo come sfondi, movimento soft, copy senza trattini lunghi.</p>
+    <p style="margin:.8rem 0 0">Vedi anche: <a href="mappa-sito.html" style="color:var(--amber)">la mappa dell'intero sito</a> (tutte le 46 pagine con link).</p>
+    <p style="margin:.8rem 0 0; color:var(--muted)">SEMBLIC · Real Humans. Real Rights. Real Earnings.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ward, nuova interfaccia (mockup)</title>
+<style>
+  :root{
+    --bg:#0C0F17; --lumen:#F2E9D8; --amber:#F2A93B; --amber-hover:#E29A2E; --on-amber:#412402;
+    --card:#141A24; --input:#1E2530; --line:#2C3440; --coral:#EE7A70; --salvia:#7FAE96;
+    --muted:rgba(242,233,216,.62); --faint:rgba(242,233,216,.36);
+    --grad-tramonto:linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%);
+    --grad-aurora:linear-gradient(135deg,#F2A93B 0%,#C25C3A 42%,#0C0F17 100%);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--lumen); background:var(--bg); min-height:100vh; -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(55% 45% at 18% -5%, rgba(242,169,59,.16), transparent 70%),
+      radial-gradient(45% 40% at 95% 8%, rgba(238,122,112,.10), transparent 70%),
+      radial-gradient(75% 55% at 50% 112%, rgba(127,174,150,.09), transparent 72%);
+    background-attachment:fixed;
+  }
+  .stars{position:fixed;inset:0;pointer-events:none;opacity:.5;
+    background-image:radial-gradient(rgba(242,233,216,.18) .5px,transparent .6px);background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(ellipse 85% 60% at 50% 30%,#000 26%,transparent 76%);
+    mask-image:radial-gradient(ellipse 85% 60% at 50% 30%,#000 26%,transparent 76%);}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1}
+
+  /* top bar */
+  header.bar{display:flex;align-items:center;gap:10px;padding:20px 2px}
+  .mark{width:26px;height:26px;border-radius:50%;
+    background:var(--grad-tramonto);box-shadow:0 0 0 1px rgba(242,233,216,.10),0 6px 24px -8px rgba(242,169,59,.5)}
+  .word{font-weight:600;letter-spacing:.22em;font-size:13px}
+  .back{margin-left:auto;font-size:13px;color:var(--muted);text-decoration:none}
+  .vptoggle{display:flex;gap:4px;border:1px solid var(--line);border-radius:999px;padding:3px;margin-left:14px}
+  .vptoggle button{background:none;border:0;color:var(--muted);font-size:11px;padding:5px 11px;border-radius:999px;cursor:pointer}
+  .vptoggle button.on{background:var(--amber);color:var(--on-amber);font-weight:700}
+
+  .frame{transition:max-width .35s ease;margin:0 auto}
+  .frame.mobile{max-width:392px}
+
+  .protect-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(127,174,150,.34);
+    background:rgba(127,174,150,.08);color:var(--salvia);border-radius:999px;padding:6px 13px;font-size:11.5px;font-weight:500}
+  .protect-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--salvia);box-shadow:0 0 0 0 rgba(127,174,150,.6);animation:beat 2.4s infinite}
+  @keyframes beat{0%{box-shadow:0 0 0 0 rgba(127,174,150,.5)}70%{box-shadow:0 0 0 8px rgba(127,174,150,0)}100%{box-shadow:0 0 0 0 rgba(127,174,150,0)}}
+
+  h1.title{font-weight:200;letter-spacing:-.04em;font-size:30px;margin:16px 0 6px;line-height:1.05}
+  .sub{color:var(--muted);font-size:13.5px;max-width:46ch;line-height:1.5;margin:0 0 22px}
+
+  .grid{display:grid;gap:26px;grid-template-columns:minmax(0,300px) 1fr}
+  .frame.mobile .grid{grid-template-columns:1fr}
+
+  /* left: protected image */
+  .imgcard{position:relative;border:1px solid var(--line);border-radius:20px;overflow:hidden;aspect-ratio:4/5;
+    background:linear-gradient(160deg,#1a2230,#0f141d);position:sticky;top:16px}
+  .frame.mobile .imgcard{position:relative;top:0}
+  .imgcard .photo{position:absolute;inset:0;background:
+    radial-gradient(120% 90% at 30% 20%,rgba(242,169,59,.22),transparent 60%),
+    radial-gradient(120% 90% at 80% 90%,rgba(238,122,112,.18),transparent 60%),#10151e;
+    display:flex;align-items:center;justify-content:center;color:rgba(242,233,216,.18);font-size:40px}
+  .scanline{position:absolute;left:0;right:0;height:42%;top:-42%;
+    background:linear-gradient(to bottom,transparent,rgba(242,169,59,.10) 60%,rgba(242,169,59,.42));
+    border-bottom:1px solid rgba(242,169,59,.8);opacity:0}
+  .imgcard.scanning .scanline{opacity:1;animation:sweep 1.4s ease-in-out}
+  @keyframes sweep{0%{top:-42%}100%{top:100%}}
+  .imgcard .glow{position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(242,169,59,0);transition:box-shadow .4s}
+  .imgcard.scanning .glow{box-shadow:inset 0 0 0 1px rgba(242,169,59,.5),inset 0 0 40px rgba(242,169,59,.18)}
+  .imgcap{position:absolute;left:0;right:0;bottom:0;padding:14px;
+    background:linear-gradient(to top,rgba(12,15,23,.96),transparent)}
+  .imgcap .k{font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+  .imgcap .v{font-size:18px;font-weight:600;margin-top:2px}
+  .leftctrl{display:flex;align-items:center;gap:10px;margin-top:14px}
+  .leftctrl .ago{font-size:12px;color:var(--muted)}
+  .btn{display:inline-flex;align-items:center;gap:7px;border-radius:999px;border:0;cursor:pointer;
+    font-weight:700;font-size:12px;padding:10px 16px;background:var(--amber);color:var(--on-amber);
+    transition:filter .15s,transform .1s}
+  .btn:hover{filter:brightness(1.08)} .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:none;border:1px solid var(--line);color:var(--lumen);font-weight:500}
+  .btn.ghost:hover{background:var(--input);filter:none}
+  .btn.scan{margin-left:auto;position:relative;overflow:hidden}
+  .btn.scan.busy{pointer-events:none;opacity:.85}
+  .btn .spin{width:13px;height:13px;border-radius:50%;border:2px solid rgba(65,36,2,.35);border-top-color:var(--on-amber);animation:rot .7s linear infinite;display:none}
+  .btn.scan.busy .spin{display:inline-block}
+  .btn.scan.busy .ic{display:none}
+  @keyframes rot{to{transform:rotate(360deg)}}
+
+  /* right: results */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .tab{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:none;color:var(--muted);
+    border-radius:999px;padding:8px 14px;font-size:12.5px;cursor:pointer;transition:.18s}
+  .tab:hover{color:var(--lumen)}
+  .tab.on{background:var(--amber);color:var(--on-amber);border-color:transparent;font-weight:700}
+  .tab .n{font-size:11px;opacity:.8}
+  .tab.on .n{opacity:1}
+
+  .card{display:flex;gap:12px;border:1px solid var(--line);background:var(--card);border-radius:18px;padding:11px;margin-bottom:11px;
+    transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;cursor:default}
+  .card:hover{transform:translateY(-2px);border-color:rgba(242,169,59,.35);box-shadow:0 12px 30px -16px rgba(0,0,0,.7)}
+  .thumb{width:62px;height:62px;flex:none;border-radius:13px;overflow:hidden;border:1px solid var(--line);
+    background:radial-gradient(120% 120% at 30% 20%,rgba(242,169,59,.18),transparent),#0f141d;
+    display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:17px}
+  .meta{min-width:0;flex:1}
+  .row1{display:flex;align-items:center;gap:8px}
+  .repdot{width:8px;height:8px;border-radius:50%;flex:none}
+  .host{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .badge{margin-left:auto;flex:none;border-radius:999px;padding:3px 9px;font-size:9.5px;font-weight:700;letter-spacing:.02em}
+  .badge.conf{background:rgba(238,122,112,.16);color:var(--coral)}
+  .badge.rev{background:rgba(242,169,59,.14);color:var(--amber)}
+  .line2{display:flex;align-items:center;gap:6px;font-size:10.5px;margin-top:6px}
+  .wm{display:inline-flex;align-items:center;gap:4px;color:var(--salvia)}
+  .acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;
+    padding:5px 11px;font-size:11px;cursor:pointer;color:var(--lumen);background:none;transition:.15s;text-decoration:none}
+  .chip:hover{background:var(--input)}
+  .chip.strike{background:var(--amber);color:var(--on-amber);border-color:transparent;font-weight:700;
+    box-shadow:0 0 0 0 rgba(242,169,59,.5)}
+  .chip.strike:hover{filter:brightness(1.08);background:var(--amber)}
+  .chip.strike.glow{animation:halo 2.6s infinite}
+  @keyframes halo{0%{box-shadow:0 0 0 0 rgba(242,169,59,.45)}70%{box-shadow:0 0 0 9px rgba(242,169,59,0)}100%{box-shadow:0 0 0 0 rgba(242,169,59,0)}}
+
+  /* Nemesis identity */
+  .nm-word{font-weight:700;letter-spacing:.20em;background:var(--grad-tramonto);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .nemesis-banner{display:flex;align-items:center;gap:13px;border:1px solid rgba(238,122,112,.30);
+    background:linear-gradient(120deg,rgba(242,169,59,.12),rgba(238,122,112,.10));border-radius:18px;padding:13px 15px;margin-bottom:14px}
+  .nemesis-banner .em{width:36px;height:36px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;
+    background:var(--grad-tramonto);color:#2a1404;font-size:18px;box-shadow:0 8px 22px -10px rgba(238,122,112,.75)}
+  .nemesis-banner .desc{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .nemesis-banner .go{margin-left:auto}
+  .mh-em{width:30px;height:30px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;
+    background:var(--grad-tramonto);color:#2a1404;font-size:15px}
+  .nicn{display:inline-flex;align-items:center;font-size:13px}
+  .icnlab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);background:rgba(20,26,36,.6);
+    border-radius:14px;padding:9px 12px;margin:12px 0 2px}
+  .icnlab .lab{font-size:11px;color:var(--muted);letter-spacing:.05em}
+  .icnlab .opt{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--bg);color:var(--lumen);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:19px;transition:.15s}
+  .icnlab .opt:hover{border-color:var(--amber);color:var(--amber)}
+  .icnlab .opt.on{background:var(--grad-tramonto);color:#2a1404;border-color:transparent}
+  .empty{border:1px dashed var(--line);border-radius:18px;padding:34px;text-align:center}
+  .empty .sh{width:30px;height:30px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;
+    background:rgba(127,174,150,.12);color:var(--salvia);font-size:15px}
+  .foot{font-size:11px;color:var(--faint);line-height:1.6;margin-top:26px;max-width:48ch}
+  .hidden{display:none!important}
+
+  /* modal */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(5px);display:none;
+    align-items:center;justify-content:center;padding:16px;z-index:20}
+  .scrim.show{display:flex}
+  .modal{width:100%;max-width:520px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;
+    border:1px solid var(--line);background:var(--card);border-radius:24px;animation:pop .22s ease}
+  @keyframes pop{from{transform:translateY(14px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+  .mhead{display:flex;align-items:center;gap:9px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .mhead .gv{color:var(--amber)}
+  .mhead .t{font-size:14px;font-weight:600;letter-spacing:.02em}
+  .mhead .h{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mhead .x{margin-left:auto;background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
+  .steps{display:flex;gap:7px;padding:14px 18px 2px}
+  .stp{flex:1;height:3px;border-radius:999px;background:var(--line);transition:.3s}
+  .stp.act{background:var(--amber)}
+  .mbody{padding:14px 18px 20px;overflow-y:auto}
+  .field{display:block;margin-bottom:10px}
+  .field span{font-size:11px;color:var(--muted)}
+  .field input{width:100%;margin-top:5px;background:var(--bg);border:1px solid var(--line);border-radius:12px;
+    color:var(--lumen);padding:10px 12px;font-size:13px;outline:none;transition:.15s}
+  .field input:focus{border-color:var(--amber)}
+  .sendto{border:1px solid var(--line);background:var(--bg);border-radius:13px;padding:11px 13px;margin-bottom:12px}
+  .sendto .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .sendto .v{font-size:13.5px;margin-top:2px}
+  pre.notice{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:13px;
+    padding:12px 13px;font-size:11px;line-height:1.55;color:rgba(242,233,216,.9);max-height:210px;overflow:auto;margin:0;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .track{border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
+  .statusrow{display:flex;align-items:center;gap:8px;margin:6px 0 12px}
+  .statusrow .d{width:9px;height:9px;border-radius:50%}
+  .statusrow .l{font-size:14px;font-weight:600}
+  .disc{font-size:10.5px;color:var(--faint);line-height:1.6;margin-top:16px}
+  @media(max-width:760px){ .grid{grid-template-columns:1fr} .imgcard{position:relative;top:0} h1.title{font-size:25px} }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="wrap">
+  <header class="bar">
+    <span class="mark"></span><span class="word">WARD</span>
+    <div class="vptoggle">
+      <button id="vpD" class="on" onclick="setVP('desktop')">Desktop</button>
+      <button id="vpM" onclick="setVP('mobile')">Mobile</button>
+    </div>
+    <a class="back" href="#">Esci</a>
+  </header>
+
+  <div class="icnlab">
+    <span class="lab">Icona Nemesis</span>
+    <button class="opt" data-i="talon" onclick="setIcon('talon',this)" title="Artiglio"></button>
+    <button class="opt" data-i="scythe" onclick="setIcon('scythe',this)" title="Falce"></button>
+    <button class="opt" data-i="dagger" onclick="setIcon('dagger',this)" title="Pugnale"></button>
+    <button class="opt" data-i="bolt" onclick="setIcon('bolt',this)" title="Saetta"></button>
+    <button class="opt on" data-i="reticle" onclick="setIcon('reticle',this)" title="Mirino colpito"></button>
+  </div>
+
+  <div id="frame" class="frame">
+    <span class="protect-pill"><span class="dot"></span> Protezione attiva</span>
+    <h1 class="title">Le copie della tua immagine</h1>
+    <p class="sub">Ward cerca su tutto il web dove la tua immagine generata e' stata copiata. Tu decidi cosa fare: nessuna accusa automatica, nessuna cifra.</p>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div>
+        <div id="imgcard" class="imgcard">
+          <div class="photo">◇</div>
+          <div class="scanline"></div>
+          <div class="glow"></div>
+          <div class="imgcap"><div class="k">La tua immagine generata</div><div class="v">Ritratto, luce calda</div></div>
+        </div>
+        <div class="leftctrl">
+          <span class="ago">Controllata 2 min fa</span>
+          <button id="scanBtn" class="btn scan" onclick="runScan()">
+            <span class="spin"></span><span class="ic">⌖</span><span class="lbl">Aggiorna</span>
+          </button>
+        </div>
+        <p id="scanMsg" class="ago" style="margin-top:9px;min-height:14px"></p>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <div id="nemesisBanner" class="nemesis-banner">
+          <div class="em">⚔</div>
+          <div>
+            <span class="nm-word" style="font-size:13px">NEMESIS</span>
+            <div class="desc"><b style="color:var(--lumen);font-weight:600">2 copie confermate</b>, pronte da rimuovere.</div>
+          </div>
+          <button class="btn go" onclick="openTakedown('instagram.com')">Apri</button>
+        </div>
+
+        <div class="tabs">
+          <button class="tab on" data-tab="all" onclick="setTab('all')">Tutte <span class="n">3</span></button>
+          <button class="tab" data-tab="review" onclick="setTab('review')">Da rivedere <span class="n">1</span></button>
+          <button class="tab" data-tab="wl" onclick="setTab('wl')">In regola <span class="n">2</span></button>
+        </div>
+
+        <div id="list">
+          <!-- confirmed + exposed -->
+          <div class="card" data-band="confirmed">
+            <div class="thumb">◷</div>
+            <div class="meta">
+              <div class="row1">
+                <span class="repdot" style="background:var(--amber)"></span>
+                <span class="host">instagram.com</span>
+                <span class="badge conf">Confermato</span>
+              </div>
+              <div class="line2"><span class="wm">◆ Filigrana: e' tua</span></div>
+              <div class="acts">
+                <a class="chip" href="#">↗ Apri</a>
+                <button class="chip" onclick="markSafe(this)">✓ Segna sicuro</button>
+                <button class="chip strike glow" onclick="openTakedown('instagram.com')"><span class="nicn"></span> Nemesis</button>
+              </div>
+            </div>
+          </div>
+          <!-- confirmed + obscure -->
+          <div class="card" data-band="confirmed">
+            <div class="thumb">◷</div>
+            <div class="meta">
+              <div class="row1">
+                <span class="repdot" style="background:var(--coral)"></span>
+                <span class="host">dark-mirror.ru</span>
+                <span class="badge conf">Confermato</span>
+              </div>
+              <div class="line2"><span style="color:var(--muted)">Zona nascosta · Filigrana: no</span></div>
+              <div class="acts">
+                <a class="chip" href="#">↗ Apri</a>
+                <button class="chip" onclick="markSafe(this)">✓ Segna sicuro</button>
+                <button class="chip strike glow" onclick="openTakedown('dark-mirror.ru')"><span class="nicn"></span> Nemesis</button>
+              </div>
+            </div>
+          </div>
+          <!-- review -->
+          <div class="card" data-band="review">
+            <div class="thumb">◷</div>
+            <div class="meta">
+              <div class="row1">
+                <span class="repdot" style="background:var(--amber)"></span>
+                <span class="host">blog-foto.io</span>
+                <span class="badge rev">Da rivedere</span>
+              </div>
+              <div class="line2"><span style="color:var(--muted)">Piattaforma nota · Filigrana: no</span></div>
+              <div class="acts">
+                <a class="chip" href="#">↗ Apri</a>
+                <button class="chip" onclick="markSafe(this)">✓ Segna sicuro</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="empty" class="empty hidden">
+          <div class="sh">✓</div>
+          <div style="font-size:14px;font-weight:600;margin-top:12px">Tutto in regola qui</div>
+          <p style="color:var(--muted);font-size:12px;max-width:30ch;margin:6px auto 0;line-height:1.5">Niente da mostrare in questa vista. Ward continua a controllare quando vuoi.</p>
+        </div>
+
+        <p class="foot">Ward trova e segnala. La filigrana invisibile conferma quando una copia e' davvero tua. La rimozione si avvia solo sulle copie confermate.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAKEDOWN MODAL -->
+<div id="scrim" class="scrim" onclick="if(event.target===this)closeTakedown()">
+  <div class="modal">
+    <div class="mhead">
+      <span class="mh-em">⚔</span>
+      <div style="min-width:0">
+        <div class="nm-word" style="font-size:12.5px;line-height:1.1">NEMESIS</div>
+        <div class="h" id="mh" style="margin-top:1px">instagram.com</div>
+      </div>
+      <button class="x" onclick="closeTakedown()">×</button>
+    </div>
+    <div class="steps"><div class="stp act" data-s="1"></div><div class="stp" data-s="2"></div><div class="stp" data-s="3"></div></div>
+    <div class="mbody">
+
+      <!-- step 1: profile -->
+      <div id="s1">
+        <p style="font-size:13.5px;font-weight:600;margin:2px 0 4px">Una volta sola: i tuoi dati</p>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 14px">Servono nella DMCA notice, restano privati e li riusiamo per le prossime richieste.</p>
+        <label class="field"><span>Nome e cognome</span><input value="Mario Rossi"></label>
+        <label class="field"><span>Indirizzo</span><input value="Via Roma 1, Milano"></label>
+        <label class="field"><span>Email</span><input value="mario@email.it"></label>
+        <button class="btn" style="margin-top:6px" onclick="goStep(2)">Continua</button>
+      </div>
+
+      <!-- step 2: document -->
+      <div id="s2" class="hidden">
+        <div class="sendto"><div class="k">Da inviare a</div><div class="v" id="sendto">abuse@instagram.com</div></div>
+        <div class="k" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Anteprima del documento</div>
+        <pre class="notice" id="noticePre"></pre>
+        <button class="btn" style="margin-top:12px" onclick="fakePdf()">⬇ Scarica PDF</button>
+        <div class="track">
+          <div class="k" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Tracciamento</div>
+          <div class="statusrow"><span class="d" style="background:var(--amber)"></span><span class="l" style="color:var(--amber)">Bozza pronta</span></div>
+          <button class="chip" onclick="goStep(3)">➤ Ho inviato la richiesta</button>
+        </div>
+        <p class="disc">Questo documento non e' consulenza legale. Semblic prepara la richiesta, l'invio spetta a te.</p>
+      </div>
+
+      <!-- step 3: tracking -->
+      <div id="s3" class="hidden">
+        <div class="statusrow" id="trkRow"><span class="d" style="background:var(--amber)"></span><span class="l" style="color:var(--amber)">Inviata, in attesa</span></div>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 14px">Quando vuoi, ricontrolla se la copia e' ancora online. Ward guarda l'indirizzo, niente di pesante.</p>
+        <button class="chip" id="recheckBtn" onclick="recheck()">↻ Ricontrolla la copia</button>
+        <p class="disc">Questo documento non e' consulenza legale. Semblic prepara la richiesta, l'invio spetta a te.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function setVP(m){document.getElementById('frame').classList.toggle('mobile',m==='mobile');
+    document.getElementById('vpD').classList.toggle('on',m==='desktop');
+    document.getElementById('vpM').classList.toggle('on',m==='mobile');}
+
+  function setTab(t){
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+    const cards=document.querySelectorAll('#list .card'); let shown=0;
+    cards.forEach(c=>{
+      let v = t==='all' ? c.dataset.band!=='wl' : t==='review' ? c.dataset.band==='review' : false;
+      c.classList.toggle('hidden',!v); if(v)shown++;
+    });
+    document.getElementById('list').classList.toggle('hidden', t==='wl');
+    document.getElementById('empty').classList.toggle('hidden', !(t==='wl'||shown===0));
+  }
+
+  function runScan(){
+    const b=document.getElementById('scanBtn'), img=document.getElementById('imgcard'), msg=document.getElementById('scanMsg');
+    b.classList.add('busy'); img.classList.add('scanning'); b.querySelector('.lbl').textContent='Controllo...'; msg.textContent='Cerco copie sul web...';
+    setTimeout(()=>{ b.classList.remove('busy'); img.classList.remove('scanning'); b.querySelector('.lbl').textContent='Aggiorna'; msg.textContent='Controllo completato. 3 copie.'; },1500);
+  }
+
+  function markSafe(btn){const c=btn.closest('.card'); c.style.transition='opacity .25s,transform .25s'; c.style.opacity='0'; c.style.transform='translateX(10px)'; setTimeout(()=>c.classList.add('hidden'),250);}
+
+  const NOTICE = `DMCA TAKEDOWN NOTICE
+
+To: __TO__
+
+I am the owner of the copyrighted work described below, and I have a good faith
+belief that the use of the material in the manner complained of is not authorized
+by me, my agent, or the law.
+
+1. Copyrighted work:
+   Title: Ritratto, luce calda
+   Authenticity certificate: DEMO-CERT
+   Verify: https://semblic.com/verify?token=DEMO-CERT
+   Perceptual hash: abcdef0123456789
+
+2. Infringing material to be removed:
+   https://__HOST__/post/123
+   Host: __HOST__
+
+3. My contact information:
+   Mario Rossi
+   Via Roma 1, Milano
+   mario@email.it
+
+I swear, under penalty of perjury, that the information in this notification is
+accurate and that I am the copyright owner.
+
+Signature: Mario Rossi`;
+
+  let curHost='instagram.com';
+  function openTakedown(host){curHost=host; document.getElementById('mh').textContent='· '+host;
+    document.getElementById('sendto').textContent='abuse@'+host;
+    document.getElementById('noticePre').textContent=NOTICE.replaceAll('__HOST__',host).replace('__TO__','abuse@'+host);
+    goStep(1); document.getElementById('scrim').classList.add('show');}
+  function closeTakedown(){document.getElementById('scrim').classList.remove('show');}
+  function goStep(n){[1,2,3].forEach(i=>document.getElementById('s'+i).classList.toggle('hidden',i!==n));
+    document.querySelectorAll('.stp').forEach(s=>s.classList.toggle('act',+s.dataset.s<=n));}
+  function fakePdf(){const b=event.target;const o=b.textContent;b.textContent='✓ PDF scaricato';setTimeout(()=>b.textContent=o,1600);}
+  function recheck(){const row=document.getElementById('trkRow'),btn=document.getElementById('recheckBtn');
+    btn.textContent='↻ Controllo...';
+    setTimeout(()=>{ const online=Math.random()>.5;
+      row.innerHTML = online
+        ? '<span class="d" style="background:var(--coral)"></span><span class="l" style="color:var(--coral)">Ancora online</span>'
+        : '<span class="d" style="background:var(--salvia)"></span><span class="l" style="color:var(--salvia)">Rimossa</span>';
+      btn.textContent = online ? '↻ Ricontrolla la copia' : '↻ Ricontrolla la copia';
+      if(!online) btn.style.display='none';
+    },1100);}
+
+  // Icone Nemesis: SVG vere, sharp. currentColor + 1em = ereditano colore e misura.
+  const ICONS={
+    talon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:1em;height:1em;display:block"><path d="M6 3C7.2 9 7.2 15 6.4 21"/><path d="M12 3C12.9 9 12.9 15 12.1 21"/><path d="M18 3C16.8 9 16.8 15 17.6 21"/></svg>',
+    scythe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;display:block"><path d="M14.5 3L12.5 21"/><path d="M14.5 3C8 3 3.6 6.2 2.8 11.5"/></svg>',
+    dagger:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="width:1em;height:1em;display:block"><path d="M12 22L9 8L12 2.5L15 8Z"/><path d="M6.5 8H17.5"/></svg>',
+    bolt:'<svg viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;display:block"><path d="M13.5 2L4.5 13.2H10L8.5 22L19.5 9.4H13L13.5 2Z"/></svg>',
+    reticle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:1em;height:1em;display:block"><circle cx="12" cy="12" r="8"/><path d="M12 1.5V5M12 19v3.5M1.5 12H5M19 12h3.5"/><path d="M7.6 16.4L16.4 7.6"/></svg>'
+  };
+  function setIcon(name,btn){
+    document.querySelectorAll('.nicn, #nemesisBanner .em, .mh-em').forEach(el=>el.innerHTML=ICONS[name]);
+    if(btn){document.querySelectorAll('.icnlab .opt').forEach(o=>o.classList.remove('on'));btn.classList.add('on');}
+  }
+  // mostra l'icona dentro ogni bottone del selettore + applica il default (artiglio)
+  document.querySelectorAll('.icnlab .opt').forEach(o=>o.innerHTML=ICONS[o.dataset.i]);
+  setIcon('reticle');
+</script>
+</body>
+</html>

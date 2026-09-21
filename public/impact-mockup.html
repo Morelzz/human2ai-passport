@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spotlight, promessa dinamica (mockup)</title>
+<style>
+  :root{
+    --bg:#0C0F17; --lumen:#F2E9D8; --amber:#F2A93B; --coral:#EE7A70;
+    --line:#2C3440; --muted:rgba(242,233,216,.62); --faint:rgba(242,233,216,.38);
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--lumen);
+    background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(60% 50% at 50% -10%,rgba(242,169,59,.08),transparent 70%);}
+  .page{max-width:1080px;margin:0 auto;padding:34px 20px 90px}
+
+  .switch{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:6px}
+  .switch button{background:none;border:1px solid var(--line);color:var(--muted);font-size:12px;padding:8px 15px;border-radius:999px;cursor:pointer;transition:.15s}
+  .switch button:hover{color:var(--lumen)}
+  .switch button.on{background:var(--amber);color:#412402;border-color:transparent;font-weight:700}
+  .cap{text-align:center;color:var(--faint);font-size:12px;margin:10px 0 16px}
+  .vptoggle{display:flex;gap:4px;border:1px solid var(--line);border-radius:999px;padding:3px;width:max-content;margin:14px auto 0}
+  .vptoggle button{background:none;border:0;color:var(--muted);font-size:11px;padding:5px 12px;border-radius:999px;cursor:pointer}
+  .vptoggle button.on{background:var(--amber);color:#412402;font-weight:700}
+
+  .stage{max-width:1040px;margin:0 auto;transition:max-width .35s}
+  .stage.mobile{max-width:392px}
+
+  /* SPOTLIGHT */
+  .impact{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:28px;text-align:center;isolation:isolate;
+    padding:108px 26px;box-shadow:0 40px 120px -60px rgba(0,0,0,.9);min-height:440px;display:flex;flex-direction:column;justify-content:center;
+    background:radial-gradient(120% 80% at 50% -8%,#11151e,#080a10 60%)}
+  .stage.mobile .impact{padding:70px 20px;min-height:0;border-radius:22px}
+  .spot{position:absolute;left:50%;top:-30%;width:120%;height:120%;transform:translateX(-50%);z-index:-1;pointer-events:none;
+    background:radial-gradient(closest-side,rgba(242,169,59,.20),transparent 70%);animation:breath 7s ease-in-out infinite}
+  .vig{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 100% at 50% 35%,transparent 45%,rgba(0,0,0,.66) 100%)}
+  @keyframes breath{0%,100%{opacity:.7}50%{opacity:1}}
+
+  .label{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--amber);opacity:.85}
+  .thesis{margin:16px auto 0;max-width:19ch;font-weight:200;letter-spacing:-.02em;font-size:clamp(28px,4.8vw,50px);line-height:1.12;color:rgba(242,233,216,.6)}
+  .divider{width:120px;height:1px;margin:30px auto;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(242,169,59,.7),transparent);box-shadow:0 0 16px rgba(242,169,59,.5)}
+  .promise{margin:0 auto;max-width:20ch;font-weight:800;letter-spacing:-.025em;font-size:clamp(30px,5.6vw,60px);line-height:1.05;min-height:1.2em}
+
+  /* 1) FLOW: gradiente caldo che scorre */
+  .p-flow{background:linear-gradient(110deg,#F2A93B,#EE7A70,#F2A93B);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 5s linear infinite}
+  @keyframes flow{to{background-position:-200% center}}
+
+  /* 2) SHINE: amber pieno con riflesso che passa */
+  .p-shine{background:linear-gradient(100deg,#F2A93B 0%,#F2A93B 40%,#FFF1D6 50%,#F2A93B 60%,#F2A93B 100%);background-size:300% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4.5s ease-in-out infinite}
+  @keyframes shine{0%{background-position:160% center}55%,100%{background-position:-60% center}}
+
+  /* 3) RISE: parole che salgono a cascata, in loop */
+  .p-rise{color:var(--amber)}
+  .p-rise .w{display:inline-block;overflow:hidden;vertical-align:top}
+  .p-rise .w span{display:inline-block;animation:rise 6s cubic-bezier(.22,1,.36,1) infinite}
+  @keyframes rise{0%{transform:translateY(110%);opacity:0}10%{transform:translateY(0);opacity:1}82%{opacity:1}92%{opacity:0;transform:translateY(-30%)}100%{opacity:0}}
+
+  /* 4) TYPE: macchina da scrivere (JS) col cursore */
+  .p-type{color:var(--amber)}
+  .caret{display:inline-block;width:.06em;background:var(--amber);margin-left:.04em;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  @media(prefers-reduced-motion:reduce){.spot,.p-flow,.p-shine,.p-rise .w span{animation:none}}
+  @media(max-width:760px){ .thesis,.promise{max-width:90%} }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="switch">
+    <button class="on" data-v="flow" onclick="setAnim('flow',this)">1 · Gradiente che scorre</button>
+    <button data-v="shine" onclick="setAnim('shine',this)">2 · Riflesso che passa</button>
+    <button data-v="rise" onclick="setAnim('rise',this)">3 · Parole che salgono</button>
+    <button data-v="type" onclick="setAnim('type',this)">4 · Macchina da scrivere</button>
+  </div>
+  <div id="cap" class="cap">1. Il testo si tinge del gradiente caldo (amber, coral) che scorre in loop.</div>
+
+  <div id="stage" class="stage">
+    <section class="impact">
+      <div class="spot"></div><div class="vig"></div>
+      <div class="label">La tesi</div>
+      <h2 class="thesis">L&rsquo;AI ha imparato a fabbricare persone.</h2>
+      <div class="divider"></div>
+      <p id="promise" class="promise p-flow">Noi proteggiamo, e paghiamo, quelle vere.</p>
+    </section>
+  </div>
+
+  <div class="vptoggle">
+    <button id="d" class="on" onclick="vp('d')">Desktop</button>
+    <button id="m" onclick="vp('m')">Mobile</button>
+  </div>
+</div>
+
+<script>
+  const TEXT="Noi proteggiamo, e paghiamo, quelle vere.";
+  const CAPS={
+    flow:"1. Il testo si tinge del gradiente caldo (amber, coral) che scorre in loop.",
+    shine:"2. Amber pieno, con un riflesso di luce che attraversa la scritta ogni pochi secondi.",
+    rise:"3. Le parole salgono a cascata dal basso, una dopo l'altra, in loop.",
+    type:"4. La frase si scrive da sola, col cursore che lampeggia."
+  };
+  let typer=null;
+  function setAnim(v,btn){
+    document.querySelectorAll('.switch button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+    document.getElementById('cap').textContent=CAPS[v];
+    render(v);
+  }
+  function vp(x){document.getElementById('stage').classList.toggle('mobile',x==='m');
+    document.getElementById('d').classList.toggle('on',x==='d');document.getElementById('m').classList.toggle('on',x==='m');}
+
+  function render(v){
+    if(typer){clearInterval(typer);typer=null;}
+    const p=document.getElementById('promise');
+    p.className='promise p-'+v;
+    if(v==='flow'||v==='shine'){ p.textContent=TEXT; return; }
+    if(v==='rise'){
+      p.innerHTML = TEXT.split(' ').map((w,i)=>`<span class="w"><span style="animation-delay:${i*0.08}s">${w}</span></span>`).join(' ');
+      return;
+    }
+    if(v==='type'){
+      p.innerHTML='<span id="tt"></span><span class="caret">&nbsp;</span>';
+      const tt=document.getElementById('tt'); let i=0,dir=1;
+      typer=setInterval(()=>{
+        tt.textContent=TEXT.slice(0,i);
+        i+=dir;
+        if(i>TEXT.length){dir=0; setTimeout(()=>{dir=1;i=0;},1800);}
+      },55);
+    }
+  }
+</script>
+</body>
+</html>

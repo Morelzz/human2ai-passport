@@ -49,7 +49,7 @@ export function SulSet({
     { t: "Scena composta", d: riepilogo, fatto: accettato, attivo: false },
     {
       t: "Sviluppo dell'immagine",
-      d: stato === "coda" ? "In fila per il motore, tocca a te a momenti" : chi ? "Prima la scena, poi un volto alla volta" : "Il motore sta disegnando lo scatto",
+      d: stato === "coda" ? "In fila per il motore, tocca a te a momenti" : chi ? "La scena con le foto verificate di ognuno, poi la misura di ogni volto" : "Il motore sta disegnando lo scatto",
       fatto: false,
       attivo: accettato,
       nota: stato === "coda" ? "in coda" : stato === "lavoro" ? "in corso" : undefined,
@@ -76,7 +76,7 @@ export function SulSet({
           <span aria-hidden className="set-scan" />
           <div className="absolute inset-x-0 top-[42%] flex flex-col items-center gap-1.5 text-center">
             <span className="text-[1.05rem] font-semibold text-foreground">{accettato ? "Sviluppo in corso" : "Preparo il set"}</span>
-            <span className="text-[0.85rem] text-muted">{chi ? "qualche minuto: un passaggio per ogni volto" : "di solito meno di un minuto"}</span>
+            <span className="text-[0.85rem] text-muted">{chi ? "qualche minuto: la scena e la misura di ogni volto" : "di solito meno di un minuto"}</span>
           </div>
         </div>
         <p className="px-1 text-[0.85rem] leading-relaxed text-muted">

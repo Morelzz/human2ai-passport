@@ -243,7 +243,7 @@ export function CreaClient({
     await avvia({ handle: volto.handle, ...corpoScatto() }, volto, perSemblic, null);
   }
 
-  // Scena di gruppo "un volto alla volta": niente riferimenti, posa, inquadratura
+  // Scena di gruppo: niente riferimenti, posa, inquadratura
   // ed espressione del singolo; look e formato restano.
   async function generaGruppo(lista: Volto[], dalCasting: boolean) {
     if (lista.length < 2 || scena.trim().length < 3) return;
@@ -783,7 +783,7 @@ export function CreaClient({
               </div>
             </div>
             <p className="text-[0.85rem] leading-relaxed text-muted">
-              Prima la scena, poi ogni volto rifatto con le foto verificate della sua persona: {scattiPerGruppo(n)} passaggi, qualche minuto.
+              La scena con le foto verificate di ognuno, poi la misura volto per volto: chi non viene riconosciuto lo rifacciamo solo lui. Qualche minuto.
               {" "}{formatEur(g.quote[n - 1])} a ciascuno.
               {(follaGruppo || n === MAX_PERSONE_GRUPPO) && (
                 <> In primo piano ci sono al massimo {MAX_PERSONE_GRUPPO} persone vere del registro: il resto della gente resta sullo sfondo, sfocata e non riconoscibile.</>

@@ -1,9 +1,10 @@
 // ──────────────────────────────────────────────────────────────────────────
 // ECHO, scena di GRUPPO (worker). Stessa sostanza di executeEchoJob, per 2-4
-// protagonisti: consenso vivo di ognuno, foto vere di ognuno, la scena "un
-// volto alla volta" (lib/gruppo), scan dei volti protetti, una generazione
-// sola per chi compra e una riga generation_people per ogni persona (royalty,
-// posizione, somiglianza). SERVER-ONLY.
+// protagonisti: consenso vivo di ognuno, le foto SCELTE di ognuno, la scena in
+// un colpo solo col ritocco mirato di chi non torna (lib/gruppo), scan dei
+// volti protetti, una generazione sola per chi compra e una riga
+// generation_people per ogni persona (royalty, posizione, somiglianza).
+// SERVER-ONLY.
 // ──────────────────────────────────────────────────────────────────────────
 
 import crypto from "crypto";
@@ -54,10 +55,6 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
       persone,
       riferimenti,
       fotografia: p.photographic,
-      // Nei gruppi un passaggio per volto non basta sempre (prova dal vivo del
-      // 19/9: Gabriella 35% senza la sua frangia): chi resta sotto soglia si
-      // ripassa una volta, in qualunque modo di somiglianza.
-      ripassa: true,
       genera: async (prompt, immagini) => {
         const r = await generaConRipiego({ prompt, references: immagini, size: p.echoSize, quality: p.echoQuality });
         modello = r.model;
@@ -65,14 +62,14 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
       },
     });
 
-    // Somiglianza: anche dopo il ripasso una persona non e' "lei" (oltre la
+    // Somiglianza: anche dopo il ritocco una persona non e' "lei" (oltre la
     // distanza della stessa persona, o il suo volto non si trova): la scena non si
     // consegna e i crediti tornano. Una foto con il nome di qualcuno che non c'e'
     // non esce. Misuratore non disponibile = non si blocca (come lo scatto singolo).
     const persa = esito.misura?.persone.find((x) => x.distanza == null || x.distanza > DISTANZA_STESSA_PERSONA);
     if (persa) {
       const chi = gruppo.find((g) => g.handle === persa.chiave)?.alias ?? persa.chiave;
-      console.warn(`[ECHO gruppo ${job.id}] ${chi} non tenuta (d ${persa.distanza ?? "n/d"}) dopo ${esito.passaggi} passaggi: non consegnata`);
+      console.warn(`[ECHO gruppo ${job.id}] ${chi} non tenuta (d ${persa.distanza ?? "n/d"}) dopo ${esito.passaggi} scatti: non consegnata`);
       throw new Error(`La scena non ha tenuto il volto di ${chi}: non te la consegniamo e non ti addebitiamo nulla. Riprova con una scena più semplice o con i volti più in primo piano.`);
     }
 
@@ -168,7 +165,7 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
       .eq("id", job.id);
 
     const chi = misure.map((m) => `${m.chiave} ${m.percentuale ?? "n/d"}%`).join(", ");
-    console.log(`[ECHO gruppo ${job.id}] done · ${gruppo.length} persone · ${esito.passaggi} passaggi${esito.ripassato ? ` (ripassato ${esito.ripassato})` : ""} · ${echoResLabel(p.echoSize)} · reale=${(esito.costoCent / 100).toFixed(3)}€ · ${chi} · sconosciuti ${esito.misura?.sconosciuti ?? "n/d"}`);
+    console.log(`[ECHO gruppo ${job.id}] done · ${gruppo.length} persone · ${esito.passaggi} scatti${esito.ripassato ? ` (ritoccata ${esito.ripassato})` : ""} · ${echoResLabel(p.echoSize)} · reale=${(esito.costoCent / 100).toFixed(3)}€ · ${chi} · sconosciuti ${esito.misura?.sconosciuti ?? "n/d"}`);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "errore sconosciuto";
     await admin.from("generation_jobs").update({ status: "error", finished_at: nowIso(), error: msg.slice(0, 500) }).eq("id", job.id);

@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TEMA, sorgente di verita dei colori (SEMBLIC).
+   Scuro = default (brand-first). Chiaro = avorio caldo (data-theme="light").
+   I token Tailwind (@theme, sotto) puntano a queste variabili, cosi tutte le
+   classi (bg-obsidian, text-foreground, bg-surface, text-muted, ...) si
+   ribaltano da sole quando cambia data-theme. Amber e i testi-su-pieno sono
+   COSTANTI; superfici/testo/bordi e gli stati cambiano col tema.
+   ────────────────────────────────────────────────────────────────────────── */
+:root, [data-theme="dark"] {
+  /* Scuro (default). Vale anche per le "isole sempre scure" (es. hero su video):
+     mettendo data-theme="dark" su una sezione, il suo sottoalbero resta scuro
+     anche quando la pagina e in tema chiaro. */
+  --bg:          #0C0F17;
+  --surface:     #141A24;
+  --elevated:    #1E2530;
+  --edge:        #2C3440;
+  --text:        #F2E9D8;
+  --text-muted:  #ADA89E;
+  --text-faint:  #74716E;
+  --hairline:      rgba(242,233,216,0.12);
+  --hairline-soft: rgba(242,233,216,0.06);
+  --nav-bg:          rgba(12,15,23,0.70);
+  --nav-bg-scrolled: rgba(12,15,23,0.90);
+  --glass-bg:    rgba(242,233,216,0.04);
+  --star-ink:    rgba(242,233,216,0.16);
+
+  /* Stati (cambiano col tema per leggibilita) */
+  --verified-c:  #7FAE96;
+  --blocked-c:   #EE7A70;
+
+  /* Costanti nei due temi */
+  --amber-c:        #F2A93B;
+  --amber-hover-c:  #E29A2E;
+  --on-amber-c:     #412402;
+  --on-verified-c:  #16352A;
+  --on-blocked-c:   #5A201B;
+
+  /* Gradienti, solo sfondi/sezioni */
+  --grad-tramonto: linear-gradient(135deg, #F2A93B 0%, #EE7A70 100%);
+  --grad-aurora:   linear-gradient(135deg, #F2A93B 0%, #C25C3A 42%, var(--bg) 100%);
+  --grad-fiducia:  linear-gradient(135deg, #7FAE96 0%, #2E8B7E 100%);
+
+  /* Alias semantici */
+  --action: var(--amber-c);
+  --action-hover: var(--amber-hover-c);
+  --text-on-amber: var(--on-amber-c);
+}
+
+[data-theme="light"] {
+  --bg:          #ECE6D6;
+  --surface:     #F5F1E7;
+  --elevated:    #FBF8F1;
+  --edge:          rgba(42,36,26,0.16);
+  --text:        #2A2418;
+  --text-muted:  #6E6655;
+  --text-faint:  #9A9080;
+  --hairline:      rgba(42,36,26,0.14);
+  --hairline-soft: rgba(42,36,26,0.07);
+  --nav-bg:          rgba(236,230,214,0.72);
+  --nav-bg-scrolled: rgba(236,230,214,0.92);
+  --glass-bg:    rgba(255,255,255,0.45);
+  --star-ink:    rgba(42,36,26,0.16);
+  --verified-c:  #3E8E78;
+  --blocked-c:   #CB5A3C;
+}
+
+/* Le isole (data-theme su una sezione) RI-DICHIARANO il colore del testo del
+   loro tema: cosi il testo che eredita `color` (es. un <h1> senza classe colore)
+   prende la tinta dell'isola e non quella gia risolta dalla pagina. */
+[data-theme] { color: var(--text); }
+
+@theme inline {
+  /* I nomi storici restano come alias: le classi Tailwind in uso si aggiornano
+     da sole. Tutti i neutri e gli stati puntano alle variabili di tema. */
+  --color-obsidian:    var(--bg);
+  --color-obsidian-2:  var(--surface);
+  --color-obsidian-3:  var(--elevated);
+  --color-surface:     var(--surface);
+  --color-elevated:    var(--elevated);
+  --color-edge:        var(--edge);
+  --color-lumen:       var(--text);
+  --color-foreground:  var(--text);
+  --color-muted:       var(--text-muted);
+  --color-faint:       var(--text-faint);
+  --color-border:      var(--hairline);
+
+  --color-amber:       var(--amber-c);
+  --color-amber-hover: var(--amber-hover-c);
+  --color-violet:      var(--amber-c);
+  --color-violet-light:var(--amber-hover-c);
+  --color-amber-light: var(--amber-hover-c);
+
+  --color-verified:    var(--verified-c);
+  --color-blocked:     var(--blocked-c);
+  --color-teal:        var(--verified-c);
+  --color-teal-light:  var(--verified-c);
+  --color-crimson:     var(--blocked-c);
+  --color-crimson-light: var(--blocked-c);
+
+  --color-on-amber:    var(--on-amber-c);
+  --color-on-verified: var(--on-verified-c);
+  --color-on-blocked:  var(--on-blocked-c);
+
+  --color-background:  var(--bg);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background: var(--bg);
+  color: var(--text);
+}
+/* Transizione morbida al cambio tema (non sullo scroll: solo i colori). */
+html.theme-anim, html.theme-anim * {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+/* CSS richiesto da Lenis (smooth scroll). */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── Strato cinematografico "Obsidian": profondita e respiro, mobile-first ── */
+.cine-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 18% -5%, rgba(242,169,59,0.16), transparent 70%),
+    radial-gradient(45% 40% at 95% 8%, rgba(238,122,112,0.10), transparent 70%),
+    radial-gradient(75% 55% at 50% 112%, rgba(127,174,150,0.09), transparent 72%);
+  animation: cine-in 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes cine-in {
+  from { transform: translate3d(0, 2.5%, 0) scale(1.08); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
+}
+
+.cine-stars {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+  background-image: radial-gradient(var(--star-ink) 0.5px, transparent 0.6px);
+  background-size: 38px 38px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 60% at 50% 32%, #000 28%, transparent 76%);
+  mask-image: radial-gradient(ellipse 85% 60% at 50% 32%, #000 28%, transparent 76%);
+  animation: cine-stars-drift 90s linear infinite;
+}
+@keyframes cine-stars-drift { to { background-position: 38px -760px; } }
+
+.cine-vignette {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(120% 120% at 50% 38%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Vetro v2 stratificato. */
+.glass {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--hairline);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 0 var(--hairline-soft),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.25),
+    0 14px 40px -18px rgba(0, 0, 0, 0.55);
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-hover:hover {
+  border-color: rgba(242, 169, 59, 0.35);
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 0 var(--hairline),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.25),
+    0 24px 55px -18px rgba(242, 169, 59, 0.42);
+}
+
+/* Etichetta HUD (kicker). */
+.label-mono {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+}
+.label-mono::before {
+  content: ""; width: 0.45rem; height: 0.45rem; border-radius: 2px;
+  background: currentColor; box-shadow: 0 0 10px currentColor; flex-shrink: 0;
+}
+
+/* Divisore luminoso tra sezioni. */
+.divider-glow {
+  height: 1px; border: 0;
+  background: linear-gradient(90deg, transparent, rgba(242, 169, 59, 0.45) 35%, rgba(127, 174, 150, 0.32) 65%, transparent);
+  box-shadow: 0 0 18px rgba(242, 169, 59, 0.25);
+}
+
+::selection { background: rgba(242, 169, 59, 0.55); color: #412402; }
+
+.focus-ring:focus-visible, .focus-ring:has(:focus-visible) {
+  outline: 2px solid var(--amber-c); outline-offset: 2px;
+}
+
+/* Scrollbar custom. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--elevated);
+  border: 2px solid var(--bg); border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--amber-c); }
+html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
+
+.reveal { opacity: 0; transform: translateY(18px); animation: reveal-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+@keyframes reveal-up { to { opacity: 1; transform: none; } }
+
+.text-gradient {
+  background: var(--grad-tramonto);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ── Tipografia del blog (.prose-semblic) ── */
+.prose-semblic { font-size: 1.02rem; line-height: 1.78; color: var(--text-muted); }
+.prose-semblic p { margin: 0 0 1.25em; }
+.prose-semblic h2 { margin: 2em 0 0.6em; font-size: 1.45rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+.prose-semblic h3 { margin: 1.6em 0 0.5em; font-size: 1.15rem; font-weight: 700; color: var(--text); }
+.prose-semblic a { color: var(--amber-c); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(242, 169, 59, 0.4); }
+.prose-semblic a:hover { text-decoration-color: var(--amber-c); }
+.prose-semblic strong { color: var(--text); font-weight: 700; }
+.prose-semblic em { color: var(--text); opacity: 0.85; }
+.prose-semblic ul, .prose-semblic ol { margin: 0 0 1.25em; padding-left: 1.3em; }
+.prose-semblic li { margin: 0.4em 0; }
+.prose-semblic li::marker { color: var(--amber-c); }
+.prose-semblic blockquote {
+  margin: 1.6em 0; padding: 0.9em 1.2em; border-left: 3px solid var(--amber-c);
+  border-radius: 0 0.75rem 0.75rem 0; background: rgba(242, 169, 59, 0.08); color: var(--text); font-weight: 600;
+}
+.prose-semblic blockquote p { margin: 0; }
+.prose-semblic code {
+  padding: 0.15em 0.4em; border-radius: 0.35rem; background: var(--hairline-soft);
+  font-family: var(--font-geist-mono), monospace; font-size: 0.85em; color: var(--verified-c);
+}
+.prose-semblic pre {
+  margin: 1.4em 0; padding: 1em 1.2em; border-radius: 0.9rem;
+  border: 1px solid var(--hairline-soft); background: var(--surface); overflow-x: auto;
+}
+.prose-semblic pre code { background: none; padding: 0; }
+.prose-semblic hr { margin: 2em 0; border: 0; height: 1px; background: var(--hairline); }
+.prose-semblic img { border-radius: 0.9rem; border: 1px solid var(--hairline-soft); }
+
+@media (max-width: 720px) {
+  .site-nav { padding-left: 1.1rem !important; padding-right: 1.1rem !important; }
+  .nav-secondary { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cine-bg { animation: none; opacity: 1; }
+  .cine-stars { animation: none; }
+  .reveal { animation: none; opacity: 1; transform: none; }
+  .glass-hover:hover { transform: none; }
+}
+
+/* ── Mappa sedi (Leaflet) ── */
+.smbl-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.72) contrast(0.9) saturate(0.35); }
+.smbl-map .leaflet-container { background: var(--bg); font: inherit; }
+.smbl-pin { display: block; width: 18px; height: 18px; border-radius: 9999px; }
+.smbl-pin--attiva { background: rgba(127, 174, 150, 0.3); border: 2px solid var(--verified-c); box-shadow: 0 0 14px rgba(127, 174, 150, 0.6); }
+.smbl-pin--arrivo { background: rgba(242, 169, 59, 0.16); border: 2px dashed var(--amber-c); opacity: 0.85; }
+.smbl-map .leaflet-popup-content-wrapper, .smbl-map .leaflet-popup-tip {
+  background: var(--elevated); color: var(--text); border: 1px solid var(--hairline); box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
+}
+.smbl-map .leaflet-popup-content { margin: 0.85rem 1rem; }
+.smbl-pop-title { margin: 0; font-size: 0.85rem; font-weight: 700; }
+.smbl-pop-sub { margin: 0.25rem 0 0; font-size: 0.72rem; color: var(--text-muted); }
+.smbl-pop-cta {
+  display: inline-block; margin-top: 0.6rem; padding: 0.45rem 1rem; border-radius: 9999px;
+  background: var(--amber-c); color: var(--on-amber-c) !important; font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none;
+}
+.smbl-map .leaflet-control-attribution { background: rgba(12, 15, 23, 0.75); color: var(--text-faint); font-size: 0.6rem; }
+.smbl-map .leaflet-control-attribution a { color: var(--text-muted); }
+
+/* ── Tema CHIARO: ammorbidisce il "void" cinematografico pensato per il buio ── */
+[data-theme="light"] .cine-vignette { background: radial-gradient(120% 120% at 50% 38%, transparent 62%, rgba(42, 36, 26, 0.05) 100%); }
+[data-theme="light"] .cine-bg {
+  background:
+    radial-gradient(55% 45% at 18% -5%, rgba(242,169,59,0.12), transparent 70%),
+    radial-gradient(45% 40% at 95% 8%, rgba(203,90,60,0.07), transparent 70%),
+    radial-gradient(75% 55% at 50% 112%, rgba(62,142,120,0.07), transparent 72%);
+}
+[data-theme="light"] .cine-stars { opacity: 0.22; }
+[data-theme="light"] .grain { opacity: 0.02; }
+[data-theme="light"] .glass {
+  box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.6), inset 0 -1px 0 0 rgba(42,36,26,0.06), 0 14px 40px -18px rgba(42,36,26,0.18);
+}
+[data-theme="light"] .glass-hover:hover { box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.7), 0 24px 55px -18px rgba(242,169,59,0.35); }
+[data-theme="light"] .smbl-tiles { filter: none; }
+[data-theme="light"] .smbl-map .leaflet-control-attribution { background: rgba(245,241,231,0.8); }
+[data-theme="light"] ::selection { background: rgba(242, 169, 59, 0.35); color: #412402; }

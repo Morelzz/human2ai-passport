@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Semblic for Business · Anteprima dei 10 tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Token SEMBLIC (app/globals.css + lib/ui.ts): Obsidian/Lumen/Amber, stati salvia+coral. */
+  :root{
+    --bg:#0C0F17; --surface:#141A24; --elevated:#1E2530; --edge:#2C3440;
+    --text:#F2E9D8; --muted:rgba(242,233,216,0.70); --faint:rgba(242,233,216,0.45);
+    --hairline:rgba(242,233,216,0.12); --hairline-soft:rgba(242,233,216,0.06);
+    --amber:#F2A93B; --amber-hover:#E29A2E; --on-amber:#412402;
+    --verified:#7FAE96; --on-verified:#16352A; --blocked:#EE7A70;
+    --paper:#F5F1E7; --paper-ink:#2A2418; --paper-mute:#6E6655; --paper-line:rgba(42,36,26,0.14);
+    --grad-aurora:linear-gradient(135deg,#F2A93B 0%,#C25C3A 42%,var(--bg) 100%);
+    --grad-tramonto:linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%);
+    --grad-fiducia:linear-gradient(135deg,#7FAE96 0%,#2E8B7E 100%);
+    --tint-amber:rgba(242,169,59,0.12); --tint-amber-bd:rgba(242,169,59,0.30);
+    --tint-salvia:rgba(127,174,150,0.12); --tint-salvia-bd:rgba(127,174,150,0.30);
+    --tint-coral:rgba(238,122,112,0.12); --tint-coral-bd:rgba(238,122,112,0.30);
+    --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Geist Mono",ui-monospace,"SF Mono",monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:var(--font);
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--tint-amber);color:var(--text)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--edge);border-radius:999px;border:3px solid var(--bg)}
+
+  .app{display:grid;grid-template-columns:256px 1fr;min-height:100vh}
+
+  /* sidebar */
+  .side{border-right:1px solid var(--hairline);padding:20px 14px;display:flex;flex-direction:column;
+    gap:16px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .brand{display:flex;flex-direction:column;gap:3px;padding:6px 8px}
+  .brand .word{font-weight:200;font-size:21px;letter-spacing:-0.04em}
+  .brand .word b{font-weight:500}
+  .brand .tag{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber);font-weight:500}
+  .nav{display:flex;flex-direction:column;gap:1px}
+  .nav .glabel{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+    padding:11px 10px 4px}
+  .nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;color:var(--muted);
+    font-size:13.5px;cursor:pointer;transition:.15s}
+  .nav a .n{font-family:var(--mono);font-size:10.5px;color:var(--faint);width:16px;flex:none}
+  .nav a:hover{background:var(--hairline-soft);color:var(--text)}
+  .nav a.active{background:var(--tint-amber);color:var(--text)}
+  .nav a.active .n{color:var(--amber)}
+  .nav a.home{color:var(--text);font-weight:500}
+  .side .foot{margin-top:auto;border-top:1px solid var(--hairline);padding-top:12px;
+    font-size:11px;color:var(--faint);padding-left:8px}
+
+  /* main */
+  .main{padding:30px 38px 70px;max-width:1200px;width:100%}
+
+  /* header / toolhead */
+  .ohead h1{font-weight:200;font-size:36px;letter-spacing:-0.04em;line-height:1.04}
+  .ohead .lead{color:var(--muted);font-size:14.5px;margin-top:10px;max-width:640px}
+  .toolhead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;
+    margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--hairline)}
+  .toolhead h2{font-weight:200;font-size:29px;letter-spacing:-0.03em;line-height:1.05}
+  .toolhead .desc{color:var(--muted);font-size:13.5px;margin-top:8px;max-width:560px}
+  .toolhead .back{font-size:12px;color:var(--faint);cursor:pointer;display:inline-flex;gap:6px;
+    align-items:center;margin-bottom:12px}
+  .toolhead .back:hover{color:var(--text)}
+  .badges{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+
+  /* chips e badge */
+  .tier{font-size:10.5px;font-weight:500;letter-spacing:.05em;border-radius:999px;padding:4px 10px;
+    border:1px solid}
+  .tier.p1{color:var(--amber);background:var(--tint-amber);border-color:var(--tint-amber-bd)}
+  .tier.p2{color:var(--verified);background:var(--tint-salvia);border-color:var(--tint-salvia-bd)}
+  .tier.p3{color:var(--muted);background:var(--hairline-soft);border-color:var(--hairline)}
+  .ttag{font-size:10.5px;color:var(--muted);background:var(--bg);border:1px solid var(--hairline);
+    border-radius:999px;padding:4px 10px;font-family:var(--mono)}
+  .badge{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;background:var(--tint-amber);
+    border:1px solid var(--tint-amber-bd);color:var(--amber);font-size:11px;font-weight:500;
+    border-radius:999px;padding:4px 11px}
+  .badge.salvia{background:var(--tint-salvia);border-color:var(--tint-salvia-bd);color:var(--verified)}
+  .badge.coral{background:var(--tint-coral);border-color:var(--tint-coral-bd);color:var(--blocked)}
+
+  /* overview grid */
+  .secrow{display:flex;align-items:center;gap:12px;margin:26px 0 14px}
+  .secrow .t{font-size:12px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+  .secrow .ln{flex:1;height:1px;background:var(--hairline)}
+  .ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px}
+  .ocard{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:17px;
+    cursor:pointer;transition:.18s;display:flex;flex-direction:column;gap:9px;min-height:150px}
+  .ocard:hover{border-color:var(--tint-amber-bd);transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(0,0,0,.25)}
+  .ocard .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .ocard .num{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .ocard .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px;
+    background:var(--tint-amber);color:var(--amber)}
+  .ocard h3{font-weight:500;font-size:15.5px;letter-spacing:-0.01em}
+  .ocard p{font-size:12.5px;color:var(--muted);line-height:1.5;flex:1}
+  .ocard .foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
+  .ocard .open{font-size:11.5px;color:var(--amber);opacity:0;transition:.18s}
+  .ocard:hover .open{opacity:1}
+
+  /* generico: bottoni, input, chip */
+  .btn{appearance:none;border:0;cursor:pointer;font-family:var(--font);font-weight:500;
+    background:var(--amber);color:var(--on-amber);border-radius:999px;padding:11px 20px;font-size:13.5px;
+    display:inline-flex;align-items:center;gap:8px;transition:.15s}
+  .btn:hover{background:var(--amber-hover)}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--hairline);border-radius:999px;
+    padding:8px 15px;font-size:12.5px;cursor:pointer;font-family:var(--font);display:inline-flex;
+    align-items:center;gap:7px;transition:.15s}
+  .btn-ghost:hover{border-color:var(--tint-amber-bd);background:var(--hairline-soft)}
+  .input,.textarea{width:100%;background:var(--elevated);border:1px solid var(--hairline);border-radius:10px;
+    padding:10px 12px;font-family:var(--font);font-size:13.5px;color:var(--text);outline:none}
+  .input:focus,.textarea:focus{border-color:var(--tint-amber-bd)}
+  .textarea{resize:none;line-height:1.5}
+  .lab{font-size:10.5px;letter-spacing:.04em;color:var(--faint);text-transform:uppercase;
+    margin-bottom:6px;display:block}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--hairline);
+    border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+  .chip b{color:var(--text);font-weight:500}
+  .seg{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--hairline);border-radius:999px;
+    padding:4px;flex-wrap:wrap}
+  .seg button{appearance:none;background:transparent;border:0;color:var(--muted);font-family:var(--font);
+    font-size:12.5px;padding:6px 13px;border-radius:999px;cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--amber);color:var(--on-amber);font-weight:500}
+  .seg button:not(.on):hover{color:var(--text)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tags span{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--bg);
+    border:1px solid var(--hairline);border-radius:999px;padding:3px 9px}
+
+  /* layout split + card/panel */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .two.wide-r{grid-template-columns:0.85fr 1.15fr}
+  .two.wide-l{grid-template-columns:1.15fr 0.85fr}
+  .panel{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:18px}
+  .panel h4{font-weight:500;font-size:13.5px;margin-bottom:13px;display:flex;align-items:center;gap:8px}
+  .panel h4 .mut{color:var(--faint);font-weight:400;font-family:var(--mono);font-size:11px}
+  .row{display:flex;gap:10px;align-items:center}
+  .row.wrap{flex-wrap:wrap}
+  .sp{flex:1}
+  .mt{margin-top:13px}.mt2{margin-top:18px}
+
+  /* stat tiles */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+  .stat{background:var(--surface);border:1px solid var(--hairline);border-radius:14px;padding:14px 15px}
+  .stat .v{font-weight:200;font-size:27px;letter-spacing:-0.03em}
+  .stat .v.amber{color:var(--amber)}.stat .v.salvia{color:var(--verified)}.stat .v.coral{color:var(--blocked)}
+  .stat .k{font-size:11.5px;color:var(--muted);margin-top:3px}
+
+  /* tabella */
+  .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+  .tbl th{text-align:left;font-weight:500;color:var(--faint);font-size:10.5px;letter-spacing:.04em;
+    text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--hairline)}
+  .tbl td{padding:10px;border-bottom:1px solid var(--hairline-soft);color:var(--text)}
+  .tbl tr:hover td{background:var(--hairline-soft)}
+  .tbl .mono{font-family:var(--mono)}
+  .pillv{font-size:10.5px;border-radius:999px;padding:3px 9px;border:1px solid;display:inline-block}
+  .pillv.ok{color:var(--verified);background:var(--tint-salvia);border-color:var(--tint-salvia-bd)}
+  .pillv.warn{color:var(--amber);background:var(--tint-amber);border-color:var(--tint-amber-bd)}
+  .pillv.bad{color:var(--blocked);background:var(--tint-coral);border-color:var(--tint-coral-bd)}
+
+  /* checklist */
+  .check{display:flex;flex-direction:column;gap:9px}
+  .citem{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--bg);
+    border:1px solid var(--hairline);border-radius:11px}
+  .dot{width:9px;height:9px;border-radius:999px;flex:none}
+  .dot.ok{background:var(--verified)}.dot.warn{background:var(--amber)}.dot.miss{background:var(--blocked)}
+  .citem .tx{font-size:13px}.citem .tx small{display:block;color:var(--faint);font-size:11px;margin-top:1px}
+  .citem .st{margin-left:auto;font-size:11px}
+
+  /* barre sentiment / progress */
+  .bars{display:flex;flex-direction:column;gap:11px}
+  .bar .bl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;color:var(--muted)}
+  .bar .bl b{color:var(--text);font-weight:500}
+  .track{height:8px;background:var(--bg);border:1px solid var(--hairline);border-radius:999px;overflow:hidden}
+  .fill{height:100%;border-radius:999px}
+  .fill.salvia{background:var(--grad-fiducia)}.fill.amber{background:var(--amber)}
+  .fill.coral{background:var(--blocked)}
+
+  /* chat */
+  .chat{display:flex;flex-direction:column;gap:11px}
+  .msg{max-width:84%;padding:11px 13px;border-radius:14px;font-size:13px;line-height:1.5}
+  .msg.bot{align-self:flex-start;background:var(--elevated);border:1px solid var(--hairline);
+    border-bottom-left-radius:5px}
+  .msg.me{align-self:flex-end;background:var(--amber);color:var(--on-amber);border-bottom-right-radius:5px}
+  .cite{margin-top:8px;font-size:10.5px;color:var(--verified);font-family:var(--mono);display:flex;
+    align-items:center;gap:6px}
+  .composer-mini{display:flex;gap:8px;margin-top:14px;align-items:center}
+
+  /* kanban */
+  .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .kcol{background:var(--bg);border:1px solid var(--hairline);border-radius:14px;padding:11px;
+    display:flex;flex-direction:column;gap:9px;min-height:230px}
+  .kcol .kh{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--muted);
+    padding:2px 4px}
+  .kcol .kh .c{font-family:var(--mono);color:var(--faint)}
+  .kcard{background:var(--surface);border:1px solid var(--hairline);border-radius:11px;padding:11px;
+    display:flex;flex-direction:column;gap:7px;cursor:grab;transition:.15s}
+  .kcard:hover{border-color:var(--tint-amber-bd);transform:translateY(-2px)}
+  .kcard .nm{font-size:13px;font-weight:500}
+  .kcard .co{font-size:11px;color:var(--faint)}
+  .kcard .mt{display:flex;align-items:center;justify-content:space-between;margin-top:2px}
+  .kcard .val{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .ls{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;border-radius:999px;padding:2px 8px;
+    border:1px solid}
+  .ls.hi{color:var(--verified);background:var(--tint-salvia);border-color:var(--tint-salvia-bd)}
+  .ls.mid{color:var(--amber);background:var(--tint-amber);border-color:var(--tint-amber-bd)}
+  .ls.lo{color:var(--muted);background:var(--hairline-soft);border-color:var(--hairline)}
+
+  /* documento "carta" (contratti, sito) */
+  .paper{background:var(--paper);color:var(--paper-ink);border-radius:12px;padding:24px 26px;
+    font-size:12.5px;line-height:1.65;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  .paper h5{font-size:15px;font-weight:600;margin-bottom:3px}
+  .paper .pm{color:var(--paper-mute)}
+  .paper hr{border:0;border-top:1px solid var(--paper-line);margin:13px 0}
+  .paper .pr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--paper-line)}
+  .paper .tot{display:flex;justify-content:space-between;font-weight:600;font-size:14px;margin-top:8px}
+  .paper .sign{margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end}
+  .paper .sline{border-bottom:1.5px solid var(--paper-ink);width:120px;height:22px}
+
+  /* anteprima immagine + overlay (content studio) */
+  .preview{position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;border:1px solid var(--hairline);
+    background:var(--grad-aurora)}
+  .preview.dusk{background:linear-gradient(150deg,#C25C3A 0%,#7C3338 52%,#1A1414 100%)}
+  .preview .scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,10,16,.6),rgba(8,10,16,0) 55%)}
+  .ov{position:absolute;left:14px;right:14px;bottom:13px;z-index:2}
+  .ov .accent{width:30px;height:3px;border-radius:2px;background:var(--amber);margin-bottom:6px}
+  .ov .otitle{font-weight:600;font-size:22px;line-height:1.05;color:#F2E9D8;text-shadow:0 2px 14px rgba(0,0,0,.55)}
+  .ov .osub{font-size:11.5px;color:rgba(242,233,216,.88);text-shadow:0 1px 8px rgba(0,0,0,.55);margin-top:3px}
+  .oved{display:flex;flex-direction:column;gap:8px;background:var(--bg);border:1px solid var(--hairline);
+    border-radius:11px;padding:10px;margin-top:11px}
+  .oved .r{display:flex;gap:8px;align-items:center}
+  .oved .cnt{font-family:var(--mono);font-size:11px;color:var(--verified);white-space:nowrap}
+  .oved .cnt.warn{color:var(--amber)}
+  .pchip{font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--hairline);
+    border-radius:999px;padding:5px 10px;cursor:pointer;transition:.15s}
+  .pchip.on{background:var(--tint-amber);border-color:var(--tint-amber-bd);color:var(--amber);font-weight:500}
+
+  /* site preview */
+  .siteprev{border:1px solid var(--hairline);border-radius:12px;overflow:hidden;background:var(--elevated)}
+  .siteprev .bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:var(--bg);
+    border-bottom:1px solid var(--hairline)}
+  .siteprev .bar i{width:9px;height:9px;border-radius:999px;background:var(--edge);display:block}
+  .siteprev .bar .u{margin-left:8px;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .shero{padding:26px 22px;background:var(--grad-aurora)}
+  .shero h3{font-weight:200;font-size:24px;letter-spacing:-0.03em;color:#F2E9D8}
+  .shero p{font-size:12px;color:rgba(242,233,216,.85);margin-top:7px;max-width:80%}
+  .shero .b{display:inline-block;margin-top:13px;background:var(--amber);color:var(--on-amber);
+    font-size:11.5px;font-weight:500;border-radius:999px;padding:7px 14px}
+  .scols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px}
+  .scols .sc{background:var(--surface);border:1px solid var(--hairline);border-radius:10px;padding:12px}
+  .scols .sc .ic{width:26px;height:26px;border-radius:8px;background:var(--tint-amber);color:var(--amber);
+    display:grid;place-items:center;font-size:13px;margin-bottom:8px}
+  .scols .sc h6{font-size:12px;font-weight:500}
+  .scols .sc p{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.45}
+
+  /* note */
+  .note{display:flex;gap:10px;align-items:flex-start;color:var(--faint);font-size:12px;
+    background:var(--surface);border:1px solid var(--hairline-soft);border-radius:13px;padding:12px 14px;margin-top:16px}
+  .note .ic{flex:none;font-size:14px}
+  .note.core .ic{color:var(--verified)}.note.amber .ic{color:var(--amber)}
+  .note b{color:var(--muted);font-weight:500}
+  .widget-card{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;overflow:hidden}
+
+  /* screens */
+  .screen{display:none;animation:fade .25s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .stamp{position:fixed;right:14px;bottom:12px;font-family:var(--mono);font-size:10px;color:var(--faint);
+    background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:5px 11px}
+
+  @media(max-width:1000px){.app{grid-template-columns:1fr}.side{display:none}.main{padding:22px 16px 80px}
+    .two,.two.wide-r,.two.wide-l{grid-template-columns:1fr}.kanban{grid-template-columns:1fr 1fr}
+    .ohead h1{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand">
+      <div class="word">Sem<b>blic</b></div>
+      <div class="tag">for business</div>
+    </div>
+    <nav class="nav">
+      <a class="home active" data-screen="overview"><span class="n">&#9633;</span> Panoramica</a>
+      <div class="glabel">P1 · ora</div>
+      <a data-screen="t2"><span class="n">2</span> Studio Contenuti</a>
+      <a data-screen="t5"><span class="n">5</span> Preventivi e contratti</a>
+      <a data-screen="t10"><span class="n">10</span> Compliance GDPR</a>
+      <div class="glabel">P2 · prossimo</div>
+      <a data-screen="t1"><span class="n">1</span> Amministrazione e fatture</a>
+      <a data-screen="t3"><span class="n">3</span> Assistente clienti</a>
+      <a data-screen="t7"><span class="n">7</span> Cervello aziendale</a>
+      <div class="glabel">P3 · roadmap</div>
+      <a data-screen="t4"><span class="n">4</span> Radar recensioni</a>
+      <a data-screen="t6"><span class="n">6</span> CRM leggero</a>
+      <a data-screen="t8"><span class="n">8</span> Email e riunioni</a>
+      <a data-screen="t9"><span class="n">9</span> Sito e SEO locale</a>
+    </nav>
+    <div class="foot">Anteprima · dati demo · 2026-06-18</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PANORAMICA -->
+    <section class="screen active" id="screen-overview">
+      <div class="ohead">
+        <h1>I 10 tool per le imprese</h1>
+        <p class="lead">Anteprima viva della suite Semblic for Business. Clicca una scheda per aprire il tool e provarlo. Tutto web-first, stessa identita del core, dati demo.</p>
+      </div>
+
+      <div class="secrow"><span class="t">P1 · si parte da qui</span><span class="ln"></span></div>
+      <div class="ogrid">
+        <div class="ocard" data-go="t2">
+          <div class="top"><div class="ico">&#10022;</div><span class="num">02</span></div>
+          <h3>Studio Contenuti</h3>
+          <p>Brief, canale, e l'AI scrive 3 post nel tuo tono di voce, con immagine e testo in overlay.</p>
+          <div class="foot"><span class="tier p1">P1 flagship</span><span class="open">Apri &#8594;</span></div>
+        </div>
+        <div class="ocard" data-go="t5">
+          <div class="top"><div class="ico">&#9998;</div><span class="num">05</span></div>
+          <h3>Preventivi e contratti</h3>
+          <p>Da un brief a preventivo o contratto pronto, con firma elettronica. Modelli per settore.</p>
+          <div class="foot"><span class="tier p1">P1</span><span class="open">Apri &#8594;</span></div>
+        </div>
+        <div class="ocard" data-go="t10">
+          <div class="top"><div class="ico">&#9873;</div><span class="num">10</span></div>
+          <h3>Compliance GDPR</h3>
+          <p>Analizza contratti e policy, evidenzia i rischi, genera privacy e cookie banner a norma.</p>
+          <div class="foot"><span class="tier p1">P1</span><span class="open">Apri &#8594;</span></div>
+        </div>
+      </div>
+
+      <div class="secrow"><span class="t">P2 · subito dopo</span><span class="ln"></span></div>
+      <div class="ogrid">
+        <div class="ocard" data-go="t1">
+          <div class="top"><div class="ico">&#8378;</div><span class="num">01</span></div>
+          <h3>Amministrazione e fatture</h3>
+          <p>Legge fatture e ricevute, ricorda IVA e F24, segnala anomalie, prepara per il commercialista.</p>
+          <div class="foot"><span class="tier p2">P2</span><span class="open">Apri &#8594;</span></div>
+        </div>
+        <div class="ocard" data-go="t3">
+          <div class="top"><div class="ico">&#9993;</div><span class="num">03</span></div>
+          <h3>Assistente clienti</h3>
+          <p>Chatbot addestrato sui tuoi contenuti, su sito, WhatsApp ed email. Passa all'umano se non sa.</p>
+          <div class="foot"><span class="tier p2">P2</span><span class="open">Apri &#8594;</span></div>
+        </div>
+        <div class="ocard" data-go="t7">
+          <div class="top"><div class="ico">&#9678;</div><span class="num">07</span></div>
+          <h3>Cervello aziendale</h3>
+          <p>Carichi i documenti interni e fai domande in linguaggio naturale. Ottimo per l'onboarding.</p>
+          <div class="foot"><span class="tier p2">P2</span><span class="open">Apri &#8594;</span></div>
+        </div>
+      </div>
+
+      <div class="secrow"><span class="t">P3 · roadmap</span><span class="ln"></span></div>
+      <div class="ogrid">
+        <div class="ocard" data-go="t4">
+          <div class="top"><div class="ico">&#9733;</div><span class="num">04</span></div>
+          <h3>Radar recensioni</h3>
+          <p>Aggrega le recensioni, analizza il sentiment, suggerisce risposte e segnala i trend.</p>
+          <div class="foot"><span class="tier p3">P3</span><span class="open">Apri &#8594;</span></div>
+        </div>
+        <div class="ocard" data-go="t6">
+          <div class="top"><div class="ico">&#9783;</div><span class="num">06</span></div>
+          <h3>CRM leggero</h3>
+          <p>Pipeline di vendita con lead scoring AI, follow-up suggeriti e bozze email on-brand.</p>
+          <div class="foot"><span class="tier p3">P3</span><span class="open">Apri &#8594;</span></div>
+        </div>
+        <div class="ocard" data-go="t8">
+          <div class="top"><div class="ico">&#9776;</div><span class="num">08</span></div>
+          <h3>Email e riunioni</h3>
+          <p>Bozze di risposta, riassunti dei thread, trascrizione riunioni con elenco delle azioni.</p>
+          <div class="foot"><span class="tier p3">P3</span><span class="open">Apri &#8594;</span></div>
+        </div>
+        <div class="ocard" data-go="t9">
+          <div class="top"><div class="ico">&#9783;</div><span class="num">09</span></div>
+          <h3>Sito e SEO locale</h3>
+          <p>Da una descrizione a landing page con testi ottimizzati e parole chiave locali.</p>
+          <div class="foot"><span class="tier p3">P3</span><span class="open">Apri &#8594;</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- T2 STUDIO CONTENUTI -->
+    <section class="screen" id="screen-t2">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Studio Contenuti</h2>
+          <p class="desc">Scrivi un brief, scegli il canale. L'AI genera piu varianti nel tuo tono di voce, con immagine e testo in overlay.</p>
+        </div>
+        <div class="badges"><span class="tier p1">P1 flagship</span><span class="ttag">web</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="row wrap" style="justify-content:space-between">
+          <div class="seg"><button class="on">Instagram</button><button>LinkedIn</button><button>Email</button><button>Sito</button></div>
+          <span class="chip">Voce: <b>caldo, esperto, ironico</b></span>
+        </div>
+        <div class="mt"><span class="lab">Il tuo brief</span><div class="input">Promo aperitivo del venerdi, dalle 18, musica dal vivo</div></div>
+        <div class="row wrap mt"><span class="chip">Lunghezza: <b>media</b></span><span class="chip">Emoji: <b>poche</b></span><div class="sp"></div><button class="btn">&#10022; Genera 3 varianti</button></div>
+      </div>
+
+      <div class="two mt2">
+        <div class="panel with-ov">
+          <div class="preview dusk">
+            <div class="scrim"></div>
+            <div class="ov"><span class="accent"></span><div class="otitle">APERTI DALLE 18</div><div class="osub">Aperitivo e musica dal vivo, ogni venerdi</div></div>
+          </div>
+          <div class="oved">
+            <div class="r"><input class="input ov-input" maxlength="24" value="APERTI DALLE 18" aria-label="Testo overlay" /><span class="cnt">15 / 24</span></div>
+            <div class="presets row"><span class="pchip on">Titolo in basso</span><span class="pchip">Badge angolo</span><span class="pchip">Nessuno</span></div>
+          </div>
+          <p class="desc mt" style="color:var(--text)">Il venerdi al Bar Centrale sa di buono. Dalle 18 aperitivo come si deve, calici pieni e musica dal vivo. Al primo brindisi ci pensiamo noi.</p>
+          <div class="tags mt"><span>#aperitivo</span><span>#musicadalvivo</span><span>#venerdi</span></div>
+        </div>
+
+        <div class="panel">
+          <div class="preview" style="background:linear-gradient(150deg,#7FAE96,#2E8B7E 60%,#15201d)">
+            <div class="scrim"></div>
+            <div class="badge" style="position:absolute;top:12px;right:12px;z-index:2">Venerdi live</div>
+          </div>
+          <div class="row mt" style="background:var(--tint-salvia);border:1px solid var(--tint-salvia-bd);border-radius:11px;padding:9px 11px">
+            <div style="width:26px;height:26px;border-radius:999px;background:var(--grad-fiducia);flex:none"></div>
+            <div style="font-size:12px">Volto collegato: Giulia V.<span style="display:block;color:var(--verified);font-family:var(--mono);font-size:10.5px">@giulia-v · consenziente</span></div>
+            <div class="sp"></div><span style="color:var(--verified)">&#10003;</span>
+          </div>
+          <p class="desc mt" style="color:var(--text)">Si comincia. Venerdi ore 18, il nostro aperitivo apre le danze: drink curati, taglieri generosi e una band dal vivo. Il weekend merita un buon inizio.</p>
+          <div class="tags mt"><span>#aperitivotime</span><span>#livemusic</span><span>#weekend</span></div>
+        </div>
+      </div>
+
+      <div class="note amber"><span class="ic">&#9998;</span><div><b>Testo in overlay.</b> La scritta e un livello separato e modificabile (qui max 24 caratteri), non cotta nell'immagine dal motore AI. Prova a scrivere nel campo: la scritta sull'immagine cambia in tempo reale.</div></div>
+      <div class="note core"><span class="ic">&#9873;</span><div><b>Ponte col core.</b> Collegando un volto scegli un avatar consenziente del registro Semblic, con i diritti gia a posto e una royalty al soggetto.</div></div>
+    </section>
+
+    <!-- T5 PREVENTIVI E CONTRATTI -->
+    <section class="screen" id="screen-t5">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Preventivi, proposte e contratti</h2>
+          <p class="desc">Da un brief guidato a un documento pronto, con firma elettronica. Modelli per settore.</p>
+        </div>
+        <div class="badges"><span class="tier p1">P1</span><span class="ttag">web</span></div>
+      </div>
+
+      <div class="two wide-r">
+        <div class="panel">
+          <h4>Nuovo documento</h4>
+          <div class="seg" style="margin-bottom:12px"><button class="on">Preventivo</button><button>Proposta</button><button>Contratto</button></div>
+          <div><span class="lab">Cliente</span><div class="input">Rossi Eventi Srl</div></div>
+          <div class="mt"><span class="lab">Oggetto</span><div class="input">Servizio fotografico per evento aziendale</div></div>
+          <div class="row mt"><div style="flex:1"><span class="lab">Importo</span><div class="input">1.200,00 &euro;</div></div><div style="flex:1"><span class="lab">Consegna</span><div class="input">15 giorni</div></div></div>
+          <button class="btn mt2">&#10022; Genera con AI</button>
+          <div class="row wrap mt2"><span class="pillv ok">Bozza</span><span class="pillv" style="color:var(--muted);border-color:var(--hairline)">Inviato</span><span class="pillv" style="color:var(--muted);border-color:var(--hairline)">Firmato</span></div>
+        </div>
+
+        <div class="paper">
+          <div class="row" style="justify-content:space-between;align-items:flex-start">
+            <div><h5>Preventivo n. 2026-041</h5><div class="pm">Bar Centrale di Mario Rossi</div></div>
+            <div class="pm" style="text-align:right">18/06/2026<br>Valido 30 giorni</div>
+          </div>
+          <hr>
+          <div class="pm" style="margin-bottom:8px">Spettabile <b style="color:var(--paper-ink)">Rossi Eventi Srl</b>, come da accordi proponiamo quanto segue.</div>
+          <div class="pr"><span>Servizio fotografico, evento aziendale</span><span>900,00 &euro;</span></div>
+          <div class="pr"><span>Post produzione e consegna digitale</span><span>300,00 &euro;</span></div>
+          <div class="tot"><span>Totale (IVA escl.)</span><span>1.200,00 &euro;</span></div>
+          <div class="sign"><div><div class="sline"></div><div class="pm" style="margin-top:4px">Il fornitore</div></div><div><div class="sline"></div><div class="pm" style="margin-top:4px">Per accettazione</div></div></div>
+        </div>
+      </div>
+      <div class="note amber"><span class="ic">&#9873;</span><div><b>Human in the loop.</b> L'AI redige la bozza, tu controlli e approvi prima di inviare. Lo strumento non sostituisce un legale.</div></div>
+    </section>
+
+    <!-- T10 COMPLIANCE GDPR -->
+    <section class="screen" id="screen-t10">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Analisi documenti e compliance GDPR</h2>
+          <p class="desc">Carica contratti e policy, l'AI evidenzia i rischi e genera i documenti privacy a norma.</p>
+        </div>
+        <div class="badges"><span class="tier p1">P1</span><span class="ttag">ibrido</span></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="v amber">68/100</div><div class="k">Punteggio compliance</div></div>
+        <div class="stat"><div class="v">12</div><div class="k">Documenti analizzati</div></div>
+        <div class="stat"><div class="v coral">3</div><div class="k">Rischi alti</div></div>
+        <div class="stat"><div class="v salvia">9</div><div class="k">A norma</div></div>
+      </div>
+
+      <div class="two mt2">
+        <div class="panel">
+          <h4>Stato documenti privacy</h4>
+          <div class="check">
+            <div class="citem"><span class="dot ok"></span><div class="tx">Privacy policy<small>Aggiornata, a norma</small></div><span class="st pillv ok" style="margin-left:auto">a norma</span></div>
+            <div class="citem"><span class="dot warn"></span><div class="tx">Cookie banner<small>Manca il consenso granulare</small></div><span class="st pillv warn" style="margin-left:auto">a rischio</span></div>
+            <div class="citem"><span class="dot miss"></span><div class="tx">Registro dei trattamenti<small>Non presente</small></div><span class="st pillv bad" style="margin-left:auto">manca</span></div>
+          </div>
+          <button class="btn mt2">&#10022; Genera i documenti mancanti</button>
+        </div>
+
+        <div class="panel">
+          <h4>Analisi contratto <span class="mut">contratto_fornitore.pdf</span></h4>
+          <div class="check">
+            <div class="citem"><span class="dot miss"></span><div class="tx">Clausola di trattamento dati assente<small>Manca il riferimento al GDPR per i dati trattati</small></div></div>
+            <div class="citem"><span class="dot warn"></span><div class="tx">Foro competente sbilanciato<small>Solo a favore della controparte</small></div></div>
+            <div class="citem"><span class="dot ok"></span><div class="tx">Durata e recesso chiari<small>Nessun rischio rilevato</small></div></div>
+          </div>
+          <div class="note amber" style="margin-top:13px"><span class="ic">&#9873;</span><div>Strumento di supporto, non un parere legale.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- T1 AMMINISTRAZIONE E FATTURE -->
+    <section class="screen" id="screen-t1">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Amministrazione e fatture</h2>
+          <p class="desc">Legge fatture e ricevute, ricorda le scadenze, segnala anomalie e prepara tutto per il commercialista.</p>
+        </div>
+        <div class="badges"><span class="tier p2">P2</span><span class="ttag">ibrido</span></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="v salvia">4.820 &euro;</div><div class="k">Incassato a giugno</div></div>
+        <div class="stat"><div class="v">1.060 &euro;</div><div class="k">IVA da versare</div></div>
+        <div class="stat"><div class="v amber">16/07</div><div class="k">Prossima scadenza</div></div>
+        <div class="stat"><div class="v coral">2</div><div class="k">Anomalie</div></div>
+      </div>
+
+      <div class="two wide-l mt2">
+        <div class="panel">
+          <h4>Documenti recenti</h4>
+          <table class="tbl">
+            <thead><tr><th>Data</th><th>Controparte</th><th>Importo</th><th>IVA</th><th>Stato</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">14/06</td><td>Forniture Bianchi</td><td class="mono">610,00 &euro;</td><td class="mono">134,20 &euro;</td><td><span class="pillv ok">categorizzata</span></td></tr>
+              <tr><td class="mono">12/06</td><td>Studio Verdi</td><td class="mono">1.220,00 &euro;</td><td class="mono">268,40 &euro;</td><td><span class="pillv warn">da rivedere</span></td></tr>
+              <tr><td class="mono">12/06</td><td>Studio Verdi</td><td class="mono">1.220,00 &euro;</td><td class="mono">268,40 &euro;</td><td><span class="pillv bad">doppione</span></td></tr>
+              <tr><td class="mono">09/06</td><td>Cliente Rossi (vendita)</td><td class="mono">900,00 &euro;</td><td class="mono">198,00 &euro;</td><td><span class="pillv ok">al commercialista</span></td></tr>
+            </tbody>
+          </table>
+          <div class="row mt2"><button class="btn-ghost">&#8595; Esporta CSV</button><button class="btn-ghost">Invia al commercialista</button></div>
+        </div>
+
+        <div class="panel">
+          <h4>Scadenze</h4>
+          <div class="check">
+            <div class="citem"><span class="dot warn"></span><div class="tx">IVA II trimestre<small>1.060,00 &euro;</small></div><span class="st" style="margin-left:auto;color:var(--amber)">16/07</span></div>
+            <div class="citem"><span class="dot warn"></span><div class="tx">F24 contributi<small>da quantificare</small></div><span class="st" style="margin-left:auto;color:var(--amber)">16/07</span></div>
+            <div class="citem"><span class="dot ok"></span><div class="tx">Saldo fornitore Bianchi<small>610,00 &euro;</small></div><span class="st" style="margin-left:auto;color:var(--muted)">30/06</span></div>
+          </div>
+          <div class="note amber" style="margin-top:13px"><span class="ic">&#9873;</span><div>Trovato un <b>doppione</b> di Studio Verdi. Lo escludo dal totale?</div></div>
+        </div>
+      </div>
+      <div class="note core"><span class="ic">&#9873;</span><div><b>Privacy.</b> I dati contabili restano lato server, oppure solo in locale con l'agente desktop che legge la cartella delle fatture.</div></div>
+    </section>
+
+    <!-- T3 ASSISTENTE CLIENTI -->
+    <section class="screen" id="screen-t3">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Assistente clienti integrabile</h2>
+          <p class="desc">Un chatbot addestrato sui tuoi contenuti, su sito, WhatsApp ed email. Se non sa, passa all'umano.</p>
+        </div>
+        <div class="badges"><span class="tier p2">P2</span><span class="ttag">web</span></div>
+      </div>
+
+      <div class="two">
+        <div class="panel">
+          <h4>Configurazione</h4>
+          <span class="lab">Fonti caricate</span>
+          <div class="tags"><span>sito (24 pagine)</span><span>FAQ</span><span>listino 2026</span></div>
+          <span class="lab" style="margin-top:14px">Canali</span>
+          <div class="row wrap"><span class="pillv ok">Sito</span><span class="pillv ok">WhatsApp</span><span class="pillv" style="color:var(--muted);border-color:var(--hairline)">Email</span></div>
+          <span class="lab" style="margin-top:14px">Snippet di embed</span>
+          <div class="input mono" style="font-size:11.5px;color:var(--muted)">&lt;script src="https://semblic.com/ai/bar-centrale.js"&gt;&lt;/script&gt;</div>
+          <button class="btn-ghost mt2">&#10697; Copia snippet</button>
+        </div>
+
+        <div class="widget-card">
+          <div style="display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--hairline);background:var(--elevated)">
+            <div style="width:30px;height:30px;border-radius:999px;background:var(--grad-tramonto)"></div>
+            <div style="font-size:13px;font-weight:500">Assistente Bar Centrale<span style="display:block;color:var(--verified);font-size:10.5px;font-weight:400">online · assistente AI</span></div>
+          </div>
+          <div class="chat" style="padding:15px">
+            <div class="msg bot">Ciao, sono l'assistente del Bar Centrale. Come posso aiutarti?</div>
+            <div class="msg me">A che ora aprite il venerdi?</div>
+            <div class="msg bot">Il venerdi siamo aperti dalle 18 fino a tarda sera, con aperitivo e musica dal vivo.<div class="cite">&#9873; fonte: pagina Orari del sito</div></div>
+            <div class="msg me">Fate catering per matrimoni?</div>
+            <div class="msg bot">Su questo ti faccio ricontattare dal titolare, cosi ti do una risposta precisa.<div class="cite" style="color:var(--amber)">&#8631; passato a un umano (email)</div></div>
+          </div>
+          <div class="composer-mini" style="padding:0 15px 15px"><div class="input" style="color:var(--faint)">Scrivi un messaggio...</div><button class="btn" style="padding:9px 14px">&#10148;</button></div>
+        </div>
+      </div>
+      <div class="note core"><span class="ic">&#9873;</span><div><b>Onesta.</b> L'assistente dichiara di essere AI, risponde solo dai tuoi contenuti e non inventa: se non sa, passa all'umano.</div></div>
+    </section>
+
+    <!-- T7 CERVELLO AZIENDALE -->
+    <section class="screen" id="screen-t7">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Cervello aziendale</h2>
+          <p class="desc">Carichi i documenti interni e fai domande in linguaggio naturale, con risposte che citano la fonte.</p>
+        </div>
+        <div class="badges"><span class="tier p2">P2</span><span class="ttag">ibrido</span></div>
+      </div>
+
+      <div class="two wide-l">
+        <div class="panel">
+          <h4>Chiedi <span class="mut">spazio: Sala e cucina</span></h4>
+          <div class="chat">
+            <div class="msg me">Qual e la procedura di chiusura cassa serale?</div>
+            <div class="msg bot">A fine serata: conta il fondo cassa di partenza, registra gli incassi nel gestionale, stampa lo scontrino di chiusura e metti il contante in cassaforte. Annota eventuali ammanchi sul registro.<div class="cite">&#9873; fonte: Procedura_chiusura.pdf, p.2</div></div>
+          </div>
+          <div class="composer-mini"><div class="input" style="color:var(--faint)">Fai una domanda sui documenti...</div><button class="btn" style="padding:9px 14px">&#10148;</button></div>
+        </div>
+
+        <div class="panel">
+          <h4>Libreria</h4>
+          <div class="check">
+            <div class="citem"><span class="dot ok"></span><div class="tx">Procedura chiusura cassa<small>PDF · aggiornato</small></div></div>
+            <div class="citem"><span class="dot ok"></span><div class="tx">Listino 2026<small>PDF</small></div></div>
+            <div class="citem"><span class="dot ok"></span><div class="tx">Manuale HACCP<small>PDF</small></div></div>
+            <div class="citem"><span class="dot ok"></span><div class="tx">Contratti fornitori<small>cartella, 6 file</small></div></div>
+          </div>
+          <div class="note" style="margin-top:13px;background:var(--tint-amber);border-color:var(--tint-amber-bd)"><span class="ic" style="color:var(--amber)">&#9678;</span><div style="color:var(--text)"><b style="color:var(--text)">Onboarding "Nuovo cameriere"</b>: 5 documenti, percorso pronto.</div></div>
+        </div>
+      </div>
+      <div class="note core"><span class="ic">&#9873;</span><div><b>Privacy e permessi.</b> Documenti sensibili lato server (o solo in locale con l'agente), e ogni spazio vede solo chi ha il permesso.</div></div>
+    </section>
+
+    <!-- T4 RADAR RECENSIONI -->
+    <section class="screen" id="screen-t4">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Radar recensioni e reputazione</h2>
+          <p class="desc">Aggrega le recensioni da piu fonti, analizza il sentiment, suggerisce le risposte e segnala i trend.</p>
+        </div>
+        <div class="badges"><span class="tier p3">P3</span><span class="ttag">web</span></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="v amber">4,3</div><div class="k">Media voti</div></div>
+        <div class="stat"><div class="v">218</div><div class="k">Recensioni</div></div>
+        <div class="stat"><div class="v salvia">74%</div><div class="k">Positive</div></div>
+        <div class="stat"><div class="v salvia">+0,2</div><div class="k">Trend 30 giorni</div></div>
+      </div>
+
+      <div class="two mt2">
+        <div class="panel">
+          <h4>Sentiment</h4>
+          <div class="bars">
+            <div class="bar"><div class="bl"><span>Positivo</span><b>74%</b></div><div class="track"><div class="fill salvia" style="width:74%"></div></div></div>
+            <div class="bar"><div class="bl"><span>Neutro</span><b>14%</b></div><div class="track"><div class="fill amber" style="width:14%"></div></div></div>
+            <div class="bar"><div class="bl"><span>Negativo</span><b>12%</b></div><div class="track"><div class="fill coral" style="width:12%"></div></div></div>
+          </div>
+          <span class="lab" style="margin-top:16px">Temi ricorrenti</span>
+          <div class="tags"><span>servizio +</span><span>aperitivo +</span><span>musica +</span><span>attesa &#8722;</span><span>parcheggio &#8722;</span></div>
+        </div>
+
+        <div class="panel">
+          <h4>Recensioni recenti</h4>
+          <div class="check">
+            <div class="citem" style="flex-direction:column;align-items:stretch;gap:7px">
+              <div class="row"><span style="color:var(--amber)">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="sp"></span><span class="mut" style="font-family:var(--mono);font-size:10.5px;color:var(--faint)">Google</span></div>
+              <div style="font-size:12.5px">"Aperitivo top e personale gentilissimo."</div>
+              <div style="font-size:11.5px;color:var(--muted);background:var(--surface);border:1px solid var(--hairline);border-radius:9px;padding:8px"><b style="color:var(--verified)">Bozza risposta:</b> Grazie di cuore, vi aspettiamo presto per il prossimo venerdi in musica.</div>
+            </div>
+            <div class="citem" style="flex-direction:column;align-items:stretch;gap:7px">
+              <div class="row"><span style="color:var(--amber)">&#9733;&#9733;&#9734;&#9734;&#9734;</span><span class="sp"></span><span style="font-family:var(--mono);font-size:10.5px;color:var(--faint)">TripAdvisor</span></div>
+              <div style="font-size:12.5px">"Servizio lento il venerdi sera."</div>
+              <div style="font-size:11.5px;color:var(--muted);background:var(--surface);border:1px solid var(--hairline);border-radius:9px;padding:8px"><b style="color:var(--amber)">Bozza risposta:</b> Ci dispiace per l'attesa, il venerdi e molto frequentato. Stiamo rinforzando il servizio, ci faccia riprovare.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note amber"><span class="ic">&#9873;</span><div><b>Human in the loop.</b> L'AI propone la risposta nel tuo tono, tu approvi prima di pubblicare.</div></div>
+    </section>
+
+    <!-- T6 CRM -->
+    <section class="screen" id="screen-t6">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>CRM leggero con AI</h2>
+          <p class="desc">Pipeline di vendita con lead scoring AI, follow-up suggeriti e bozze email nel tono del brand.</p>
+        </div>
+        <div class="badges"><span class="tier p3">P3</span><span class="ttag">web</span></div>
+      </div>
+
+      <div class="note amber" style="margin-top:0;margin-bottom:18px"><span class="ic">&#10022;</span><div><b>3 azioni suggerite oggi.</b> Richiama Rossi Eventi (proposta in scadenza), invia preventivo a Hotel Belvedere, scrivi a Boutique Lia.</div></div>
+
+      <div class="kanban">
+        <div class="kcol">
+          <div class="kh"><span>Nuovo</span><span class="c">2</span></div>
+          <div class="kcard"><div class="nm">Boutique Lia</div><div class="co">retail · Bologna</div><div class="mt"><span class="val">2.400 &euro;</span><span class="ls mid">score 61</span></div></div>
+          <div class="kcard"><div class="nm">Studio Dentistico Sole</div><div class="co">sanita</div><div class="mt"><span class="val">1.200 &euro;</span><span class="ls lo">score 38</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kh"><span>Contattato</span><span class="c">1</span></div>
+          <div class="kcard"><div class="nm">Rossi Eventi Srl</div><div class="co">eventi</div><div class="mt"><span class="val">3.500 &euro;</span><span class="ls hi">score 88</span></div><div style="font-size:11px;color:var(--amber);margin-top:3px">&#10022; richiama oggi</div></div>
+        </div>
+        <div class="kcol">
+          <div class="kh"><span>Proposta</span><span class="c">1</span></div>
+          <div class="kcard"><div class="nm">Hotel Belvedere</div><div class="co">hospitality</div><div class="mt"><span class="val">6.000 &euro;</span><span class="ls hi">score 91</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kh"><span>Chiuso</span><span class="c">1</span></div>
+          <div class="kcard"><div class="nm">Caffe Aurora</div><div class="co">ristorazione</div><div class="mt"><span class="val">1.800 &euro;</span><span class="ls hi">vinto</span></div></div>
+        </div>
+      </div>
+      <div class="note core"><span class="ic">&#9873;</span><div><b>Bozze on-brand.</b> Le email di follow-up sono scritte nel tono del profilo voce, tu le rivedi e invii.</div></div>
+    </section>
+
+    <!-- T8 EMAIL E RIUNIONI -->
+    <section class="screen" id="screen-t8">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Assistente email e riunioni</h2>
+          <p class="desc">Bozze di risposta, riassunti dei thread, trascrizione delle riunioni con elenco delle azioni.</p>
+        </div>
+        <div class="badges"><span class="tier p3">P3</span><span class="ttag">ibrido</span></div>
+      </div>
+
+      <div class="two">
+        <div class="panel">
+          <h4>Email <span class="mut">Richiesta preventivo catering</span></h4>
+          <div style="font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--hairline);border-radius:10px;padding:11px"><b style="color:var(--verified)">Riassunto:</b> Rossi Eventi chiede un preventivo catering per 80 persone il 12 luglio, budget circa 3.000 euro, attende risposta entro venerdi.</div>
+          <span class="lab" style="margin-top:14px">Bozza di risposta</span>
+          <div class="textarea" style="min-height:120px">Gentile Rossi Eventi, grazie per la richiesta. Per 80 persone il 12 luglio possiamo proporre un menu aperitivo completo a partire da 32 euro a persona. Le invio il preventivo dettagliato entro domani. Un caro saluto, Bar Centrale.</div>
+          <div class="row mt"><button class="btn">&#10148; Invia</button><button class="btn-ghost">Modifica</button></div>
+        </div>
+
+        <div class="panel">
+          <h4>Riunione <span class="mut">staff, 17/06</span></h4>
+          <div style="font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--hairline);border-radius:10px;padding:11px"><b style="color:var(--verified)">Riassunto:</b> Decisi i turni del weekend, nuovo menu del venerdi, e una serata DJ a fine mese.</div>
+          <span class="lab" style="margin-top:14px">Azioni</span>
+          <div class="check">
+            <div class="citem"><span class="dot warn"></span><div class="tx">Ordinare bicchieri<small>Luca · entro 20/06</small></div></div>
+            <div class="citem"><span class="dot warn"></span><div class="tx">Aggiornare menu del venerdi<small>Sara · entro 19/06</small></div></div>
+            <div class="citem"><span class="dot ok"></span><div class="tx">Chiamare il DJ<small>Mario · fatto</small></div></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:12px">trascrizione: "...allora per il venerdi mettiamo i taglieri nuovi..."</div>
+        </div>
+      </div>
+      <div class="note amber"><span class="ic">&#9873;</span><div><b>Human in the loop.</b> L'AI prepara, tu controlli e invii. L'audio sensibile resta lato server o in locale con l'agente.</div></div>
+    </section>
+
+    <!-- T9 SITO E SEO -->
+    <section class="screen" id="screen-t9">
+      <div class="toolhead">
+        <div>
+          <div class="back" data-screen="overview">&#8592; Tutti i tool</div>
+          <h2>Sito e landing con SEO locale</h2>
+          <p class="desc">Da una descrizione a una landing page con testi ottimizzati e parole chiave locali.</p>
+        </div>
+        <div class="badges"><span class="tier p3">P3</span><span class="ttag">web</span></div>
+      </div>
+
+      <div class="two wide-r">
+        <div>
+          <div class="panel">
+            <h4>Descrivi l'attivita</h4>
+            <div class="textarea" style="min-height:80px">Bar con aperitivo e musica dal vivo in centro a Bologna, aperto la sera, atmosfera calda.</div>
+            <button class="btn mt2">&#10022; Genera sito</button>
+          </div>
+          <div class="panel mt2">
+            <h4>SEO locale <span class="mut">punteggio</span></h4>
+            <div class="row" style="align-items:center;gap:14px;margin-bottom:12px"><div class="stat" style="border:0;padding:0"><div class="v salvia">82/100</div></div><div style="flex:1"><div class="track"><div class="fill salvia" style="width:82%"></div></div></div></div>
+            <span class="lab">Titolo</span>
+            <div class="input" style="font-size:12px">Bar Centrale Bologna, aperitivo e musica dal vivo</div>
+            <span class="lab" style="margin-top:12px">Parole chiave locali</span>
+            <div class="tags"><span>aperitivo bologna</span><span>bar musica dal vivo bologna</span><span>aperitivo centro bologna</span></div>
+          </div>
+        </div>
+
+        <div class="siteprev">
+          <div class="bar"><i></i><i></i><i></i><span class="u">barcentrale.it</span></div>
+          <div class="shero">
+            <h3>Il tuo venerdi, in musica</h3>
+            <p>Aperitivo, taglieri e band dal vivo nel cuore di Bologna. Dalle 18 fino a sera.</p>
+            <span class="b">Prenota un tavolo</span>
+          </div>
+          <div class="scols">
+            <div class="sc"><div class="ic">&#127864;</div><h6>Aperitivo</h6><p>Drink curati e taglieri generosi ogni sera.</p></div>
+            <div class="sc"><div class="ic">&#9834;</div><h6>Musica dal vivo</h6><p>Band e DJ selezionati, ogni venerdi.</p></div>
+            <div class="sc"><div class="ic">&#9728;</div><h6>Eventi privati</h6><p>Spazio per feste e occasioni speciali.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="note core"><span class="ic">&#9873;</span><div><b>Ponte col core.</b> Le immagini del sito possono usare un volto consenziente del registro Semblic, con i diritti a posto.</div></div>
+    </section>
+
+    <!--SCREENS-->
+
+  </main>
+</div>
+
+<div class="stamp">SEMBLIC · anteprima 10 tool</div>
+
+<script>
+  // Navigazione tra schermate.
+  const screens = document.querySelectorAll('.screen');
+  const navlinks = document.querySelectorAll('[data-screen]');
+  function show(id){
+    screens.forEach(s => s.classList.toggle('active', s.id === 'screen-' + id));
+    navlinks.forEach(n => n.classList.toggle('active', n.dataset.screen === id));
+    window.scrollTo(0,0);
+  }
+  document.addEventListener('click', e => {
+    const nav = e.target.closest('[data-screen]');
+    if(nav){ show(nav.dataset.screen); return; }
+    const go = e.target.closest('[data-go]');
+    if(go){ show(go.dataset.go); }
+  });
+
+  // Toggle generici (segmenti, preset, tab).
+  document.querySelectorAll('.seg, .presets').forEach(g => {
+    g.addEventListener('click', e => {
+      const b = e.target.closest('button, .pchip'); if(!b || !g.contains(b)) return;
+      g.querySelectorAll('button, .pchip').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+    });
+  });
+
+  // Overlay live (Studio Contenuti): il testo digitato aggiorna la scritta sull'immagine.
+  document.querySelectorAll('.ov-input').forEach(inp => {
+    const card = inp.closest('.with-ov');
+    const title = card ? card.querySelector('.otitle') : null;
+    const cnt = card ? card.querySelector('.cnt') : null;
+    const max = parseInt(inp.getAttribute('maxlength')) || 24;
+    const u = () => {
+      if(title) title.textContent = inp.value.toUpperCase();
+      if(cnt){ cnt.textContent = inp.value.length + ' / ' + max; cnt.classList.toggle('warn', inp.value.length > max - 4); }
+    };
+    inp.addEventListener('input', u); u();
+  });
+</script>
+</body>
+</html>

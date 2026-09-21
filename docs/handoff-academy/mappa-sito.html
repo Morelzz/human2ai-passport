@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Semblic · Mappa dell'intero sito</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;700;800&family=Geist+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0C0F17; --surface:#141A24; --elevated:#1E2530;
+    --text:#F2E9D8; --muted:#ADA89E; --faint:#74716E;
+    --hairline:rgba(242,233,216,0.12); --hairline-soft:rgba(242,233,216,0.06);
+    --amber:#F2A93B; --on-amber:#412402; --verified:#7FAE96; --blocked:#EE7A70;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:"Geist",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.6; position:relative; min-height:100vh;}
+  body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(55% 45% at 18% -5%, rgba(242,169,59,0.16), transparent 70%),
+      radial-gradient(45% 40% at 95% 8%, rgba(238,122,112,0.10), transparent 70%),
+      radial-gradient(75% 55% at 50% 112%, rgba(127,174,150,0.09), transparent 72%);}
+  .wrap{position:relative; z-index:1; max-width:1040px; margin:0 auto; padding:4rem 1.5rem 6rem;}
+  .kicker{display:inline-flex; align-items:center; gap:.6rem; font-family:"Geist Mono",monospace;
+    font-size:.66rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--amber);}
+  .kicker::before{content:""; width:.45rem; height:.45rem; border-radius:2px; background:currentColor; box-shadow:0 0 10px currentColor;}
+  h1{font-weight:200; letter-spacing:-.04em; line-height:1; font-size:clamp(2.4rem,6vw,3.8rem); margin:1rem 0 .6rem;}
+  h2{font-weight:300; letter-spacing:-.02em; font-size:1.3rem; margin:0;}
+  .lead{color:var(--muted); max-width:640px; font-size:1.05rem;}
+  .tag{font-family:"Geist Mono",monospace; font-size:.7rem; color:var(--faint);}
+  a{color:inherit; text-decoration:none;}
+  .toc{display:flex; flex-wrap:wrap; gap:.5rem; margin:2rem 0 1rem;}
+  .toc a{font-size:.78rem; color:var(--muted); border:1px solid var(--hairline); border-radius:999px; padding:.35rem .85rem;}
+  .toc a:hover{border-color:var(--amber); color:var(--text);}
+  section{margin-top:3rem;}
+  .sec-head{display:flex; align-items:baseline; gap:.8rem; margin-bottom:1rem; padding-bottom:.6rem; border-bottom:1px solid var(--hairline-soft);}
+  .sec-head .n{font-family:"Geist Mono",monospace; color:var(--amber); font-size:.8rem;}
+  .row{display:grid; grid-template-columns:200px 1fr auto; gap:1rem; align-items:center;
+    padding:.7rem .9rem; border-radius:10px; border:1px solid transparent;}
+  .row:hover{background:rgba(242,233,216,0.03); border-color:var(--hairline-soft);}
+  .path{font-family:"Geist Mono",monospace; font-size:.82rem; color:var(--text);}
+  .desc{color:var(--muted); font-size:.88rem;}
+  .open{color:var(--amber); font-size:.78rem; white-space:nowrap;}
+  .pill{font-size:.6rem; font-family:"Geist Mono",monospace; letter-spacing:.05em; padding:.1rem .45rem; border-radius:999px; margin-left:.4rem; vertical-align:middle;}
+  .p-lock{color:var(--faint); border:1px solid var(--hairline);}
+  .p-op{color:var(--blocked); border:1px solid rgba(238,122,112,.3);}
+  .p-new{color:var(--verified); border:1px solid rgba(127,174,150,.3);}
+  .foot{margin-top:4rem; padding-top:1.5rem; border-top:1px solid var(--hairline); color:var(--faint); font-size:.85rem;}
+  @media(max-width:620px){ .row{grid-template-columns:1fr; gap:.2rem;} .open{justify-self:start;} .wrap{padding:3rem 1.1rem;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="kicker">SEMBLIC · MAPPA DELL'INTERO SITO</span>
+    <h1>Tutte le pagine, in un colpo d'occhio.</h1>
+    <p class="lead">Le 46 pagine di Semblic, raggruppate per area, con cosa sono e il link al sito live. Serve a capire la struttura e prendere spunto per Semblic Academy.</p>
+    <p class="tag">I link aprono semblic.com. Sigle: <span class="pill p-lock">LOGIN</span> richiede accesso · <span class="pill p-op">OPERATORI</span> interno/admin · <span class="pill p-new">NUOVA</span></p>
+    <nav class="toc">
+      <a href="#facciata">Facciata</a><a href="#prodotto">Prodotto</a><a href="#ward">Ward</a>
+      <a href="#ingresso">Ingresso</a><a href="#genera">Genera</a><a href="#account">Account</a>
+      <a href="#certificati">Certificati</a><a href="#legali">Legali</a>
+    </nav>
+  </header>
+
+  <section id="facciata">
+    <div class="sec-head"><span class="n">01</span><h2>Facciata e marketing</h2></div>
+    <a class="row" href="https://semblic.com/" target="_blank"><span class="path">/</span><span class="desc">Home: hero, come funziona, registro, Sigil, Ward, sedi, sezione B2B.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/catalogo" target="_blank"><span class="path">/catalogo</span><span class="desc">Il registro pubblico dei volti consenzienti.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/prezzi" target="_blank"><span class="path">/prezzi</span><span class="desc">Prezzi e crediti VOLT.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/enterprise" target="_blank"><span class="path">/enterprise</span><span class="desc">Per aziende e brand.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/enterprise/register" target="_blank"><span class="path">/enterprise/register</span><span class="desc">Registrazione azienda (KYB).</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/partner" target="_blank"><span class="path">/partner</span><span class="desc">Partner e collaborazioni.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/sviluppatori" target="_blank"><span class="path">/sviluppatori</span><span class="desc">API per sviluppatori: il filtro del consenso.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/faq" target="_blank"><span class="path">/faq</span><span class="desc">Domande frequenti.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/contatti" target="_blank"><span class="path">/contatti</span><span class="desc">Contatti e richieste di ingaggio reale.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/academy" target="_blank"><span class="path">/academy<span class="pill p-new">NUOVA</span></span><span class="desc">Semblic Academy: la pagina nuova (in costruzione).</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/blog" target="_blank"><span class="path">/blog</span><span class="desc">Blog: lista articoli.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/blog" target="_blank"><span class="path">/blog/[slug]</span><span class="desc">Singolo articolo del blog.</span><span class="open">apri →</span></a>
+  </section>
+
+  <section id="prodotto">
+    <div class="sec-head"><span class="n">02</span><h2>Prodotto: registro e verifica</h2></div>
+    <a class="row" href="https://semblic.com/passport/random" target="_blank"><span class="path">/passport/[handle]</span><span class="desc">La scheda di un volto: identità, consenso, token, royalty. Esempio: /passport/random.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/verify" target="_blank"><span class="path">/verify</span><span class="desc">Sigil: verifichi un contenuto o un volto col token.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/trasparenza" target="_blank"><span class="path">/trasparenza</span><span class="desc">Report di trasparenza: blocchi e richieste.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/scansione" target="_blank"><span class="path">/scansione</span><span class="desc">Le sedi fisiche dove farsi scansionare il volto.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/scansione/prenota" target="_blank"><span class="path">/scansione/prenota</span><span class="desc">Prenoti una scansione.</span><span class="open">apri →</span></a>
+  </section>
+
+  <section id="ward">
+    <div class="sec-head"><span class="n">03</span><h2>Ward: protezione del volto</h2></div>
+    <a class="row" href="https://semblic.com/ward" target="_blank"><span class="path">/ward</span><span class="desc">Ward: monitoraggio e protezione del proprio volto in rete.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/ward/demo" target="_blank"><span class="path">/ward/demo</span><span class="desc">Ward in versione demo.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/proteggi" target="_blank"><span class="path">/proteggi</span><span class="desc">Proteggi il tuo volto: porta al flusso protetto.</span><span class="open">apri →</span></a>
+  </section>
+
+  <section id="ingresso">
+    <div class="sec-head"><span class="n">04</span><h2>Flussi di ingresso</h2></div>
+    <a class="row" href="https://semblic.com/login" target="_blank"><span class="path">/login</span><span class="desc">Accedi.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/signup" target="_blank"><span class="path">/signup</span><span class="desc">Registrati.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/signup/avatar" target="_blank"><span class="path">/signup/avatar</span><span class="desc">Crea il tuo avatar: scelta tra aperto e protetto.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/signup/avatar/open" target="_blank"><span class="path">/signup/avatar/open</span><span class="desc">Ramo "avatar aperto".</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/signup/avatar/protected" target="_blank"><span class="path">/signup/avatar/protected</span><span class="desc">Ramo "protetto" (Ward).</span><span class="open">apri →</span></a>
+  </section>
+
+  <section id="genera">
+    <div class="sec-head"><span class="n">05</span><h2>Generazione e studio</h2></div>
+    <a class="row" href="https://semblic.com/match" target="_blank"><span class="path">/match<span class="pill p-lock">LOGIN</span></span><span class="desc">Cerchi un volto e generi: il consenso resta il filtro.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/studio" target="_blank"><span class="path">/studio<span class="pill p-lock">LOGIN</span></span><span class="desc">Studio di generazione.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/studio/edit" target="_blank"><span class="path">/studio/edit<span class="pill p-lock">LOGIN</span></span><span class="desc">Editor di post produzione.</span><span class="open">apri →</span></a>
+    <span class="row"><span class="path">/studio/edit/[cert]<span class="pill p-lock">LOGIN</span></span><span class="desc">Editor di un contenuto certificato (rotta dinamica).</span><span class="open"></span></span>
+  </section>
+
+  <section id="account">
+    <div class="sec-head"><span class="n">06</span><h2>Area utente e operatori</h2></div>
+    <a class="row" href="https://semblic.com/account" target="_blank"><span class="path">/account<span class="pill p-lock">LOGIN</span></span><span class="desc">Il tuo hub: avatar, consenso, volt, attività.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/account/avatar" target="_blank"><span class="path">/account/avatar<span class="pill p-lock">LOGIN</span></span><span class="desc">Crea avatar.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/account/consent" target="_blank"><span class="path">/account/consent<span class="pill p-lock">LOGIN</span></span><span class="desc">Gestione del consenso: interruttore si/no, revoca.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/account/volt" target="_blank"><span class="path">/account/volt<span class="pill p-lock">LOGIN</span></span><span class="desc">I tuoi crediti VOLT.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/account/attivita" target="_blank"><span class="path">/account/attivita<span class="pill p-lock">LOGIN</span></span><span class="desc">La tua attività.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/account/verify" target="_blank"><span class="path">/account/verify<span class="pill p-lock">LOGIN</span></span><span class="desc">Verifica identità.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/account/kyc" target="_blank"><span class="path">/account/kyc<span class="pill p-lock">LOGIN</span></span><span class="desc">KYC: verifica del documento.</span><span class="open">apri →</span></a>
+    <span class="row"><span class="path">/account/face-index<span class="pill p-op">OPERATORI</span></span><span class="desc">Indice volti (interno).</span><span class="open"></span></span>
+    <span class="row"><span class="path">/account/review<span class="pill p-op">OPERATORI</span></span><span class="desc">Coda di certificazione degli avatar.</span><span class="open"></span></span>
+    <span class="row"><span class="path">/account/reports<span class="pill p-op">OPERATORI</span></span><span class="desc">Segnalazioni di abuso.</span><span class="open"></span></span>
+    <span class="row"><span class="path">/account/kyb-review<span class="pill p-op">OPERATORI</span></span><span class="desc">Revisione aziende (KYB).</span><span class="open"></span></span>
+  </section>
+
+  <section id="certificati">
+    <div class="sec-head"><span class="n">07</span><h2>Certificati, consenso, badge</h2></div>
+    <span class="row"><span class="path">/receipt/[cert]</span><span class="desc">Ricevuta di conformità di una generazione (rotta dinamica, segreto nell'URL).</span><span class="open"></span></span>
+    <span class="row"><span class="path">/consent/[token]</span><span class="desc">Pagina di conferma consenso per la persona onboardata da un'azienda (link tokenizzato).</span><span class="open"></span></span>
+    <a class="row" href="https://semblic.com/badge" target="_blank"><span class="path">/badge</span><span class="desc">Badge incorporabile per il proprio sito.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/report" target="_blank"><span class="path">/report</span><span class="desc">Segnala un abuso.</span><span class="open">apri →</span></a>
+  </section>
+
+  <section id="legali">
+    <div class="sec-head"><span class="n">08</span><h2>Legali</h2></div>
+    <a class="row" href="https://semblic.com/privacy" target="_blank"><span class="path">/privacy</span><span class="desc">Informativa privacy.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/termini" target="_blank"><span class="path">/termini</span><span class="desc">Termini di servizio.</span><span class="open">apri →</span></a>
+    <a class="row" href="https://semblic.com/cookie" target="_blank"><span class="path">/cookie</span><span class="desc">Cookie policy.</span><span class="open">apri →</span></a>
+  </section>
+
+  <div class="foot">
+    <p style="margin:0">46 pagine totali. Coppia questa mappa col recap di design (<a href="index.html" style="color:var(--amber)">index.html</a>) per avere struttura + linguaggio visivo di Semblic in un colpo solo.</p>
+    <p style="margin:.7rem 0 0; color:var(--muted)">SEMBLIC · Real Humans. Real Rights. Real Earnings.</p>
+  </div>
+</div>
+</body>
+</html>

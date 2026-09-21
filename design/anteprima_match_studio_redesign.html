@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Studio di generazione, redesign (anteprima)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0F17; --surface:#141A24; --elevated:#1E2530; --edge:#2C3440;
+    --text:#F2E9D8; --muted:rgba(242,233,216,0.70); --faint:rgba(242,233,216,0.45);
+    --hairline:rgba(242,233,216,0.12); --hairline-soft:rgba(242,233,216,0.06);
+    --amber:#F2A93B; --amber-hover:#E29A2E; --on-amber:#412402;
+    --verified:#7FAE96; --blocked:#EE7A70;
+    --tint-amber:rgba(242,169,59,0.12); --tint-amber-bd:rgba(242,169,59,0.30);
+    --tint-salvia:rgba(127,174,150,0.12); --tint-salvia-bd:rgba(127,174,150,0.30);
+    --grad-tramonto:linear-gradient(135deg,#F2A93B 0%,#EE7A70 100%);
+    --grad-fiducia:linear-gradient(135deg,#7FAE96 0%,#2E8B7E 100%);
+    --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Geist Mono",ui-monospace,"SF Mono",monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  ::selection{background:var(--tint-amber)}
+  ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar:horizontal{height:8px}
+  ::-webkit-scrollbar-thumb{background:var(--edge);border-radius:999px;border:3px solid var(--bg)}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px 26px;
+    border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:10;background:rgba(12,15,23,.85);backdrop-filter:blur(10px)}
+  .hud{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;font-weight:500}
+  .hud .pulse{position:relative;width:8px;height:8px}.hud .pulse i{position:absolute;inset:0;border-radius:999px;background:var(--verified)}
+  .hud .pulse i.ping{animation:ping 1.4s cubic-bezier(0,0,.2,1) infinite}@keyframes ping{75%,100%{transform:scale(2.2);opacity:0}}
+  .hud .teal{color:var(--verified)}.hud .sep{color:var(--faint)}.hud .am{color:var(--amber)}
+  .brandmini{font-weight:200;font-size:18px;letter-spacing:-0.03em}.brandmini b{font-weight:500}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:24px 26px 80px}
+  .h1{font-weight:200;font-size:30px;letter-spacing:-0.04em;line-height:1.05}
+  .lead{color:var(--muted);font-size:14px;margin-top:8px;max-width:660px}
+
+  .ava{display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:12px 14px;margin-top:18px}
+  .ava .pf{width:48px;height:48px;border-radius:12px;flex:none;background:radial-gradient(42% 32% at 50% 32%, #EBCDAC 0%, #C99B73 40%, rgba(201,155,115,0) 70%),linear-gradient(160deg,#3C3654,#14101d)}
+  .ava .nm{font-size:15px;font-weight:500}.ava .sub{font-size:12px;color:var(--faint);font-family:var(--mono)}
+  .ava .tierb{font-size:10px;font-weight:600;border-radius:999px;padding:3px 9px;background:var(--tint-salvia);color:var(--verified);border:1px solid var(--tint-salvia-bd);margin-left:2px}
+  .ava .ok{font-size:11px;color:var(--verified);background:var(--tint-salvia);border:1px solid var(--tint-salvia-bd);border-radius:999px;padding:4px 10px}
+  .ava .change{margin-left:auto;font-size:12px;color:var(--muted);border:1px solid var(--hairline);border-radius:999px;padding:7px 13px;cursor:pointer}
+  .ava .change:hover{color:var(--text);border-color:var(--tint-amber-bd)}
+
+  .studio{display:grid;grid-template-columns:1fr 0.94fr;gap:18px;margin-top:18px;align-items:start}
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:18px;padding:18px}
+  .result{position:sticky;top:84px}
+
+  .blk{margin-bottom:17px}.blk:last-child{margin-bottom:0}
+  .lab{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--amber);font-weight:500;margin-bottom:9px}
+  .lab .opt{color:var(--faint);font-weight:400;letter-spacing:.02em;text-transform:none}
+  .lab .new{color:var(--amber);background:var(--tint-amber);border:1px solid var(--tint-amber-bd);border-radius:999px;padding:2px 8px;font-size:10px;letter-spacing:.02em;text-transform:none}
+
+  /* ricette / preset */
+  .recipes{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+  .recipe{flex:none;width:132px;border:1px solid var(--hairline);border-radius:13px;padding:10px;cursor:pointer;background:var(--elevated);transition:.15s}
+  .recipe:hover{border-color:var(--tint-amber-bd);transform:translateY(-2px)}
+  .recipe .sw{height:38px;border-radius:9px;margin-bottom:8px}
+  .recipe .rn{font-size:12.5px;font-weight:600}
+  .recipe .rd{font-size:10px;color:var(--faint);margin-top:3px;line-height:1.35}
+
+  textarea.ta{width:100%;background:var(--elevated);border:1px solid var(--hairline);border-radius:13px;padding:13px 14px;font-family:var(--font);font-size:15px;color:var(--text);resize:vertical;min-height:78px;outline:none;line-height:1.55}
+  textarea.ta:focus{border-color:var(--tint-amber-bd)}
+  .underrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;flex-wrap:wrap}
+  .hint{font-size:11px;color:var(--faint);line-height:1.5;max-width:60%}
+  .enh{flex:none;border:1px solid var(--tint-amber-bd);background:var(--tint-amber);color:var(--amber);border-radius:999px;padding:8px 13px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--font);transition:.15s}
+  .enh:hover{background:rgba(242,169,59,0.2)}
+  .proposal{margin-top:11px;border:1px solid var(--tint-amber-bd);background:rgba(242,169,59,0.07);border-radius:13px;padding:13px;box-shadow:0 0 26px rgba(242,169,59,0.12);display:none}
+  .proposal.show{display:block;animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .proposal .tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+  .proposal p{font-size:13.5px;line-height:1.55;margin-top:7px;color:var(--text)}
+  .proposal .acts{display:flex;gap:8px;margin-top:11px}
+  .mini{border-radius:9px;padding:7px 12px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);border:1px solid}
+  .mini.use{border-color:var(--tint-salvia-bd);background:var(--tint-salvia);color:var(--verified)}
+  .mini.keep{border-color:var(--hairline);background:transparent;color:var(--muted)}
+
+  .scroller{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+  .pose{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;width:86px}
+  .pose .av{width:86px;height:104px;border-radius:12px;border:1.5px solid var(--hairline);background:var(--elevated);display:grid;place-items:center;transition:.15s;position:relative;overflow:hidden;color:var(--muted)}
+  .pose .av svg{width:56px;height:86px}
+  .pose:hover .av{color:var(--text);border-color:var(--tint-amber-bd)}
+  .pose.on .av{border-color:var(--amber);box-shadow:0 0 0 2px var(--tint-amber);color:var(--amber)}
+  .pose .nm{font-size:10.5px;color:var(--muted);text-align:center;line-height:1.2}.pose.on .nm{color:var(--text)}
+
+  .cams{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .cam{display:flex;gap:10px;align-items:center;background:var(--elevated);border:1px solid var(--hairline);border-radius:12px;padding:10px;cursor:pointer;transition:.15s}
+  .cam:hover{border-color:var(--tint-amber-bd)}.cam.on{border-color:var(--amber);background:var(--tint-amber)}
+  .cam .ic{width:28px;height:28px;border-radius:8px;background:var(--bg);display:grid;place-items:center;font-size:14px;flex:none;color:var(--muted)}.cam.on .ic{color:var(--amber)}
+  .cam .nm{font-size:12.5px;font-weight:500}.cam .cap{font-size:10.5px;color:var(--faint);margin-top:1px}
+  .dial{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .lens{font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--elevated);border:1px solid var(--hairline);border-radius:999px;padding:7px 11px;cursor:pointer;transition:.15s;min-width:46px;text-align:center}
+  .lens:hover{color:var(--text)}.lens.on{background:var(--amber);color:var(--on-amber);border-color:var(--amber);font-weight:500}
+  .lenscap{font-size:11.5px;color:var(--muted);margin-top:8px}.lenscap b{color:var(--text);font-weight:500}
+
+  details.look{border:1px solid var(--hairline);border-radius:14px;background:var(--elevated);overflow:hidden}
+  details.look>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500}
+  details.look>summary::-webkit-details-marker{display:none}
+  details.look>summary .ch{margin-left:auto;color:var(--faint);transition:.25s}details.look[open]>summary .ch{transform:rotate(180deg)}
+  details.look .inner{padding:0 14px 14px;border-top:1px solid var(--hairline)}
+  .sublab{font-size:11px;color:var(--muted);margin:13px 0 8px;font-weight:500}
+
+  .seg{display:inline-flex;gap:4px;background:var(--bg);border:1px solid var(--hairline);border-radius:999px;padding:4px;flex-wrap:wrap}
+  .seg button{appearance:none;background:transparent;border:0;color:var(--muted);font-family:var(--font);font-size:12px;padding:6px 13px;border-radius:999px;cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--amber);color:var(--on-amber);font-weight:500}
+  .seg button:not(.on):hover{color:var(--text)}
+  .enginechip{display:inline-flex;align-items:center;gap:9px;background:var(--tint-amber);border:1px solid var(--tint-amber-bd);color:var(--amber);border-radius:999px;padding:8px 15px;font-size:12.5px;font-weight:500}
+  .enginechip span{color:var(--muted);font-weight:400;font-size:11px}
+
+  .finalp{background:var(--bg);border:1px dashed var(--hairline);border-radius:12px;padding:11px 13px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.65;word-break:break-word}
+  .finalp .add{color:var(--amber)}.finalp .sys{display:block;color:var(--faint);font-size:10px;margin-top:6px}
+
+  .btn{appearance:none;border:0;cursor:pointer;font-family:var(--font);font-weight:600;background:var(--amber);color:var(--on-amber);border-radius:13px;padding:14px 22px;font-size:14.5px;display:inline-flex;align-items:center;justify-content:center;gap:9px;transition:.15s;width:100%;box-shadow:0 8px 36px rgba(242,169,59,0.32)}
+  .btn:hover{background:var(--amber-hover)}
+  .costline{text-align:center;font-size:11px;color:var(--faint);margin-top:9px}
+
+  .photo{background:radial-gradient(38% 26% at 50% 33%, #EBCDAC 0%, #Cd9d75 34%, rgba(205,157,117,0) 62%),radial-gradient(64% 40% at 50% 104%, #6A5340 0%, rgba(106,83,64,0) 60%),linear-gradient(157deg, #3C3654 0%, #251F36 52%, #14101d 100%);}
+  .gen-wrap{position:relative;border-radius:15px;overflow:hidden;border:1px solid var(--hairline);aspect-ratio:4/5}
+  .gen-img{position:absolute;inset:0;transition:filter .18s ease}
+  .grain{position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:overlay;background-size:180px 180px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");transition:opacity .2s}
+  .gen-tag{position:absolute;top:10px;left:11px;z-index:3;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,233,216,.75);background:rgba(12,15,23,.5);border:1px solid var(--hairline);border-radius:999px;padding:4px 9px;backdrop-filter:blur(4px)}
+  .wm{position:absolute;right:11px;bottom:10px;z-index:3;font-family:var(--mono);font-size:10px;color:rgba(242,233,216,.5);letter-spacing:.12em}
+
+  /* variazioni 4 in 1 */
+  .variants{display:none;grid-template-columns:1fr 1fr;gap:8px}
+  .variants.show{display:grid}.single.hide{display:none}
+  .variants .v{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--hairline);aspect-ratio:4/5;cursor:pointer;transition:.15s}
+  .variants .v:hover{border-color:var(--amber)}
+  .variants .v .vp{position:absolute;inset:0}
+  .variants .v .vb{position:absolute;left:7px;bottom:6px;z-index:2;font-family:var(--mono);font-size:9px;color:rgba(242,233,216,.8);background:rgba(12,15,23,.55);border-radius:999px;padding:2px 7px}
+
+  .editbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:13px}
+  .editbar h4{font-weight:500;font-size:13px}
+  .slider{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+  input[type=range]{-webkit-appearance:none;appearance:none;height:4px;width:96px;border-radius:999px;background:var(--edge);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:999px;background:var(--amber);cursor:pointer;border:2px solid var(--bg)}
+  .toggle{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);cursor:pointer;border:1px solid var(--hairline);border-radius:999px;padding:5px 10px;background:var(--bg);transition:.15s}
+  .toggle.on{color:var(--amber);border-color:var(--tint-amber-bd);background:var(--tint-amber)}
+  .toggle .sw{width:24px;height:14px;border-radius:999px;background:var(--edge);position:relative;transition:.15s}
+  .toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:999px;background:var(--text);transition:.15s}
+  .toggle.on .sw{background:var(--amber)}.toggle.on .sw::after{left:12px;background:var(--on-amber)}
+
+  .styles{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
+  .style{cursor:pointer;text-align:center}
+  .style .th{aspect-ratio:1;border-radius:9px;border:1.5px solid var(--hairline);overflow:hidden;transition:.15s}
+  .style.on .th{border-color:var(--amber);box-shadow:0 0 0 2px var(--tint-amber)}
+  .style .nm{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.15;display:block}.style.on .nm{color:var(--text)}
+
+  .dl{display:flex;flex-direction:column;gap:8px;margin-top:15px}
+  .dlbtn{border-radius:12px;padding:11px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;border:1px solid}
+  .dlbtn.prov{border-color:var(--tint-salvia-bd);background:var(--tint-salvia);color:var(--verified)}
+  .dlbtn.story{border-color:var(--tint-amber-bd);background:var(--tint-amber);color:var(--amber)}
+  .dlbtn.look{border-color:var(--hairline);background:transparent;color:var(--muted)}
+  .lookbook{display:none;gap:8px;margin-top:10px}.lookbook.show{display:flex;animation:fade .25s ease}
+  .lookbook .lb{flex:1;border-radius:11px;overflow:hidden;border:1px solid var(--hairline);aspect-ratio:3/4;position:relative}
+  .lookbook .lb .lp{position:absolute;inset:0}
+  .lookbook .lb .lt{position:absolute;left:6px;bottom:5px;font-family:var(--mono);font-size:8.5px;color:rgba(242,233,216,.8);background:rgba(12,15,23,.55);border-radius:999px;padding:2px 6px}
+  .cert{font-family:var(--mono);font-size:10px;color:var(--faint);word-break:break-all;margin-top:9px}.cert b{color:var(--verified)}
+  .note{display:flex;gap:9px;align-items:flex-start;color:var(--faint);font-size:11.5px;background:var(--bg);border:1px solid var(--hairline-soft);border-radius:12px;padding:11px 12px;margin-top:11px}
+  .note .ic{flex:none;font-size:13px;color:var(--verified)}.note b{color:var(--muted);font-weight:500}
+
+  .stamp{position:fixed;right:14px;bottom:12px;font-family:var(--mono);font-size:10px;color:var(--faint);background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:5px 11px}
+
+  @media(max-width:980px){.studio{grid-template-columns:1fr}.result{position:static}.styles{grid-template-columns:repeat(4,1fr)}.wrap{padding:18px 14px 80px}.topbar{padding:12px 14px}.hint{max-width:100%}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="hud"><span class="pulse"><i class="ping"></i><i></i></span><span class="teal">REGISTRO ATTIVO</span><span class="sep">/</span><span class="am">STUDIO DI GENERAZIONE</span></div>
+  <div class="brandmini">Sem<b>blic</b></div>
+</header>
+
+<div class="wrap">
+  <div class="h1">Dirigi la scena</div>
+  <p class="lead">Hai scelto il volto. Parti da una ricetta pronta o componi a mano: scena, posa, look fotografico, luce. A destra vedi e rifinisci, anche in quattro varianti, senza rigenerare.</p>
+
+  <div class="ava">
+    <div class="pf"></div>
+    <div><div class="nm">Giulia V. <span class="tierb">SOUL</span></div><div class="sub">@giulia-v</div></div>
+    <span class="ok">&#10003; consenziente per Fashion</span>
+    <span class="change">&#8592; Cambia volto</span>
+  </div>
+
+  <div class="studio">
+
+    <!-- COMPONI -->
+    <section class="card">
+
+      <!-- RICETTE: preset one-click che impostano macchina, ottica, luce, inquadratura ed editing -->
+      <div class="blk">
+        <div class="lab">Ricetta <span class="new">nuovo</span> <span class="opt">· look pronto in un click</span></div>
+        <div class="recipes" id="recipes">
+          <div class="recipe" data-cam="full_frame" data-lens="85" data-light="golden" data-framing="mezzo" data-style="Cinematico"><div class="sw" style="background:linear-gradient(135deg,#C25C3A,#7C3338)"></div><div class="rn">Editoriale</div><div class="rd">85mm, golden hour, cinematico</div></div>
+          <div class="recipe" data-cam="medio_formato" data-lens="50" data-light="studio" data-framing="intera" data-style="Naturale"><div class="sw" style="background:linear-gradient(135deg,#3C3654,#9aa0b0)"></div><div class="rn">E-commerce pulito</div><div class="rd">50mm, studio, figura intera</div></div>
+          <div class="recipe" data-cam="analogica" data-lens="35" data-light="naturale" data-framing="intera" data-style="Vintage"><div class="sw" style="background:linear-gradient(135deg,#9C7A4E,#5A4636)"></div><div class="rn">Street analogico</div><div class="rd">35mm pellicola, vintage</div></div>
+          <div class="recipe" data-cam="medio_formato" data-lens="85" data-light="studio" data-framing="primo" data-style="Pastello"><div class="sw" style="background:linear-gradient(135deg,#E8C9C0,#C99B95)"></div><div class="rn">Beauty</div><div class="rd">85mm, studio, primo piano</div></div>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="lab">La scena, prompt</div>
+        <textarea class="ta" id="scene">ragazza che cammina in una via di Milano, sguardo verso la camera</textarea>
+        <div class="underrow">
+          <p class="hint">Scena libera: azione, luogo, mood. Il volto resta Giulia, identita bloccata dalle sue foto reali. ECHO e fotorealistico: descrivi una scena reale.</p>
+          <button class="enh" id="enhBtn">&#10022; Migliora prompt</button>
+        </div>
+        <div class="proposal" id="proposal">
+          <span class="tag">Proposta del rifinitore</span>
+          <p id="propText">Ragazza che cammina in una via del centro di Milano al tramonto, luce dorata radente, vetrine illuminate sullo sfondo morbidamente sfocato, passo naturale, atmosfera editoriale.</p>
+          <div class="acts"><button class="mini use" id="useProp">&#10003; Usa questa</button><button class="mini keep" id="keepProp">Tieni la mia</button></div>
+        </div>
+      </div>
+
+      <!-- POSA sotto il prompt -->
+      <div class="blk">
+        <div class="lab">Posa <span class="opt">· sotto il prompt, scegline una</span></div>
+        <div class="scroller" id="poses">
+          <div class="pose on" data-token=""><div class="av"><svg viewBox="0 0 40 60"><g fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="20" cy="30" r="11"/><line x1="12.5" y1="37.5" x2="27.5" y2="22.5"/></g></svg></div><div class="nm">Nessuna</div></div>
+          <div class="pose" data-token="standing straight facing the camera, arms relaxed"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="20" cy="10" r="6"/><rect x="13.5" y="16" width="13" height="22" rx="6"/><rect x="9.6" y="17" width="4" height="18" rx="2"/><rect x="26.4" y="17" width="4" height="18" rx="2"/><rect x="15" y="36" width="4.4" height="22" rx="2.2"/><rect x="20.6" y="36" width="4.4" height="22" rx="2.2"/></g></svg></div><div class="nm">In piedi</div></div>
+          <div class="pose" data-token="three-quarter turn, weight on one leg"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor" transform="rotate(7 20 32)"><circle cx="21" cy="10" r="6"/><rect x="14.5" y="16" width="12" height="22" rx="6"/><rect x="10.8" y="17" width="3.8" height="17" rx="1.9"/><rect x="14.5" y="25" width="11.5" height="4.2" rx="2.1"/><rect x="16.4" y="36" width="4.3" height="22" rx="2.1"/><rect x="21" y="36" width="4.3" height="22" rx="2.1"/></g></svg></div><div class="nm">Tre quarti</div></div>
+          <div class="pose" data-token="captured mid-stride walking forward"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="20" cy="10" r="6"/><rect x="14" y="16" width="12" height="19" rx="6"/><rect x="24.5" y="17" width="3.8" height="15" rx="1.9" transform="rotate(-24 26 22)"/><rect x="11.5" y="17" width="3.8" height="15" rx="1.9" transform="rotate(20 13 22)"/><rect x="18.6" y="34" width="4.4" height="23" rx="2.2" transform="rotate(-18 21 42)"/><rect x="17" y="34" width="4.4" height="23" rx="2.2" transform="rotate(20 19 42)"/></g></svg></div><div class="nm">Camminata</div></div>
+          <div class="pose" data-token="arms crossed over the chest, confident"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="20" cy="10" r="6"/><rect x="13" y="16" width="14" height="22" rx="6"/><rect x="15" y="36" width="4.4" height="22" rx="2.2"/><rect x="20.6" y="36" width="4.4" height="22" rx="2.2"/><rect x="10.5" y="22.5" width="19" height="4.4" rx="2.2" transform="rotate(13 20 24.7)"/><rect x="10.5" y="22.5" width="19" height="4.4" rx="2.2" transform="rotate(-13 20 24.7)"/></g></svg></div><div class="nm">Braccia conserte</div></div>
+          <div class="pose" data-token="leaning sideways against a wall, ankles crossed"><div class="av"><svg viewBox="0 0 40 60"><rect x="32.5" y="3" width="4.5" height="54" rx="1.5" fill="currentColor" opacity="0.5"/><g fill="currentColor" transform="rotate(-11 23 33)"><circle cx="23" cy="11" r="5.8"/><rect x="17" y="17" width="12" height="21" rx="5.5"/><rect x="13.4" y="18" width="3.7" height="16" rx="1.85"/><rect x="18.4" y="36" width="4.2" height="21" rx="2.1" transform="rotate(12 20 46)"/><rect x="22.2" y="36" width="4.2" height="21" rx="2.1" transform="rotate(-12 24 46)"/></g></svg></div><div class="nm">Al muro</div></div>
+          <div class="pose" data-token="full side profile, looking straight ahead"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="19" cy="10" r="6"/><path d="M24.5 8.6 l3.6 1.8 l-3.6 1.8 z"/><rect x="15.5" y="16" width="9.5" height="22" rx="4.6"/><rect x="16" y="17" width="3.6" height="16" rx="1.8"/><rect x="16.6" y="36" width="4.3" height="22" rx="2.1"/><rect x="20.2" y="36" width="4.3" height="22" rx="2.1"/></g></svg></div><div class="nm">Profilo</div></div>
+          <div class="pose" data-token="hand raised to the chin, thoughtful pose"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="20" cy="10" r="6"/><rect x="13.5" y="16" width="13" height="22" rx="6"/><rect x="26.4" y="17" width="3.9" height="18" rx="1.95"/><rect x="10.4" y="24" width="3.8" height="11" rx="1.9"/><rect x="10.4" y="14" width="3.7" height="12" rx="1.85" transform="rotate(34 12.2 20)"/><rect x="15" y="36" width="4.4" height="22" rx="2.2"/><rect x="20.6" y="36" width="4.4" height="22" rx="2.2"/></g></svg></div><div class="nm">Mano al mento</div></div>
+          <div class="pose" data-token="both arms open wide, expressive fashion pose"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="20" cy="11" r="6"/><rect x="14" y="17" width="12" height="21" rx="6"/><rect x="3.5" y="11.5" width="13" height="4.2" rx="2.1" transform="rotate(-26 10 13.6)"/><rect x="23.5" y="11.5" width="13" height="4.2" rx="2.1" transform="rotate(26 30 13.6)"/><rect x="15.4" y="36" width="4.4" height="22" rx="2.2" transform="rotate(7 17.6 47)"/><rect x="20.2" y="36" width="4.4" height="22" rx="2.2" transform="rotate(-7 22.4 47)"/></g></svg></div><div class="nm">Braccia aperte</div></div>
+          <div class="pose" data-token="standing with both hands in trouser pockets"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="20" cy="10" r="6"/><rect x="13.5" y="16" width="13" height="22" rx="6"/><rect x="10.4" y="17" width="3.6" height="11" rx="1.8"/><rect x="11.5" y="27" width="7" height="3.4" rx="1.7" transform="rotate(22 13 28)"/><rect x="26" y="17" width="3.6" height="11" rx="1.8"/><rect x="21.5" y="27" width="7" height="3.4" rx="1.7" transform="rotate(-22 27 28)"/><rect x="15" y="36" width="4.4" height="22" rx="2.2"/><rect x="20.6" y="36" width="4.4" height="22" rx="2.2"/></g></svg></div><div class="nm">Mani in tasca</div></div>
+          <div class="pose" data-token="hands on hips, confident power pose"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="20" cy="10" r="6"/><rect x="13.5" y="16" width="13" height="22" rx="6"/><rect x="8" y="17" width="3.6" height="12" rx="1.8" transform="rotate(26 9.8 23)"/><rect x="9.5" y="27" width="7.5" height="3.4" rx="1.7" transform="rotate(-32 13 28)"/><rect x="28.4" y="17" width="3.6" height="12" rx="1.8" transform="rotate(-26 30.2 23)"/><rect x="23" y="27" width="7.5" height="3.4" rx="1.7" transform="rotate(32 27 28)"/><rect x="15" y="36" width="4.4" height="22" rx="2.2"/><rect x="20.6" y="36" width="4.4" height="22" rx="2.2"/></g></svg></div><div class="nm">Mani sui fianchi</div></div>
+          <div class="pose" data-token="sitting on a tall stool, upright posture"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><rect x="11" y="40" width="18" height="3" rx="1.5" opacity="0.55"/><rect x="13" y="43" width="2.4" height="15" rx="1" opacity="0.55"/><rect x="24.6" y="43" width="2.4" height="15" rx="1" opacity="0.55"/><circle cx="20" cy="8" r="5.6"/><rect x="14" y="13" width="12" height="18" rx="5.5"/><rect x="14" y="31" width="13" height="4.2" rx="2.1"/><rect x="15" y="39" width="3.7" height="17" rx="1.85"/><rect x="21.2" y="39" width="3.7" height="17" rx="1.85"/><rect x="10.8" y="14" width="3.5" height="14" rx="1.75"/><rect x="25.6" y="14" width="3.5" height="14" rx="1.75"/></g></svg></div><div class="nm">Seduta sgabello</div></div>
+          <div class="pose" data-token="sitting on the floor, one knee up, arm resting on the knee"><div class="av"><svg viewBox="0 0 40 60"><rect x="6" y="53" width="28" height="2.6" rx="1.3" fill="currentColor" opacity="0.45"/><g fill="currentColor"><circle cx="15" cy="15" r="5.6"/><rect x="11" y="20" width="10.5" height="15" rx="5" transform="rotate(-8 16 27)"/><rect x="12" y="48" width="17" height="4" rx="2"/><rect x="25" y="36" width="4" height="15" rx="2"/><rect x="16" y="29" width="11" height="3.4" rx="1.7" transform="rotate(-26 21 31)"/></g></svg></div><div class="nm">Seduta a terra</div></div>
+          <div class="pose" data-token="presenting a product held in one hand toward the camera"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="18" cy="10" r="6"/><rect x="11.5" y="16" width="13" height="22" rx="6"/><rect x="9" y="17" width="3.6" height="17" rx="1.8"/><rect x="23" y="20" width="3.6" height="8" rx="1.8"/><rect x="25" y="25" width="8" height="3.4" rx="1.7"/><rect x="30" y="22" width="7" height="9" rx="1.6" opacity="0.85" stroke="currentColor" stroke-width="0.6"/><rect x="13" y="36" width="4.4" height="22" rx="2.2"/><rect x="18.6" y="36" width="4.4" height="22" rx="2.2"/></g></svg></div><div class="nm">Prodotto in mano</div></div>
+          <div class="pose" data-token="seen from behind, looking back over the shoulder"><div class="av"><svg viewBox="0 0 40 60"><g fill="currentColor"><circle cx="21" cy="10" r="6"/><path d="M15.5 9 l-3 1.6 l3 1.6 z"/><rect x="11" y="15" width="18" height="21" rx="7"/><rect x="14.5" y="35" width="4.6" height="23" rx="2.3"/><rect x="20.9" y="35" width="4.6" height="23" rx="2.3"/></g></svg></div><div class="nm">Di spalle</div></div>
+        </div>
+      </div>
+
+      <!-- INQUADRATURA + ESPRESSIONE -->
+      <div class="blk">
+        <div class="lab">Inquadratura <span class="new">nuovo</span></div>
+        <div class="seg" id="framing">
+          <button data-val="primo" data-token="close-up portrait, head and shoulders">Primo piano</button>
+          <button class="on" data-val="mezzo" data-token="medium shot, waist up">Mezzo busto</button>
+          <button data-val="intera" data-token="full-body shot">Figura intera</button>
+          <button data-val="americano" data-token="American shot, from the knees up">Piano americano</button>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="lab">Espressione <span class="new">nuovo</span></div>
+        <div class="seg" id="mood">
+          <button class="on" data-val="naturale" data-token="">Naturale</button>
+          <button data-val="sorriso" data-token="natural smile">Sorriso</button>
+          <button data-val="serio" data-token="serious expression">Serio</button>
+          <button data-val="pensieroso" data-token="thoughtful expression">Pensieroso</button>
+          <button data-val="risata" data-token="candid laughter">Risata</button>
+        </div>
+      </div>
+
+      <!-- LOOK FOTOGRAFICO: macchina + ottica + luce -->
+      <div class="blk">
+        <details class="look" open>
+          <summary>&#9673; Look fotografico <span class="new" style="margin-left:6px">nuovo</span> <span class="opt" style="color:var(--faint);font-weight:400;margin-left:4px">macchina, ottica, luce</span> <span class="ch">&#9662;</span></summary>
+          <div class="inner">
+            <div class="sublab">Macchina</div>
+            <div class="cams" id="cams">
+              <div class="cam" data-val="analogica" data-token="shot on 35mm film, natural grain, warm tones" data-cap="Pellicola 35mm"><div class="ic">&#9678;</div><div><div class="nm">Analogica</div><div class="cap">grana naturale</div></div></div>
+              <div class="cam on" data-val="full_frame" data-token="full-frame digital, sharp, wide dynamic range" data-cap="Digitale full frame"><div class="ic">&#9633;</div><div><div class="nm">Full frame</div><div class="cap">nitido, gamma ampia</div></div></div>
+              <div class="cam" data-val="medio_formato" data-token="medium format, extreme detail, smooth bokeh" data-cap="Medio formato"><div class="ic">&#9744;</div><div><div class="nm">Medio formato</div><div class="cap">dettaglio estremo</div></div></div>
+              <div class="cam" data-val="polaroid" data-token="instant Polaroid photo, white frame, vintage tones" data-cap="Polaroid"><div class="ic">&#9635;</div><div><div class="nm">Polaroid</div><div class="cap">istantanea vintage</div></div></div>
+            </div>
+            <div class="sublab">Ottica</div>
+            <div class="dial" id="lenses">
+              <span class="lens" data-val="8" data-token="8mm fisheye, ultra wide-angle" data-cap="Fisheye, ultra grandangolo">8</span>
+              <span class="lens" data-val="12" data-token="12mm ultra wide-angle" data-cap="Grandangolo spinto">12</span>
+              <span class="lens" data-val="20" data-token="20mm wide-angle" data-cap="Grandangolo, ambiente">20</span>
+              <span class="lens" data-val="35" data-token="35mm reportage perspective" data-cap="Reportage, naturale">35</span>
+              <span class="lens" data-val="50" data-token="50mm natural perspective" data-cap="Standard, occhio umano">50</span>
+              <span class="lens on" data-val="85" data-token="85mm portrait lens, creamy bokeh, shallow depth of field" data-cap="Ritratto, sfocato cremoso">85</span>
+              <span class="lens" data-val="200" data-token="200mm telephoto, compressed perspective" data-cap="Tele, compressione">200</span>
+            </div>
+            <div class="lenscap" id="lenscap"><b>85mm</b> Ritratto, sfocato cremoso</div>
+            <div class="sublab">Luce <span class="new" style="font-weight:400">nuovo</span></div>
+            <div class="seg" id="light">
+              <button class="on" data-val="naturale" data-token="natural light">Naturale</button>
+              <button data-val="golden" data-token="golden hour warm light">Golden hour</button>
+              <button data-val="studio" data-token="studio softbox lighting">Studio</button>
+              <button data-val="controluce" data-token="backlight, rim light">Controluce</button>
+              <button data-val="neon" data-token="nighttime neon lighting">Neon</button>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="blk">
+        <div class="lab">Motore e formato</div>
+        <div class="enginechip" style="margin-bottom:10px">&#9673; ECHO fotoreale <span>massima fedelta, identita bloccata</span></div>
+        <div class="seg" style="margin-right:6px"><button>Quadrato</button><button class="on">Verticale</button><button>Orizzontale</button></div>
+        <div class="seg" style="margin-top:8px"><button>HD</button><button class="on">2K</button><button>4K</button></div>
+      </div>
+
+      <div class="blk">
+        <div class="lab">Prompt finale <span class="opt">· cosa va al motore</span></div>
+        <div class="finalp" id="finalp"></div>
+      </div>
+
+      <button class="btn">&#10022; Genera la tua scena · 1.490 VOLT</button>
+      <div class="costline">Saldo dopo: 8.510 VOLT · output full res, certificato e royalty a Giulia</div>
+    </section>
+
+    <!-- VEDI E RIFINISCI -->
+    <section class="card result">
+      <div class="single" id="single">
+        <div class="gen-wrap">
+          <div class="gen-img photo" id="genImg"></div>
+          <div class="grain" id="grain"></div>
+          <div class="gen-tag">anteprima, watermark</div>
+          <div class="wm">SEMBLIC</div>
+        </div>
+      </div>
+      <div class="variants" id="variants">
+        <div class="v"><div class="vp photo" style="filter:saturate(1.05) contrast(1.05)"></div><span class="vb">var 1</span></div>
+        <div class="v"><div class="vp photo" style="filter:sepia(.15) saturate(1.1) contrast(1.08) brightness(1.03)"></div><span class="vb">var 2</span></div>
+        <div class="v"><div class="vp photo" style="filter:contrast(1.12) brightness(.98) saturate(1.1)"></div><span class="vb">var 3</span></div>
+        <div class="v"><div class="vp photo" style="filter:saturate(.95) brightness(1.05)"></div><span class="vb">var 4</span></div>
+      </div>
+
+      <div class="editbar">
+        <h4>Editing e color <span class="new" style="font-weight:400;font-size:10px;color:var(--amber);background:var(--tint-amber);border:1px solid var(--tint-amber-bd);border-radius:999px;padding:2px 7px;margin-left:4px">nuovo</span></h4>
+        <div style="flex:1"></div>
+        <div class="toggle" id="varToggle"><span class="sw"></span> 4 varianti</div>
+        <div class="slider">Intensita <input type="range" id="intensity" min="0" max="100" value="85"><span id="intval" style="font-family:var(--mono);color:var(--text)">85%</span></div>
+        <div class="toggle" id="grainToggle"><span class="sw"></span> Grana</div>
+      </div>
+
+      <div class="styles" id="styles">
+        <div class="style on" data-name="Naturale" data-sat="1" data-con="1" data-bri="1" data-sep="0" data-gray="0" data-hue="0" data-grain="0"><div class="th photo"></div><span class="nm">Naturale</span></div>
+        <div class="style" data-name="Pastello" data-sat=".8" data-con=".92" data-bri="1.08" data-sep=".12" data-gray="0" data-hue="0" data-grain="0"><div class="th photo" style="filter:sepia(.12) saturate(.8) contrast(.92) brightness(1.08)"></div><span class="nm">Pastello</span></div>
+        <div class="style" data-name="Contrasto" data-sat="1.12" data-con="1.4" data-bri=".98" data-sep="0" data-gray="0" data-hue="0" data-grain="0"><div class="th photo" style="filter:saturate(1.12) contrast(1.4) brightness(.98)"></div><span class="nm">Contrasto</span></div>
+        <div class="style" data-name="Bianco e nero" data-sat="1" data-con="1.15" data-bri="1" data-sep="0" data-gray="1" data-hue="0" data-grain="0"><div class="th photo" style="filter:grayscale(1) contrast(1.15)"></div><span class="nm">Bianco e nero</span></div>
+        <div class="style" data-name="Cinematico" data-sat="1.05" data-con="1.18" data-bri="1" data-sep=".18" data-gray="0" data-hue="-8" data-grain="1"><div class="th photo" style="filter:sepia(.18) saturate(1.05) contrast(1.18) hue-rotate(-8deg)"></div><span class="nm">Cinematico</span></div>
+        <div class="style" data-name="Vintage" data-sat=".82" data-con=".9" data-bri="1.06" data-sep=".28" data-gray="0" data-hue="0" data-grain="1"><div class="th photo" style="filter:sepia(.28) saturate(.82) contrast(.9) brightness(1.06)"></div><span class="nm">Vintage</span></div>
+        <div class="style" data-name="Dorato" data-sat="1.2" data-con="1.05" data-bri="1.04" data-sep=".25" data-gray="0" data-hue="-12" data-grain="0"><div class="th photo" style="filter:sepia(.25) saturate(1.2) contrast(1.05) brightness(1.04) hue-rotate(-12deg)"></div><span class="nm">Dorato</span></div>
+        <div class="style" data-name="Freddo" data-sat="1.1" data-con="1.08" data-bri=".96" data-sep="0" data-gray="0" data-hue="200" data-grain="0"><div class="th photo" style="filter:saturate(1.1) contrast(1.08) brightness(.96) hue-rotate(200deg)"></div><span class="nm">Freddo</span></div>
+        <div class="style" data-name="Seppia" data-sat=".9" data-con="1" data-bri="1" data-sep=".85" data-gray="0" data-hue="0" data-grain="0"><div class="th photo" style="filter:sepia(.85) saturate(.9)"></div><span class="nm">Seppia</span></div>
+        <div class="style" data-name="Matte" data-sat=".9" data-con=".88" data-bri="1.05" data-sep="0" data-gray="0" data-hue="0" data-grain="0"><div class="th photo" style="filter:saturate(.9) contrast(.88) brightness(1.05)"></div><span class="nm">Matte</span></div>
+        <div class="style" data-name="HDR" data-sat="1.5" data-con="1.22" data-bri="1.02" data-sep="0" data-gray="0" data-hue="0" data-grain="0"><div class="th photo" style="filter:saturate(1.5) contrast(1.22) brightness(1.02)"></div><span class="nm">HDR</span></div>
+        <div class="style" data-name="Cross" data-sat="1.3" data-con="1.12" data-bri="1" data-sep="0" data-gray="0" data-hue="30" data-grain="0"><div class="th photo" style="filter:saturate(1.3) contrast(1.12) hue-rotate(30deg)"></div><span class="nm">Cross</span></div>
+      </div>
+
+      <div class="dl">
+        <div class="dlbtn prov">Scarica con provenienza &#8594;</div>
+        <div class="dlbtn story">Condividi come Storia &#8594;</div>
+        <div class="dlbtn look" id="lookToggle">&#9776; Genera serie lookbook</div>
+      </div>
+      <div class="lookbook" id="lookbook">
+        <div class="lb"><div class="lp photo"></div><span class="lt">in piedi</span></div>
+        <div class="lb"><div class="lp photo" style="filter:saturate(1.05)"></div><span class="lt">tre quarti</span></div>
+        <div class="lb"><div class="lp photo" style="filter:saturate(1.05)"></div><span class="lt">camminata</span></div>
+      </div>
+      <div class="cert">credenziale d'uscita (hash anonimo): <b>a7f3c9e1d2b80456...</b></div>
+      <div class="note"><span class="ic">&#9873;</span><div><b>Tutto invariato sotto.</b> Identity-lock dalle foto consensuali, consenso per categoria, royalty a Giulia e certificato. Posa, inquadratura, luce, macchina e ottica entrano nel prompt; l'editing e le varianti si applicano dopo, senza rigenerare.</div></div>
+    </section>
+  </div>
+</div>
+
+<div class="stamp">SEMBLIC · redesign /match · 2026-06-18</div>
+
+<script>
+  const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
+
+  // toggle a gruppo generico
+  function groupToggle(c, sel, after){
+    if(!c) return;
+    c.addEventListener('click', e=>{
+      const b=e.target.closest(sel); if(!b||!c.contains(b))return;
+      c.querySelectorAll(sel).forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); if(after) after(b);
+    });
+  }
+  qa('.seg').forEach(s=>groupToggle(s,'button'));
+  groupToggle(q('#poses'),'.pose',compose);
+  groupToggle(q('#cams'),'.cam',compose);
+  groupToggle(q('#lenses'),'.lens',l=>{ q('#lenscap').innerHTML='<b>'+l.textContent+'mm</b> '+l.dataset.cap; compose(); });
+  // inquadratura, espressione, luce: aggiornano il prompt finale
+  ['#framing','#mood','#light'].forEach(id=>q(id)&&q(id).addEventListener('click',e=>{ if(e.target.closest('button')) compose(); }));
+
+  // prompt enhancer (demo)
+  const proposal=q('#proposal'), sceneEl=q('#scene');
+  q('#enhBtn').addEventListener('click',()=>proposal.classList.add('show'));
+  q('#useProp').addEventListener('click',()=>{ sceneEl.value=q('#propText').textContent.trim(); proposal.classList.remove('show'); compose(); });
+  q('#keepProp').addEventListener('click',()=>proposal.classList.remove('show'));
+  sceneEl.addEventListener('input',compose);
+
+  // prompt finale = scena + posa + inquadratura + espressione + luce + macchina + ottica
+  const finalp=q('#finalp');
+  function compose(){
+    const get=(s)=>{const el=q(s);return el?el.dataset.token:'';};
+    const pose=q('#poses .pose.on'), cam=q('#cams .cam.on'), lens=q('#lenses .lens.on');
+    const toks=[pose&&pose.dataset.token, get('#framing button.on'), get('#mood button.on'), get('#light button.on'), cam&&cam.dataset.token, lens&&lens.dataset.token].filter(Boolean).join(', ');
+    finalp.innerHTML='"'+(sceneEl.value||'').trim()+'"'+(toks?'<span class="add">, '+toks+'</span>':'')+'<span class="sys">+ prefisso identita di sistema (dalle foto consensuali di Giulia, lato server)</span>';
+  }
+
+  // preset "ricette": impostano piu controlli in un colpo
+  function pick(container, val){ if(!container)return; const items=qa('[data-val]',container); items.forEach(x=>x.classList.remove('on')); const m=items.find(x=>x.dataset.val===val); if(m)m.classList.add('on'); }
+  function pickStyle(name){ qa('#styles .style').forEach(x=>x.classList.remove('on')); const m=qa('#styles .style').find(x=>x.dataset.name===name); if(m)m.classList.add('on'); applyGrade(); }
+  q('#recipes').addEventListener('click',e=>{
+    const r=e.target.closest('.recipe'); if(!r)return;
+    pick(q('#cams'), r.dataset.cam); pick(q('#lenses'), r.dataset.lens); pick(q('#light'), r.dataset.light); pick(q('#framing'), r.dataset.framing);
+    const lz=q('#lenses .lens.on'); if(lz) q('#lenscap').innerHTML='<b>'+lz.textContent+'mm</b> '+lz.dataset.cap;
+    pickStyle(r.dataset.style); compose();
+  });
+
+  // editing live
+  const genImg=q('#genImg'), grain=q('#grain'), intensity=q('#intensity'), intval=q('#intval'), grainToggle=q('#grainToggle');
+  let manualGrain=false;
+  function applyGrade(){
+    const s=q('#styles .style.on'), k=(+intensity.value)/100, d=s.dataset, lin=t=>1+k*((+t)-1);
+    genImg.style.filter='grayscale('+(k*+d.gray).toFixed(3)+') sepia('+(k*+d.sep).toFixed(3)+') saturate('+lin(d.sat).toFixed(3)+') contrast('+lin(d.con).toFixed(3)+') brightness('+lin(d.bri).toFixed(3)+') hue-rotate('+(k*+d.hue).toFixed(1)+'deg)';
+    grain.style.opacity=(manualGrain||d.grain==='1')?(0.5*k).toFixed(3):0;
+    intval.textContent=intensity.value+'%';
+  }
+  q('#styles').addEventListener('click',e=>{ const st=e.target.closest('.style'); if(!st)return; qa('#styles .style').forEach(x=>x.classList.remove('on')); st.classList.add('on'); applyGrade(); });
+  intensity.addEventListener('input',applyGrade);
+  grainToggle.addEventListener('click',()=>{manualGrain=!manualGrain;grainToggle.classList.toggle('on',manualGrain);applyGrade();});
+
+  // variazioni 4 in 1
+  q('#varToggle').addEventListener('click',()=>{
+    const on=q('#varToggle').classList.toggle('on');
+    q('#variants').classList.toggle('show',on);
+    q('#single').classList.toggle('hide',on);
+  });
+  // lookbook
+  q('#lookToggle').addEventListener('click',()=>{
+    const on=q('#lookbook').classList.toggle('show');
+    q('#lookToggle').style.color=on?'var(--amber)':'';
+  });
+
+  compose(); applyGrade();
+</script>
+</body>
+</html>

@@ -179,13 +179,13 @@ export default function PrezziPage() {
               <div className="card rounded-2xl p-5 sm:p-6">
                 <h3 className="text-[1.15rem] font-bold tracking-[-0.02em]">Scena di gruppo</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-muted">
-                  Prima la scena, poi ogni volto rifatto con le foto verificate della sua persona: con N persone il motore lavora N+1 volte.
-                  La parte delle persone si divide in parti uguali. Esempi in Alta, verticale:
+                  Una scena sola con le foto verificate di ognuno, poi la misura volto per volto: chi non viene riconosciuto si rifa’ da solo.
+                  Vale come due scatti, che siate in due o in quattro. La parte delle persone si divide in parti uguali. Esempi in Alta, verticale:
                 </p>
                 <ul className="mt-4 flex flex-col divide-y divide-border">
                   {GRUPPI.map((g) => (
                     <li key={g.n} className="flex items-baseline justify-between gap-3 py-2.5 tabular-nums">
-                      <span className="text-sm font-semibold">{g.n} persone <span className="font-normal text-faint">· {scattiPerGruppo(g.n)} passaggi</span></span>
+                      <span className="text-sm font-semibold">{g.n} persone <span className="font-normal text-faint">· come {scattiPerGruppo(g.n)} scatti</span></span>
                       <span className="text-right text-sm">
                         <span className="font-bold">{eur(g.prezzo.gross_cents)}</span>
                         <span className="ml-2 text-xs font-semibold text-verified">{eur(g.prezzo.quote[g.n - 1])} a testa</span>

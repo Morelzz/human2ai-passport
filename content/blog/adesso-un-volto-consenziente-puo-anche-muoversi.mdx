@@ -13,13 +13,15 @@ Fino a ieri un contenuto Semblic era una fotografia: una persona reale del regis
 
 Sono due funzioni che quasi tutti i generatori hanno. La differenza sta in quello che ci abbiamo messo attorno.
 
-## Le foto di gruppo si fanno un volto alla volta
+## Le foto di gruppo: prima le foto giuste, poi una scena sola
 
-Chiedere a un modello "due amiche che brindano al bar" e sperare che assomiglino davvero a due persone precise non funziona. Lo abbiamo misurato: in un colpo solo una delle due usciva al 64 per cento di somiglianza con le sue foto vere, cioè una persona che le somiglia ma non è lei.
+Chiedere a un modello "due amiche che brindano al bar" e sperare che assomiglino davvero a due persone precise non funziona da solo. Lo abbiamo misurato: alla prima prova una delle due usciva al 64 per cento di somiglianza con le sue foto vere, cioè una persona che le somiglia ma non è lei.
 
-Allora il set lavora in passaggi. Prima compone la scena con tutte le persone, dichiarando l'ordine da sinistra a destra. Poi, per ogni protagonista, rifà solo il suo volto usando le foto verificate di quella persona, senza toccare il resto della scena. Alla fine misura tutti.
+La prima risposta è stata rifare ogni volto in un passaggio a parte. Funzionava, ma male: ogni passaggio ridisegna tutta l’immagine, e la pelle usciva impastata. Il problema vero stava a monte, nelle foto di riferimento. Se in un reference-set ci sono scatti troppo diversi fra loro, il motore riceve indicazioni in contraddizione e disegna una via di mezzo che non è nessuno.
 
-Nella prima prova pubblica il risultato è stato 84 e 55 per cento. Il secondo numero merita una nota onesta: le foto vere di quella persona, confrontate fra loro, arrivano al 57 per cento, perché sono scatti molto diversi tra loro. Il sistema ha fatto quello che poteva, e lo dichiara invece di nasconderlo. Se una persona resta sotto la soglia oltre la quale il misuratore dice "non è lei", la scena non viene consegnata e i crediti tornano indietro: preferiamo una foto in meno che una foto con il nome sbagliato.
+Così adesso il set fa due cose. Prima sceglie, fra le foto verificate di ogni persona, quelle che concordano fra loro, e scarta le altre. Poi compone la scena in un colpo solo, dichiarando l’ordine da sinistra a destra, e misura ogni volto. Solo chi non viene riconosciuto viene ritoccato, e il ritocco si tiene soltanto se il misuratore dice che è migliorato. Sullo stesso banco di prova siamo passati da 84 e 55 per cento a 95 e 80, con un’immagine più pulita e metà del lavoro: per questo una scena di gruppo costa come due scatti, che siate in due o in quattro.
+
+Se una persona resta sotto la soglia oltre la quale il misuratore dice "non è lei", la scena non viene consegnata e i crediti tornano indietro: preferiamo una foto in meno che una foto con il nome sbagliato.
 
 ## Il video ha bisogno di un secondo sì
 

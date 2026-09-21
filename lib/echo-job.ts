@@ -69,7 +69,7 @@ export interface EchoJobParams {
     colorStyle?: string | null; framing?: string | null; expression?: string | null;
   };
   pricing: EchoPricing;
-  // Scena di gruppo "un volto alla volta": 2-4 protagonisti. Il primo e'
+  // Scena di gruppo: 2-4 protagonisti. Il primo e'
   // anche l'avatar del job (job.avatar_id / job.handle).
   gruppo?: PersonaGruppo[];
 }

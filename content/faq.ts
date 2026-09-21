@@ -47,7 +47,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: "Posso fare una foto con più persone del registro?",
-    a: "Sì, fino a quattro in primo piano. Prima si compone la scena, poi ogni volto viene rifatto con le foto verificate della sua persona, uno alla volta, e ognuno viene misurato. Il prezzo è quello di tanti scatti quanti sono i passaggi, e la parte delle persone si divide in parti uguali. Il resto della gente resta sullo sfondo, non riconoscibile.",
+    a: "Sì, fino a quattro in primo piano. La scena si compone in una volta sola, con le foto verificate di ognuno e l’ordine da sinistra a destra dichiarato; poi ogni volto viene misurato, e solo chi non viene riconosciuto viene rifatto. Una scena di gruppo costa come due scatti, che siate in due o in quattro, e la parte delle persone si divide in parti uguali. Il resto della gente resta sullo sfondo, non riconoscibile.",
   },
   {
     q: "Posso trasformare uno scatto in un video?",

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Home (proposta di redesign)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C0F17; --surface:#141A24; --elevated:#1E2530; --edge:#2C3440;
+    --text:#F2E9D8; --muted:rgba(242,233,216,0.70); --faint:rgba(242,233,216,0.45);
+    --hairline:rgba(242,233,216,0.12); --hairline-soft:rgba(242,233,216,0.06);
+    --amber:#F2A93B; --amber-hover:#E29A2E; --on-amber:#412402;
+    --verified:#7FAE96; --blocked:#EE7A70;
+    --tint-amber:rgba(242,169,59,0.12); --tint-amber-bd:rgba(242,169,59,0.30);
+    --tint-salvia:rgba(127,174,150,0.12); --tint-salvia-bd:rgba(127,174,150,0.30);
+    --tint-coral:rgba(238,122,112,0.12); --tint-coral-bd:rgba(238,122,112,0.30);
+    --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Geist Mono",ui-monospace,"SF Mono",monospace;
+    --maxw:1180px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--tint-amber);color:var(--text)}
+  ::-webkit-scrollbar{width:10px}::-webkit-scrollbar-thumb{background:var(--edge);border-radius:999px;border:3px solid var(--bg)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;font-family:var(--font);font-weight:600;background:var(--amber);color:var(--on-amber);border-radius:999px;padding:13px 24px;font-size:14.5px;transition:.15s}
+  .btn:hover{background:var(--amber-hover)}
+  .btn.sm{padding:9px 17px;font-size:13px}
+  .ghost{background:transparent;color:var(--text);border:1px solid var(--hairline)}
+  .ghost:hover{border-color:var(--tint-amber-bd);background:var(--hairline-soft)}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;border-bottom:1px solid transparent;transition:.25s}
+  nav.scrolled{background:rgba(12,15,23,.8);backdrop-filter:blur(12px);border-color:var(--hairline)}
+  .navin{display:flex;align-items:center;gap:24px;height:64px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:200;font-size:20px;letter-spacing:-0.03em}
+  .logo b{font-weight:600}.logo .sh{width:22px;height:22px;border-radius:6px;background:var(--grad,linear-gradient(135deg,#F2A93B,#EE7A70))}
+  .navlinks{display:flex;gap:22px;margin-left:14px}
+  .navlinks a{font-size:13.5px;color:var(--muted);transition:.15s}.navlinks a:hover{color:var(--text)}
+  .navr{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .navr .login{font-size:13.5px;color:var(--muted)}.navr .login:hover{color:var(--text)}
+
+  /* HERO */
+  .hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden}
+  .hero .bgvid{position:absolute;inset:0;z-index:0;background:
+    radial-gradient(60% 50% at 78% 30%, rgba(242,169,59,0.22), transparent 60%),
+    radial-gradient(50% 60% at 20% 80%, rgba(238,122,112,0.14), transparent 60%),
+    linear-gradient(160deg,#15121e 0%,#0C0F17 55%,#0a0d14 100%)}
+  .hero .bgvid::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 8%,rgba(12,15,23,.4) 45%,transparent 70%)}
+  .hero .grain{position:absolute;inset:0;z-index:1;opacity:.5;mix-blend-mode:overlay;pointer-events:none;background-size:200px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")}
+  .hero .in{position:relative;z-index:2;width:100%;padding:90px 0}
+  .hero h1{font-weight:200;font-size:clamp(2.8rem,6.4vw,5.2rem);line-height:0.98;letter-spacing:-0.045em;max-width:13ch}
+  .hero h1 .am{background:linear-gradient(90deg,#F2A93B,#E29A2E,#F2A93B);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:300}
+  .hero .sub{margin-top:24px;font-size:1.02rem;color:var(--muted);max-width:42ch;line-height:1.6}
+  .hero .sub b{color:var(--text);font-weight:500}
+  .hero .cta{margin-top:34px;display:flex;gap:12px;flex-wrap:wrap}
+  .hero .strip{margin-top:34px;display:flex;gap:10px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--hairline);background:rgba(20,26,36,.5);backdrop-filter:blur(6px);border-radius:999px;padding:8px 14px;font-size:12.5px;color:var(--muted)}
+  .chip b{color:var(--text);font-weight:600;font-family:var(--mono)}
+  .chip .dot{width:7px;height:7px;border-radius:999px}
+  .dot.coral{background:var(--blocked)}.dot.salvia{background:var(--verified)}.dot.amber{background:var(--amber)}
+
+  /* HOOK band */
+  .hook{border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);background:
+    radial-gradient(60% 100% at 50% 0%, rgba(242,169,59,0.06), transparent 70%)}
+  .hook .in{padding:70px 0;text-align:center;max-width:30ch;margin:0 auto}
+  .hook .p1{font-size:clamp(1.4rem,3vw,2rem);font-weight:300;color:var(--faint);letter-spacing:-0.02em;line-height:1.2}
+  .hook .p2{font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:500;color:var(--text);letter-spacing:-0.03em;line-height:1.12;margin-top:14px}
+  .hook .p2 .am{color:var(--amber)}
+
+  section.blk{padding:96px 0}
+  .seclab{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .seclab .ln{flex:1;height:1px;background:var(--hairline)}
+  h2.dh{font-weight:200;font-size:clamp(2rem,4vw,3rem);letter-spacing:-0.04em;line-height:1.05}
+  .lead{color:var(--muted);font-size:15px;margin-top:12px;max-width:52ch;line-height:1.6}
+
+  /* COME FUNZIONA */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+  .step{background:var(--surface);border:1px solid var(--hairline);border-radius:18px;padding:24px;transition:.18s}
+  .step:hover{border-color:var(--tint-amber-bd);transform:translateY(-3px)}
+  .step .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:19px;border:1px solid}
+  .step.s1 .ic{color:var(--amber);background:var(--tint-amber);border-color:var(--tint-amber-bd)}
+  .step.s2 .ic{color:var(--blocked);background:var(--tint-coral);border-color:var(--tint-coral-bd)}
+  .step.s3 .ic{color:var(--verified);background:var(--tint-salvia);border-color:var(--tint-salvia-bd)}
+  .step .n{font-family:var(--mono);font-size:11px;color:var(--faint);margin:16px 0 4px}
+  .step h3{font-size:17px;font-weight:600;letter-spacing:-0.01em}
+  .step p{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.55}
+
+  /* REGISTRO VIVO */
+  .proof{display:grid;grid-template-columns:1.25fr 0.95fr;gap:22px;margin-top:34px;align-items:start}
+  .faces{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .face{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--hairline);aspect-ratio:3/4;cursor:pointer;transition:.18s}
+  .face:hover{border-color:var(--tint-amber-bd);transform:translateY(-2px)}
+  .face .ph{position:absolute;inset:0}
+  .face .scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,10,16,.85),transparent 55%)}
+  .face .v{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--verified);background:rgba(12,15,23,.6);border:1px solid var(--tint-salvia-bd);border-radius:999px;padding:3px 7px;backdrop-filter:blur(4px)}
+  .face .meta{position:absolute;left:9px;right:9px;bottom:8px;z-index:2}
+  .face .al{font-size:12.5px;font-weight:600}
+  .face .tr{font-family:var(--mono);font-size:9px;color:var(--faint)}
+  .verifycard{background:var(--surface);border:1px solid var(--hairline);border-radius:18px;padding:20px;position:sticky;top:84px}
+  .verifycard h4{font-size:14px;font-weight:600}
+  .verifycard .sub{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+  .tokenrow{display:flex;gap:8px;margin-top:14px}
+  .tokenrow input{flex:1;min-width:0;background:var(--elevated);border:1px solid var(--hairline);border-radius:10px;padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text);outline:none}
+  .tokenrow input:focus{border-color:var(--tint-amber-bd)}
+  .vresult{margin-top:13px;display:flex;align-items:center;gap:11px;background:var(--tint-salvia);border:1px solid var(--tint-salvia-bd);border-radius:12px;padding:11px 13px}
+  .vresult .pf{width:34px;height:34px;border-radius:999px;flex:none;background:radial-gradient(50% 40% at 50% 35%,#EBCDAC,#C99B73 60%,rgba(0,0,0,0)),linear-gradient(160deg,#3C3654,#14101d)}
+  .vresult .t{font-size:12px;color:var(--text)}.vresult .t b{color:var(--verified)}
+  .vresult .t small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
+  .marks{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+  .mark{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--hairline);border-radius:999px;padding:6px 11px;display:inline-flex;gap:6px;align-items:center}
+  .mark .d{width:6px;height:6px;border-radius:999px;background:var(--verified)}
+
+  /* PER CHI */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
+  .pcard{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--hairline);border-radius:22px;padding:30px}
+  .pcard .glow{position:absolute;inset:0;pointer-events:none}
+  .pcard.sell .glow{background:radial-gradient(70% 80% at 0% 0%,rgba(127,174,150,0.12),transparent 65%)}
+  .pcard.buy .glow{background:radial-gradient(70% 80% at 100% 0%,rgba(242,169,59,0.14),transparent 65%)}
+  .pcard .rel{position:relative}
+  .pcard h3{font-weight:300;font-size:clamp(1.5rem,2.5vw,2rem);letter-spacing:-0.03em;margin-top:8px}
+  .pcard p{font-size:14px;color:var(--muted);margin-top:12px;max-width:38ch;line-height:1.6}
+  .pcard .btn{margin-top:22px}
+
+  /* CTA finale */
+  .final{position:relative;overflow:hidden;border:1px solid var(--hairline);border-radius:28px;padding:80px 24px;text-align:center;background:
+    radial-gradient(60% 120% at 30% 0%, rgba(238,122,112,0.16), transparent 60%),
+    radial-gradient(60% 120% at 80% 100%, rgba(242,169,59,0.18), transparent 60%),
+    var(--surface)}
+  .final h2{font-weight:200;font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:-0.04em;line-height:1.05;max-width:18ch;margin:0 auto}
+  .final h2 .am{color:var(--amber)}
+  .final p{color:var(--muted);font-size:15px;margin:16px auto 0;max-width:40ch}
+  .final .btn{margin-top:30px}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--hairline);margin-top:90px;padding:56px 0 28px}
+  .foot{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-between}
+  .foot .brand{max-width:30ch}
+  .foot .brand .payoff{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);margin-top:12px}
+  .foot .cols{display:flex;gap:48px;flex-wrap:wrap}
+  .foot .col h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+  .foot .col a{display:block;font-size:13px;color:var(--faint);margin-bottom:9px;transition:.15s}.foot .col a:hover{color:var(--text)}
+  .bigword{font-weight:700;text-align:center;letter-spacing:-0.04em;line-height:.8;margin-top:30px;font-size:clamp(4rem,18vw,12rem);background:linear-gradient(to bottom,rgba(242,233,216,.08),transparent);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none}
+
+  .stamp{position:fixed;right:14px;bottom:12px;z-index:60;font-family:var(--mono);font-size:10px;color:var(--faint);background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:5px 11px}
+
+  @media(max-width:880px){
+    .navlinks{display:none}
+    .proof{grid-template-columns:1fr}.verifycard{position:static}
+    .steps{grid-template-columns:1fr}.two{grid-template-columns:1fr}.faces{grid-template-columns:repeat(3,1fr)}
+    section.blk{padding:64px 0}
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap navin">
+    <div class="logo"><span class="sh"></span>Sem<b>blic</b></div>
+    <div class="navlinks">
+      <a href="#come">Come funziona</a>
+      <a href="#registro">Registro</a>
+      <a href="#perchi">Per chi</a>
+      <a href="#">Prezzi</a>
+      <a href="#">Trasparenza</a>
+    </div>
+    <div class="navr">
+      <a class="login" href="#">Accedi</a>
+      <a class="btn sm" href="#">Entra in Semblic</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="bgvid"></div>
+  <div class="grain"></div>
+  <div class="in wrap">
+    <span class="kicker">Il filtro di tutela umana</span>
+    <h1>Real Humans. Real Rights. Real <span class="am">Earnings</span>.</h1>
+    <p class="sub">Il filtro che impedisce all'AI di generare un essere umano senza il permesso di una persona reale: <b>riconosciuta, protetta e pagata</b>, ogni volta.</p>
+    <div class="cta">
+      <a class="btn" href="#">Metti il tuo volto</a>
+      <a class="btn ghost" href="#registro">Trova un volto</a>
+    </div>
+    <div class="strip">
+      <span class="chip"><span class="dot amber"></span><b>142</b> volti nel registro</span>
+      <span class="chip"><span class="dot salvia"></span>ogni token <b>verificabile</b></span>
+      <span class="chip"><span class="dot coral"></span><b>37</b> generazioni rifiutate questo mese</span>
+    </div>
+  </div>
+</header>
+
+<!-- HOOK -->
+<section class="hook"><div class="in wrap">
+  <div class="p1">L'AI fabbrica persone che non esistono.</div>
+  <div class="p2">Noi facciamo l'opposto: ogni volto e una <span class="am">persona vera</span> che ha detto si.</div>
+</div></section>
+
+<!-- COME FUNZIONA -->
+<section class="blk" id="come"><div class="wrap">
+  <div class="seclab"><span class="kicker">Come funziona</span><span class="ln"></span></div>
+  <h2 class="dh">Tre passi, una regola sola.</h2>
+  <p class="lead">Se nessuna persona reale ha acconsentito, l'AI non genera. E un confine, non un'opzione.</p>
+  <div class="steps">
+    <div class="step s1"><div class="ic">&#9678;</div><div class="n">01</div><h3>Una persona reale entra.</h3><p>Viene verificata, firma il consenso e sceglie dove la sua immagine puo vivere.</p></div>
+    <div class="step s2"><div class="ic">&#9632;</div><div class="n">02</div><h3>Una richiesta arriva.</h3><p>Chi crea descrive cio che gli serve. Se non esiste un volto consenziente adatto, non si genera.</p></div>
+    <div class="step s3"><div class="ic">&#9650;</div><div class="n">03</div><h3>Il valore torna alla persona.</h3><p>A ogni utilizzo una royalty matura nel portafoglio di chi ha messo il proprio volto.</p></div>
+  </div>
+</div></section>
+
+<!-- REGISTRO VIVO -->
+<section class="blk" id="registro" style="padding-top:0"><div class="wrap">
+  <div class="seclab"><span class="kicker">Il registro vivo</span><span class="ln"></span></div>
+  <h2 class="dh">Persone vere, prova inclusa.</h2>
+  <p class="lead">Ogni volto ha un passaporto pubblico e un token verificabile da chiunque. Non chiediamo fiducia, la rendiamo verificabile.</p>
+  <div class="proof">
+    <div class="faces">
+      <div class="face"><div class="ph" style="background:radial-gradient(46% 40% at 50% 36%,#EFD3B2,#C99B73 45%,rgba(0,0,0,0)),linear-gradient(158deg,#3E3858,#14101d)"></div><div class="scrim"></div><span class="v">&#10003; verificato</span><div class="meta"><div class="al">Giulia V.</div><div class="tr">SOUL · @giulia-v</div></div></div>
+      <div class="face"><div class="ph" style="background:radial-gradient(46% 40% at 50% 36%,#E8C9A8,#9C7A4E 45%,rgba(0,0,0,0)),linear-gradient(158deg,#2f3a44,#14101d)"></div><div class="scrim"></div><span class="v">&#10003; verificato</span><div class="meta"><div class="al">Mario R.</div><div class="tr">SOUL · @mario-r</div></div></div>
+      <div class="face"><div class="ph" style="background:radial-gradient(46% 40% at 50% 36%,#d8b89a,#6a4a3a 45%,rgba(0,0,0,0)),linear-gradient(158deg,#3a2f3e,#14101d)"></div><div class="scrim"></div><span class="v">&#10003; verificato</span><div class="meta"><div class="al">Amara N.</div><div class="tr">SOUL · @amara-n</div></div></div>
+      <div class="face"><div class="ph" style="background:radial-gradient(46% 40% at 50% 36%,#f0d6b0,#b08a5a 45%,rgba(0,0,0,0)),linear-gradient(158deg,#33384a,#14101d)"></div><div class="scrim"></div><span class="v">&#10003; verificato</span><div class="meta"><div class="al">Kenji T.</div><div class="tr">SHAPE · @kenji-t</div></div></div>
+      <div class="face"><div class="ph" style="background:radial-gradient(46% 40% at 50% 36%,#eccaa6,#8a6a4a 45%,rgba(0,0,0,0)),linear-gradient(158deg,#2e3640,#14101d)"></div><div class="scrim"></div><span class="v">&#10003; verificato</span><div class="meta"><div class="al">Sofia M.</div><div class="tr">HUMAN · @sofia-m</div></div></div>
+      <div class="face"><div class="ph" style="background:radial-gradient(46% 40% at 50% 36%,#e6c6a0,#7a5a44 45%,rgba(0,0,0,0)),linear-gradient(158deg,#3c3450,#14101d)"></div><div class="scrim"></div><span class="v">&#10003; verificato</span><div class="meta"><div class="al">Luca B.</div><div class="tr">SPARK · @luca-b</div></div></div>
+    </div>
+    <div class="verifycard">
+      <h4>Verifica un contenuto</h4>
+      <div class="sub">Incolla un token e scopri chi c'e dietro, e con quale consenso.</div>
+      <div class="tokenrow"><input id="tok" value="a7f3c9e1d2b80456e9..."><button class="btn sm" id="vbtn">Verifica</button></div>
+      <div class="vresult" id="vres">
+        <div class="pf"></div>
+        <div class="t"><b>&#10003; VALIDO</b><small>Giulia V. · Fashion · consenso attivo</small></div>
+      </div>
+      <div class="marks">
+        <span class="mark"><span class="d"></span>Passaporto pubblico</span>
+        <span class="mark"><span class="d"></span>Token certificato</span>
+        <span class="mark"><span class="d"></span>Royalty alla persona</span>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- PER CHI -->
+<section class="blk" id="perchi" style="padding-top:0"><div class="wrap">
+  <div class="seclab"><span class="kicker">Per chi</span><span class="ln"></span></div>
+  <div class="two">
+    <div class="pcard sell"><div class="glow"></div><div class="rel">
+      <span class="kicker" style="color:var(--verified)">Per chi mette il volto</span>
+      <h3>Il tuo volto, alle tue condizioni.</h3>
+      <p>Decidi dove la tua immagine puo apparire, e dove mai. Ogni volta che viene usata, guadagni. Ogni volta che cambi idea, comandi tu.</p>
+      <a class="btn" href="#">Candida il tuo volto</a>
+    </div></div>
+    <div class="pcard buy"><div class="glow"></div><div class="rel">
+      <span class="kicker">Per i brand</span>
+      <h3>Volti che puoi usare senza paura.</h3>
+      <p>Ogni volto e verificato e consenziente, per categorie d'uso dichiarate. Niente cause, niente volti rubati, prova di provenienza in ogni contenuto.</p>
+      <a class="btn ghost" href="#registro">Sfoglia il catalogo</a>
+    </div></div>
+  </div>
+</div></section>
+
+<!-- CTA FINALE -->
+<section class="blk" style="padding-top:0"><div class="wrap">
+  <div class="final">
+    <span class="kicker" style="color:var(--blocked)">L'appello</span>
+    <h2 style="margin-top:14px">L'epoca dei volti senza nome <span class="am">finisce qui</span>.</h2>
+    <p>Unisciti alle persone che hanno deciso di possedere la propria immagine nell'era dell'AI.</p>
+    <a class="btn" href="#">Entra in Semblic</a>
+  </div>
+</div></section>
+
+<!-- FOOTER -->
+<footer><div class="wrap">
+  <div class="foot">
+    <div class="brand">
+      <div class="logo"><span class="sh"></span>Sem<b>blic</b></div>
+      <p style="font-size:13px;color:var(--faint);margin-top:12px;line-height:1.6">Il registro dei diritti d'immagine. Il filtro di tutela umana sopra ogni AI generativa.</p>
+      <div class="payoff">REAL HUMANS · REAL RIGHTS · REAL EARNINGS</div>
+    </div>
+    <div class="cols">
+      <div class="col"><h5>Piattaforma</h5><a href="#">Registro</a><a href="#">La scansione</a><a href="#">Prezzi</a><a href="#">Verifica</a><a href="#">Studio</a></div>
+      <div class="col"><h5>Fiducia</h5><a href="#">Trasparenza</a><a href="#">Sviluppatori</a><a href="#">FAQ</a><a href="#">Blog</a></div>
+      <div class="col"><h5>Legale</h5><a href="#">Privacy</a><a href="#">Termini</a><a href="#">Contatti</a></div>
+    </div>
+  </div>
+  <div class="bigword">SEMBLIC</div>
+</div></footer>
+
+<div class="stamp">SEMBLIC · proposta home · 2026-06-18</div>
+
+<script>
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>20),{passive:true});
+  // demo verifica
+  const vres=document.getElementById('vres'),tok=document.getElementById('tok');
+  document.getElementById('vbtn').addEventListener('click',()=>{vres.style.display='flex';vres.animate?vres.animate([{opacity:.3},{opacity:1}],{duration:250}):0;});
+  tok.addEventListener('input',()=>{const ok=tok.value.trim().length>6;vres.style.opacity=ok?1:.4;});
+</script>
+</body>
+</html>

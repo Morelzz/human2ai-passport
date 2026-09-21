@@ -1,13 +1,15 @@
 // ──────────────────────────────────────────────────────────────────────────
-// SCENE DI GRUPPO "un volto alla volta" (19/9/2026). Provato su Higgsfield con
-// Gabriella e Stella: in un colpo solo Stella usciva al 64%, rifacendo solo il
-// suo volto con le sue foto e' salita all'82% (Gabriella ferma all'82%).
-// Il procedimento:
-//  1. la scena con tutti i protagonisti, poche foto per persona e l'ordine
-//     da sinistra a destra dichiarato;
-//  2. per ogni protagonista un passaggio che rifa' SOLO il suo volto con
-//     tutte le sue foto vere (la posizione si legge dal primo scatto);
-//  3. la misura di ognuno (lib/identity-score).
+// SCENE DI GRUPPO (19/9/2026, metodo rifatto il 21/9). Il procedimento:
+//  1. UNA scena con tutti i protagonisti, le foto SCELTE di ognuno
+//     (lib/riferimenti-scelti) e l'ordine da sinistra a destra dichiarato;
+//  2. la misura di ognuno (lib/identity-score);
+//  3. solo chi non viene riconosciuto si ritocca, al massimo due volte, e il
+//     ritocco si tiene solo se migliora.
+// Il "un volto alla volta" a tappeto e' stato ABBANDONATO: serviva a rimediare
+// a riferimenti incoerenti, ma ogni passaggio ridisegna tutta l'immagine. Banco
+// del 21/9 (stessa scena, stessi riferimenti scelti): scena sola 94% e 85%, con
+// due passaggi Gabriella non veniva nemmeno piu' riconosciuta e la pelle usciva
+// maculata; col modello premium 91% e 80%; col vecchio ad alta fedelta' 73% e 61%.
 // Il motore e' iniettato (genera): cosi' si prova senza spendere.
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -76,9 +78,9 @@ export interface EsitoGruppo {
   png: Buffer;
   misura: MisuraSomiglianza | null;
   costoCent: number;
-  passaggi: number;
+  passaggi: number; // 1 = solo la scena; 2 o 3 = con i ritocchi mirati
   volti: number; // volti trovati nel primo scatto
-  ripassato: string | null; // chiave della persona ripassata una seconda volta
+  ripassato: string | null; // chi e' stato ritoccato (se qualcuno)
 }
 
 // Esegue la scena di gruppo. riferimenti = impronte delle foto vere (una per protagonista,
@@ -89,9 +91,6 @@ export async function eseguiGruppo(opts: {
   riferimenti: (Riferimento | null)[];
   genera: Genera;
   fotografia?: string | null;
-  // modo "applica": se una persona resta sotto soglia si rifa' il suo volto una
-  // volta e si tiene la versione migliore
-  ripassa?: boolean;
   volti?: (png: Buffer) => Promise<{ x?: number; lato: number; desc: number[] }[]>;
 }): Promise<EsitoGruppo> {
   const { scena, persone, genera } = opts;
@@ -100,7 +99,15 @@ export async function eseguiGruppo(opts: {
   const k = fotoPerPersona(persone.length);
   let costo = 0;
 
-  // 1) la scena, fino a due tentativi per avere tutti i volti in quadro
+  const rif = opts.riferimenti.filter((r): r is Riferimento => Boolean(r));
+  const misura_ = async (png: Buffer): Promise<MisuraSomiglianza | null> => {
+    if (!rif.length) return null;
+    try { return abbina(await trova(png), rif); } catch { return null; }
+  };
+  const peggiore = (m: MisuraSomiglianza) => Math.max(...m.persone.map((p) => p.distanza ?? 9));
+
+  // 1) LA SCENA, con le foto scelte di ognuno. Fino a due tentativi se manca
+  //    qualche volto in quadro.
   let corrente: Buffer | null = null;
   let trovati = 0;
   for (let t = 0; t < 2; t++) {
@@ -114,41 +121,33 @@ export async function eseguiGruppo(opts: {
   }
   if (!corrente) throw new Error("La scena di gruppo non e' uscita.");
 
-  // 2) un passaggio per protagonista, da sinistra a destra
-  for (let i = 0; i < persone.length; i++) {
-    const r = await genera(promptPassaggio(i, persone.length), [corrente, ...persone[i].foto.slice(0, MAX_IMMAGINI - 1)]);
-    costo += r.costoCent;
-    corrente = r.png;
-  }
-
-  // 3) misura di tutti
-  const rif = opts.riferimenti.filter((r): r is Riferimento => Boolean(r));
-  const misura_ = async (png: Buffer): Promise<MisuraSomiglianza | null> => {
-    if (!rif.length) return null;
-    try { return abbina(await trova(png), rif); } catch { return null; }
-  };
   let misura = await misura_(corrente);
-  let passaggi = persone.length;
+  let passaggi = 1;
   let ripassato: string | null = null;
 
-  // 4) in "applica": la persona piu' lontana sotto soglia si ripassa una volta
-  if (opts.ripassa && misura && !verdetto(misura).ok) {
+  // 2) SOLO CHI NON TORNA si rifa'. Banco del 21/9: con le foto di riferimento
+  //    scelte, la scena da sola tiene 94% e 85%; rifacendo i volti a tappeto si
+  //    scendeva a "volto non riconosciuto" e pelle impastata, perche' ogni
+  //    passaggio ridisegna TUTTA l'immagine. Quindi al massimo due ritocchi
+  //    mirati, e solo se la misura li chiede; si tiene la versione migliore.
+  const MAX_RITOCCHI = 2;
+  for (let n = 0; n < MAX_RITOCCHI && misura && !verdetto(misura).ok; n++) {
     const sotto = misura.persone
       .filter((p) => p.distanza == null || p.distanza > p.soglia)
       .sort((a, b) => (b.distanza ?? 9) - (a.distanza ?? 9))[0];
     const i = sotto ? persone.findIndex((p) => p.handle === sotto.chiave) : -1;
-    if (i >= 0) {
-      const r = await genera(promptPassaggio(i, persone.length), [corrente, ...persone[i].foto.slice(0, MAX_IMMAGINI - 1)]);
-      costo += r.costoCent;
-      passaggi++;
-      const nuova = await misura_(r.png);
-      const peggiore = (m: MisuraSomiglianza) => Math.max(...m.persone.map((p) => p.distanza ?? 9));
-      if (nuova && peggiore(nuova) < peggiore(misura)) {
-        corrente = r.png;
-        misura = nuova;
-        ripassato = persone[i].handle;
-      }
-    }
+    if (i < 0) break;
+    const r = await genera(promptPassaggio(i, persone.length), [corrente, ...persone[i].foto.slice(0, MAX_IMMAGINI - 1)]);
+    costo += r.costoCent;
+    passaggi++;
+    const nuova = await misura_(r.png);
+    // Il ritocco si tiene solo se migliora davvero: se peggiora, si resta com'era.
+    if (nuova && peggiore(nuova) < peggiore(misura)) {
+      corrente = r.png;
+      misura = nuova;
+      ripassato = persone[i].handle;
+    } else break;
   }
+
   return { png: corrente, misura, costoCent: costo, passaggi, volti: trovati, ripassato };
 }
