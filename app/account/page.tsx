@@ -20,6 +20,8 @@ import { ContentsGrid, type GridItem } from "@/components/account/ContentsGrid";
 import { VideoStrip, type VideoItem } from "@/components/account/VideoStrip";
 import { voltBalance, LOW_BALANCE_THRESHOLD } from "@/lib/volt";
 import { ActiveJobs, type ActiveJob } from "@/components/account/ActiveJobs";
+import { Linguette, VaiAllaScheda, type Scheda } from "@/components/account/Linguette";
+import { Quadro, type Numero } from "@/components/account/Quadro";
 import { eOperatore } from "@/lib/operatori";
 
 const ROLE_LABEL: Record<string, string> = {
@@ -64,11 +66,17 @@ export default async function AccountPage() {
   let revenue: RevenueStats | null = null; // serie 30g + categorie (dolore #1: revenue visibili)
   if (role === "seller") {
     const admin = createServerClient();
-    const { data: av } = await admin
+    // ATTENZIONE: maybeSingle() con DUE volti dello stesso proprietario torna
+    // errore e data null, e il creatore non vedeva piu' un euro dei suoi
+    // guadagni (trovato il 22/9 sull'account demo, che ne ha due). Si prende
+    // quello che conta: prima chi non si e' ritirato, poi il piu' usato.
+    const { data: avs } = await admin
       .from("avatars")
-      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count, owner_wallet, gender, age_range, ethnicity, hair_color, commercial_consent")
+      .select("id, handle, soul_ref, royalty_accrued_cents, usage_count, owner_wallet, gender, age_range, ethnicity, hair_color, commercial_consent, revoked_at")
       .eq("owner_id", user.id)
-      .maybeSingle();
+      .order("usage_count", { ascending: false, nullsFirst: false })
+      .limit(10);
+    const av = (avs ?? []).find((x) => !x.revoked_at) ?? (avs ?? [])[0] ?? null;
     myAvatar = av?.handle ?? null;
     myWallet = (av as { owner_wallet?: string } | null)?.owner_wallet ?? null;
     soulActive = !!av?.soul_ref;
@@ -230,358 +238,401 @@ export default async function AccountPage() {
     }
   }
 
+  // ── Operatore: quante cose aspettano una risposta ──────────────────────
+  let daKyc = 0;
+  let daVolti = 0;
+  let daSegnalazioni = 0;
+  if (operatore) {
+    const [k, v, s] = await Promise.all([
+      admin2.from("profiles").select("id", { count: "exact", head: true }).eq("kyc_status", "pending"),
+      admin2.from("avatars").select("id", { count: "exact", head: true }).eq("verification_status", "pending"),
+      admin2.from("abuse_reports").select("id", { count: "exact", head: true }).eq("status", "open"),
+    ]);
+    daKyc = k.count ?? 0;
+    daVolti = v.count ?? 0;
+    daSegnalazioni = s.count ?? 0;
+  }
+  const daOperatore = daKyc + daVolti + daSegnalazioni + messaggiAperti;
+
+  // ── I QUATTRO NUMERI IN TESTA ──────────────────────────────────────────
+  const numeri: Numero[] = [];
+  if (volt !== null) {
+    numeri.push({
+      v: `⚡ ${volt.toLocaleString("it-IT")}`,
+      e: volt <= 0 ? "VOLT · energia esaurita" : volt < LOW_BALANCE_THRESHOLD ? "VOLT · batteria quasi scarica" : "VOLT · i crediti per generare",
+      acceso: true,
+    });
+  }
+  if (role === "seller" && myAvatar) {
+    numeri.push({ v: formatEur(royaltyCents).replace("€", "").trim(), unita: "EUR", e: "Guadagnato col tuo volto" });
+  }
+  if (myGenerations.length > 0) {
+    numeri.push({
+      v: String(myGenerations.length),
+      e: myVideos.length > 0 ? `Contenuti tuoi · ${myVideos.length} video` : "Contenuti tuoi",
+    });
+  }
+  if (role === "seller" && myAvatar) {
+    numeri.push({ v: String(usageCount), e: "Volte che ti hanno usato" });
+  }
+
+  // ── I MATTONI DELLE SCHEDE ─────────────────────────────────────────────
+  const cardVolt = volt !== null && (
+    <div className="card bg-[radial-gradient(58%_46%_at_97%_-12%,var(--amber-soft),transparent_62%)] p-5">
+      <p className="kicker">I TUOI VOLT</p>
+      <div className="mt-2 flex items-baseline gap-2">
+        <span aria-hidden className="text-[1.3rem]">⚡</span>
+        <span className={`text-[2.6rem] font-bold leading-none tracking-[-0.045em] ${volt <= 0 ? "text-blocked" : volt < LOW_BALANCE_THRESHOLD ? "text-amber-ink" : ""}`}>
+          {volt.toLocaleString("it-IT")}
+        </span>
+      </div>
+      <p className="mt-2.5 text-[0.82rem] leading-relaxed text-muted">
+        {volt <= 0
+          ? "Energia esaurita: ricarica per generare."
+          : volt < LOW_BALANCE_THRESHOLD
+            ? "Batteria quasi scarica."
+            : "Un VOLT è un centesimo. Uno scatto in Alta ne costa 24."}
+      </p>
+      <Link href="/account/volt" className="mt-4 block rounded-full bg-amber px-4 py-2.5 text-center text-[0.88rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">
+        Ricarica
+      </Link>
+    </div>
+  );
+
+  const cardStato = (
+    <div className="card p-5">
+      <p className="kicker">IL TUO ACCOUNT</p>
+      <div className="mt-3 flex flex-col">
+        <Riga k="Tipo di account" v={ROLE_LABEL[role] ?? role} />
+        {role === "seller" && <Riga k="Verifica identità (KYC)" v={kyc.text} colore={kyc.color} />}
+        {role === "seller" && myAvatar && <Riga k="Il tuo volto" v={`@${myAvatar}`} />}
+      </div>
+      {role === "seller" && (profile?.kyc_status ?? "none") !== "approved" && (
+        <Link href="/account/verify" className="mt-4 block rounded-full bg-amber px-4 py-2.5 text-center text-[0.88rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">
+          {profile?.kyc_status === "rejected" ? "Riprova la verifica" : "Verifica ora la tua identità"}
+        </Link>
+      )}
+      {role === "buyer" && (user.user_metadata as { account_intent?: string } | null)?.account_intent === "enterprise" && (
+        <Link href="/enterprise/register" className="mt-4 block rounded-full bg-amber px-4 py-2.5 text-center text-[0.88rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">
+          Completa la registrazione della tua azienda
+        </Link>
+      )}
+    </div>
+  );
+
+  const cardProtezione = protection && (
+    <div className="card border-amber/35 p-5">
+      <p className="kicker">IL TUO VOLTO È PROTETTO</p>
+      <div className="mt-3 flex items-center gap-2 rounded-xl border border-verified/30 bg-verified-soft px-3 py-2.5">
+        <span aria-hidden className="h-[7px] w-[7px] shrink-0 rounded-full bg-verified" />
+        <span className="text-[0.82rem] font-bold text-on-verified">Dentro Semblic il tuo volto non può essere generato né concesso.</span>
+      </div>
+      {protection.total > 0 ? (
+        <>
+          <div className="mt-4 flex items-baseline gap-2">
+            <span className="text-[2.1rem] font-bold leading-none tracking-[-0.04em]">{protection.total}</span>
+            <span className="text-[0.85rem] leading-snug text-muted">
+              {protection.total === 1 ? "volta il tuo volto è stato riconosciuto" : "volte il tuo volto è stato riconosciuto"} in immagini caricate su Semblic
+              {protection.last30 > 0 && ` (${protection.last30} negli ultimi 30 giorni)`}
+            </span>
+          </div>
+          <p className="mt-2.5 text-[0.82rem] leading-relaxed text-muted">
+            Qualcuno ha caricato qui un&apos;immagine in cui compare il tuo volto: può essere un contenuto creato fuori da Semblic. Conserviamo la traccia per te.
+          </p>
+          <div className="mt-4 flex flex-col">
+            {protection.recent.map((a) => (
+              <div key={a.id} className="flex items-center justify-between border-t border-hairline-soft py-2 text-[0.8rem]">
+                <span className="text-muted">{new Date(a.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                {a.similarity !== null && <span className="font-bold text-amber-ink">somiglianza ~{a.similarity}%</span>}
+              </div>
+            ))}
+          </div>
+          {protection.total > protection.recent.length && (
+            <p className="mt-2 text-[0.72rem] text-faint">e altri {protection.total - protection.recent.length} eventi più vecchi.</p>
+          )}
+          <Link href="/signup/avatar/protected" className="mt-4 block rounded-full border border-amber/40 bg-amber-soft px-4 py-2.5 text-center text-[0.85rem] font-bold text-amber-ink transition-colors hover:border-amber">
+            Gestisci la tua protezione
+          </Link>
+        </>
+      ) : (
+        <p className="mt-4 text-[0.82rem] leading-relaxed text-muted">
+          Nessun tentativo rilevato finora. Se qualcuno carica su Semblic un&apos;immagine col tuo volto, lo vedrai qui.
+        </p>
+      )}
+      <p className="mt-4 text-[0.7rem] leading-relaxed text-faint">
+        Dentro Semblic la protezione è garantita lato server. Fuori da qui possiamo avvisarti e aiutarti a chiedere la rimozione, non impedirlo in assoluto. La tutela legale è in revisione.
+      </p>
+    </div>
+  );
+
+  const cardVolto = role === "seller" && (
+    <div className="card p-5">
+      <p className="kicker">IL TUO VOLTO</p>
+      {myAvatar ? (
+        <div className="mt-3 flex flex-col gap-3">
+          {soulActive ? (
+            <div className="flex items-center gap-2 rounded-xl border border-verified/30 bg-verified-soft px-3 py-2.5">
+              <span aria-hidden className="h-[7px] w-[7px] shrink-0 rounded-full bg-verified" />
+              <span className="text-[0.82rem] font-bold text-on-verified">Soul attivo, il tuo avatar è generabile</span>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-amber/25 bg-[var(--bg)] p-4">
+              <p className="kicker mb-3">ATTIVA IL TUO SOUL</p>
+              <SoulActivate />
+            </div>
+          )}
+          <Link href={`/passport/${myAvatar}`} className="block rounded-full border border-amber/30 bg-amber-soft px-4 py-2.5 text-center text-[0.85rem] font-semibold transition-colors hover:border-amber">
+            Vai al tuo passaporto pubblico
+          </Link>
+          <Link href="/account/consent" className="block rounded-full border border-border px-4 py-2.5 text-center text-[0.85rem] font-semibold text-muted transition-colors hover:border-amber/60 hover:text-foreground">
+            Gestisci il consenso
+          </Link>
+          <LinkWallet initialWallet={myWallet} />
+        </div>
+      ) : isVerifiedSeller ? (
+        <Link href="/account/avatar" className="mt-3 block rounded-full bg-amber px-4 py-2.5 text-center text-[0.88rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">
+          Crea il tuo avatar nel registro
+        </Link>
+      ) : (
+        <p className="mt-3 text-[0.85rem] leading-relaxed text-muted">Verifica prima la tua identità per poter creare il tuo avatar.</p>
+      )}
+    </div>
+  );
+
+  const cardPortafoglio = role === "seller" && myAvatar && (
+    <div className="card bg-[radial-gradient(55%_38%_at_97%_-10%,var(--verified-soft),transparent_60%)] p-5">
+      <p className="kicker">IL TUO PORTAFOGLIO</p>
+      <div className="mt-3">
+        <span className="text-[0.8rem] text-muted">Royalty accumulate</span>
+        <div className="mt-0.5 flex flex-wrap items-baseline gap-2.5">
+          <span className="text-[2.9rem] font-bold leading-none tracking-[-0.04em] text-verified">{formatEur(royaltyCents)}</span>
+          {revenue && revenue.last30Cents > 0 && (
+            <span className="text-[0.85rem] font-bold text-amber-ink">
+              +{formatEur(revenue.last30Cents)} <span className="font-medium text-muted">ultimi 30 giorni</span>
+              {revenue.deltaPct !== null && (
+                <span className={revenue.deltaPct >= 0 ? "ml-1.5 text-verified" : "ml-1.5 text-blocked"}>
+                  {revenue.deltaPct >= 0 ? "▲" : "▼"} {Math.abs(revenue.deltaPct)}%
+                </span>
+              )}
+            </span>
+          )}
+        </div>
+        <p className="mt-2 text-[0.78rem] text-faint">{usageCount} utilizzi totali</p>
+      </div>
+
+      {revenue && (
+        <div className="mt-5">
+          <RoyaltyCharts stats={revenue} />
+        </div>
+      )}
+
+      <Link href="/account/attivita" className="mt-5 block rounded-full border border-verified/30 bg-verified-soft px-4 py-2 text-center text-[0.82rem] font-bold text-on-verified transition-colors hover:border-verified">
+        Attività del mio volto
+      </Link>
+
+      <div className="mt-5 h-2 overflow-hidden rounded-full bg-[var(--hairline)]">
+        <div className="h-full bg-[linear-gradient(90deg,var(--amber-c),var(--verified-c))]" style={{ width: `${Math.min(100, (royaltyCents / PAYOUT_THRESHOLD_CENTS) * 100)}%` }} />
+      </div>
+      <p className="mt-1.5 text-[0.76rem] text-muted">Soglia di pagamento: {formatEur(PAYOUT_THRESHOLD_CENTS)}</p>
+
+      <div className="mt-4">
+        <PayoutButton eligible={royaltyCents >= PAYOUT_THRESHOLD_CENTS} amount={formatEur(royaltyCents)} />
+      </div>
+
+      {payouts.length > 0 && (
+        <div className="mt-6 border-t border-hairline pt-4">
+          <p className="kicker mb-3">STORICO PAGAMENTI</p>
+          <div className="flex flex-col gap-2">
+            {payouts.map((p) => (
+              <div key={p.id} className="flex items-center justify-between">
+                <span className="text-[0.8rem] text-muted">{new Date(p.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                <span className="flex items-center gap-2">
+                  <span className="text-[0.7rem] font-bold uppercase text-verified">{p.status}</span>
+                  <span className="text-[0.88rem] font-bold">{formatEur(p.amount_cents)}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const cardDomanda = role === "seller" && myAvatar && demand && demand.compatible > 0 && (
+    <div className="card p-5">
+      <p className="kicker">IL TUO VOLTO È STATO CERCATO</p>
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="text-[2.1rem] font-bold leading-none tracking-[-0.04em]">{demand.compatible}</span>
+        <span className="text-[0.85rem] leading-snug text-muted">
+          {demand.compatible === 1 ? "ricerca compatibile" : "ricerche compatibili"} col tuo volto negli ultimi {demand.days} giorni
+        </span>
+      </div>
+      {demand.notGranted > 0 && (
+        <>
+          <div className="mt-4 rounded-xl border border-amber/30 bg-amber-soft px-3 py-2.5">
+            <span className="text-[0.82rem] font-bold text-amber-ink">
+              {demand.notGranted === 1 ? "1 era in una categoria che oggi non concedi" : `${demand.notGranted} erano in categorie che oggi non concedi`}
+            </span>
+          </div>
+          <Link href="/account/consent" className="mt-3 block rounded-full border border-amber/30 bg-amber-soft px-4 py-2 text-center text-[0.82rem] font-bold text-amber-ink transition-colors hover:border-amber">
+            Apri nuove categorie, decidi tu
+          </Link>
+        </>
+      )}
+      <p className="mt-4 text-[0.7rem] leading-relaxed text-faint">Registriamo solo la forma della domanda: chi cerca resta anonimo.</p>
+    </div>
+  );
+
+  const cardRecluta = role === "buyer" && !protection && (user.user_metadata as { account_intent?: string } | null)?.account_intent !== "enterprise" && (
+    <div className="rounded-[20px] border border-amber/30 bg-[linear-gradient(135deg,var(--amber-soft),transparent)] p-5">
+      <p className="text-[1.05rem] font-bold tracking-[-0.02em]">Metti il tuo volto nel registro</p>
+      <p className="mt-1.5 text-[0.85rem] leading-relaxed text-muted">
+        Sei una persona reale: il tuo volto può entrare nel registro, restare sotto il tuo consenso e farti guadagnare ogni volta che viene usato. Tu decidi tutto, sempre.
+      </p>
+      <Link href="/scansione" className="mt-4 inline-block rounded-full bg-amber px-5 py-2.5 text-[0.85rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">
+        Scopri come entrare
+      </Link>
+    </div>
+  );
+
+  // In Panoramica solo gli ultimi, con il tasto per andare alla scheda piena:
+  // la stessa griglia due volte sarebbe la stessa pagina due volte.
+  const ultimiContenuti = myGenerations.length > 0 && (
+    <div className="card p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="kicker">GLI ULTIMI CHE HAI FATTO</p>
+          <p className="mt-1.5 text-[0.85rem] text-muted">Ogni scatto porta il suo certificato e la sua ricevuta.</p>
+        </div>
+        <VaiAllaScheda a="contenuti" className="focus-ring shrink-0 rounded-full border border-border px-4 py-2 text-[0.82rem] font-semibold text-muted transition-colors hover:border-amber/60 hover:text-foreground">
+          {myGenerations.length > 4 ? `Vedi tutti e ${myGenerations.length}` : "Vedi tutti"}
+        </VaiAllaScheda>
+      </div>
+      <div className="mt-4">
+        <ContentsGrid items={gridItems.slice(0, 4)} shareVariant="buyer" />
+      </div>
+    </div>
+  );
+
+  const contenuti = myGenerations.length > 0 && (
+    <div className="card p-5">
+      <p className="kicker">I MIEI CONTENUTI</p>
+      <div aria-hidden className="mt-3 mb-4 h-px bg-[linear-gradient(90deg,var(--amber-c),var(--hairline)_38%,transparent_80%)] opacity-60" />
+      <VideoStrip items={myVideos} />
+      <ContentsGrid items={gridItems} shareVariant="buyer" />
+      <p className="mt-4 text-[0.7rem] leading-relaxed text-faint">Ogni contenuto è certificato e la persona reale è stata remunerata.</p>
+    </div>
+  );
+
+  const cardOperatore = operatore && (
+    <div className="flex flex-col gap-4">
+      <div className="card p-5">
+        <p className="kicker">LE COSE DA OPERATORE</p>
+        <p className="mt-2 text-[0.85rem] leading-relaxed text-muted">Il numero rosso è quello che aspetta una risposta.</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <LinkOperatore href="/account/kyc" l="Verifiche identità (KYC)" n={daKyc} />
+          <LinkOperatore href="/account/review" l="Volti da approvare" n={daVolti} />
+          <LinkOperatore href="/account/kyb-review" l="Verifiche aziende (KYB)" n={0} />
+          <LinkOperatore href="/account/reports" l="Segnalazioni di abuso" n={daSegnalazioni} />
+          <LinkOperatore href="/account/messaggi" l="Messaggi dal sito" n={messaggiAperti} />
+          <LinkOperatore href="/account/face-index" l="Indice volti del registro" n={0} />
+        </div>
+      </div>
+      <AnchorPanel />
+      <VoltGrantPanel />
+    </div>
+  );
+
+  const cardOrg = role === "enterprise" && (
+    <div className="flex flex-col gap-4">
+      <OrgAvatars avatars={orgAvatars} kyb={orgKyb} />
+      <Link href="/account/attivita" className="block rounded-full border border-verified/30 bg-verified-soft px-4 py-2.5 text-center text-[0.85rem] font-bold text-on-verified transition-colors hover:border-verified">
+        Attività dei tuoi volti
+      </Link>
+    </div>
+  );
+
+  // ── LE SCHEDE ──────────────────────────────────────────────────────────
+  const schede: Scheda[] = [
+    {
+      id: "panoramica",
+      l: "Panoramica",
+      nodo: (
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_330px]">
+          <div className="flex min-w-0 flex-col gap-4">
+            {activeJobs.length > 0 && <ActiveJobs initial={activeJobs} />}
+            {cardOrg}
+            {cardPortafoglio}
+            {cardDomanda}
+            {cardRecluta}
+            {ultimiContenuti}
+          </div>
+          <div className="flex flex-col gap-4">
+            {cardVolt}
+            {cardStato}
+            {cardProtezione}
+            {cardVolto}
+          </div>
+        </div>
+      ),
+    },
+  ];
+  if (myGenerations.length > 0) {
+    schede.push({ id: "contenuti", l: "I miei contenuti", badge: myGenerations.length, nodo: contenuti });
+  }
+  if (role === "seller") {
+    schede.push({
+      id: "volto",
+      l: "Il mio volto",
+      nodo: (
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_330px]">
+          <div className="flex min-w-0 flex-col gap-4">{cardPortafoglio || <div className="card p-5 text-[0.9rem] text-muted">Quando il tuo volto entra nel registro, qui compaiono guadagni e utilizzi.</div>}{cardDomanda}</div>
+          <div className="flex flex-col gap-4">{cardVolto}</div>
+        </div>
+      ),
+    });
+  }
+  if (protection) {
+    schede.push({ id: "protezione", l: "Protezione", nodo: <div className="max-w-2xl">{cardProtezione}</div> });
+  }
+  if (operatore) {
+    schede.push({ id: "operatore", l: "Operatore", badge: daOperatore || null, nodo: cardOperatore });
+  }
+
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-<div className="relative z-[2]">
+      <div className="relative z-[2]">
         <SiteNav />
         <MarkContentsSeen />
 
-      <section style={{ maxWidth: 560, margin: "0 auto", padding: "3rem 1.5rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.7rem", flexWrap: "wrap", margin: "0 0 0.4rem" }}>
-          <h1 style={{ fontSize: "2.1rem", fontWeight: 700, letterSpacing: "-0.04em", margin: 0 }}>
-            Ciao, {profile?.full_name || "utente"}
-          </h1>
-          {profile?.kyc_status === "approved" && <VerifiedBadge />}
-        </div>
-        <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", margin: "0 0 1.3rem" }}>{user.email}</p>
-        {/* Hairline tramonto, lo stesso filo delle altre superfici */}
-        <div aria-hidden style={{ height: 1, background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 34%, transparent 72%)", marginBottom: "1.6rem" }} />
-
-        <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-          <Row label="Tipo di account" value={ROLE_LABEL[role] ?? role} />
-
-          {/* KYC SOLO per i creatori/venditori. Il compratore accede e basta. */}
-          {role === "seller" && (
-            <>
-              <Row label="Verifica identità (KYC)" value={kyc.text} valueColor={kyc.color} />
-              {(profile?.kyc_status ?? "none") !== "approved" && (
-                <Link
-                  href="/account/verify"
-                  style={{
-                    display: "block",
-                    textAlign: "center",
-                    padding: "0.75rem",
-                    borderRadius: 10,
-                    background: "var(--amber-c)",
-                    color: "var(--on-amber-c)",
-                    fontWeight: 700,
-                    fontSize: "0.85rem",
-                    textDecoration: "none",
-                  }}
-                >
-                  {profile?.kyc_status === "rejected" ? "Riprova la verifica" : "Verifica ora la tua identità"}
-                </Link>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Azienda: chi si è registrato come "Azienda" al signup nasce buyer con
-            l'intento enterprise nel metadata. Finché non completa il KYB resta
-            buyer: qui glielo ricordiamo con un CTA diretto al form (dopo il KYB
-            diventa enterprise e questo blocco sparisce). */}
-        {role === "buyer" && (user.user_metadata as { account_intent?: string } | null)?.account_intent === "enterprise" && (
-          <Link href="/enterprise/register" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
-            Completa la registrazione della tua azienda
-          </Link>
-        )}
-
-        {/* Saldo VOLT: i crediti che alimentano le generazioni. Visibile a tutti
-            (nascosto solo se il sistema VOLT non è configurato). */}
-        {volt !== null && (
-          <div style={{ background: "radial-gradient(55% 42% at 97% -10%, rgba(242,169,59,0.12), transparent 60%), var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
-            <div>
-              <p className="kicker" style={{ margin: "0 0 0.3rem" }}>I TUOI VOLT</p>
-              <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
-                <span aria-hidden style={{ fontSize: "1.4rem" }}>⚡</span>
-                <span style={{ color: volt <= 0 ? "var(--blocked-c)" : volt < LOW_BALANCE_THRESHOLD ? "var(--amber-c)" : "var(--text)", fontSize: "2.6rem", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1 }}>
-                  {volt.toLocaleString("it-IT")}
-                </span>
-              </div>
-              {volt < LOW_BALANCE_THRESHOLD && (
-                <p style={{ color: "var(--text-muted)", fontSize: "0.75rem", margin: "0.4rem 0 0" }}>
-                  {volt <= 0 ? "Energia esaurita: ricarica per generare." : "Batteria quasi scarica."}
-                </p>
-              )}
+        <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
+          {/* ── Testata ── */}
+          <div className="flex flex-wrap items-center gap-4">
+            <span aria-hidden className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--amber-c),#E0715F)] text-[1.25rem] font-bold text-white">
+              {(profile?.full_name || user.email || "?").trim().charAt(0).toUpperCase()}
+            </span>
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-[1.7rem] font-bold leading-tight tracking-[-0.035em] sm:text-[2rem]">
+                Ciao, {profile?.full_name || "utente"}
+              </h1>
+              <p className="truncate font-mono text-[0.78rem] text-faint">{user.email}</p>
             </div>
-            <Link href="/account/volt" style={{ flexShrink: 0, padding: "0.7rem 1.4rem", borderRadius: 999, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
-              Ricarica
-            </Link>
-          </div>
-        )}
-
-        {/* Generazioni asincrone in corso: stato live, niente pagina muta (Fase 1.5). */}
-        {activeJobs.length > 0 && <ActiveJobs initial={activeJobs} />}
-
-        {/* VETO (Fase 2.5) — lo scudo visto dal titolare: protezione attiva +
-            eventuali tentativi di uso del suo volto rilevati su Semblic. "Veto"
-            è il nome interno: in pubblico si parla solo di "volto protetto". */}
-        {protection && (
-          <div style={{ background: "var(--surface)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO VOLTO È PROTETTO</p>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--verified-c)", display: "inline-block", flexShrink: 0 }} />
-              <span style={{ color: "var(--verified-c)", fontSize: "0.82rem", fontWeight: 700 }}>
-                Protezione attiva: dentro Semblic il tuo volto non può essere generato né concesso.
-              </span>
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              {profile?.kyc_status === "approved" && <VerifiedBadge />}
+              <span className="rounded-full border border-border bg-surface px-3 py-1 text-[0.72rem] font-semibold text-muted">{ROLE_LABEL[role] ?? role}</span>
+              <LogoutButton />
             </div>
-
-            {protection.total > 0 ? (
-              <>
-                <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", margin: "1.1rem 0 0.3rem" }}>
-                  <span style={{ color: "var(--text)", fontSize: "2.1rem", fontWeight: 700, letterSpacing: "-0.04em" }}>{protection.total}</span>
-                  <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
-                    {protection.total === 1 ? "volta il tuo volto è stato riconosciuto" : "volte il tuo volto è stato riconosciuto"} in immagini caricate su Semblic
-                    {protection.last30 > 0 && ` (${protection.last30} negli ultimi 30 giorni)`}
-                  </span>
-                </div>
-                <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.6, margin: "0.5rem 0 0" }}>
-                  Qualcuno ha caricato qui un&apos;immagine in cui compare il tuo volto: può essere un contenuto creato fuori da Semblic. Conserviamo la traccia per te.
-                </p>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginTop: "1rem" }}>
-                  {protection.recent.map((a) => (
-                    <div key={a.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--hairline)", paddingTop: "0.45rem" }}>
-                      <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>
-                        {new Date(a.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
-                      </span>
-                      {a.similarity !== null && (
-                        <span style={{ color: "var(--amber-ink)", fontSize: "0.8rem", fontWeight: 700 }}>somiglianza ~{a.similarity}%</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {protection.total > protection.recent.length && (
-                  <p style={{ color: "var(--text-faint)", fontSize: "0.72rem", margin: "0.6rem 0 0" }}>
-                    e altri {protection.total - protection.recent.length} eventi più vecchi.
-                  </p>
-                )}
-
-                <Link href="/signup/avatar/protected" style={{ display: "block", textAlign: "center", padding: "0.7rem", borderRadius: 10, background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--amber-ink)", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "1.1rem" }}>
-                  Gestisci la tua protezione
-                </Link>
-              </>
-            ) : (
-              <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.6, margin: "1rem 0 0" }}>
-                Nessun tentativo rilevato finora. Se qualcuno carica su Semblic un&apos;immagine col tuo volto, lo vedrai qui.
-              </p>
-            )}
-
-            <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
-              Dentro Semblic la protezione è garantita lato server. Fuori da qui possiamo avvisarti e aiutarti a chiedere la rimozione, non impedirlo in assoluto. La tutela legale è in revisione.
-            </p>
           </div>
-        )}
+          <div aria-hidden className="mt-4 h-px bg-[linear-gradient(90deg,var(--amber-c),var(--hairline)_34%,transparent_72%)] opacity-70" />
 
-        {operatore && (
-          <>
-            <Link href="/account/kyc" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
-              Verifiche identità (KYC)
-            </Link>
-            <Link href="/account/review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Coda di revisione operatori
-            </Link>
-            <Link href="/account/kyb-review" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Verifiche aziende (KYB)
-            </Link>
-            <Link href="/account/reports" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(238,122,112,0.1)", border: "1px solid rgba(238,122,112,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Segnalazioni di abuso
-            </Link>
-            <Link href="/account/messaggi" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Messaggi dal sito{messaggiAperti ? ` · ${messaggiAperti} da rispondere` : ""}
-            </Link>
-            <Link href="/account/face-index" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "0.8rem" }}>
-              Indice volti del registro
-            </Link>
-            <AnchorPanel />
-            <VoltGrantPanel />
-          </>
-        )}
+          <Quadro numeri={numeri} />
 
-        {role === "enterprise" && (
-          <>
-            <OrgAvatars avatars={orgAvatars} kyb={orgKyb} />
-            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.85rem", borderRadius: 12, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "var(--verified-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", marginTop: "1.2rem" }}>
-              Attività dei tuoi volti
-            </Link>
-          </>
-        )}
+          <Linguette schede={schede} />
 
-        {role === "seller" && (
-          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO AVATAR</p>
-            {myAvatar ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
-                {/* Stato del Soul */}
-                {soulActive ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem" }}>
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--verified-c)", display: "inline-block" }} />
-                    <span style={{ color: "var(--verified-c)", fontSize: "0.82rem", fontWeight: 700 }}>Soul attivo, il tuo avatar è generabile</span>
-                  </div>
-                ) : (
-                  <div style={{ background: "var(--bg)", border: "1px solid rgba(242,169,59,0.25)", borderRadius: 12, padding: "1.1rem" }}>
-                    <p style={{ color: "var(--amber-ink)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", margin: "0 0 0.8rem" }}>ATTIVA IL TUO SOUL</p>
-                    <SoulActivate />
-                  </div>
-                )}
-                <Link href={`/passport/${myAvatar}`} style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--text)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
-                  Vai al tuo passport pubblico
-                </Link>
-                <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "transparent", border: "1px solid var(--hairline)", color: "var(--text-muted)", fontWeight: 600, fontSize: "0.85rem", textDecoration: "none" }}>
-                  Gestisci il consenso
-                </Link>
-                <LinkWallet initialWallet={myWallet} />
-              </div>
-            ) : isVerifiedSeller ? (
-              <Link href="/account/avatar" style={{ display: "block", textAlign: "center", padding: "0.75rem", borderRadius: 10, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
-                Crea il tuo avatar nel registro
-              </Link>
-            ) : (
-              <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", margin: 0, lineHeight: 1.6 }}>
-                Verifica prima la tua identità per poter creare il tuo avatar.
-              </p>
-            )}
-          </div>
-        )}
-
-        {role === "seller" && myAvatar && (
-          <div style={{ background: "radial-gradient(55% 38% at 97% -10%, rgba(127,174,150,0.12), transparent 60%), var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO WALLET</p>
-
-            {/* Revenue-hero: il guadagno in grande (dolore #1 risolto), col passo
-                degli ultimi 30 giorni e gli utilizzi totali. */}
-            <div style={{ marginBottom: "1.1rem" }}>
-              <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>Royalty accumulate</span>
-              <div style={{ display: "flex", alignItems: "baseline", gap: "0.7rem", flexWrap: "wrap", marginTop: "0.15rem" }}>
-                <span style={{ color: "var(--verified-c)", fontSize: "2.9rem", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1 }}>{formatEur(royaltyCents)}</span>
-                {revenue && revenue.last30Cents > 0 && (
-                  <span style={{ color: "var(--amber-ink)", fontSize: "0.85rem", fontWeight: 700 }}>
-                    +{formatEur(revenue.last30Cents)} <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>ultimi 30 giorni</span>
-                    {revenue.deltaPct !== null && (
-                      <span style={{ color: revenue.deltaPct >= 0 ? "var(--verified-c)" : "var(--blocked-c)", marginLeft: "0.4rem" }}>
-                        {revenue.deltaPct >= 0 ? "▲" : "▼"} {Math.abs(revenue.deltaPct)}%
-                      </span>
-                    )}
-                  </span>
-                )}
-              </div>
-              <p style={{ color: "var(--text-faint)", fontSize: "0.78rem", margin: "0.5rem 0 0" }}>{usageCount} utilizzi totali</p>
-            </div>
-
-            {/* Grafici royalty (30 giorni + per categoria) */}
-            {revenue && (
-              <div style={{ marginBottom: "1.2rem" }}>
-                <RoyaltyCharts stats={revenue} />
-              </div>
-            )}
-
-            <Link href="/account/attivita" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "rgba(127,174,150,0.1)", border: "1px solid rgba(127,174,150,0.3)", color: "var(--verified-c)", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginBottom: "1.2rem" }}>
-              Attività del mio volto
-            </Link>
-
-            {/* Barra verso la soglia di payout */}
-            <div style={{ height: 8, background: "var(--surface)", borderRadius: 999, overflow: "hidden", marginBottom: "0.5rem" }}>
-              <div style={{ height: "100%", width: `${Math.min(100, (royaltyCents / PAYOUT_THRESHOLD_CENTS) * 100)}%`, background: "linear-gradient(90deg,#F2A93B,var(--verified-c))" }} />
-            </div>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.76rem", margin: "0 0 1.2rem" }}>
-              Soglia payout: {formatEur(PAYOUT_THRESHOLD_CENTS)}
-            </p>
-
-            <PayoutButton eligible={royaltyCents >= PAYOUT_THRESHOLD_CENTS} amount={formatEur(royaltyCents)} />
-
-            {/* Storico payout (ledger tracciabile) */}
-            {payouts.length > 0 && (
-              <div style={{ marginTop: "1.5rem", borderTop: "1px solid var(--hairline)", paddingTop: "1.2rem" }}>
-                <p className="kicker" style={{ margin: "0 0 0.8rem" }}>STORICO PAYOUT</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  {payouts.map((p) => (
-                    <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>
-                        {new Date(p.created_at).toLocaleDateString("it-IT", { day: "2-digit", month: "short", year: "numeric" })}
-                      </span>
-                      <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                        <span style={{ color: "var(--verified-c)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase" }}>{p.status}</span>
-                        <span style={{ color: "var(--text)", fontSize: "0.88rem", fontWeight: 700 }}>{formatEur(p.amount_cents)}</span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* E3 — "Il tuo volto è stato cercato": la domanda reale degli ultimi
-            7 giorni vista da questo volto. Compare solo se c'è almeno una
-            ricerca compatibile (e se la tabella match_searches esiste). */}
-        {role === "seller" && myAvatar && demand && demand.compatible > 0 && (
-          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p className="kicker" style={{ margin: "0 0 1rem" }}>IL TUO VOLTO È STATO CERCATO</p>
-
-            <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem", marginBottom: "0.3rem" }}>
-              <span style={{ color: "var(--text)", fontSize: "2.1rem", fontWeight: 700, letterSpacing: "-0.04em" }}>{demand.compatible}</span>
-              <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
-                {demand.compatible === 1 ? "ricerca compatibile" : "ricerche compatibili"} col tuo volto negli ultimi {demand.days} giorni
-              </span>
-            </div>
-
-            {demand.notGranted > 0 && (
-              <>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(242,169,59,0.1)", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 10, padding: "0.7rem 0.9rem", margin: "0.9rem 0 0" }}>
-                  <span style={{ color: "var(--amber-ink)", fontSize: "0.82rem", fontWeight: 700 }}>
-                    {demand.notGranted === 1 ? "1 era in una categoria che oggi non concedi" : `${demand.notGranted} erano in categorie che oggi non concedi`}
-                  </span>
-                </div>
-                <Link href="/account/consent" style={{ display: "block", textAlign: "center", padding: "0.6rem", borderRadius: 10, background: "var(--amber-soft)", border: "1px solid rgba(242,169,59,0.3)", color: "var(--amber-ink)", fontWeight: 700, fontSize: "0.82rem", textDecoration: "none", marginTop: "0.8rem" }}>
-                  Apri nuove categorie, decidi tu
-                </Link>
-              </>
-            )}
-
-            <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
-              Registriamo solo la forma della domanda: chi cerca resta anonimo.
-            </p>
-          </div>
-        )}
-
-        {myGenerations.length > 0 && (
-          <div style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p className="kicker" style={{ margin: "0 0 0.8rem" }}>I MIEI CONTENUTI</p>
-            <div aria-hidden style={{ height: 1, background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 38%, transparent 80%)", margin: "0 0 1rem" }} />
-            <VideoStrip items={myVideos} />
-            <ContentsGrid items={gridItems} shareVariant="buyer" />
-            <p style={{ color: "var(--text-faint)", fontSize: "0.7rem", margin: "1rem 0 0", lineHeight: 1.5 }}>
-              Ogni contenuto è certificato e la persona reale è stata remunerata.
-            </p>
-          </div>
-        )}
-
-        {/* Reclutamento: il buyer è anche una persona reale. L'account stesso
-            invita a mettere il proprio volto nel registro (e a guadagnarci).
-            Non si mostra a chi ha PROTETTO il volto: proteggere e concedere lo
-            stesso volto si escludono (guardia 1:1 server-side, modulo VETO). */}
-        {role === "buyer" && !protection && (user.user_metadata as { account_intent?: string } | null)?.account_intent !== "enterprise" && (
-          <div style={{ background: "linear-gradient(135deg, rgba(242,169,59,0.12), rgba(238,122,112,0.08))", border: "1px solid rgba(242,169,59,0.3)", borderRadius: 16, padding: "1.5rem", marginTop: "1.2rem" }}>
-            <p style={{ color: "var(--text)", fontSize: "1.05rem", fontWeight: 700, margin: "0 0 0.4rem" }}>Metti il tuo volto nel registro</p>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", lineHeight: 1.6, margin: "0 0 1rem" }}>
-              Sei una persona reale: il tuo volto può entrare nel registro, restare sotto il tuo
-              consenso e farti guadagnare ogni volta che viene usato. Tu decidi tutto, sempre.
-            </p>
-            <Link href="/scansione" style={{ display: "inline-block", padding: "0.7rem 1.4rem", borderRadius: 999, background: "var(--amber-c)", color: "var(--on-amber-c)", fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
-              Scopri come entrare
-            </Link>
-          </div>
-        )}
-
-        <div style={{ marginTop: "2rem", display: "flex", justifyContent: "center" }}>
-          <LogoutButton />
-        </div>
-
-        <p style={{ color: "var(--text-faint)", fontSize: "0.78rem", lineHeight: 1.6, marginTop: "1.5rem", textAlign: "center" }}>
-          Il tuo profilo è protetto: solo tu puoi vederlo e modificarlo.
-        </p>
-      </section>
+          <p className="mt-10 text-center text-[0.78rem] leading-relaxed text-faint">
+            Il tuo profilo è protetto: solo tu puoi vederlo e modificarlo.
+          </p>
+        </main>
       </div>
     </div>
   );
@@ -589,22 +640,29 @@ export default async function AccountPage() {
 
 function VerifiedBadge() {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", background: "rgba(127,174,150,0.12)", border: "1px solid rgba(127,174,150,0.35)", borderRadius: 999, padding: "0.25rem 0.7rem" }}>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--verified-c)" strokeWidth="3">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-verified/35 bg-verified-soft px-2.5 py-1">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--verified-c)" strokeWidth="3" aria-hidden>
         <path d="M20 6 9 17l-5-5" />
       </svg>
-      <span style={{ color: "var(--verified-c)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.04em" }}>
-        Creatore verificato
-      </span>
+      <span className="text-[0.72rem] font-bold tracking-[0.04em] text-on-verified">Creatore verificato</span>
     </span>
   );
 }
 
-function Row({ label, value, valueColor = "var(--text)" }: { label: string; value: string; valueColor?: string }) {
+function Riga({ k, v, colore }: { k: string; v: string; colore?: string }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>{label}</span>
-      <span style={{ color: valueColor, fontSize: "0.9rem", fontWeight: 600 }}>{value}</span>
+    <div className="flex items-center justify-between gap-3 border-t border-hairline-soft py-2.5 first:border-t-0 first:pt-0">
+      <span className="text-[0.85rem] text-muted">{k}</span>
+      <span className="text-[0.88rem] font-semibold" style={colore ? { color: colore } : undefined}>{v}</span>
     </div>
+  );
+}
+
+function LinkOperatore({ href, l, n }: { href: string; l: string; n: number }) {
+  return (
+    <Link href={href} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface px-3.5 py-3 text-[0.85rem] font-semibold transition-colors hover:border-amber/60">
+      {l}
+      {n > 0 && <span className="rounded-full bg-blocked-soft px-2 py-px font-mono text-[0.65rem] font-bold text-on-blocked">{n}</span>}
+    </Link>
   );
 }
