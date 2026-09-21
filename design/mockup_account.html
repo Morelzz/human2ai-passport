@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Il tuo account (proposta)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F4EE; --surface:#FFFFFF; --edge:#D9D3C5;
+    --text:#17150F; --muted:#5B564B; --faint:#736D62;
+    --hairline:#E6E1D6; --hairline-soft:#EFEBE2;
+    --verified:#2F7563; --verified-soft:#E3F1EC;
+    --blocked:#B0472B; --blocked-soft:#F8E6E0;
+    --amber:#E29A2E; --amber-soft:#F8E9CF; --amber-ink:#9A4A0B; --on-amber:#412402;
+    --font:"Instrument Sans",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EFEBE2;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+
+  /* telaio della presentazione */
+  .foglio{max-width:1420px;margin:0 auto;padding:34px 22px 80px}
+  .titolone{font-size:30px;font-weight:700;letter-spacing:-.035em}
+  .sotto{color:var(--muted);font-size:15px;max-width:74ch;margin-top:8px}
+  .nota{background:#fff;border:1px solid var(--hairline);border-left:3px solid var(--amber);border-radius:12px;padding:12px 16px;color:var(--muted);font-size:13.5px;margin:18px 0 26px}
+  .nota b{color:var(--text)}
+  .etichetta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink);margin:34px 0 12px;display:block}
+  .schermi{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+
+  /* finestre */
+  .desktop{flex:1 1 820px;min-width:0;border:1px solid var(--edge);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .telefono{flex:0 0 370px;border:1px solid var(--edge);border-radius:30px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .barra{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#EDE8DE;border-bottom:1px solid var(--hairline)}
+  .pallino{width:10px;height:10px;border-radius:50%;background:#D9D3C5}
+  .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+  /* mattoni comuni */
+  .kicker{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink)}
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:20px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;cursor:pointer;font-family:var(--font);font-weight:700;background:var(--amber);color:var(--on-amber);border-radius:999px;padding:11px 20px;font-size:13.5px}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--edge)}
+  .btn.sm{padding:8px 15px;font-size:12.5px}
+  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:600;border:1px solid var(--hairline);background:#fff;color:var(--muted)}
+  .chip .pt{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .chip.ok{background:var(--verified-soft);border-color:rgba(47,117,99,.25);color:var(--verified)}
+  .chip.am{background:var(--amber-soft);border-color:rgba(226,154,46,.35);color:var(--amber-ink)}
+  .chip.no{background:var(--blocked-soft);border-color:rgba(176,71,43,.25);color:var(--blocked)}
+
+  /* nav del sito, finta */
+  .sitenav{display:flex;align-items:center;justify-content:space-between;padding:14px 26px;border-bottom:1px solid var(--hairline);background:rgba(247,244,238,.9)}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.02em}
+  .logo i{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#E29A2E,#E0715F);display:block}
+  .sitenav nav{display:flex;gap:20px;font-size:13.5px;color:var(--muted)}
+
+  /* ── TESTATA DELL'ACCOUNT ── */
+  .testata{padding:26px 26px 0}
+  .riga-nome{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .avatarone{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#E29A2E,#E0715F);display:grid;place-items:center;color:#fff;font-weight:700;font-size:20px;flex-shrink:0}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.035em;line-height:1.1}
+  .email{color:var(--faint);font-size:13px;font-family:var(--mono)}
+  .filo{height:1px;background:linear-gradient(90deg,rgba(226,154,46,.5),var(--hairline) 34%,transparent 72%);margin:18px 0 0}
+
+  /* ── IL QUADRO: i quattro numeri ── */
+  .quadro{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px 26px 0}
+  .numero{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:14px 16px}
+  .numero .v{font-size:27px;font-weight:700;letter-spacing:-.04em;line-height:1.05;display:flex;align-items:baseline;gap:5px}
+  .numero .v small{font-size:13px;font-weight:600;color:var(--faint);letter-spacing:0}
+  .numero .e{font-size:11.5px;color:var(--faint);margin-top:3px}
+  .numero.acceso{background:radial-gradient(60% 50% at 98% -15%,rgba(226,154,46,.16),transparent 62%),var(--surface);border-color:rgba(226,154,46,.35)}
+  .numero.acceso .v{color:var(--amber-ink)}
+
+  /* ── LE LINGUETTE ── */
+  .linguette{display:flex;gap:4px;padding:18px 26px 0;border-bottom:1px solid var(--hairline);overflow-x:auto;scrollbar-width:none}
+  .linguette::-webkit-scrollbar{display:none}
+  .lin{padding:9px 14px 12px;font-size:13.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:7px}
+  .lin.on{color:var(--text);border-bottom-color:var(--amber)}
+  .lin .pill{background:var(--amber-soft);color:var(--amber-ink);border-radius:999px;font-size:10.5px;font-weight:700;padding:1px 6px;font-family:var(--mono)}
+
+  /* ── CORPO ── */
+  .corpo{padding:22px 26px 30px;display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:start}
+  .colonna{display:flex;flex-direction:column;gap:16px;min-width:0}
+
+  .pannello{padding:18px}
+  .pannello h2{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px}
+  .pannello .sub{color:var(--muted);font-size:13px;line-height:1.55}
+  .testa{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+
+  /* in lavorazione */
+  .lav{display:flex;align-items:center;gap:12px;border:1px solid rgba(226,154,46,.35);background:var(--amber-soft);border-radius:14px;padding:12px 14px}
+  .spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(154,74,11,.25);border-top-color:var(--amber-ink);animation:g 1s linear infinite;flex-shrink:0}
+  @keyframes g{to{transform:rotate(360deg)}}
+
+  /* griglia contenuti */
+  .griglia{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .tess{position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:#E7E1D3;border:1px solid var(--hairline)}
+  .tess .ph{position:absolute;inset:0;background:linear-gradient(160deg,#CFC7B6,#EDE8DE 60%,#D9D3C5)}
+  .tess .vel{position:absolute;inset:auto 0 0 0;height:54%;background:linear-gradient(to top,rgba(0,0,0,.55),transparent)}
+  .tess .nome{position:absolute;left:10px;bottom:9px;color:#fff;font-size:12px;font-weight:600;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+  .tess .alto{position:absolute;left:8px;top:8px;display:flex;gap:5px}
+  .mini{border-radius:999px;background:rgba(255,255,255,.92);color:#17150F;font-size:9.5px;font-weight:700;padding:3px 7px;font-family:var(--mono);letter-spacing:.04em}
+  .mini.video{background:rgba(23,21,15,.82);color:#F2E9D8}
+  .mini.ok{background:var(--verified-soft);color:var(--verified)}
+
+  /* righe chiave/valore */
+  .kv{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--hairline-soft);font-size:13.5px}
+  .kv:first-of-type{border-top:0}
+  .kv .k{color:var(--muted)}
+  .kv .v{font-weight:600}
+
+  /* volt */
+  .volt{background:radial-gradient(58% 46% at 97% -12%,rgba(226,154,46,.16),transparent 62%),var(--surface)}
+  .voltnum{font-size:40px;font-weight:700;letter-spacing:-.045em;line-height:1;display:flex;align-items:baseline;gap:8px}
+  .barretta{height:7px;border-radius:999px;background:var(--hairline);overflow:hidden;margin-top:12px}
+  .barretta i{display:block;height:100%;width:62%;background:linear-gradient(90deg,#E29A2E,#E0715F);border-radius:999px}
+
+  /* guadagni */
+  .grafico{display:flex;align-items:flex-end;gap:5px;height:66px;margin-top:12px}
+  .grafico i{flex:1;background:linear-gradient(180deg,#E29A2E,rgba(226,154,46,.35));border-radius:4px 4px 0 0;display:block}
+
+  /* riquadro protezione */
+  .scudo{border-color:rgba(226,154,46,.35)}
+
+  /* operatore */
+  .op{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .oplink{border:1px solid var(--hairline);border-radius:12px;padding:11px 13px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff}
+  .oplink span.n{background:var(--blocked-soft);color:var(--blocked);border-radius:999px;font-size:10.5px;font-weight:700;padding:1px 7px;font-family:var(--mono)}
+
+  /* ── TELEFONO ── */
+  .tel .testata{padding:18px 16px 0}
+  .tel h1{font-size:21px}
+  .tel .quadro{display:flex;gap:10px;overflow-x:auto;padding:14px 16px 2px;scrollbar-width:none}
+  .tel .quadro::-webkit-scrollbar{display:none}
+  .tel .numero{flex:0 0 132px}
+  .tel .linguette{padding:14px 16px 0}
+  .tel .corpo{grid-template-columns:1fr;padding:16px 16px 26px}
+  .tel .griglia{grid-template-columns:repeat(2,1fr)}
+  .tel .op{grid-template-columns:1fr}
+
+  .legenda{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .voce{background:#fff;border:1px solid var(--hairline);border-radius:14px;padding:13px 15px}
+  .voce b{font-size:13.5px}
+  .voce p{color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.55}
+  .prima-dopo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+  .pd{background:#fff;border:1px solid var(--hairline);border-radius:14px;padding:14px 16px}
+  .pd h4{font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+  .pd li{font-size:13px;color:var(--muted);margin:5px 0 5px 16px}
+  @media(max-width:1100px){.prima-dopo{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="foglio">
+
+  <h1 class="titolone">Il tuo account, rifatto</h1>
+  <p class="sotto">Oggi l'account è una colonna stretta da 560 pixel dove si impilano, una sotto l'altra, dieci cose diverse: tipo di account, KYC, VOLT, lavori in corso, protezione, i link da operatore, i contenuti, i video, i guadagni, il portafoglio. È l'unica schermata del sito scritta ancora a stili inline, e si vede. Questa è la proposta: <b>quattro numeri in alto, sei linguette, e ogni cosa a casa sua.</b></p>
+
+  <div class="nota"><b>Da approvare prima di toccare il codice.</b> Niente funzioni nuove qui dentro: è la stessa roba di adesso, sistemata. Le uniche aggiunte sono le linguette, la striscia dei quattro numeri e i bollini sui contenuti (foto / video / usato N volte).</div>
+
+  <span class="etichetta">Schermo grande · Panoramica</span>
+  <div class="schermi">
+
+    <!-- ══════════ DESKTOP ══════════ -->
+    <div class="desktop">
+      <div class="barra"><i class="pallino"></i><i class="pallino"></i><i class="pallino"></i><span class="url">semblic.com/account</span></div>
+
+      <div class="sitenav">
+        <div class="logo"><i></i> SEMBLIC</div>
+        <nav><span>Il registro</span><span>Crea</span><span>Prezzi</span><span>Ward</span><span style="color:var(--text);font-weight:600">Account</span></nav>
+      </div>
+
+      <div class="testata">
+        <div class="riga-nome">
+          <div class="avatarone">R</div>
+          <div style="flex:1;min-width:0">
+            <h1>Ciao, Riccardo</h1>
+            <div class="email">morelz.video@gmail.com</div>
+          </div>
+          <span class="chip ok"><i class="pt"></i> Identità verificata</span>
+          <span class="chip">Creatore</span>
+          <a class="btn ghost sm">Esci</a>
+        </div>
+        <div class="filo"></div>
+      </div>
+
+      <div class="quadro">
+        <div class="numero acceso">
+          <div class="v">⚡ 1.240</div>
+          <div class="e">VOLT · bastano per ~51 scatti</div>
+        </div>
+        <div class="numero">
+          <div class="v">59,54 <small>EUR</small></div>
+          <div class="e">Guadagnato col tuo volto</div>
+        </div>
+        <div class="numero">
+          <div class="v">68</div>
+          <div class="e">Contenuti tuoi · 7 video</div>
+        </div>
+        <div class="numero">
+          <div class="v">178</div>
+          <div class="e">Volte che ti hanno usato</div>
+        </div>
+      </div>
+
+      <div class="linguette">
+        <div class="lin on">Panoramica</div>
+        <div class="lin">I miei contenuti <span class="pill">68</span></div>
+        <div class="lin">VOLT</div>
+        <div class="lin">Il mio volto</div>
+        <div class="lin">Protezione</div>
+        <div class="lin">Operatore <span class="pill">3</span></div>
+      </div>
+
+      <div class="corpo">
+        <!-- colonna larga -->
+        <div class="colonna">
+
+          <div class="lav">
+            <i class="spin"></i>
+            <div style="flex:1">
+              <div style="font-size:13.5px;font-weight:700;color:var(--amber-ink)">Una scena di gruppo è sul set</div>
+              <div style="font-size:12.5px;color:var(--muted)">Gabriella e Stella · partita 40 secondi fa</div>
+            </div>
+            <a class="btn sm">Guarda</a>
+          </div>
+
+          <div class="card pannello">
+            <div class="testa">
+              <div>
+                <h2>Gli ultimi che hai fatto</h2>
+                <p class="sub">Ogni scatto porta il suo certificato e la sua ricevuta.</p>
+              </div>
+              <a class="btn ghost sm">Vedi tutti e 68</a>
+            </div>
+            <div class="griglia">
+              <div class="tess"><i class="ph"></i><span class="alto"><em class="mini">FOTO</em></span><i class="vel"></i><span class="nome">Gabriella e Stella</span></div>
+              <div class="tess"><i class="ph"></i><span class="alto"><em class="mini video">VIDEO 5s</em></span><i class="vel"></i><span class="nome">Random</span></div>
+              <div class="tess"><i class="ph"></i><span class="alto"><em class="mini">FOTO</em><em class="mini ok">USATO 4×</em></span><i class="vel"></i><span class="nome">Asia</span></div>
+              <div class="tess"><i class="ph"></i><span class="alto"><em class="mini">FOTO</em></span><i class="vel"></i><span class="nome">Luca</span></div>
+            </div>
+          </div>
+
+          <div class="card pannello">
+            <div class="testa">
+              <div>
+                <h2>Il tuo volto, in numeri</h2>
+                <p class="sub">Quanto ti hanno usato e quanto ti è entrato, mese per mese.</p>
+              </div>
+              <a class="btn ghost sm">Il tuo passaporto</a>
+            </div>
+            <div class="grafico">
+              <i style="height:22%"></i><i style="height:36%"></i><i style="height:30%"></i><i style="height:58%"></i><i style="height:44%"></i><i style="height:72%"></i><i style="height:64%"></i><i style="height:95%"></i><i style="height:81%"></i>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:7px"><span>GEN</span><span>SET</span></div>
+          </div>
+
+        </div>
+
+        <!-- colonna stretta -->
+        <div class="colonna">
+
+          <div class="card pannello volt">
+            <div class="kicker" style="margin-bottom:8px">I TUOI VOLT</div>
+            <div class="voltnum">⚡ 1.240</div>
+            <div class="barretta"><i></i></div>
+            <p class="sub" style="margin-top:10px;font-size:12.5px">Un VOLT è un centesimo. Uno scatto in Alta ne costa 24.</p>
+            <a class="btn" style="width:100%;margin-top:12px">Ricarica</a>
+          </div>
+
+          <div class="card pannello">
+            <div class="kicker" style="margin-bottom:10px">IL TUO PORTAFOGLIO</div>
+            <div class="kv"><span class="k">Maturato</span><span class="v">59,54 €</span></div>
+            <div class="kv"><span class="k">Già pagato</span><span class="v">40,00 €</span></div>
+            <div class="kv"><span class="k">Soglia di pagamento</span><span class="v">50,00 €</span></div>
+            <a class="btn" style="width:100%;margin-top:12px">Chiedi il pagamento</a>
+          </div>
+
+          <div class="card pannello scudo">
+            <div class="kicker" style="margin-bottom:10px">IL TUO VOLTO È PROTETTO</div>
+            <div class="chip ok" style="width:100%;justify-content:flex-start;padding:9px 12px;border-radius:12px"><i class="pt"></i> Dentro Semblic nessuno può generarlo</div>
+            <div class="kv" style="margin-top:8px"><span class="k">Tentativi rilevati</span><span class="v">0</span></div>
+            <a class="btn ghost sm" style="width:100%;margin-top:10px">Gestisci la protezione</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ TELEFONO ══════════ -->
+    <div class="telefono tel">
+      <div class="barra"><i class="pallino"></i><span class="url">account</span></div>
+
+      <div class="testata">
+        <div class="riga-nome">
+          <div class="avatarone" style="width:44px;height:44px;border-radius:14px;font-size:17px">R</div>
+          <div style="flex:1;min-width:0">
+            <h1>Ciao, Riccardo</h1>
+            <div class="email" style="font-size:11.5px">morelz.video@gmail.com</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+          <span class="chip ok"><i class="pt"></i> Verificato</span>
+          <span class="chip">Creatore</span>
+        </div>
+        <div class="filo"></div>
+      </div>
+
+      <div class="quadro">
+        <div class="numero acceso"><div class="v">⚡ 1.240</div><div class="e">VOLT</div></div>
+        <div class="numero"><div class="v">59,54 <small>EUR</small></div><div class="e">Guadagnato</div></div>
+        <div class="numero"><div class="v">68</div><div class="e">Contenuti</div></div>
+        <div class="numero"><div class="v">178</div><div class="e">Utilizzi</div></div>
+      </div>
+
+      <div class="linguette">
+        <div class="lin on">Panoramica</div>
+        <div class="lin">Contenuti <span class="pill">68</span></div>
+        <div class="lin">VOLT</div>
+        <div class="lin">Il mio volto</div>
+      </div>
+
+      <div class="corpo">
+        <div class="colonna">
+          <div class="lav">
+            <i class="spin"></i>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:var(--amber-ink)">Una scena è sul set</div>
+              <div style="font-size:12px;color:var(--muted)">Gabriella e Stella</div>
+            </div>
+          </div>
+
+          <div class="card pannello volt">
+            <div class="kicker" style="margin-bottom:8px">I TUOI VOLT</div>
+            <div class="voltnum" style="font-size:34px">⚡ 1.240</div>
+            <div class="barretta"><i></i></div>
+            <a class="btn" style="width:100%;margin-top:12px">Ricarica</a>
+          </div>
+
+          <div class="card pannello">
+            <div class="testa"><div><h2>Gli ultimi che hai fatto</h2></div></div>
+            <div class="griglia">
+              <div class="tess"><i class="ph"></i><span class="alto"><em class="mini">FOTO</em></span><i class="vel"></i><span class="nome">Gabriella e Stella</span></div>
+              <div class="tess"><i class="ph"></i><span class="alto"><em class="mini video">VIDEO 5s</em></span><i class="vel"></i><span class="nome">Random</span></div>
+            </div>
+            <a class="btn ghost sm" style="width:100%;margin-top:12px">Vedi tutti e 68</a>
+          </div>
+
+          <div class="card pannello">
+            <div class="kicker" style="margin-bottom:10px">IL TUO PORTAFOGLIO</div>
+            <div class="kv"><span class="k">Maturato</span><span class="v">59,54 €</span></div>
+            <div class="kv"><span class="k">Soglia</span><span class="v">50,00 €</span></div>
+            <a class="btn" style="width:100%;margin-top:12px">Chiedi il pagamento</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span class="etichetta">La linguetta "Operatore" · solo per te e per chi lavora con te</span>
+  <div class="desktop" style="max-width:860px">
+    <div class="barra"><i class="pallino"></i><i class="pallino"></i><i class="pallino"></i><span class="url">semblic.com/account → Operatore</span></div>
+    <div class="corpo" style="grid-template-columns:1fr">
+      <div class="colonna">
+        <div class="card pannello">
+          <div class="testa">
+            <div>
+              <h2>Le cose da operatore</h2>
+              <p class="sub">Oggi sono sei bottoni arancioni infilati in mezzo alla pagina, fra i VOLT e i contenuti. Qui stanno a casa loro, col numero di cose che aspettano.</p>
+            </div>
+          </div>
+          <div class="op">
+            <div class="oplink">Verifiche identità (KYC) <span class="n">2</span></div>
+            <div class="oplink">Volti da approvare <span class="n">1</span></div>
+            <div class="oplink">Segnalazioni <span class="n">0</span></div>
+            <div class="oplink">Messaggi dal sito</div>
+            <div class="oplink">Indice dei volti</div>
+            <div class="oplink">Regala VOLT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span class="etichetta">Cosa cambia</span>
+  <div class="prima-dopo">
+    <div class="pd">
+      <h4>Adesso</h4>
+      <ul>
+        <li>Una colonna da 560px: su un monitor è un francobollo in mezzo al vuoto.</li>
+        <li>Dieci riquadri in fila: per arrivare ai contenuti si scorre oltre tutto il resto.</li>
+        <li>I link da operatore in mezzo alle cose del creatore.</li>
+        <li>Scritta a stili inline: non è il sito, è un'altra cosa che gli somiglia.</li>
+        <li>Nessun numero in testa: non si sa a colpo d'occhio come si sta messi.</li>
+      </ul>
+    </div>
+    <div class="pd">
+      <h4>Dopo</h4>
+      <ul>
+        <li>Larghezza piena, due colonne sul monitor, una sul telefono.</li>
+        <li>Quattro numeri in testa: VOLT, guadagni, contenuti, utilizzi.</li>
+        <li>Sei linguette: ogni cosa a casa sua, niente scroll infinito.</li>
+        <li>Gli stessi mattoni del resto del sito (card, kicker, chip, bottoni).</li>
+        <li>Sul telefono le linguette e i numeri scorrono di lato, mai in colonna.</li>
+      </ul>
+    </div>
+  </div>
+
+  <span class="etichetta">Le tre aggiunte vere</span>
+  <div class="legenda">
+    <div class="voce"><b>I quattro numeri</b><p>VOLT, guadagnato, contenuti, utilizzi. Sono dati che già abbiamo: oggi stanno sparsi in tre riquadri diversi e uno (gli utilizzi) non si vede proprio.</p></div>
+    <div class="voce"><b>I bollini sui contenuti</b><p>FOTO / VIDEO 5s / USATO 4×. Serve a distinguere a occhio una foto da un video, e a vedere quali scatti stanno lavorando.</p></div>
+    <div class="voce"><b>La linguetta Operatore</b><p>I sei link di servizio escono dal mezzo della pagina e vanno in una linguetta, con il contatore di quello che aspetta una risposta.</p></div>
+  </div>
+
+</div>
+</body>
+</html>
