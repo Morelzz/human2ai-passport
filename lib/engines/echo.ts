@@ -101,6 +101,32 @@ async function parseEchoResponse(text: string): Promise<{ png: Buffer; usage?: E
 // Errori dell'API resi UMANI: il messaggio dell'Error arriva fino al box
 // errore del cliente (in /match via job.error), quindi NIENTE JSON grezzo.
 // Il dettaglio tecnico completo resta nei log server per la diagnosi.
+// Il filtro del motore ha fermato la generazione: errore riconoscibile, cosi'
+// chi chiama puo' riprovare da solo una volta con una scena piu' sobria.
+export class ErroreModerazione extends Error {
+  constructor(messaggio: string, readonly fase: "input" | "output") {
+    super(messaggio);
+    this.name = "ErroreModerazione";
+  }
+}
+
+// Livello di moderazione chiesto al motore: "low" e' il piu' permissivo
+// consentito da OpenAI e riduce i falsi allarmi su scene di moda del tutto
+// normali (21/9/2026: "due ragazze che posano in un set fotografico di moda"
+// veniva fermata). Leva d'emergenza: ECHO_MODERAZIONE=auto.
+export function livelloModerazione(): "low" | "auto" {
+  return process.env.ECHO_MODERAZIONE === "auto" ? "auto" : "low";
+}
+
+// Nota aggiunta al secondo tentativo: descrive persone vestite e una scena
+// pubblicabile, senza cambiare quello che ha chiesto il cliente.
+export const CLAUSOLA_SOBRIA =
+  " Everyone in the image is fully clothed in modest, professional clothing; no swimwear, no lingerie, no suggestive poses; tasteful commercial photography suitable for a general audience.";
+
+export function promptSobrio(prompt: string): string {
+  return prompt.includes(CLAUSOLA_SOBRIA) ? prompt : prompt + CLAUSOLA_SOBRIA;
+}
+
 function echoApiError(endpoint: "edit" | "generation", status: number, body: string): Error {
   console.error(`[ECHO] OpenAI ${endpoint} ${status}: ${body.slice(0, 1000)}`);
   try {
@@ -111,10 +137,11 @@ function echoApiError(endpoint: "edit" | "generation", status: number, body: str
       const where = j.error?.moderation_details?.moderation_stage === "input"
         ? "la richiesta (la scena descritta o le immagini di riferimento)"
         : "l'immagine generata";
-      return new Error(
-        `Il sistema di sicurezza del motore ha giudicato sensibile ${where} e ha fermato questa generazione. ` +
-        "Nessun costo per te. Riprova: spesso basta rigenerare. Se si ripete, descrivi una scena più sobria " +
-        "(per esempio specifica un abbigliamento più coperto)."
+      return new ErroreModerazione(
+        `Il sistema di sicurezza del motore ha giudicato sensibile ${where} e ha fermato questa generazione, ` +
+        "anche al secondo tentativo. Nessun costo per te. Riprova cambiando qualche parola: spesso basta " +
+        "descrivere l'abbigliamento (per esempio \"in giacca e jeans\") o togliere parole come \"set fotografico di moda\".",
+        j.error?.moderation_details?.moderation_stage === "input" ? "input" : "output",
       );
     }
   } catch {
@@ -141,6 +168,7 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
     form.append("size", size);
     form.append("quality", quality);
     form.append("n", "1");
+    form.append("moderation", livelloModerazione());
     refs.forEach((buf, i) => {
       form.append("image[]", new Blob([new Uint8Array(buf)], { type: "image/jpeg" }), `ref-${i}.jpg`);
     });
@@ -160,10 +188,28 @@ export async function generateEcho(input: EchoInput): Promise<EchoResult> {
   const res = await fetchEcho(GEN_URL, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model, prompt: input.prompt, size, quality, n: 1 }),
+    body: JSON.stringify({ model, prompt: input.prompt, size, quality, n: 1, moderation: livelloModerazione() }),
   });
   const text = await res.text();
   if (!res.ok) throw echoApiError("generation", res.status, text);
   const { png, usage } = await parseEchoResponse(text);
   return { png, model, mode: "generation", refsUsed: 0, size, quality, usage };
+}
+
+// Una generazione che non si arrende al primo falso allarme: se il filtro del
+// motore ferma la scena, si riprova UNA volta aggiungendo la clausola sobria.
+// Il motore e' iniettabile per i test.
+export async function generaConRipiego(
+  input: EchoInput,
+  motore: (i: EchoInput) => Promise<EchoResult> = generateEcho,
+): Promise<EchoResult> {
+  try {
+    return await motore(input);
+  } catch (e) {
+    if (!(e instanceof ErroreModerazione)) throw e;
+    const prompt = promptSobrio(input.prompt);
+    if (prompt === input.prompt) throw e;
+    console.warn("[ECHO] filtro del motore: secondo tentativo con la clausola sobria");
+    return motore({ ...input, prompt });
+  }
 }

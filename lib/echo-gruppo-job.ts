@@ -9,7 +9,7 @@
 import crypto from "crypto";
 import type { createServerClient } from "@/lib/supabase";
 import { getReferenceSet } from "@/lib/references";
-import { generateEcho } from "@/lib/engines/echo";
+import { generaConRipiego } from "@/lib/engines/echo";
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
@@ -59,7 +59,7 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
       // ripassa una volta, in qualunque modo di somiglianza.
       ripassa: true,
       genera: async (prompt, immagini) => {
-        const r = await generateEcho({ prompt, references: immagini, size: p.echoSize, quality: p.echoQuality });
+        const r = await generaConRipiego({ prompt, references: immagini, size: p.echoSize, quality: p.echoQuality });
         modello = r.model;
         return { png: r.png, costoCent: echoCostCentsFromUsage(r.usage) ?? 0 };
       },

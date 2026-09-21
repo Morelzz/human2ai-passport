@@ -15,7 +15,7 @@ import crypto from "crypto";
 import sharp from "sharp";
 import type { createServerClient } from "@/lib/supabase";
 import { getReferenceSet } from "@/lib/references";
-import { generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/echo";
+import { generaConRipiego, generateEcho, type EchoSize, type EchoQuality } from "@/lib/engines/echo";
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
@@ -290,7 +290,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     let scelto: { result: Awaited<ReturnType<typeof generateEcho>>; misura: MisuraSomiglianza | null } | null = null;
     let costoTentativi = 0;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-      result = await generateEcho({
+      result = await generaConRipiego({
         prompt: buildEchoPrompt(p.scene, extraMeta, p.poseText, p.identityText, p.photographic),
         references,
         size: p.echoSize,

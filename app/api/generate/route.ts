@@ -8,7 +8,7 @@ import { echoCostCentsFromUsage } from "@/lib/engines/echo-cost";
 import { generateWithHiggsfield, buildGenerationPrompt } from "@/lib/higgsfield";
 import { DEFAULT_MODEL, isValidModel, isValidStyle } from "@/lib/soul-models";
 import { watermarkPreview, watermarkPreviewBuffer } from "@/lib/watermark";
-import { generateEcho, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
+import { generaConRipiego, isEchoConfigured, isEchoSize, isEchoQuality } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
 import { uploadPublicImage } from "@/lib/storage";
 import { allowRequest } from "@/lib/rate-limit";
@@ -300,7 +300,7 @@ export async function POST(request: Request) {
 
     let png: Buffer;
     try {
-      const echoResult = await generateEcho({ prompt: buildEchoPrompt(scene, extraMeta, poseText, identityText, photographic), references, size: echoSize, quality: echoQuality });
+      const echoResult = await generaConRipiego({ prompt: buildEchoPrompt(scene, extraMeta, poseText, identityText, photographic), references, size: echoSize, quality: echoQuality });
       png = echoResult.png;
       echoUsage = echoResult.usage;
       generationRef = `echo:${echoResult.model}`;
