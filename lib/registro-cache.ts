@@ -40,7 +40,10 @@ export const numeriRegistro = unstable_cache(
     const [volti, protetti, pagate] = await Promise.all([
       getPublicAvatars(sb).then((a) => a.length),
       countProtectedFaces(sb),
-      sb.from("generations").select("id", { count: "exact", head: true }).eq("mode", "commercial").then((r) => r.count ?? 0),
+      // "generazioni pagate alle persone": ci sono anche le prove gratuite,
+      // perche' anche quelle pagano la persona (le paga Semblic). Se non le
+      // contassimo, il numero direbbe meno della verita'.
+      sb.from("generations").select("id", { count: "exact", head: true }).in("mode", ["commercial", "prova"]).then((r) => r.count ?? 0),
     ]);
     return { volti, protetti, pagate };
   },

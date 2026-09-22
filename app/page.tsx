@@ -3,6 +3,7 @@ import { registroPubblico, numeriRegistro } from "@/lib/registro-cache";
 import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Hero } from "@/components/marketing/Hero";
+import { ProvaGratis, type VoltoProva } from "@/components/marketing/ProvaGratis";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { IlSet } from "@/components/marketing/IlSet";
 import { Trust } from "@/components/marketing/Trust";
@@ -12,7 +13,9 @@ import { AiActStrip } from "@/components/marketing/AiActStrip";
 import { ToolsBusiness } from "@/components/marketing/ToolsBusiness";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Footer } from "@/components/marketing/Footer";
-import { galleryFromRow } from "@/lib/sample-galleries";
+import { galleryFromRow, portraitFor } from "@/lib/sample-galleries";
+import { sampleSrc } from "@/lib/sample-size";
+import { provaAttiva, voltiPerLaProva } from "@/lib/prova-gratis";
 
 
 export default async function Home() {
@@ -20,6 +23,14 @@ export default async function Home() {
   // volti e stessi contatori di catalogo e trasparenza. Le due letture partono
   // insieme: prima erano tre giri sul DB in fila, e la pagina non partiva.
   const [approved, numeri] = await Promise.all([registroPubblico(), numeriRegistro()]);
+
+  // La fascia "Provalo adesso": c'e' solo quando l'interruttore e' acceso.
+  const voltiProva: VoltoProva[] = provaAttiva()
+    ? voltiPerLaProva(approved as unknown as Parameters<typeof voltiPerLaProva>[0], 4).map((a) => {
+        const r = a as unknown as { handle: string; alias: string };
+        return { handle: r.handle, alias: r.alias, src: sampleSrc(portraitFor(r as never), 480) };
+      })
+    : [];
   const { protetti: protectedFaces, pagate: paidCount } = numeri;
 
   // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
@@ -50,6 +61,11 @@ export default async function Home() {
       <SiteNav />
       <main>
         <Hero count={approved.length} paidCount={paidCount} protectedFaces={protectedFaces} />
+        {voltiProva.length > 0 && (
+          <div className="px-5 pb-2 sm:px-8">
+            <ProvaGratis volti={voltiProva} compatta />
+          </div>
+        )}
         <div className="sv"><Registry avatars={featured} total={approved.length} /></div>
         {/* Le card di Come funziona entrano una per una: .sv sta dentro, sulle card. */}
         <HowItWorks />

@@ -72,6 +72,10 @@ export interface EchoJobParams {
   // Scena di gruppo: 2-4 protagonisti. Il primo e'
   // anche l'avatar del job (job.avatar_id / job.handle).
   gruppo?: PersonaGruppo[];
+  // Prova gratis (lib/prova-gratis): la compra Semblic per farla vedere a uno
+  // sconosciuto. La persona viene pagata lo stesso, ma non e' un uso
+  // commerciale di un cliente: si registra come "prova".
+  prova?: boolean;
 }
 
 // Riga minima del job che il worker consuma.
@@ -347,7 +351,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
       buyer_id: job.buyer_id,
       prompt: p.scene,
       category: p.category,
-      mode: "commercial",
+      mode: p.prova ? "prova" : "commercial",
       gross_cents,
       fee_cents,
       royalty_cents,
