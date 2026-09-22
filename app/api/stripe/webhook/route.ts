@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyStripeSignature } from "@/lib/stripe-webhook";
 import { grantVolt } from "@/lib/volt";
+import { premiaRicarica } from "@/lib/invito-server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,6 +47,12 @@ export async function POST(request: Request) {
       if (userId && Number.isFinite(voltTotal) && voltTotal > 0 && sessionId) {
         // ref = id sessione: chiave d'idempotenza dell'accredito.
         await grantVolt(userId, voltTotal, "recharge", sessionId);
+        // Se questo account e' arrivato da un invito, adesso si paga chi l'ha
+        // portato (e, la prima volta, anche lui). Mai a fondo perduto: solo su
+        // una ricarica vera. Se qualcosa non va, la ricarica resta buona.
+        await premiaRicarica(userId, voltTotal, sessionId).catch((e) =>
+          console.error("[invito] premio non accreditato:", e instanceof Error ? e.message : e),
+        );
       }
     }
   }

@@ -76,6 +76,10 @@ export default function SignupForm() {
       // Azienda: dritti al form KYB (l'org si crea lì). Gli altri a ?next (i
       // flussi gated come /signup/avatar lo portano fin qui) oppure all'account.
       const next = safeNext(new URLSearchParams(window.location.search).get("next"));
+      // Se si arriva da un link d'invito, adesso si lega l'account a chi l'ha
+      // mandato. Se non funziona non si blocca la registrazione: il premio e'
+      // un di piu', l'account e' la cosa importante.
+      await fetch("/api/invito", { method: "POST" }).catch(() => {});
       router.push(isEnterprise ? "/enterprise/register" : (next ?? "/account"));
       router.refresh();
     } else {

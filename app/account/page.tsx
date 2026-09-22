@@ -21,6 +21,7 @@ import { VideoStrip, type VideoItem } from "@/components/account/VideoStrip";
 import { voltBalance, LOW_BALANCE_THRESHOLD } from "@/lib/volt";
 import { ActiveJobs, type ActiveJob } from "@/components/account/ActiveJobs";
 import { Linguette, VaiAllaScheda, type Scheda } from "@/components/account/Linguette";
+import { Invita } from "@/components/account/Invita";
 import { Quadro, type Numero } from "@/components/account/Quadro";
 import { eOperatore } from "@/lib/operatori";
 
@@ -576,6 +577,7 @@ export default async function AccountPage() {
           </div>
           <div className="flex flex-col gap-4">
             {cardVolt}
+            <Invita />
             {cardStato}
             {cardProtezione}
             {cardVolto}
