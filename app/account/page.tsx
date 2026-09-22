@@ -22,8 +22,11 @@ import { voltBalance, LOW_BALANCE_THRESHOLD } from "@/lib/volt";
 import { ActiveJobs, type ActiveJob } from "@/components/account/ActiveJobs";
 import { Linguette, VaiAllaScheda, type Scheda } from "@/components/account/Linguette";
 import { Invita } from "@/components/account/Invita";
+import { WardVolto } from "@/components/account/WardVolto";
+import { monitoringConsentStatus } from "@/lib/ward/consent";
 import { Quadro, type Numero } from "@/components/account/Quadro";
 import { eOperatore } from "@/lib/operatori";
+import { scegliVoltoDaSorvegliare } from "@/lib/ward/quale-volto";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -236,6 +239,38 @@ export default async function AccountPage() {
         total: count ?? rows.length,
         last30: last30 ?? 0,
       };
+    }
+  }
+
+  // ── Ward sul proprio volto ─────────────────────────────────────────────
+  // Chi ha detto si' al registro e' la persona piu' esposta: da oggi puo'
+  // accendere il cane da guardia anche lui, non solo chi sta in sola protezione.
+  let wardAvatarId: string | null = null;
+  let wardAcceso = false;
+  let wardTrovate = 0;
+  {
+    const { data: miei } = await admin2
+      .from("avatars")
+      .select("id, protection_only, revoked_at")
+      .eq("owner_id", user.id)
+      .order("protection_only", { ascending: false })
+      .order("created_at", { ascending: true })
+      .limit(10);
+    const scelto = scegliVoltoDaSorvegliare(miei ?? []);
+    if (scelto) {
+      wardAvatarId = scelto.id as string;
+      const { data: cons } = await admin2
+        .from("monitoring_consents")
+        .select("scope, on_match, open_web, granted_at, expires_at, revoked_at")
+        .eq("avatar_id", wardAvatarId)
+        .order("granted_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      wardAcceso = monitoringConsentStatus(cons ?? null, new Date().toISOString()) === "active";
+      if (wardAcceso) {
+        const { count } = await admin2.from("scan_matches").select("id", { count: "exact", head: true }).eq("avatar_id", wardAvatarId);
+        wardTrovate = count ?? 0;
+      }
     }
   }
 
@@ -596,7 +631,10 @@ export default async function AccountPage() {
       nodo: (
         <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_330px]">
           <div className="flex min-w-0 flex-col gap-4">{cardPortafoglio || <div className="card p-5 text-[0.9rem] text-muted">Quando il tuo volto entra nel registro, qui compaiono guadagni e utilizzi.</div>}{cardDomanda}</div>
-          <div className="flex flex-col gap-4">{cardVolto}</div>
+          <div className="flex flex-col gap-4">
+            {cardVolto}
+            {wardAvatarId && <WardVolto attivo={wardAcceso} avatarId={wardAvatarId} ultimi={wardTrovate} />}
+          </div>
         </div>
       ),
     });
