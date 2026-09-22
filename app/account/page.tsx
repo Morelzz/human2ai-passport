@@ -511,6 +511,13 @@ export default async function AccountPage() {
       <div className="mt-4">
         <ContentsGrid items={gridItems.slice(0, 4)} shareVariant="buyer" />
       </div>
+      <Link href="/account/progetti" className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-border px-4 py-3 text-[0.88rem] font-semibold transition-colors hover:border-amber/60">
+        <span>
+          Raccogli gli scatti in una cartella
+          <span className="ml-2 font-normal text-muted">e mandane il link al tuo cliente</span>
+        </span>
+        <span aria-hidden className="text-faint">→</span>
+      </Link>
     </div>
   );
 
