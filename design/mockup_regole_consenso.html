@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Il consenso che si legge (proposta)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F4EE; --surface:#FFFFFF; --edge:#D9D3C5;
+    --text:#17150F; --muted:#5B564B; --faint:#736D62;
+    --hairline:#E6E1D6; --hairline-soft:#EFEBE2;
+    --verified:#2F7563; --verified-soft:#E3F1EC;
+    --blocked:#B0472B; --blocked-soft:#F8E6E0;
+    --amber:#E29A2E; --amber-soft:#F8E9CF; --amber-ink:#9A4A0B; --on-amber:#412402;
+    --font:"Instrument Sans",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EFEBE2;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .foglio{max-width:1240px;margin:0 auto;padding:34px 22px 80px}
+  .titolone{font-size:30px;font-weight:700;letter-spacing:-.035em}
+  .sotto{color:var(--muted);font-size:15px;max-width:80ch;margin-top:8px}
+  .nota{background:#fff;border:1px solid var(--hairline);border-left:3px solid var(--amber);border-radius:12px;padding:12px 16px;color:var(--muted);font-size:13.5px;margin:18px 0 26px}
+  .nota b{color:var(--text)}
+  .etichetta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink);margin:34px 0 12px;display:block}
+  .fila{display:grid;grid-template-columns:1fr 390px;gap:22px;align-items:start}
+  .schermo{border:1px solid var(--edge);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .barra{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#EDE8DE;border-bottom:1px solid var(--hairline)}
+  .pallino{width:10px;height:10px;border-radius:50%;background:#D9D3C5}
+  .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .dentro{padding:26px;max-width:600px;margin:0 auto}
+  .kicker{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink)}
+  h1{font-size:27px;font-weight:700;letter-spacing:-.035em}
+  .p{color:var(--muted);font-size:14px;margin-top:6px}
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:20px;margin-top:14px}
+  .card.spenta{opacity:.55}
+  .piccolo{color:var(--faint);font-size:12.5px;margin-top:4px}
+  .interr{display:flex;align-items:center;gap:12px;margin-top:12px;font-size:14px;font-weight:600}
+  .sw{width:40px;height:23px;border-radius:999px;background:var(--verified);position:relative;flex:none}
+  .sw::after{content:"";position:absolute;top:2px;left:19px;width:19px;height:19px;border-radius:50%;background:#fff}
+  textarea{width:100%;min-height:118px;border:1px solid var(--edge);border-radius:14px;padding:13px 14px;font-family:var(--font);font-size:15px;line-height:1.5;color:var(--text);background:#fff;resize:none;margin-top:12px}
+  .pille{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .pl{border:1px solid var(--hairline);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);background:#fff}
+  .pl.on{background:var(--text);color:#F7F4EE;border-color:var(--text);font-weight:600}
+  .riga{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .conta{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:0;font-family:var(--font);font-weight:700;background:var(--amber);color:var(--on-amber);border-radius:999px;padding:11px 22px;font-size:14px}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--edge)}
+  .stato{display:flex;gap:10px;align-items:flex-start;margin-top:14px;background:var(--verified-soft);border:1px solid rgba(47,117,99,.25);border-radius:12px;padding:10px 14px;font-size:13px;color:#16352A}
+  .punto{width:7px;height:7px;border-radius:50%;background:var(--verified);margin-top:7px;flex:none}
+  .come{margin-top:14px;border-top:1px solid var(--hairline-soft);padding-top:12px;display:grid;gap:8px}
+  .come div{display:flex;gap:10px;font-size:13px;color:var(--muted)}
+  .come b{font-family:var(--mono);font-size:11px;color:var(--amber-ink);width:18px;flex:none;padding-top:2px}
+  /* lato di chi compra */
+  .studio{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:22px}
+  .scena{border:1px solid var(--edge);border-radius:14px;background:#fff;padding:13px 14px;font-size:14.5px;min-height:92px}
+  .blocco{border:1px solid rgba(176,71,43,.3);background:var(--blocked-soft);border-radius:14px;padding:14px 16px}
+  .blocco p{font-size:14px;color:#4A1D10}
+  .blocco .titolo{font-weight:700;color:var(--blocked);font-size:14.5px;margin-bottom:4px}
+  .cita{font-family:var(--mono);font-size:12px;background:#fff;border:1px solid rgba(176,71,43,.25);border-radius:8px;padding:6px 10px;margin:8px 0;color:var(--text)}
+  .ok{border:1px solid rgba(47,117,99,.3);background:var(--verified-soft);border-radius:14px;padding:12px 16px;font-size:13.5px;color:#16352A;margin-top:10px}
+  .persone{display:flex;gap:8px;margin-top:10px}
+  .pers{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline);border-radius:999px;background:#fff;padding:4px 12px 4px 4px;font-size:13px;font-weight:600}
+  .pers i{width:26px;height:26px;border-radius:50%;background:linear-gradient(160deg,#CFC7B6,#EDE8DE)}
+  .pers.no{border-color:rgba(176,71,43,.45)}
+  .pers.no small{color:var(--blocked);font-weight:700}
+  .pers small{font-size:11px;color:var(--verified);font-weight:700}
+  /* telefono */
+  .tel{width:100%;max-width:390px;border:10px solid #17150F;border-radius:40px;overflow:hidden;background:var(--bg)}
+  .tel .dentro{padding:18px 16px 26px}
+  .tel h1{font-size:23px}
+  .tel textarea{min-height:130px;font-size:15px}
+  .tel .btn{width:100%}
+  @media (max-width:1000px){ .fila{grid-template-columns:1fr} .tel{margin:0 auto} .studio{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="foglio">
+  <p class="titolone">Il consenso che si legge</p>
+  <p class="sotto">Oggi il consenso è un sì o un no all'uso commerciale. Con questa parte ognuno scrive a parole cosa non vuole, e prima di ogni scatto un giudice legge la scena contro quelle parole. Se la tocca, lo scatto non parte e chi compra non paga nulla.</p>
+  <div class="nota"><b>Già costruito e provato:</b> il giudice (8 casi su 8, compreso chi prova a scrivere istruzioni nelle regole), il blocco prima di spendere nello scatto singolo e di gruppo, la prova nella timeline del consenso. <b>Manca solo questa faccia</b> e il file SQL da incollare. Nel dubbio si blocca: una foto contro la volontà di qualcuno non si ritira.</div>
+
+  <span class="etichetta">1 · La persona, nella pagina Gestisci il consenso (computer e telefono)</span>
+  <div class="fila">
+    <div class="schermo">
+      <div class="barra"><span class="pallino"></span><span class="pallino"></span><span class="pallino"></span><span class="url">semblic.com/account/consent</span></div>
+      <div class="dentro">
+        <h1>Gestisci il consenso</h1>
+        <p class="p">Il consenso è una timeline: ogni modifica viene registrata e vale solo per il futuro.</p>
+
+        <div class="card spenta">
+          <p class="kicker">Uso commerciale</p>
+          <div class="interr"><span class="sw"></span>Uso commerciale: consentito</div>
+        </div>
+
+        <div class="card">
+          <p class="kicker">Le tue regole</p>
+          <p class="piccolo">Scrivi con parole tue per cosa il tuo volto non si usa. Prima di ogni scatto le leggiamo contro la scena richiesta: se la toccano, lo scatto non parte.</p>
+          <textarea>Niente alcol e niente sigarette. Niente politica né religione. Niente intimo o costumi. Sì alle auto e allo sport.</textarea>
+          <div class="pille">
+            <span class="pl on">niente alcol</span><span class="pl">niente fumo</span><span class="pl on">niente politica</span><span class="pl">niente armi</span><span class="pl on">niente intimo</span><span class="pl">niente gioco d'azzardo</span><span class="pl">niente farmaci</span>
+          </div>
+          <div class="riga">
+            <span class="conta">118 / 600</span>
+            <span style="display:flex;gap:8px"><span class="btn ghost">Togli le regole</span><span class="btn">Salva le regole</span></span>
+          </div>
+          <div class="stato"><span class="punto"></span><span>In vigore dal 23 settembre. L'ultima scena fermata: 21 settembre, "aperitivo in terrazza con spritz".</span></div>
+          <div class="come">
+            <div><b>01</b><span>Chi compra scrive la scena. Prima di spendere, un giudice la legge contro le tue parole.</span></div>
+            <div><b>02</b><span>Se tocca una tua regola, non si fa. Chi compra legge quale regola e come riscrivere la scena.</span></div>
+            <div><b>03</b><span>Se il giudice non risponde, non si fa lo stesso. Meglio uno scatto in meno.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tel">
+      <div class="dentro">
+        <h1>Gestisci il consenso</h1>
+        <div class="card">
+          <p class="kicker">Le tue regole</p>
+          <p class="piccolo">Scrivi con parole tue per cosa il tuo volto non si usa.</p>
+          <textarea>Niente alcol e niente sigarette. Niente politica né religione. Niente intimo o costumi. Sì alle auto e allo sport.</textarea>
+          <div class="pille" style="flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px">
+            <span class="pl on">niente alcol</span><span class="pl">niente fumo</span><span class="pl on">niente politica</span><span class="pl">niente armi</span><span class="pl on">niente intimo</span>
+          </div>
+          <div class="riga"><span class="conta">118 / 600</span></div>
+          <span class="btn" style="margin-top:10px">Salva le regole</span>
+          <div class="stato"><span class="punto"></span><span>In vigore dal 23 settembre.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span class="etichetta">2 · Chi compra, nello Studio, quando la scena tocca una regola</span>
+  <div class="schermo">
+    <div class="barra"><span class="pallino"></span><span class="pallino"></span><span class="pallino"></span><span class="url">semblic.com/studio</span></div>
+    <div class="studio">
+      <div>
+        <p class="kicker">La scena</p>
+        <div class="scena" style="margin-top:10px">Aperitivo al tramonto su una terrazza a Milano, calici di spritz sul tavolo, luce dorata, amici che ridono.</div>
+        <div class="persone">
+          <span class="pers no"><i></i>Stella <small>no</small></span>
+          <span class="pers"><i></i>Luca <small>sì</small></span>
+        </div>
+      </div>
+      <div>
+        <div class="blocco">
+          <p class="titolo">Stella non lo consente</p>
+          <div class="cita">"Niente alcol e niente sigarette."</div>
+          <p>La scena mostra calici di spritz. Prova con "bibite analcoliche" o "caffè al tramonto": il resto della scena va bene.</p>
+          <p style="margin-top:8px;font-weight:700">Lo scatto non parte, nessun costo.</p>
+        </div>
+        <div class="ok">Luca non ha regole su questa scena: con lui da solo lo scatto si può fare così com'è.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
