@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
-import { PAYOUT_THRESHOLD_CENTS, formatEur } from "@/lib/wallet";
+import { PAYOUT_THRESHOLD_CENTS, formatEur, splitEcho } from "@/lib/wallet";
 import { demandForAvatar, type DemandSummary } from "@/lib/searches";
 import type { ScorableAvatar } from "@/lib/matching";
 import { SiteNav } from "@/components/marketing/SiteNav";
@@ -312,6 +312,10 @@ export default async function AccountPage() {
     numeri.push({ v: String(usageCount), e: "Volte che ti hanno usato" });
   }
 
+  // Il prezzo dello scatto in Alta, dalla stessa funzione che fa pagare. Il 23/9
+  // qui c'era scritto 24 a mano, ed era 50: un prezzo non si scrive, si calcola.
+  const voltAlta = splitEcho(null, "1024x1536", "high").gross_cents;
+
   // ── I MATTONI DELLE SCHEDE ─────────────────────────────────────────────
   const cardVolt = volt !== null && (
     <div className="card bg-[radial-gradient(58%_46%_at_97%_-12%,var(--amber-soft),transparent_62%)] p-5">
@@ -327,7 +331,7 @@ export default async function AccountPage() {
           ? "Energia esaurita: ricarica per generare."
           : volt < LOW_BALANCE_THRESHOLD
             ? "Batteria quasi scarica."
-            : "Un VOLT è un centesimo. Uno scatto in Alta ne costa 24."}
+            : `Un VOLT è un centesimo. Uno scatto in Alta verticale ne costa ${voltAlta}.`}
       </p>
       <Link href="/account/volt" className="mt-4 block rounded-full bg-amber px-4 py-2.5 text-center text-[0.88rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">
         Ricarica

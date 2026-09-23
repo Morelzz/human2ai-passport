@@ -19,6 +19,7 @@ import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 import { eseguiGruppo, dividiRoyalty, type Protagonista } from "@/lib/gruppo";
 import { refundJobVolt, type EchoJobRow } from "@/lib/echo-job";
 import { giudicaScatto, verdettoQualita, costoGiudizioCent } from "@/lib/qualita";
+import type { VerdettoQualita } from "@/lib/qualita";
 
 type Admin = ReturnType<typeof createServerClient>;
 
@@ -170,6 +171,13 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
         surcharge_cents,
         engine_cost_cents: costoReale,
       })
+      .eq("id", job.id);
+
+    // Il verdetto del controllo qualita' resta scritto sul lavoro (best-effort).
+    const q: VerdettoQualita | null = esito.qualita;
+    await admin
+      .from("generation_jobs")
+      .update({ params: { ...p, qualita: q ? { fatto: true, passa: q.passa, motivo: q.motivo } : { fatto: false } } })
       .eq("id", job.id);
 
     const chi = misure.map((m) => `${m.chiave} ${m.percentuale ?? "n/d"}%`).join(", ");

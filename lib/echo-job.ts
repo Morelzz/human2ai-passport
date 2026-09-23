@@ -22,7 +22,7 @@ import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-sc
 import { misuraScatto, migliore, modoSomiglianza, verdetto as verdettoSomiglianza, type MisuraSomiglianza } from "@/lib/identity-score";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
-import { giudicaScatto, verdettoQualita, preferisci, costoGiudizioCent, type Giudizio, type VerdettoQualita } from "@/lib/qualita";
+import { giudicaScatto, verdettoQualita, preferisci, costoGiudizioCent, qualitaPerRegistro, type Giudizio, type VerdettoQualita } from "@/lib/qualita";
 
 type Admin = ReturnType<typeof createServerClient>;
 
@@ -432,6 +432,14 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
         surcharge_cents,
         engine_cost_cents: engineCostCents,
       })
+      .eq("id", job.id);
+
+    // Il verdetto del controllo qualita' resta scritto sul lavoro (dentro params,
+    // che e' gia' il suo registro): si vede se il giudice ha lavorato e cosa ha
+    // detto, senza dover leggere i log del worker. Best-effort.
+    await admin
+      .from("generation_jobs")
+      .update({ params: { ...p, qualita: qualitaPerRegistro(scelto.giudizio, scelto.qualita) } })
       .eq("id", job.id);
 
     const real = engineCostCents != null ? `${(engineCostCents / 100).toFixed(3)}€` : "n/d";

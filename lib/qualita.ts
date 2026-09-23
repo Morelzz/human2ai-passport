@@ -80,6 +80,12 @@ export function preferisci(a: VerdettoQualita | null, b: VerdettoQualita | null,
   return somigliaMeglio;
 }
 
+/** Quello che si scrive sul lavoro: voto, esito e difetti, oppure "non fatto". */
+export function qualitaPerRegistro(g: Giudizio | null, v: VerdettoQualita | null) {
+  if (!g || !v) return { fatto: false as const };
+  return { fatto: true as const, voto: g.voto, passa: v.passa, motivo: v.motivo, difetti: g.difetti, nota: g.nota };
+}
+
 // ── Il giudice (SERVER-ONLY) ────────────────────────────────────────────────
 
 // L'interruttore: QUALITA_CONTROLLO=0 lo spegne (costi, falsi allarmi) senza
