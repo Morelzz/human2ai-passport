@@ -22,6 +22,7 @@ import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-sc
 import { misuraScatto, migliore, modoSomiglianza, verdetto as verdettoSomiglianza, type MisuraSomiglianza } from "@/lib/identity-score";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
+import { giudicaScatto, verdettoQualita, preferisci, costoGiudizioCent, type Giudizio, type VerdettoQualita } from "@/lib/qualita";
 
 type Admin = ReturnType<typeof createServerClient>;
 
@@ -292,9 +293,19 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     // verificare i volti protetti, la generazione viene annullata (CRIT-7).
     // Poi la somiglianza: in modo "applica", sotto soglia o con un volto
     // sconosciuto riconoscibile si rifa' una volta e si consegna il migliore.
+    // Poi il CONTROLLO QUALITA' (lib/qualita, 23/9): un secondo occhio guarda
+    // la foto e i primi piani; un difetto che un cliente non accetterebbe
+    // (mani, pelle, testo inventato, volti clonati) fa rifare una volta. Fra i
+    // tentativi vince chi passa il controllo, a parita' chi somiglia di piu'.
+    // Se il giudice non risponde lo scatto esce come prima (fail-open).
     const MAX_ATTEMPTS = 2;
     let result!: Awaited<ReturnType<typeof generateEcho>>;
-    let scelto: { result: Awaited<ReturnType<typeof generateEcho>>; misura: MisuraSomiglianza | null } | null = null;
+    let scelto: {
+      result: Awaited<ReturnType<typeof generateEcho>>;
+      misura: MisuraSomiglianza | null;
+      qualita: VerdettoQualita | null;
+      giudizio: Giudizio | null;
+    } | null = null;
     let costoTentativi = 0;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       result = await generaConRipiego({
@@ -321,9 +332,17 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
         continue;
       }
       const misura = riferimento ? await misuraScatto(result.png, [riferimento]) : null;
-      if (!scelto || migliore(misura, scelto.misura)) scelto = { result, misura };
-      if (modo !== "applica" || !misura || verdettoSomiglianza(misura).ok || attempt === MAX_ATTEMPTS) break;
-      console.warn(`[ECHO job ${job.id}] somiglianza sotto soglia (${verdettoSomiglianza(misura).motivi.join(",")}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
+      const giudizio = await giudicaScatto(result.png, { scena: p.scene }, {
+        traccia: (u) => { costoTentativi += costoGiudizioCent(u.input, u.output); },
+      });
+      const qualita = giudizio ? verdettoQualita(giudizio) : null;
+      if (!scelto || preferisci(qualita, scelto.qualita, migliore(misura, scelto.misura))) scelto = { result, misura, qualita, giudizio };
+
+      const somiglianzaDaRifare = modo === "applica" && !!misura && !verdettoSomiglianza(misura).ok;
+      const qualitaDaRifare = !!qualita && !qualita.passa;
+      if ((!somiglianzaDaRifare && !qualitaDaRifare) || attempt === MAX_ATTEMPTS) break;
+      if (somiglianzaDaRifare) console.warn(`[ECHO job ${job.id}] somiglianza sotto soglia (${verdettoSomiglianza(misura!).motivi.join(",")}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
+      if (qualitaDaRifare) console.warn(`[ECHO job ${job.id}] qualita' non consegnabile (${qualita!.motivo}: ${giudizio?.nota ?? ""}), tentativo ${attempt}/${MAX_ATTEMPTS}`);
     }
     if (!scelto) throw new Error("Nessun risultato consegnabile.");
     result = scelto.result;
@@ -334,7 +353,9 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     const cleanUrl = await uploadPublicImage("generations", `${job.avatar_id}/${crypto.randomUUID()}.png`, result.png);
 
     // Costo reale: tutti i tentativi pagati al motore, non solo quello consegnato.
-    const engineCostCents = costoTentativi > 0 ? costoTentativi : echoCostCentsFromUsage(result.usage);
+    // Arrotondato: il giudice costa frazioni di centesimo e la colonna e' intera
+    // (un 5.35 farebbe fallire la scrittura che chiude il lavoro).
+    const engineCostCents = costoTentativi > 0 ? Math.round(costoTentativi) : echoCostCentsFromUsage(result.usage);
     const { gross_cents, fee_cents, royalty_cents, surcharge_cents } = p.pricing;
 
     // Credenziale d'uscita: hash anonimo (nessun dato biometrico) — seme del C2PA.
@@ -381,7 +402,7 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
         identity_distance: esitoPersona?.distanza ?? null,
         identity_extra_faces: misuraFinale.sconosciuti,
       }).eq("id", genId);
-      console.log(`[ECHO job ${job.id}] somiglianza ${esitoPersona?.percentuale ?? "n/d"}% (d ${esitoPersona?.distanza ?? "n/d"}), volti sconosciuti ${misuraFinale.sconosciuti}, modo ${modo}`);
+      console.log(`[ECHO job ${job.id}] somiglianza ${esitoPersona?.percentuale ?? "n/d"}% (d ${esitoPersona?.distanza ?? "n/d"}), volti sconosciuti ${misuraFinale.sconosciuti}, modo ${modo}, qualita' ${scelto.giudizio ? `${scelto.giudizio.voto}${scelto.qualita?.passa ? "" : " (NON passa: " + scelto.qualita?.motivo + ")"}` : "n/d"}`);
     }
 
     // Accredita la royalty NETTA + incrementa utilizzi.

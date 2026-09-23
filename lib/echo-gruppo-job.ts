@@ -18,6 +18,7 @@ import { DISTANZA_STESSA_PERSONA } from "@/lib/identity-score";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 import { eseguiGruppo, dividiRoyalty, type Protagonista } from "@/lib/gruppo";
 import { refundJobVolt, type EchoJobRow } from "@/lib/echo-job";
+import { giudicaScatto, verdettoQualita, costoGiudizioCent } from "@/lib/qualita";
 
 type Admin = ReturnType<typeof createServerClient>;
 
@@ -50,11 +51,17 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
     }
 
     let modello = "";
+    let costoGiudice = 0;
     const esito = await eseguiGruppo({
       scena: p.scene,
       persone,
       riferimenti,
       fotografia: p.photographic,
+      giudica: async (png) => {
+        const g = await giudicaScatto(png, { scena: p.scene }, { traccia: (u) => { costoGiudice += costoGiudizioCent(u.input, u.output); } });
+        if (g && !verdettoQualita(g).passa) console.warn(`[ECHO gruppo ${job.id}] qualita' non consegnabile: ${verdettoQualita(g).motivo} · ${g.nota}`);
+        return g ? verdettoQualita(g) : null;
+      },
       genera: async (prompt, immagini) => {
         const r = await generaConRipiego({ prompt, references: immagini, size: p.echoSize, quality: p.echoQuality });
         modello = r.model;
@@ -123,7 +130,8 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
     const { error: gpErr } = await admin.from("generation_people").insert(righe);
     if (gpErr) console.error(`[ECHO gruppo ${job.id}] generation_people non scritta: ${gpErr.message}`);
 
-    const meta: Record<string, unknown> = { tier: "ECHO", engine_cost_cents: esito.costoCent };
+    const costoReale = Math.round(esito.costoCent + costoGiudice);
+    const meta: Record<string, unknown> = { tier: "ECHO", engine_cost_cents: costoReale };
     const ph = p.photo;
     if (ph?.camera) meta.camera = ph.camera;
     if (ph?.lens) meta.lens = ph.lens;
@@ -160,12 +168,12 @@ export async function executeGruppoJob(admin: Admin, job: EchoJobRow): Promise<v
         fee_cents,
         royalty_cents,
         surcharge_cents,
-        engine_cost_cents: esito.costoCent,
+        engine_cost_cents: costoReale,
       })
       .eq("id", job.id);
 
     const chi = misure.map((m) => `${m.chiave} ${m.percentuale ?? "n/d"}%`).join(", ");
-    console.log(`[ECHO gruppo ${job.id}] done · ${gruppo.length} persone · ${esito.passaggi} scatti${esito.ripassato ? ` (ritoccata ${esito.ripassato})` : ""} · ${echoResLabel(p.echoSize)} · reale=${(esito.costoCent / 100).toFixed(3)}€ · ${chi} · sconosciuti ${esito.misura?.sconosciuti ?? "n/d"}`);
+    console.log(`[ECHO gruppo ${job.id}] done · ${gruppo.length} persone · ${esito.passaggi} scatti${esito.ripassato ? ` (ritoccata ${esito.ripassato})` : ""} · ${echoResLabel(p.echoSize)} · reale=${(costoReale / 100).toFixed(3)}€ · qualita' ${esito.qualita ? (esito.qualita.passa ? "ok" : "NO " + esito.qualita.motivo) : "n/d"} · ${chi} · sconosciuti ${esito.misura?.sconosciuti ?? "n/d"}`);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "errore sconosciuto";
     await admin.from("generation_jobs").update({ status: "error", finished_at: nowIso(), error: msg.slice(0, 500) }).eq("id", job.id);

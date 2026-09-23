@@ -103,4 +103,45 @@ describe("scene di gruppo", () => {
     expect(r.png.toString()).toBe("u1");
     expect(r.ripassato).toBeNull();
   });
+
+  it("scena con tutti i volti ma che NON passa il controllo qualita': si rifa' e si consegna la buona", async () => {
+    let n = 0;
+    const genera = async () => ({ png: Buffer.from(`u${++n}`), costoCent: 5 });
+    const volti = async () => [{ x: 1, lato: 150, desc: [0.2] }, { x: 2, lato: 150, desc: [10.1] }];
+    const giudica = async (png: Buffer) =>
+      png.toString() === "u1" ? { passa: false, motivo: "grave: volti_clonati" } : { passa: true, motivo: null };
+    const r = await eseguiGruppo({ scena: "x", persone: [p("a"), p("b")], riferimenti: RIF, genera, volti, giudica });
+    expect(n).toBe(2);
+    expect(r.png.toString()).toBe("u2");
+    expect(r.qualita?.passa).toBe(true);
+  });
+
+  it("scena buona al primo colpo: niente secondo tentativo", async () => {
+    let n = 0;
+    const genera = async () => ({ png: Buffer.from(`u${++n}`), costoCent: 5 });
+    const volti = async () => [{ x: 1, lato: 150, desc: [0.2] }, { x: 2, lato: 150, desc: [10.1] }];
+    const r = await eseguiGruppo({ scena: "x", persone: [p("a"), p("b")], riferimenti: RIF, genera, volti, giudica: async () => ({ passa: true, motivo: null }) });
+    expect(n).toBe(1);
+    expect(r.qualita?.passa).toBe(true);
+  });
+
+  it("un ritocco che fa somigliare di piu' ma rompe la foto non si tiene", async () => {
+    let n = 0;
+    const genera = async () => ({ png: Buffer.from(`u${++n}`), costoCent: 5 });
+    const volti = async (png: Buffer) => [{ x: 1, lato: 150, desc: [0.2] }, { x: 2, lato: 150, desc: [png.toString() === "u2" ? 10.3 : 10.7] }];
+    const giudica = async (png: Buffer) =>
+      png.toString() === "u2" ? { passa: false, motivo: "grave: mani" } : { passa: true, motivo: null };
+    const r = await eseguiGruppo({ scena: "x", persone: [p("a"), p("b")], riferimenti: RIF, genera, volti, giudica });
+    expect(r.png.toString()).toBe("u1"); // si resta sulla scena, che era buona
+    expect(r.ripassato).toBeNull();
+  });
+
+  it("giudice che non risponde: il gruppo esce come prima (fail-open)", async () => {
+    let n = 0;
+    const genera = async () => ({ png: Buffer.from(`u${++n}`), costoCent: 5 });
+    const volti = async () => [{ x: 1, lato: 150, desc: [0.2] }, { x: 2, lato: 150, desc: [10.1] }];
+    const r = await eseguiGruppo({ scena: "x", persone: [p("a"), p("b")], riferimenti: RIF, genera, volti, giudica: async () => { throw new Error("rete"); } });
+    expect(n).toBe(1);
+    expect(r.qualita).toBeNull();
+  });
 });
