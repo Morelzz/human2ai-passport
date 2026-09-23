@@ -11,8 +11,12 @@ describe("adultGateReason", () => {
   it("account pre-gate (nessuna data, mai verificato): no_dob", () => {
     expect(adultGateReason({ date_of_birth: null, adult_verified_at: null }, NOW)).toBe("no_dob");
   });
-  it("verificato da documento (data non salvata ma esito presente): via libera", () => {
-    expect(adultGateReason({ date_of_birth: null, adult_verified_at: "2026-06-23T10:00:00Z" }, NOW)).toBeNull();
+  it("il timbro da solo NON basta: senza data si chiede la data (23/9)", () => {
+    // prima passava: bastava scriversi adult_verified_at nel profilo
+    expect(adultGateReason({ date_of_birth: null, adult_verified_at: "2026-06-23T10:00:00Z" }, NOW)).toBe("no_dob");
+  });
+  it("il timbro NON scavalca una data da minorenne (la falla del 23/9)", () => {
+    expect(adultGateReason({ date_of_birth: "2012-01-01", adult_verified_at: "2026-06-23T10:00:00Z" }, NOW)).toBe("under_18");
   });
   it("autodichiarato adulto: via libera", () => {
     expect(adultGateReason({ date_of_birth: "2000-01-01", adult_verified_at: "2026-06-23T10:00:00Z" }, NOW)).toBeNull();

@@ -47,21 +47,26 @@ function euclid(a: number[], b: number[]): number {
   return Math.sqrt(s);
 }
 
-// Descrittore del volto verificato per l'utente. Cache su
-// profiles.identity_face_descriptor; se manca, lo calcola scaricando il
-// portrait dalla decisione Didit (via identity_session_id) ed embeddandolo
-// server-side, poi lo salva. null se non ricavabile (nessuna sessione, link
-// scaduto, nessun volto).
+// Descrittore del volto verificato per l'utente: si ricava ogni volta dal
+// portrait della decisione Didit (via identity_session_id), embeddandolo
+// server-side. null se non ricavabile (nessuna sessione, link scaduto, nessun
+// volto).
 export async function getIdentityDescriptor(userId: string): Promise<number[] | null> {
   const admin = createServerClient();
   const { data } = await admin
     .from("profiles")
-    .select("identity_session_id, identity_face_descriptor")
+    .select("identity_session_id")
     .eq("id", userId)
     .maybeSingle();
 
-  const cached = data?.identity_face_descriptor as number[] | null | undefined;
-  if (Array.isArray(cached) && cached.length === 128) return cached;
+  // NIENTE CACHE (23/9/2026). Prima qui si restituiva identity_face_descriptor
+  // se c'era: ma quella colonna l'utente la poteva scrivere da solo col suo
+  // accesso al database. Bastava metterci l'impronta di un'altra persona (la si
+  // ricava da una sua foto pubblica, face-api e' libero) e poi registrare IL
+  // SUO volto come proprio: il confronto "e' lo stesso volto del documento?"
+  // passava, perche' il "documento" l'aveva scelto lui. Adesso l'impronta si
+  // ricava ogni volta dalla sessione Didit, che l'utente non sceglie. Costa un
+  // download e un embedding, e succede solo quando si crea un volto.
 
   const sessionId = data?.identity_session_id as string | null | undefined;
   if (!sessionId) return null;
@@ -81,7 +86,6 @@ export async function getIdentityDescriptor(userId: string): Promise<number[] | 
   // (CRIT-6), lo rilancia embedOrThrow. "Nessun volto nel portrait" resta null.
   const descriptor = await embedOrThrow(bytes, "reference", userId);
   if (!descriptor || descriptor.length !== 128) return null;
-  await admin.from("profiles").update({ identity_face_descriptor: descriptor }).eq("id", userId);
   return descriptor;
 }
 

@@ -57,6 +57,9 @@ export async function POST(request: Request) {
       } else if (outcome === "ok") {
         adultPatch.adult_verified_at = new Date().toISOString();
         adultPatch.adult_verified_method = "document";
+        // La data dal documento: il cancello dei 18 anni decide SOLO sulla data
+        // (lib/adult-gate), quindi chi si e' verificato col documento deve averla.
+        if (dob) adultPatch.date_of_birth = dob;
       } else {
         // DOB illeggibile: niente stato document-adult, revisione manuale.
         reportDegradation("kyc.dob_missing", { user: userId, session: payload.session_id });
