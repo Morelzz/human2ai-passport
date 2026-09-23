@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { voltoDelTitolare, handlePulito } from "@/lib/volto-del-titolare";
 
 // Collega un wallet self-custody (es. Phantom) all'avatar della persona.
 // Quando si ancora l'identità soulbound, verrà mintata su QUESTO indirizzo.
@@ -14,17 +15,15 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => null);
   const wallet = String(body?.wallet ?? "").trim();
-  const handle = body?.handle ? String(body.handle).trim() : null;
+  const handle = handlePulito(body?.handle);
   if (!ADDR_RE.test(wallet)) {
     return NextResponse.json({ error: "Indirizzo wallet non valido" }, { status: 400 });
   }
 
   const admin = createServerClient();
 
-  // Risolve l'avatar del proprietario (un seller ne ha uno; un'agenzia passa l'handle).
-  let q = admin.from("avatars").select("id, handle, owner_id").eq("owner_id", user.id);
-  if (handle) q = q.eq("handle", handle);
-  const { data: av } = await q.maybeSingle();
+  // Il volto del titolare: quello dell'handle se e' suo, altrimenti quello che conta.
+  const av = await voltoDelTitolare<{ id: string }>(admin, user.id, "id", { handle });
   if (!av) return NextResponse.json({ error: "Avatar non trovato per questo account" }, { status: 404 });
 
   const { error } = await admin

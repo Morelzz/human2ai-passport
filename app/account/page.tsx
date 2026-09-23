@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { voltoDelTitolare } from "@/lib/volto-del-titolare";
 import { PAYOUT_THRESHOLD_CENTS, formatEur, splitEcho } from "@/lib/wallet";
 import { demandForAvatar, type DemandSummary } from "@/lib/searches";
 import type { ScorableAvatar } from "@/lib/matching";
@@ -211,12 +212,7 @@ export default async function AccountPage() {
   type ProtectionAlert = { id: string; similarity: number | null; created_at: string };
   let protection: { recent: ProtectionAlert[]; total: number; last30: number } | null = null;
   {
-    const { data: prot } = await admin2
-      .from("avatars")
-      .select("handle, revoked_at")
-      .eq("owner_id", user.id)
-      .eq("protection_only", true)
-      .maybeSingle();
+    const prot = await voltoDelTitolare(admin2, user.id, "handle, revoked_at", { soloProtezione: true });
     if (prot?.handle && !prot.revoked_at) {
       const cutoffIso = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
       // Solo i 5 piu' recenti per la lista; il totale e gli ultimi 30 giorni sono

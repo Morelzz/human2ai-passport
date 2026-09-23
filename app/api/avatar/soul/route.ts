@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { voltoDelTitolare } from "@/lib/volto-del-titolare";
 import { createSoulFromImages, SoulPhoto } from "@/lib/higgsfield";
 import { avatarVetoReason } from "@/lib/avatar-gate";
 
@@ -31,11 +32,7 @@ export async function POST(request: Request) {
   }
 
   const admin = createServerClient();
-  const { data: avatar } = await admin
-    .from("avatars")
-    .select("id, alias, soul_ref, protection_only, revoked_at")
-    .eq("owner_id", user.id)
-    .maybeSingle();
+  const avatar = await voltoDelTitolare<{ id: string; alias: string; soul_ref: string | null }>(admin, user.id, "id, alias, soul_ref");
 
   if (!avatar) return NextResponse.json({ error: "Non hai ancora un avatar nel registro" }, { status: 404 });
 

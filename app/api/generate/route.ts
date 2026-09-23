@@ -23,6 +23,7 @@ import { spendVolt, grantVolt } from "@/lib/volt";
 import { spesaMotoreOggi, sforaTetto, tettoGiorno } from "@/lib/tetto-giorno";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo } from "@/lib/gruppo-prezzi";
 import sharp from "sharp";
+import { controllaRegole } from "@/lib/regole-consenso";
 
 export const runtime = "nodejs";
 // Le generazioni ad alta risoluzione (2K/4K) possono durare minuti: alziamo il
@@ -127,6 +128,17 @@ export async function POST(request: Request) {
   if (!isPreview && avatar.commercial_consent === false) {
     logBlockedRequest(admin, { source: "generate", reason: "no_commercial_consent", category });
     return NextResponse.json({ error: `"${avatar.alias}" non ha autorizzato l'uso commerciale del proprio volto` }, { status: 403 });
+  }
+
+  // Il consenso che si legge (lib/regole-consenso, 23/9): se la persona ha
+  // scritto dei limiti, la scena si controlla adesso, prima di spendere. Chi
+  // non ne ha scritti passa senza attese. Fail-closed per chi li ha.
+  if (!isPreview) {
+    const regole = await controllaRegole(admin, [avatar.id as string], scene, category);
+    if (!regole.via) {
+      logBlockedRequest(admin, { source: "generate", reason: "rules_excluded", category });
+      return NextResponse.json({ error: regole.messaggio, code: "regole_persona" }, { status: 403 });
+    }
   }
 
   // ECHO (gpt-image-2 con identity-lock dal reference-set) e' l'unico motore.
@@ -514,6 +526,13 @@ async function accodaGruppo(
   const persone = avatars as NonNullable<(typeof avatars)[number]>[];
 
   const scene = String(body?.scene ?? body?.prompt ?? "").trim();
+
+  // Le regole di ognuno, prima di spendere (lib/regole-consenso).
+  const regole = await controllaRegole(admin, persone.map((a) => a.id as string), scene, category);
+  if (!regole.via) {
+    logBlockedRequest(admin, { source: "generate", reason: "rules_excluded", category });
+    return NextResponse.json({ error: regole.messaggio, code: "regole_persona" }, { status: 403 });
+  }
   const echoSize = isEchoSize(body?.echoSize) ? body.echoSize : "1024x1024";
   const echoQuality = isEchoQuality(body?.echoQuality) ? body.echoQuality : "high";
   // In gruppo niente inquadratura ed espressione del singolo: camera, lente, luce e colore si.

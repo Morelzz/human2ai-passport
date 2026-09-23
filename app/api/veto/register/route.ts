@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { voltoDelTitolare } from "@/lib/volto-del-titolare";
 import { appendProtectedFaces } from "@/lib/protected-index";
 import { isValidDescriptor } from "@/lib/face-index";
 
@@ -89,11 +90,9 @@ export async function POST(request: Request) {
 
   // 1:1: chi concede il proprio volto nel registro non puo' al tempo stesso
   // proteggerlo (e viceversa). Se esiste gia' una protezione, e' una ri-registrazione.
-  const { data: existing } = await admin
-    .from("avatars")
-    .select("id, handle, protection_only")
-    .eq("owner_id", uid)
-    .maybeSingle();
+  // Con piu' volti maybeSingle() tornava null e il controllo 1:1 saltava: si
+  // guarda il volto che conta (chi concede vince sulla protezione).
+  const existing = await voltoDelTitolare<{ id: string }>(admin, uid, "id");
   if (existing && !existing.protection_only) {
     return NextResponse.json({ error: "Hai già un avatar nel registro: non puoi proteggere e concedere lo stesso volto. Scrivici per assistenza." }, { status: 409 });
   }

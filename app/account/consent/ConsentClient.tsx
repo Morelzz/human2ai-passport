@@ -29,7 +29,7 @@ export default function ConsentClient({ handle, commercialConsent, videoConsent 
     const res = await fetch("/api/avatar/consent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "set_video_consent", value: next }),
+      body: JSON.stringify({ handle, type: "set_video_consent", value: next }),
     });
     const json = await res.json();
     setBusy(false);
@@ -45,7 +45,7 @@ export default function ConsentClient({ handle, commercialConsent, videoConsent 
     const res = await fetch("/api/avatar/booking", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ available: next }),
+      body: JSON.stringify({ handle, available: next }),
     });
     const json = await res.json();
     setBusy(false);
@@ -59,7 +59,7 @@ export default function ConsentClient({ handle, commercialConsent, videoConsent 
     const res = await fetch("/api/avatar/consent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "set_commercial_consent", value: next }),
+      body: JSON.stringify({ handle, type: "set_commercial_consent", value: next }),
     });
     const json = await res.json();
     setBusy(false);
@@ -74,7 +74,7 @@ export default function ConsentClient({ handle, commercialConsent, videoConsent 
     const res = await fetch("/api/avatar/consent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ handle, ...body }),
     });
     const json = await res.json();
     setBusy(false);

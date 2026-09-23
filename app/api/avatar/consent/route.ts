@@ -4,17 +4,23 @@ import { createServerClient } from "@/lib/supabase";
 import { deletePrefix } from "@/lib/storage";
 import { removeHandleFromFaceIndex } from "@/lib/face-index";
 import { revocaRegistro } from "@/lib/registro-cache";
+import { voltoDelTitolare, handlePulito } from "@/lib/volto-del-titolare";
+import { regolePulite, MAX_REGOLE } from "@/lib/regole-consenso";
 
 export const runtime = "nodejs";
 
 // Modello senza categorie (Fase 2/4): il consenso all'uso commerciale è sì/no.
 // Niente più gestione per-categoria. Restano la revoca totale (kill-switch) e la
 // riattivazione, che sono la timeline del consenso (guardrail CLAUDE.md #2).
-type Action =
+// `handle` (facoltativo) dice su quale volto si agisce, per chi ne ha piu' di
+// uno: vale solo se il volto e' suo. Senza, il volto che conta (lib/volto-del-titolare).
+type Action = { handle?: string } & (
   | { type: "revoke_all" }
   | { type: "reactivate" }
   | { type: "set_commercial_consent"; value: boolean }
-  | { type: "set_video_consent"; value: boolean };
+  | { type: "set_video_consent"; value: boolean }
+  | { type: "set_regole"; regole: string }
+);
 
 export async function POST(request: Request) {
   const auth = await createAuthClient();
@@ -27,11 +33,7 @@ export async function POST(request: Request) {
   const admin = createServerClient();
 
   // L'avatar deve appartenere all'utente
-  const { data: avatar } = await admin
-    .from("avatars")
-    .select("id, handle, revoked_at, protection_only")
-    .eq("owner_id", user.id)
-    .maybeSingle();
+  const avatar = await voltoDelTitolare<{ id: string }>(admin, user.id, "id", { handle: handlePulito(action.handle) });
   if (!avatar) return NextResponse.json({ error: "Nessun avatar da gestire" }, { status: 404 });
 
   // Fase 2.1 (VETO): un profilo in sola protezione non concede alcun uso e non è
@@ -111,6 +113,29 @@ export async function POST(request: Request) {
       occurred_at: today,
     });
     return NextResponse.json({ ok: true });
+  }
+
+  // Le regole scritte a parole (lib/regole-consenso): prima di ogni scatto un
+  // giudice legge la scena contro queste parole. Vuoto = nessuna regola.
+  if (action.type === "set_regole") {
+    if (typeof action.regole === "string" && action.regole.trim().length > MAX_REGOLE) {
+      return NextResponse.json({ error: `Al massimo ${MAX_REGOLE} caratteri.` }, { status: 400 });
+    }
+    const regole = regolePulite(action.regole);
+    const { error: rErr } = await admin
+      .from("avatars")
+      .update({ regole, regole_aggiornate_at: new Date().toISOString() })
+      .eq("id", avatar.id);
+    // Colonna assente = migrazione regole_consenso.sql non ancora applicata.
+    if (rErr) return NextResponse.json({ error: "Le regole scritte arrivano a breve." }, { status: 503 });
+    // Nella timeline resta il testo in vigore da oggi: e' la prova di cosa valeva quando.
+    await admin.from("consent_events").insert({
+      avatar_id: avatar.id,
+      event_type: regole ? "CATEGORY_REMOVED" : "CATEGORY_ADDED",
+      detail: regole ? `Regole scritte: "${regole}"` : "Regole scritte tolte",
+      occurred_at: today,
+    });
+    return NextResponse.json({ ok: true, regole });
   }
 
   return NextResponse.json({ error: "Azione sconosciuta" }, { status: 400 });

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
+import { voltoDelTitolare } from "@/lib/volto-del-titolare";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import NewAvatarClient from "./NewAvatarClient";
 
@@ -26,11 +27,7 @@ export default async function NewAvatarPage() {
   // Le organizzazioni possono crearne molti, quindi non vengono reindirizzate.
   if (!isEnterprise) {
     const admin = createServerClient();
-    const { data: existing } = await admin
-      .from("avatars")
-      .select("handle")
-      .eq("owner_id", user.id)
-      .maybeSingle();
+    const existing = await voltoDelTitolare(admin, user.id, "handle");
     if (existing) redirect(`/passport/${existing.handle}`);
   }
 
