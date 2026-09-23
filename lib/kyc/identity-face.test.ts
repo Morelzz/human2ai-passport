@@ -10,20 +10,24 @@ vi.mock("@/lib/ward/matching/embed", () => ({
   }),
 }));
 
+// Il volto verificato si ricava SEMPRE dalla sessione Didit (23/9: la cache nel
+// profilo l'utente la poteva riscrivere). Quindi la prova passa dal portrait:
+// c'e' una sessione, il portrait si scarica, e l'embedding fallisce.
 vi.mock("@/lib/kyc/didit", () => ({
-  getDiditPortraitUrl: vi.fn(async () => null),
+  getDiditPortraitUrl: vi.fn(async () => "https://didit.test/portrait.jpg"),
 }));
+vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([9, 9, 9]), { status: 200 })));
 
-// Profilo con descrittore di identita GIA in cache: getIdentityDescriptor torna
-// la cache senza embeddare il reference, cosi il fallimento avviene sull'embed
-// delle FOTO caricate (il cuore del gate).
+// Profilo con una sessione di verifica e, di proposito, un descrittore in
+// cache: non deve essere usato. Se lo fosse, l'embedding del reference si
+// salterebbe e la prova sotto non la vedrebbe.
 vi.mock("@/lib/supabase", () => ({
   createServerClient: () => ({
     from: () => ({
       select: () => ({
         eq: () => ({
           maybeSingle: async () => ({
-            data: { identity_face_descriptor: Array(128).fill(0.1), identity_session_id: null },
+            data: { identity_face_descriptor: Array(128).fill(0.1), identity_session_id: "sessione-1" },
           }),
         }),
       }),
@@ -41,5 +45,11 @@ describe("gate identita fail-closed (CRIT-6)", () => {
     await expect(
       checkBestFaceAgainstIdentity("user-1", [new Uint8Array([1, 2, 3])]),
     ).rejects.toBeInstanceOf(IdentityModelsUnavailableError);
+  });
+
+  it("NON usa l'impronta salvata nel profilo (la falla del 23/9): la ricava dalla verifica", async () => {
+    const { getDiditPortraitUrl } = await import("@/lib/kyc/didit");
+    await checkBestFaceAgainstIdentity("user-1", [new Uint8Array([1, 2, 3])]).catch(() => {});
+    expect(getDiditPortraitUrl).toHaveBeenCalledWith("sessione-1");
   });
 });
