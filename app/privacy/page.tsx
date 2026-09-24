@@ -88,8 +88,10 @@ export default function PrivacyPage() {
               limitatamente a ciò che serve: <strong className="text-foreground">Supabase</strong>{" "}(database, autenticazione
               e archiviazione cifrata delle foto), <strong className="text-foreground">Didit</strong>{" "}(verifica
               dell&apos;identità), <strong className="text-foreground">Anthropic (Claude)</strong>{" "}per analizzare le foto e
-              pre-compilare l&apos;identikit, solo se lo scegli, e per leggere il testo della scena che scrivi e scegliere i
-              volti adatti (il testo, mai le foto), <strong className="text-foreground">OpenAI</strong>{" "}(ECHO, gpt-image) per
+              pre-compilare l&apos;identikit, solo se lo scegli, per leggere il testo della scena che scrivi e scegliere i
+              volti adatti, per leggere la scena contro i limiti che una persona ha scritto sul proprio volto, e per
+              controllare ogni immagine generata prima della consegna (riceve l&apos;immagine generata, mai le foto
+              originali delle persone), <strong className="text-foreground">OpenAI</strong>{" "}(ECHO, gpt-image) per
               la generazione delle immagini quando autorizzata, <strong className="text-foreground">Higgsfield</strong>{" "}per
               trasformare uno scatto certificato in video, solo con il consenso al video della persona, e{" "}
               <strong className="text-foreground">Google Cloud Vision</strong>{" "}per cercare online le copie delle immagini dei
