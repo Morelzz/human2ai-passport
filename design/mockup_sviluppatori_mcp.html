@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Semblic dentro gli AI (proposta)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F4EE; --surface:#FFFFFF; --edge:#D9D3C5;
+    --text:#17150F; --muted:#5B564B; --faint:#736D62;
+    --hairline:#E6E1D6; --hairline-soft:#EFEBE2;
+    --verified:#2F7563; --verified-soft:#E3F1EC;
+    --blocked:#B0472B; --blocked-soft:#F8E6E0;
+    --amber:#E29A2E; --amber-soft:#F8E9CF; --amber-ink:#9A4A0B; --on-amber:#412402;
+    --font:"Instrument Sans",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EFEBE2;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .foglio{max-width:1100px;margin:0 auto;padding:34px 22px 80px}
+  .titolone{font-size:30px;font-weight:700;letter-spacing:-.035em}
+  .sotto{color:var(--muted);font-size:15px;max-width:80ch;margin-top:8px}
+  .nota{background:#fff;border:1px solid var(--hairline);border-left:3px solid var(--amber);border-radius:12px;padding:12px 16px;color:var(--muted);font-size:13.5px;margin:18px 0 26px}
+  .nota b{color:var(--text)}
+  .etichetta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink);margin:34px 0 12px;display:block}
+  .schermo{border:1px solid var(--edge);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(0,0,0,.45)}
+  .barra{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#EDE8DE;border-bottom:1px solid var(--hairline)}
+  .pallino{width:10px;height:10px;border-radius:50%;background:#D9D3C5}
+  .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .dentro{padding:34px 26px;max-width:760px;margin:0 auto}
+  .kicker{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-ink)}
+  h2{font-size:32px;font-weight:700;letter-spacing:-.04em;line-height:1.08;margin-top:8px}
+  .p{color:var(--muted);font-size:15px;margin-top:10px;max-width:62ch}
+  .indirizzo{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;background:var(--text);color:#F7F4EE;border-radius:14px;padding:14px 16px;font-family:var(--mono);font-size:14px;flex-wrap:wrap}
+  .copia{font-family:var(--font);font-size:13px;font-weight:700;background:var(--amber);color:var(--on-amber);border-radius:999px;padding:7px 14px}
+  .griglia{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+  .str{background:#fff;border:1px solid var(--hairline);border-radius:16px;padding:16px}
+  .str code{font-family:var(--mono);font-size:12.5px;color:var(--amber-ink);font-weight:600}
+  .str b{display:block;font-size:15px;margin-top:4px}
+  .str p{color:var(--muted);font-size:13.5px;margin-top:4px}
+  .dialogo{margin-top:22px;background:#fff;border:1px solid var(--hairline);border-radius:16px;padding:16px;display:grid;gap:10px}
+  .msg{border-radius:12px;padding:10px 13px;font-size:14px;max-width:88%}
+  .msg.tu{background:var(--hairline-soft);justify-self:end}
+  .msg.ai{background:#fff;border:1px solid var(--hairline)}
+  .chiamata{font-family:var(--mono);font-size:11.5px;color:var(--faint);padding-left:4px}
+  .ok{color:var(--verified);font-weight:700} .no{color:var(--blocked);font-weight:700}
+  .passi{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pl{border:1px solid var(--hairline);border-radius:999px;padding:7px 13px;font-size:13px;color:var(--muted);background:#fff}
+  @media (max-width:700px){ .griglia{grid-template-columns:1fr} h2{font-size:26px} .dentro{padding:24px 16px} }
+</style>
+</head>
+<body>
+<div class="foglio">
+  <p class="titolone">Semblic dentro gli AI</p>
+  <p class="sotto">Una sezione nuova in cima a /sviluppatori (e un rimando nel piè di pagina). Il server esiste già ed è online: questa è solo la parte che lo fa trovare.</p>
+  <div class="nota"><b>Già online e provato:</b> https://semblic.com/api/mcp risponde al client MCP ufficiale con quattro strumenti in sola lettura. <b>Nessuno strumento spende o genera:</b> lo scatto lo compra sempre una persona dal link che l'assistente le passa.</div>
+
+  <span class="etichetta">La sezione, su /sviluppatori (si stringe da sola sul telefono)</span>
+  <div class="schermo">
+    <div class="barra"><span class="pallino"></span><span class="pallino"></span><span class="pallino"></span><span class="url">semblic.com/sviluppatori</span></div>
+    <div class="dentro">
+      <p class="kicker">Semblic dentro gli AI</p>
+      <h2>Il tuo assistente chiede a noi prima di generare una persona.</h2>
+      <p class="p">Collega Semblic a Claude, ChatGPT o al tuo agente. Trova volti che hanno detto sì, controlla il consenso sulla scena esatta e ottiene il prezzo vero. Se una persona non è nel registro o ha scritto un limite che la scena tocca, la risposta è BLOCK.</p>
+
+      <div class="indirizzo"><span>https://semblic.com/api/mcp</span><span class="copia">Copia</span></div>
+      <div class="passi"><span class="pl">Claude: Impostazioni, Connettori, Aggiungi</span><span class="pl">Qualsiasi client MCP: Streamable HTTP</span><span class="pl">Nessuna chiave</span></div>
+
+      <div class="griglia">
+        <div class="str"><code>search_faces</code><b>Cerca volti consenzienti</b><p>Solo chi ha il consenso attivo adesso, con il link per comprare lo scatto.</p></div>
+        <div class="str"><code>check_consent</code><b>Consenso sulla scena</b><p>ALLOW o BLOCK, letto dal vivo e contro i limiti scritti dalla persona.</p></div>
+        <div class="str"><code>get_prices</code><b>Prezzi veri</b><p>Gli stessi dello Studio, con la parte che va alla persona.</p></div>
+        <div class="str"><code>verify_content</code><b>Verifica un certificato</b><p>Chi c'è nell'immagine e se il suo consenso è ancora attivo.</p></div>
+      </div>
+
+      <div class="dialogo">
+        <div class="msg tu">Mi serve una foto di una donna sui 30 anni in un aperitivo sul lago, per un post.</div>
+        <div class="chiamata">search_faces · gender woman · age 25-35</div>
+        <div class="chiamata">check_consent · stella · "aperitivo sul lago con spritz" → <span class="no">BLOCK</span> "niente alcol"</div>
+        <div class="chiamata">check_consent · gabriella · "aperitivo sul lago con spritz" → <span class="ok">ALLOW</span></div>
+        <div class="msg ai">Gabriella ha detto sì a questa scena: 50 VOLT in qualità alta, 0,11 € vanno a lei. Stella non consente scene con alcol. Ecco il link per creare lo scatto con Gabriella.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
