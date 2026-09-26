@@ -39,6 +39,12 @@
   --on-verified-c:  #16352A;
   --on-blocked-c:   #5A201B;
 
+  /* Le due porte (27/9/2026, dall'immagine approvata): la meta' di chi ci mette
+     la faccia e l'etichetta del consenso attivo. */
+  --pannello-persona: #F1EAE8;
+  --consenso-pill:    #D6EBCF;
+  --on-consenso-pill: #184A1D;
+
   /* Gradienti, solo sfondi/sezioni */
   --grad-tramonto: linear-gradient(135deg, #E29A2E 0%, #E0715F 100%);
   --grad-aurora:   linear-gradient(135deg, #E29A2E 0%, #C25C3A 42%, var(--bg) 100%);
@@ -76,6 +82,9 @@
   --blocked-soft:  rgba(238,122,112,0.16);
   --amber-soft:    rgba(226,154,46,0.16);
   --amber-ink:     #E5B57A;
+  --pannello-persona: #1E2530;
+  --consenso-pill:    rgba(127,174,150,0.18);
+  --on-consenso-pill: #BFE0C9;
   --grad-testo:    linear-gradient(110deg, #F2A93B, #EE7A70, #F2A93B);
 }
 
@@ -136,6 +145,22 @@ html {
 /* Transizione morbida al cambio tema (non sullo scroll: solo i colori). */
 html.theme-anim, html.theme-anim * {
   transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+/* Le due porte della prima pagina: l'unico movimento, le due meta' salgono
+   insieme all'apertura. Solo transform (la foto si dipinge subito). */
+@media (prefers-reduced-motion: no-preference) {
+  .porte-home .porta-home { animation: porta-sale 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .porte-home .porta-home + .porta-home { animation-delay: 0.08s; }
+}
+@keyframes porta-sale { from { transform: translateY(18px); } to { transform: none; } }
+/* Portatili bassi (768-880 px di altezza): le due porte restano intere nel
+   primo schermo, con il titolo un po' piu' piccolo e la foto piu' panoramica. */
+@media (min-width: 1024px) and (max-height: 880px) {
+  .titolo-home { font-size: clamp(2.9rem, 6.6vh, 4.9rem); }
+  .sub-home { margin-top: 0.5rem; font-size: 1.12rem; }
+  .porte-home { margin-top: 1.5rem; }
+  .porte-home .foto-porta { aspect-ratio: 2 / 1; }
 }
 
 /* Sui telefoni Lenis non parte (SmoothScroll): le ancore scorrono morbide col CSS. */

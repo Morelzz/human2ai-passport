@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,10 +21,13 @@ type NavEntry =
   | { label: string; href: string }
   | { label: string; items: NavItem[] };
 
+// 27/9/2026 (proposta approvata da Morelz): Registro, Crea, Proteggi, Prezzi,
+// Academy. I prezzi escono da sotto "Fiducia" e diventano una voce diretta; le
+// pagine di fiducia stanno sotto Proteggi e nel pie' di pagina.
 const NAV: NavEntry[] = [
-  { label: "Avatar", href: "/catalogo" },
-  { label: "Genera", items: [
-    { href: "/match", label: "Genera" },
+  { label: "Registro", href: "/catalogo" },
+  { label: "Crea", items: [
+    { href: "/match", label: "Crea una foto" },
     { href: "/brand", label: "Per i brand" },
     { href: "/studio/edit", label: "Semblic Editor" },
     { heading: "Per le aziende" },
@@ -36,19 +40,21 @@ const NAV: NavEntry[] = [
     { href: "/entra", label: "Entra nel registro" },
     { href: "/ward", label: "Ward e Nemesis" },
     { href: "/verify", label: "Sigil" },
-  ] },
-  { label: "Academy", href: "/academy" },
-  { label: "Fiducia", items: [
-    { href: "/blog", label: "Blog" },
-    { href: "/prezzi", label: "Prezzi" },
+    { heading: "Fiducia" },
     { href: "/trasparenza", label: "Trasparenza" },
     { href: "/ai-act", label: "AI Act" },
+    { href: "/blog", label: "Blog" },
     { href: "/contatti", label: "Contatti" },
   ] },
+  { label: "Prezzi", href: "/prezzi" },
+  { label: "Academy", href: "/academy" },
 ];
 
 export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 }: { firstName: string | null; unseen?: number; volt?: number | null; voltThreshold?: number }) {
   const [open, setOpen] = useState(false);
+  // Voce della pagina in cui sei: in inchiostro e piu' piena (27/9, revisione di Impeccable).
+  const pathname = usePathname() ?? "";
+  const attiva = (href: string) => pathname === href || pathname.startsWith(href + "/");
   const [openSection, setOpenSection] = useState<string | null>(null); // accordion del drawer
   const badge = unseen > 0 ? (unseen > 9 ? "9+" : String(unseen)) : null;
 
@@ -74,7 +80,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
   // spezzava su due righe) e underline AMBRA che cresce da sinistra all'hover,
   // firma cinematica in linea col sistema (accento Amber + easing del brand).
   const topLinkBase =
-    "relative whitespace-nowrap text-[0.9rem] font-medium text-muted transition-colors duration-300 hover:text-foreground after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)]";
+    "relative whitespace-nowrap text-[0.98rem] font-medium text-muted transition-colors duration-300 hover:text-foreground after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-amber after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)]";
 
   return (
     <>
@@ -86,7 +92,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
       }`}
     >
       <ScrollProgress />
-      <nav className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 sm:px-8 ${scrolled ? "h-[3.4rem]" : "h-16"}`}>
+      <nav className={`mx-auto flex max-w-[1380px] items-center justify-between px-5 transition-all duration-500 sm:px-8 ${scrolled ? "h-[3.6rem]" : "h-[4.75rem]"}`}>
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/semblic-mark.png" alt="" aria-hidden className="h-8 w-8 shrink-0 object-contain [mask-image:radial-gradient(circle,#000_62%,transparent_84%)] [-webkit-mask-image:radial-gradient(circle,#000_62%,transparent_84%)]" />
@@ -115,7 +121,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                   <div className="card flex min-w-[12rem] flex-col gap-0.5 p-2 shadow-[0_24px_60px_-30px_rgba(23,21,15,0.35)]">
                     {entry.items.map((it) =>
                       "heading" in it ? (
-                        <div key={it.heading} className="kicker mt-1.5 px-3 pb-1 pt-1 text-[0.58rem] text-faint">{it.heading}</div>
+                        <div key={it.heading} className="kicker mt-1.5 px-3 pb-1 pt-1 text-[0.75rem] text-faint">{it.heading}</div>
                       ) : (
                         <Link key={it.href} href={it.href} className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-[var(--hairline)] hover:text-foreground">{it.label}</Link>
                       )
@@ -124,7 +130,7 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 </div>
               </div>
             ) : (
-              <Link key={entry.href} href={entry.href} className={`${topLinkBase} hover:after:scale-x-100`}>{entry.label}</Link>
+              <Link key={entry.href} href={entry.href} aria-current={attiva(entry.href) ? "page" : undefined} className={`${topLinkBase} hover:after:scale-x-100 ${attiva(entry.href) ? "font-semibold !text-foreground" : ""}`}>{entry.label}</Link>
             )
           )}
 
@@ -155,13 +161,14 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
                 )}
               </Link>
             ) : (
-              <Link href="/login" className={`${topLinkBase} hover:after:scale-x-100`}>Accedi</Link>
+              <Button asChild size="sm" variant="secondary" className="h-11 px-5 text-[0.95rem]"><Link href="/login">Accedi</Link></Button>
             )}
             <ThemeToggle />
-            {/* Chi e' gia' dentro non ha bisogno di entrare nel registro: la sua azione e' generare. */}
-            <Button asChild size="sm">
-              {firstName ? <Link href="/match">Genera</Link> : <Link href="/entra">Entra nel registro</Link>}
-            </Button>
+            {/* Chi e' gia' dentro crea; chi arriva nuovo si registra (27/9: prima era
+                "Entra nel registro", che valeva solo per chi mette il volto). */}
+            {firstName
+              ? <Button asChild size="sm" className="h-11 px-5 text-[0.95rem]"><Link href="/match">Crea</Link></Button>
+              : <Button asChild size="sm" variant="ink" className="h-11 px-5 text-[0.95rem]"><Link href="/signup">Registrati</Link></Button>}
           </div>
         </div>
 
@@ -241,11 +248,9 @@ export function Navbar({ firstName, unseen = 0, volt = null, voltThreshold = 50 
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
-                <Button asChild variant="primary" size="lg" className="w-full">
-                  {firstName
-                    ? <Link href="/match" onClick={() => setOpen(false)}>Genera</Link>
-                    : <Link href="/entra" onClick={() => setOpen(false)}>Entra nel registro</Link>}
-                </Button>
+                {firstName
+                  ? <Button asChild variant="primary" size="lg" className="w-full"><Link href="/match" onClick={() => setOpen(false)}>Crea</Link></Button>
+                  : <Button asChild variant="ink" size="lg" className="w-full"><Link href="/signup" onClick={() => setOpen(false)}>Registrati</Link></Button>}
               </div>
             </motion.aside>
           </>

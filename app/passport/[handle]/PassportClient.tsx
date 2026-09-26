@@ -18,6 +18,8 @@ interface Props {
   scanSource?: string;
   availableForBooking?: boolean;
   galleryCount?: number;
+  /** Prezzo piu' basso di uno scatto e la parte alla persona (dal server, mai scritto a mano). */
+  prezzo?: { cent: number; allaPersonaCent: number };
   ownership: {
     owner: string;
     ownerVerified?: boolean;
@@ -83,7 +85,8 @@ function SocialPill({ kind, value }: { kind: "instagram" | "facebook"; value: st
   );
 }
 
-export default function PassportClient({ avatar, events, status, tier, tokenShort, isPublicFigure, scanSource = "studio", availableForBooking = false, galleryCount = 0, ownership }: Props) {
+export default function PassportClient({ avatar, events, status, tier, tokenShort, isPublicFigure, scanSource = "studio", availableForBooking = false, galleryCount = 0, ownership, prezzo }: Props) {
+  const euro = (cent: number) => (cent / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" });
   const [copied, setCopied] = useState(false);
 
   function copyToken() {
@@ -110,16 +113,19 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
   // due posti, uno solo visibile per taglio.
   const azioni = (dove: "lato" | "flusso") => (
     <div className={dove === "lato" ? "hidden lg:block" : "lg:hidden"}>
-      {status === "ATTIVO" && (
+      {/* Sul telefono il bottone sta nella barra fissa in basso (sotto): qui solo sul computer. */}
+      {status === "ATTIVO" && dove === "lato" && (
         <div className="mt-5 lg:mt-4">
           <Link
             href={`/match?avatar=${avatar.handle}`}
             className="block w-full rounded-full bg-amber px-8 py-5 text-center text-[1.15rem] font-bold tracking-[-0.01em] text-on-amber transition-colors hover:bg-amber-hover sm:text-[1.3rem] lg:py-4 lg:text-[1.1rem]"
           >
-            Genera con questo avatar
+            Crea con {avatar.alias}
           </Link>
-          <p className="mt-2 text-center text-xs text-faint">
-            Vai dritto alla generazione: {avatar.alias} è già selezionat{avatar.gender?.toLowerCase() === "donna" ? "a" : "o"}, il consenso resta il filtro.
+          <p className="mt-2 text-center text-[0.85rem] text-muted">
+            {prezzo
+              ? <>Uno scatto da <b className="font-semibold text-foreground">{euro(prezzo.cent)}</b>, <span className="text-verified">{euro(prezzo.allaPersonaCent)} vanno a {avatar.alias}</span></>
+              : <>{avatar.alias} è già selezionat{avatar.gender?.toLowerCase() === "donna" ? "a" : "o"}, il consenso resta il filtro.</>}
           </p>
         </div>
       )}
@@ -147,7 +153,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
   );
 
   return (
-    <main className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14 lg:max-w-6xl">
+    <main className={`mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14 lg:max-w-6xl ${status === "ATTIVO" ? "max-lg:pb-32" : ""}`}>
       {/* Back: il passport è una scheda del catalogo, serve una via d'uscita
           chiara su mobile (prima si restava incastrati dentro l'avatar). */}
       <Link href="/catalogo" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground">
@@ -353,7 +359,7 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
         </p>
       </Card>
 
-      {/* Timeline — review C4: il consent ledger reso come timeline GRAFICA.
+      {/* Timeline: review C4: il consent ledger reso come timeline GRAFICA.
           La linea CONTINUA per i consensi attivi; per i revocati SI INTERROMPE
           alla revoca: l'interruzione è la prova. Solo rendering, zero logica. */}
       <Card i={4} index="04" label="Timeline di consenso">
@@ -483,6 +489,26 @@ export default function PassportClient({ avatar, events, status, tier, tokenShor
       </div>
       </div>
       </div>
+      {/* Telefono: prezzo e bottone sempre a portata di pollice (27/9/2026,
+          mockup approvato). Solo per i volti attivi. */}
+      {status === "ATTIVO" && (
+        <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-border bg-[color-mix(in_oklab,var(--bg)_94%,transparent)] px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden">
+          <div className="mx-auto flex max-w-3xl items-center gap-3">
+            {prezzo && (
+              <p className="text-[0.82rem] leading-tight text-muted">
+                Uno scatto da
+                <b className="block text-[1.15rem] font-semibold tabular-nums text-foreground">{euro(prezzo.cent)}</b>
+              </p>
+            )}
+            <Link
+              href={`/match?avatar=${avatar.handle}`}
+              className="ml-auto inline-flex min-h-[52px] items-center justify-center rounded-full bg-amber px-6 text-[1rem] font-bold text-on-amber transition-colors hover:bg-amber-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+            >
+              Crea con {avatar.alias}
+            </Link>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

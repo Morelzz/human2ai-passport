@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { percorsoInterno } from "@/lib/percorso-interno";
 import { createAuthClient } from "@/lib/supabase-auth";
 import SignupForm from "./SignupForm";
 
@@ -18,7 +19,8 @@ export default async function SignupPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const sp = await searchParams;
-  const next = sp?.next && sp.next.startsWith("/") && !sp.next.startsWith("//") ? sp.next : null;
+  // Una regola sola per tutto il sito (lib/percorso-interno): anche "/<TAB>/host" e' fuori.
+  const next = percorsoInterno(sp?.next);
 
   const supabase = await createAuthClient();
   const {

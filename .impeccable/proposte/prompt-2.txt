@@ -1,0 +1,13 @@
+A high-fidelity desktop website homepage design comp, first viewport only, 1536x1024, for SEMBLIC, the consent registry of real human faces for AI photos. This is a real web page layout, not a poster.
+
+Keep exactly the visual identity of the reference screenshot: warm light ivory page background, near-black text, one amber accent used only on the primary button, a crisp modern grotesque sans-serif (Instrument Sans style), pill-shaped buttons, 16px rounded cards, calm Apple-like restraint, no gradients, no glow, no dark blocks. The blurred area in the reference is only a placeholder: do not copy its content.
+
+This variation makes THE REGISTRY ITSELF the hero: the faces lead, the words follow.
+
+Layout, top to bottom:
+1. Slim navigation bar: small black rounded square logo mark with the wordmark SEMBLIC on the left; links on the right: Registro, Crea, Proteggi, Prezzi, Academy; then an outlined pill "Accedi" and a black pill "Registrati".
+2. A full-width horizontal row of five tall portrait cards of different adults, natural studio photographs in soft daylight on light neutral backgrounds, edge to edge across the page with small gaps, the row slightly cropped at the right edge to suggest it scrolls sideways. Under each photo, outside the image, a first name in bold and a small green line "consenso attivo · foto e video".
+3. Below the row, left aligned, a large bold one-line headline "Ogni volto qui ha detto sì." and on the same band, to the right, the two equal large rounded choice tiles side by side: the first filled amber with bold text "Crea con volti veri" and small text "da 0,21 € a scatto"; the second white with a thin border, bold text "Metti il tuo volto" and small text "gratis, guadagni a ogni foto".
+4. One quiet line of small grey text under the headline: "Consenso verificato e certificato su ogni scatto. Chi ci mette la faccia viene pagato."
+
+All text in Italian exactly as written above, spelled correctly. No other text, no logos of other companies, no watermarks except faint diagonal "SEMBLIC" watermarks on the photos.

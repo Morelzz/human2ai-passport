@@ -1,0 +1,15 @@
+A high-fidelity desktop website homepage design comp, first viewport only, 1536x1024, for SEMBLIC, the consent registry of real human faces for AI photos. This is a real web page layout, not a poster.
+
+Keep exactly the visual identity of the reference screenshot: warm light ivory page background, near-black text, one amber accent used only on the primary button, a crisp modern grotesque sans-serif (Instrument Sans style), pill-shaped buttons, 16px rounded cards, calm Apple-like restraint, no gradients, no glow, no dark blocks. The blurred area in the reference is only a placeholder: do not copy its content.
+
+This variation shows THE TWO DOORS AS TWO HALVES of one proof: what a creator gets, and what the person gets, from the same photo.
+
+Layout, top to bottom:
+1. Slim navigation bar: small black rounded square logo mark with the wordmark SEMBLIC on the left; links on the right: Registro, Crea, Proteggi, Prezzi, Academy; then an outlined pill "Accedi" and a black pill "Registrati".
+2. Centered above both halves, a large bold one-line headline "Ogni volto qui ha detto sì." and one short grey line under it: "Una foto, due persone contente: chi la crea e chi ci mette la faccia."
+3. Two equal large rounded panels side by side, 16px corners, on the ivory page:
+   Left panel, white: a finished lifestyle photograph of a young adult woman in a sunny cafe reading a book, with a small white pill on the photo "Certificato SEMBLIC"; under the photo the line "Scatto verticale, alta qualità" and a large price "0,50 €"; at the bottom a full-width amber pill button "Crea con volti veri".
+   Right panel, very light warm grey: the same woman's simple studio portrait small at the top left with her first name "Anna" and a green pill "consenso attivo"; then a short list in clean type: "Ha ricevuto 0,11 € per questo scatto", "Revoca quando vuole, vale subito", "Decide lei a cosa dice no, con parole sue"; at the bottom a full-width black pill button "Metti il tuo volto".
+4. Nothing else in the first viewport.
+
+All text in Italian exactly as written above, spelled correctly. No other text, no logos of other companies, faint diagonal "SEMBLIC" watermarks on the photos only.

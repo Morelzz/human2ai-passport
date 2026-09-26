@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
-// F1 — banner cookie conforme: default SOLO essenziali, scelta granulare,
+// F1: banner cookie conforme: default SOLO essenziali, scelta granulare,
 // nessun dark pattern (i due bottoni hanno pari dignità visiva). Oggi la
 // piattaforma usa solo cookie tecnici; la preferenza "statistiche" viene
 // salvata e verrà rispettata se/quando introdurremo analytics.
@@ -50,6 +50,29 @@ export function CookieBanner() {
 
   if (!open) return null;
 
+  // 27/9/2026 (proposta approvata da Morelz): finche' usiamo solo cookie
+  // essenziali non c'e' niente da accettare, quindi niente "Accetta tutto" e
+  // niente riquadro che copre un terzo del telefono. Una riga sola con i
+  // dettagli e "Ok". Il pannello completo resta: lo riapre la pagina /cookie.
+  if (!detail) {
+    return (
+      <div role="region" aria-label="Informativa cookie" className="fixed inset-x-3 bottom-3 z-[80] mx-auto max-w-lg">
+        <div className="flex items-center gap-3 rounded-2xl bg-foreground py-2.5 pl-4 pr-2.5 text-[0.9rem] text-background shadow-[0_18px_40px_-20px_rgba(23,21,15,0.55)]">
+          <p className="min-w-0 flex-1 leading-snug">
+            Solo cookie essenziali, niente profilazione.{" "}
+            <Link href="/cookie" className="font-semibold underline underline-offset-2">Dettagli</Link>
+          </p>
+          <button
+            onClick={() => save(false)}
+            className="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-amber px-5 font-semibold text-on-amber transition-colors hover:bg-amber-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber"
+          >
+            Ok
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div role="dialog" aria-label="Preferenze cookie" className="fixed inset-x-3 bottom-3 z-[80] mx-auto max-w-xl">
       <div className="rounded-2xl border border-border bg-[color-mix(in_oklab,var(--surface)_95%,transparent)] p-5 shadow-[0_24px_60px_-24px_rgba(23,21,15,0.35)] backdrop-blur-xl">
@@ -68,7 +91,7 @@ export function CookieBanner() {
             </label>
             <label className="flex cursor-pointer items-center justify-between gap-3 text-[0.8rem]">
               <span><span className="font-semibold text-foreground">Statistiche</span> <span className="text-faint">· oggi non in uso; la scelta varrà se le introdurremo</span></span>
-              <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} className="h-4 w-4 accent-[#F2A93B]" />
+              <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} className="h-4 w-4 accent-[var(--amber-c)]" />
             </label>
           </div>
         )}
@@ -78,14 +101,9 @@ export function CookieBanner() {
           <button onClick={() => save(false)} className="rounded-full border border-border px-5 py-2.5 text-[0.9rem] font-semibold text-foreground transition-colors hover:border-edge">
             Solo essenziali
           </button>
-          <button onClick={() => save(detail ? analytics : true)} className="rounded-full border border-border px-5 py-2.5 text-[0.9rem] font-semibold text-foreground transition-colors hover:border-edge">
-            {detail ? "Salva preferenze" : "Accetta tutto"}
+          <button onClick={() => save(analytics)} className="rounded-full border border-border px-5 py-2.5 text-[0.9rem] font-semibold text-foreground transition-colors hover:border-edge">
+            Salva preferenze
           </button>
-          {!detail && (
-            <button onClick={() => setDetail(true)} className="px-2 py-2.5 text-[0.72rem] font-semibold text-muted underline-offset-2 transition-colors hover:text-foreground hover:underline">
-              Preferenze
-            </button>
-          )}
         </div>
       </div>
     </div>

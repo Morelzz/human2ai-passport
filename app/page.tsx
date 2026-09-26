@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { registroPubblico, numeriRegistro } from "@/lib/registro-cache";
+import { registroPubblico } from "@/lib/registro-cache";
 import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
-import { Hero } from "@/components/marketing/Hero";
+import { DuePorte } from "@/components/marketing/DuePorte";
+import { scattoInVetrina } from "@/lib/vetrina";
 import { ProvaGratis, type VoltoProva } from "@/components/marketing/ProvaGratis";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { IlSet } from "@/components/marketing/IlSet";
@@ -22,7 +23,7 @@ export default async function Home() {
   // Fonte UNICA del registro pubblico, in cache (lib/registro-cache): stessi
   // volti e stessi contatori di catalogo e trasparenza. Le due letture partono
   // insieme: prima erano tre giri sul DB in fila, e la pagina non partiva.
-  const [approved, numeri] = await Promise.all([registroPubblico(), numeriRegistro()]);
+  const [approved, vetrina] = await Promise.all([registroPubblico(), scattoInVetrina()]);
 
   // La fascia "Provalo adesso": c'e' solo quando l'interruttore e' acceso.
   const voltiProva: VoltoProva[] = provaAttiva()
@@ -31,9 +32,8 @@ export default async function Home() {
         return { handle: r.handle, alias: r.alias, src: sampleSrc(portraitFor(r as never), 480) };
       })
     : [];
-  const { protetti: protectedFaces, pagate: paidCount } = numeri;
 
-  // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi —
+  // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi :
   // i volti REALI (con galleria: Mario/Random e gli ambassador) restano in
   // testa. I revocati vivono nel catalogo, in fondo.
   const featured: FeaturedAvatar[] = approved
@@ -60,7 +60,7 @@ export default async function Home() {
     <div className="relative min-h-screen overflow-x-hidden">
       <SiteNav />
       <main>
-        <Hero count={approved.length} paidCount={paidCount} protectedFaces={protectedFaces} />
+        <DuePorte vetrina={vetrina} />
         {voltiProva.length > 0 && (
           <div className="px-5 pb-2 sm:px-8">
             <ProvaGratis volti={voltiProva} compatta />

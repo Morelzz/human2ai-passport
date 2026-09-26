@@ -1,0 +1,11 @@
+A high-fidelity desktop website homepage design comp, first viewport only, 1536x1024, for SEMBLIC, the consent registry of real human faces for AI photos. This is a real web page layout, not a poster.
+
+Keep exactly the visual identity of the reference screenshot: warm light ivory page background, near-black text, one amber accent used only on the primary button, a crisp modern grotesque sans-serif (Instrument Sans style), pill-shaped buttons, 16px rounded cards, calm Apple-like restraint, no gradients, no glow, no dark blocks. The blurred area in the reference is only a placeholder: do not copy its content.
+
+Layout, top to bottom:
+1. Slim navigation bar: small black rounded square logo mark with the wordmark SEMBLIC on the left; links on the right: Registro, Crea, Proteggi, Prezzi, Academy; then an outlined pill "Accedi" and a black pill "Registrati".
+2. Hero split in two columns. Left column, left aligned: a very large bold two-line headline "Ogni volto qui ha detto sì." Below it one short paragraph in grey: "Foto e video con persone vere, consenso verificato e certificato su ogni scatto. Chi ci mette la faccia viene pagato." Below that, two equal large rounded choice tiles side by side: the first filled amber with bold text "Crea con volti veri" and small text "da 0,21 € a scatto"; the second white with a thin border, bold text "Metti il tuo volto" and small text "gratis, guadagni a ogni foto".
+3. Right column: an asymmetric mosaic of three natural studio portrait photographs of different adults (one tall on the left, two stacked on the right), soft daylight, neutral light backgrounds, each photo with a small white pill label at the bottom left showing a first name and the green words "consenso attivo".
+4. Under the hero, one quiet single line of three facts in small text: "11 volti nel registro", "75 scatti pagati alle persone", "2 volti protetti, mai generabili".
+
+Generous white space, strong left alignment, the headline is the dominant element. All text in Italian exactly as written above, spelled correctly. No other text, no logos of other companies, no watermarks except faint diagonal "SEMBLIC" watermarks on the photos.

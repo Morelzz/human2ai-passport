@@ -7,11 +7,10 @@ import { NextResponse, type NextRequest } from "next/server";
 const SUPABASE_ORIGIN = "https://ktjebfavzherochwhtis.supabase.co";
 const BLOG_CDN = "https://d8j0ntlcm91z4.cloudfront.net";
 
-// Il poster dell'hero e' l'elemento piu' grande della home (LCP). Lo chiediamo
-// con l'header HTTP e non con un <link> nella pagina: l'header arriva col primo
-// byte, prima che il browser legga una riga di HTML, e React non lo tocca
-// (dentro la pagina il preload spariva, 21/9/2026).
-const HERO_POSTER = `${SUPABASE_ORIGIN}/storage/v1/object/public/assets/hero-v3-poster.jpg`;
+// L'immagine piu' grande della home (LCP) si chiede con l'header HTTP e non con
+// un <link> nella pagina: l'header arriva col primo byte, prima che il browser
+// legga una riga di HTML, e React non lo tocca (dentro la pagina il preload
+// spariva, 21/9/2026). Dal 27/9 e' la foto delle due porte (sotto).
 
 function buildCsp(nonce: string): string {
   // script-src con nonce + strict-dynamic (Next inietta i suoi script col nonce).
@@ -80,7 +79,11 @@ export async function proxy(request: NextRequest) {
   response.headers.set("Content-Security-Policy-Report-Only", csp);
   response.headers.set("x-nonce", nonce);
   if (request.nextUrl.pathname === "/") {
-    response.headers.set("Link", `<${HERO_POSTER}>; rel=preload; as=image; fetchpriority=high`);
+    // La foto delle due porte (27/9/2026) e' l'elemento piu' grande della home.
+    response.headers.set(
+      "Link",
+      `</home/scatto-gabriella-1200.webp>; rel=preload; as=image; type="image/webp"; imagesrcset="/home/scatto-gabriella-760.webp 760w, /home/scatto-gabriella-1200.webp 1200w"; imagesizes="(min-width: 1024px) 38vw, 92vw"; fetchpriority=high`,
+    );
   }
 
   return response;

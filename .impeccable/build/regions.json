@@ -1,0 +1,25 @@
+{
+  "regions": [
+    { "id": "logo", "kind": "chrome", "pixelBox": { "x": 58, "y": 28, "w": 156, "h": 40 }, "note": "black rounded square mark and wordmark SEMBLIC" },
+    { "id": "nav-links", "kind": "text", "pixelBox": { "x": 822, "y": 34, "w": 420, "h": 28 }, "note": "nav links Registro Crea Proteggi Prezzi Academy" },
+    { "id": "nav-accedi", "kind": "control", "pixelBox": { "x": 1266, "y": 25, "w": 90, "h": 44 }, "note": "outlined pill Accedi" },
+    { "id": "nav-registrati", "kind": "control", "pixelBox": { "x": 1366, "y": 25, "w": 114, "h": 44 }, "note": "black pill Registrati" },
+    { "id": "nav-rule", "kind": "chrome", "pixelBox": { "x": 0, "y": 87, "w": 1536, "h": 3 }, "note": "hairline under the navigation" },
+    { "id": "headline", "kind": "text", "pixelBox": { "x": 334, "y": 142, "w": 868, "h": 82 }, "note": "headline Ogni volto qui ha detto si" },
+    { "id": "subline", "kind": "text", "pixelBox": { "x": 446, "y": 238, "w": 646, "h": 28 }, "note": "grey line Una foto, due persone contente" },
+    { "id": "panel-crea", "kind": "chrome", "container": true, "pixelBox": { "x": 111, "y": 306, "w": 647, "h": 640 }, "note": "white rounded panel for the creator side" },
+    { "id": "foto-scatto", "kind": "image", "parentId": "panel-crea", "pixelBox": { "x": 145, "y": 329, "w": 579, "h": 388 }, "note": "certified lifestyle photo of a woman reading in a sunny cafe; ships as the real certified Semblic shot", "bleed": true },
+    { "id": "pill-certificato", "kind": "control", "parentId": "panel-crea", "pixelBox": { "x": 163, "y": 347, "w": 165, "h": 38 }, "note": "white label Certificato SEMBLIC over the top left corner of the image", "codeDrawn": true },
+    { "id": "caption-scatto", "kind": "text", "parentId": "panel-crea", "pixelBox": { "x": 145, "y": 741, "w": 248, "h": 26 }, "note": "grey caption Scatto verticale, alta qualita" },
+    { "id": "prezzo", "kind": "text", "parentId": "panel-crea", "pixelBox": { "x": 145, "y": 778, "w": 162, "h": 54 }, "note": "large price 0,50 euro" },
+    { "id": "btn-crea", "kind": "control", "parentId": "panel-crea", "pixelBox": { "x": 145, "y": 851, "w": 579, "h": 60 }, "note": "amber full-width pill Crea con volti veri" },
+    { "id": "panel-volto", "kind": "chrome", "container": true, "pixelBox": { "x": 779, "y": 306, "w": 648, "h": 640 }, "note": "light warm grey rounded panel for the person side" },
+    { "id": "ritratto", "kind": "image", "parentId": "panel-volto", "pixelBox": { "x": 814, "y": 341, "w": 161, "h": 190 }, "note": "small studio portrait of the same woman; ships as the real registry portrait", "bleed": true },
+    { "id": "nome", "kind": "text", "parentId": "panel-volto", "pixelBox": { "x": 1005, "y": 388, "w": 76, "h": 34 }, "note": "first name Anna" },
+    { "id": "pill-consenso", "kind": "control", "parentId": "panel-volto", "pixelBox": { "x": 1005, "y": 433, "w": 169, "h": 36 }, "note": "green label consenso attivo with dot", "codeDrawn": true },
+    { "id": "riga-ricevuto", "kind": "text", "parentId": "panel-volto", "pixelBox": { "x": 818, "y": 577, "w": 410, "h": 36 }, "note": "icon and line Ha ricevuto 0,11 euro per questo scatto" },
+    { "id": "riga-revoca", "kind": "text", "parentId": "panel-volto", "pixelBox": { "x": 818, "y": 656, "w": 378, "h": 36 }, "note": "shield icon and line Revoca quando vuole, vale subito" },
+    { "id": "riga-regole", "kind": "text", "parentId": "panel-volto", "pixelBox": { "x": 818, "y": 736, "w": 446, "h": 36 }, "note": "person icon and line Decide lei a cosa dice no, con parole sue" },
+    { "id": "btn-volto", "kind": "control", "parentId": "panel-volto", "pixelBox": { "x": 814, "y": 851, "w": 578, "h": 60 }, "note": "black full-width pill Metti il tuo volto" }
+  ]
+}

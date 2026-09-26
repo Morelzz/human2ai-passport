@@ -8,6 +8,7 @@ import { siteUrl } from "@/lib/site";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import PassportClient from "./PassportClient";
+import { FORMATI, qualitaPer } from "@/app/match/crea/opzioni";
 import { jsonLdSicuro } from "@/lib/json-ld";
 
 // Handle storici rinominati: redirect permanente (308) al nuovo handle, per i
@@ -48,6 +49,14 @@ export async function generateMetadata({ params }: Props) {
       images: [`${siteUrl()}/passport/${handle}/opengraph-image`],
     },
   };
+}
+
+// Il prezzo piu' basso di uno scatto, dalla stessa funzione che fa pagare lo
+// Studio (mai scritto a mano), con la parte che va alla persona.
+function prezzoMinimo(): { cent: number; allaPersonaCent: number } {
+  const tutte = FORMATI.flatMap((f) => qualitaPer(f.v));
+  const min = tutte.reduce((a, b) => (b.volt < a.volt ? b : a));
+  return { cent: min.volt, allaPersonaCent: min.royaltyCents };
 }
 
 const CAMPI_PUBBLICI = [
@@ -146,7 +155,7 @@ export default async function PassportPage({ params }: Props) {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-clip">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSicuro(personJsonLd) }} />
 <div className="relative z-[2]">
         <SiteNav />
@@ -161,6 +170,7 @@ export default async function PassportPage({ params }: Props) {
           availableForBooking={(a.available_for_booking as boolean) ?? false}
           galleryCount={galleryFromRow(handle, (avatar as Record<string, unknown>).gallery_urls).length}
           ownership={ownership}
+          prezzo={prezzoMinimo()}
         />
         <Footer />
       </div>
