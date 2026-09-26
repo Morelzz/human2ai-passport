@@ -1,0 +1,847 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-26T23:10:30.984Z",
+  "title": "Design System: SEMBLIC",
+  "extensions": {
+    "colorMeta": {
+      "ivory-bg": {
+        "role": "neutral",
+        "displayName": "Ivory Page",
+        "canonical": "#F7F4EE",
+        "oklch": "oklch(96.8% 0.009 84.6)",
+        "tonalRamp": [
+          "oklch(15% 0.005 84.6)",
+          "oklch(26% 0.005 84.6)",
+          "oklch(37% 0.009 84.6)",
+          "oklch(48% 0.009 84.6)",
+          "oklch(59% 0.009 84.6)",
+          "oklch(70% 0.009 84.6)",
+          "oklch(82% 0.009 84.6)",
+          "oklch(95% 0.005 84.6)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100% 0 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0 89.9)",
+          "oklch(26% 0 89.9)",
+          "oklch(37% 0 89.9)",
+          "oklch(48% 0 89.9)",
+          "oklch(59% 0 89.9)",
+          "oklch(70% 0 89.9)",
+          "oklch(82% 0 89.9)",
+          "oklch(95% 0 89.9)"
+        ]
+      },
+      "edge": {
+        "role": "neutral",
+        "displayName": "Warm Edge",
+        "canonical": "#D9D3C5",
+        "oklch": "oklch(86.8% 0.02 87.5)",
+        "tonalRamp": [
+          "oklch(15% 0.011 87.5)",
+          "oklch(26% 0.011 87.5)",
+          "oklch(37% 0.02 87.5)",
+          "oklch(48% 0.02 87.5)",
+          "oklch(59% 0.02 87.5)",
+          "oklch(70% 0.02 87.5)",
+          "oklch(82% 0.02 87.5)",
+          "oklch(95% 0.011 87.5)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#E6E1D6",
+        "oklch": "oklch(91.1% 0.016 86.4)",
+        "tonalRamp": [
+          "oklch(15% 0.009 86.4)",
+          "oklch(26% 0.009 86.4)",
+          "oklch(37% 0.016 86.4)",
+          "oklch(48% 0.016 86.4)",
+          "oklch(59% 0.016 86.4)",
+          "oklch(70% 0.016 86.4)",
+          "oklch(82% 0.016 86.4)",
+          "oklch(95% 0.009 86.4)"
+        ]
+      },
+      "hairline-soft": {
+        "role": "neutral",
+        "displayName": "Soft Hairline",
+        "canonical": "#EFEBE2",
+        "oklch": "oklch(94.1% 0.013 86.8)",
+        "tonalRamp": [
+          "oklch(15% 0.007 86.8)",
+          "oklch(26% 0.007 86.8)",
+          "oklch(37% 0.013 86.8)",
+          "oklch(48% 0.013 86.8)",
+          "oklch(59% 0.013 86.8)",
+          "oklch(70% 0.013 86.8)",
+          "oklch(82% 0.013 86.8)",
+          "oklch(95% 0.007 86.8)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#17150F",
+        "oklch": "oklch(19.6% 0.012 91.8)",
+        "tonalRamp": [
+          "oklch(15% 0.007 91.8)",
+          "oklch(26% 0.007 91.8)",
+          "oklch(37% 0.012 91.8)",
+          "oklch(48% 0.012 91.8)",
+          "oklch(59% 0.012 91.8)",
+          "oklch(70% 0.012 91.8)",
+          "oklch(82% 0.012 91.8)",
+          "oklch(95% 0.007 91.8)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#5B564B",
+        "oklch": "oklch(45.4% 0.019 86.5)",
+        "tonalRamp": [
+          "oklch(15% 0.01 86.5)",
+          "oklch(26% 0.01 86.5)",
+          "oklch(37% 0.019 86.5)",
+          "oklch(48% 0.019 86.5)",
+          "oklch(59% 0.019 86.5)",
+          "oklch(70% 0.019 86.5)",
+          "oklch(82% 0.019 86.5)",
+          "oklch(95% 0.01 86.5)"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Faint Ink",
+        "canonical": "#736D62",
+        "oklch": "oklch(53.7% 0.018 82.8)",
+        "tonalRamp": [
+          "oklch(15% 0.01 82.8)",
+          "oklch(26% 0.01 82.8)",
+          "oklch(37% 0.018 82.8)",
+          "oklch(48% 0.018 82.8)",
+          "oklch(59% 0.018 82.8)",
+          "oklch(70% 0.018 82.8)",
+          "oklch(82% 0.018 82.8)",
+          "oklch(95% 0.01 82.8)"
+        ]
+      },
+      "portrait-well": {
+        "role": "neutral",
+        "displayName": "Portrait Well",
+        "canonical": "#E7E1D3",
+        "oklch": "oklch(91.1% 0.02 87.5)",
+        "tonalRamp": [
+          "oklch(15% 0.011 87.5)",
+          "oklch(26% 0.011 87.5)",
+          "oklch(37% 0.02 87.5)",
+          "oklch(48% 0.02 87.5)",
+          "oklch(59% 0.02 87.5)",
+          "oklch(70% 0.02 87.5)",
+          "oklch(82% 0.02 87.5)",
+          "oklch(95% 0.011 87.5)"
+        ]
+      },
+      "person-panel": {
+        "role": "neutral",
+        "displayName": "Rose Paper",
+        "canonical": "#F1EAE8",
+        "oklch": "oklch(94.2% 0.008 36.6)",
+        "cssVar": "--pannello-persona",
+        "darkValue": "#1E2530",
+        "tonalRamp": [
+          "oklch(15% 0.004 36.6)",
+          "oklch(26% 0.004 36.6)",
+          "oklch(37% 0.008 36.6)",
+          "oklch(48% 0.008 36.6)",
+          "oklch(59% 0.008 36.6)",
+          "oklch(70% 0.008 36.6)",
+          "oklch(82% 0.008 36.6)",
+          "oklch(95% 0.004 36.6)"
+        ]
+      },
+      "amber": {
+        "role": "primary",
+        "displayName": "Registry Amber",
+        "canonical": "#E29A2E",
+        "oklch": "oklch(74% 0.144 72)",
+        "tonalRamp": [
+          "oklch(15% 0.079 72)",
+          "oklch(26% 0.079 72)",
+          "oklch(37% 0.144 72)",
+          "oklch(48% 0.144 72)",
+          "oklch(59% 0.144 72)",
+          "oklch(70% 0.144 72)",
+          "oklch(82% 0.144 72)",
+          "oklch(95% 0.079 72)"
+        ]
+      },
+      "amber-hover": {
+        "role": "primary",
+        "displayName": "Pressed Amber",
+        "canonical": "#D08A22",
+        "oklch": "oklch(68.9% 0.138 70.7)",
+        "tonalRamp": [
+          "oklch(15% 0.076 70.7)",
+          "oklch(26% 0.076 70.7)",
+          "oklch(37% 0.138 70.7)",
+          "oklch(48% 0.138 70.7)",
+          "oklch(59% 0.138 70.7)",
+          "oklch(70% 0.138 70.7)",
+          "oklch(82% 0.138 70.7)",
+          "oklch(95% 0.076 70.7)"
+        ]
+      },
+      "amber-soft": {
+        "role": "primary",
+        "displayName": "Amber Wash",
+        "canonical": "#F8E9CF",
+        "oklch": "oklch(93.9% 0.038 81.5)",
+        "tonalRamp": [
+          "oklch(15% 0.021 81.5)",
+          "oklch(26% 0.021 81.5)",
+          "oklch(37% 0.038 81.5)",
+          "oklch(48% 0.038 81.5)",
+          "oklch(59% 0.038 81.5)",
+          "oklch(70% 0.038 81.5)",
+          "oklch(82% 0.038 81.5)",
+          "oklch(95% 0.021 81.5)"
+        ]
+      },
+      "amber-ink": {
+        "role": "primary",
+        "displayName": "Burnt Amber Ink",
+        "canonical": "#9A4A0B",
+        "oklch": "oklch(50.2% 0.126 50.9)",
+        "tonalRamp": [
+          "oklch(15% 0.069 50.9)",
+          "oklch(26% 0.069 50.9)",
+          "oklch(37% 0.126 50.9)",
+          "oklch(48% 0.126 50.9)",
+          "oklch(59% 0.126 50.9)",
+          "oklch(70% 0.126 50.9)",
+          "oklch(82% 0.126 50.9)",
+          "oklch(95% 0.069 50.9)"
+        ]
+      },
+      "on-amber": {
+        "role": "primary",
+        "displayName": "Deep Brown Label",
+        "canonical": "#412402",
+        "oklch": "oklch(29.2% 0.063 64.8)",
+        "tonalRamp": [
+          "oklch(15% 0.035 64.8)",
+          "oklch(26% 0.035 64.8)",
+          "oklch(37% 0.063 64.8)",
+          "oklch(48% 0.063 64.8)",
+          "oklch(59% 0.063 64.8)",
+          "oklch(70% 0.063 64.8)",
+          "oklch(82% 0.063 64.8)",
+          "oklch(95% 0.035 64.8)"
+        ]
+      },
+      "verified": {
+        "role": "secondary",
+        "displayName": "Consent Green",
+        "canonical": "#2F7563",
+        "oklch": "oklch(51.2% 0.076 173.6)",
+        "tonalRamp": [
+          "oklch(15% 0.042 173.6)",
+          "oklch(26% 0.042 173.6)",
+          "oklch(37% 0.076 173.6)",
+          "oklch(48% 0.076 173.6)",
+          "oklch(59% 0.076 173.6)",
+          "oklch(70% 0.076 173.6)",
+          "oklch(82% 0.076 173.6)",
+          "oklch(95% 0.042 173.6)"
+        ]
+      },
+      "verified-soft": {
+        "role": "secondary",
+        "displayName": "Green Wash",
+        "canonical": "#E3F1EC",
+        "oklch": "oklch(94.6% 0.016 172.6)",
+        "tonalRamp": [
+          "oklch(15% 0.009 172.6)",
+          "oklch(26% 0.009 172.6)",
+          "oklch(37% 0.016 172.6)",
+          "oklch(48% 0.016 172.6)",
+          "oklch(59% 0.016 172.6)",
+          "oklch(70% 0.016 172.6)",
+          "oklch(82% 0.016 172.6)",
+          "oklch(95% 0.009 172.6)"
+        ]
+      },
+      "on-verified": {
+        "role": "secondary",
+        "displayName": "Green Ink",
+        "canonical": "#16352A",
+        "oklch": "oklch(30.1% 0.042 168)",
+        "tonalRamp": [
+          "oklch(15% 0.023 168)",
+          "oklch(26% 0.023 168)",
+          "oklch(37% 0.042 168)",
+          "oklch(48% 0.042 168)",
+          "oklch(59% 0.042 168)",
+          "oklch(70% 0.042 168)",
+          "oklch(82% 0.042 168)",
+          "oklch(95% 0.023 168)"
+        ]
+      },
+      "consent-pill": {
+        "role": "secondary",
+        "displayName": "Consent Leaf",
+        "canonical": "#D6EBCF",
+        "oklch": "oklch(91.7% 0.044 137.8)",
+        "cssVar": "--consenso-pill",
+        "darkValue": "rgba(127,174,150,0.18)",
+        "tonalRamp": [
+          "oklch(15% 0.024 137.8)",
+          "oklch(26% 0.024 137.8)",
+          "oklch(37% 0.044 137.8)",
+          "oklch(48% 0.044 137.8)",
+          "oklch(59% 0.044 137.8)",
+          "oklch(70% 0.044 137.8)",
+          "oklch(82% 0.044 137.8)",
+          "oklch(95% 0.024 137.8)"
+        ]
+      },
+      "on-consent-pill": {
+        "role": "secondary",
+        "displayName": "Leaf Ink",
+        "canonical": "#184A1D",
+        "oklch": "oklch(36.4% 0.091 145.1)",
+        "cssVar": "--on-consenso-pill",
+        "darkValue": "#BFE0C9",
+        "tonalRamp": [
+          "oklch(15% 0.05 145.1)",
+          "oklch(26% 0.05 145.1)",
+          "oklch(37% 0.091 145.1)",
+          "oklch(48% 0.091 145.1)",
+          "oklch(59% 0.091 145.1)",
+          "oklch(70% 0.091 145.1)",
+          "oklch(82% 0.091 145.1)",
+          "oklch(95% 0.05 145.1)"
+        ]
+      },
+      "blocked": {
+        "role": "secondary",
+        "displayName": "Revoked Brick",
+        "canonical": "#B0472B",
+        "oklch": "oklch(53.4% 0.144 35.8)",
+        "tonalRamp": [
+          "oklch(15% 0.079 35.8)",
+          "oklch(26% 0.079 35.8)",
+          "oklch(37% 0.144 35.8)",
+          "oklch(48% 0.144 35.8)",
+          "oklch(59% 0.144 35.8)",
+          "oklch(70% 0.144 35.8)",
+          "oklch(82% 0.144 35.8)",
+          "oklch(95% 0.079 35.8)"
+        ]
+      },
+      "blocked-soft": {
+        "role": "secondary",
+        "displayName": "Brick Wash",
+        "canonical": "#F8E6E0",
+        "oklch": "oklch(93.8% 0.021 39.4)",
+        "tonalRamp": [
+          "oklch(15% 0.012 39.4)",
+          "oklch(26% 0.012 39.4)",
+          "oklch(37% 0.021 39.4)",
+          "oklch(48% 0.021 39.4)",
+          "oklch(59% 0.021 39.4)",
+          "oklch(70% 0.021 39.4)",
+          "oklch(82% 0.021 39.4)",
+          "oklch(95% 0.012 39.4)"
+        ]
+      },
+      "on-blocked": {
+        "role": "secondary",
+        "displayName": "Brick Ink",
+        "canonical": "#5A201B",
+        "oklch": "oklch(33% 0.087 27.7)",
+        "tonalRamp": [
+          "oklch(15% 0.048 27.7)",
+          "oklch(26% 0.048 27.7)",
+          "oklch(37% 0.087 27.7)",
+          "oklch(48% 0.087 27.7)",
+          "oklch(59% 0.087 27.7)",
+          "oklch(70% 0.087 27.7)",
+          "oklch(82% 0.087 27.7)",
+          "oklch(95% 0.048 27.7)"
+        ]
+      },
+      "island-bg": {
+        "role": "neutral",
+        "displayName": "Night",
+        "canonical": "#0C0F17",
+        "oklch": "oklch(16.9% 0.018 268.6)",
+        "tonalRamp": [
+          "oklch(15% 0.01 268.6)",
+          "oklch(26% 0.01 268.6)",
+          "oklch(37% 0.018 268.6)",
+          "oklch(48% 0.018 268.6)",
+          "oklch(59% 0.018 268.6)",
+          "oklch(70% 0.018 268.6)",
+          "oklch(82% 0.018 268.6)",
+          "oklch(95% 0.01 268.6)"
+        ]
+      },
+      "island-surface": {
+        "role": "neutral",
+        "displayName": "Night Surface",
+        "canonical": "#141A24",
+        "oklch": "oklch(21.7% 0.022 260.5)",
+        "tonalRamp": [
+          "oklch(15% 0.012 260.5)",
+          "oklch(26% 0.012 260.5)",
+          "oklch(37% 0.022 260.5)",
+          "oklch(48% 0.022 260.5)",
+          "oklch(59% 0.022 260.5)",
+          "oklch(70% 0.022 260.5)",
+          "oklch(82% 0.022 260.5)",
+          "oklch(95% 0.012 260.5)"
+        ]
+      },
+      "island-elevated": {
+        "role": "neutral",
+        "displayName": "Night Raised",
+        "canonical": "#1E2530",
+        "oklch": "oklch(26.3% 0.023 259.3)",
+        "tonalRamp": [
+          "oklch(15% 0.013 259.3)",
+          "oklch(26% 0.013 259.3)",
+          "oklch(37% 0.023 259.3)",
+          "oklch(48% 0.023 259.3)",
+          "oklch(59% 0.023 259.3)",
+          "oklch(70% 0.023 259.3)",
+          "oklch(82% 0.023 259.3)",
+          "oklch(95% 0.013 259.3)"
+        ]
+      },
+      "island-edge": {
+        "role": "neutral",
+        "displayName": "Night Edge",
+        "canonical": "#2C3440",
+        "oklch": "oklch(32.3% 0.024 258.4)",
+        "tonalRamp": [
+          "oklch(15% 0.013 258.4)",
+          "oklch(26% 0.013 258.4)",
+          "oklch(37% 0.024 258.4)",
+          "oklch(48% 0.024 258.4)",
+          "oklch(59% 0.024 258.4)",
+          "oklch(70% 0.024 258.4)",
+          "oklch(82% 0.024 258.4)",
+          "oklch(95% 0.013 258.4)"
+        ]
+      },
+      "island-text": {
+        "role": "neutral",
+        "displayName": "Warm Cream",
+        "canonical": "#F2E9D8",
+        "oklch": "oklch(93.7% 0.025 83.4)",
+        "tonalRamp": [
+          "oklch(15% 0.014 83.4)",
+          "oklch(26% 0.014 83.4)",
+          "oklch(37% 0.025 83.4)",
+          "oklch(48% 0.025 83.4)",
+          "oklch(59% 0.025 83.4)",
+          "oklch(70% 0.025 83.4)",
+          "oklch(82% 0.025 83.4)",
+          "oklch(95% 0.014 83.4)"
+        ]
+      },
+      "island-amber-ink": {
+        "role": "primary",
+        "displayName": "Island Amber Ink",
+        "canonical": "#E5B57A",
+        "oklch": "oklch(80.3% 0.094 71.6)",
+        "tonalRamp": [
+          "oklch(15% 0.052 71.6)",
+          "oklch(26% 0.052 71.6)",
+          "oklch(37% 0.094 71.6)",
+          "oklch(48% 0.094 71.6)",
+          "oklch(59% 0.094 71.6)",
+          "oklch(70% 0.094 71.6)",
+          "oklch(82% 0.094 71.6)",
+          "oklch(95% 0.052 71.6)"
+        ]
+      },
+      "island-verified": {
+        "role": "secondary",
+        "displayName": "Sage",
+        "canonical": "#7FAE96",
+        "oklch": "oklch(71% 0.061 162.1)",
+        "tonalRamp": [
+          "oklch(15% 0.034 162.1)",
+          "oklch(26% 0.034 162.1)",
+          "oklch(37% 0.061 162.1)",
+          "oklch(48% 0.061 162.1)",
+          "oklch(59% 0.061 162.1)",
+          "oklch(70% 0.061 162.1)",
+          "oklch(82% 0.061 162.1)",
+          "oklch(95% 0.034 162.1)"
+        ]
+      },
+      "island-blocked": {
+        "role": "secondary",
+        "displayName": "Coral",
+        "canonical": "#EE7A70",
+        "oklch": "oklch(71% 0.145 26.4)",
+        "tonalRamp": [
+          "oklch(15% 0.08 26.4)",
+          "oklch(26% 0.08 26.4)",
+          "oklch(37% 0.145 26.4)",
+          "oklch(48% 0.145 26.4)",
+          "oklch(59% 0.145 26.4)",
+          "oklch(70% 0.145 26.4)",
+          "oklch(82% 0.145 26.4)",
+          "oklch(95% 0.08 26.4)"
+        ]
+      },
+      "island-on-consent-pill": {
+        "role": "secondary",
+        "displayName": "Island Leaf Ink",
+        "canonical": "#BFE0C9",
+        "oklch": "oklch(87.6% 0.047 154.9)",
+        "cssVar": "--on-consenso-pill (dark)",
+        "tonalRamp": [
+          "oklch(15% 0.026 154.9)",
+          "oklch(26% 0.026 154.9)",
+          "oklch(37% 0.047 154.9)",
+          "oklch(48% 0.047 154.9)",
+          "oklch(59% 0.047 154.9)",
+          "oklch(70% 0.047 154.9)",
+          "oklch(82% 0.047 154.9)",
+          "oklch(95% 0.026 154.9)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The one home headline, centred. 2.6rem phone, 3.8rem sm, 4.9rem lg; line-height 1.02, tracking -0.04em."
+      },
+      "display-short": {
+        "displayName": "Display, short screens",
+        "purpose": "Same headline at clamp(2.9rem, 6.6vh, 4.9rem) on screens at least 1024px wide and at most 880px tall."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles (SectionTitle). 2.1rem phone, 3.25rem sm."
+      },
+      "page-title": {
+        "displayName": "Page title",
+        "purpose": "h1 of inner pages: catalogue 3.5rem, prices 3.75rem, passport 3rem; 2.4rem to 2.6rem on phones."
+      },
+      "price": {
+        "displayName": "Price",
+        "purpose": "Real shot price in the creator's door: 600, 2.9rem phone, 3.4rem sm, tracking -0.03em, tabular figures."
+      },
+      "panel-name": {
+        "displayName": "Panel name",
+        "purpose": "The person's name in her door, 600 at 1.9rem, link to the passport."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card and step titles."
+      },
+      "lead-large": {
+        "displayName": "Lead, large",
+        "purpose": "Line under the home headline: 1.1rem phone, 1.3rem sm, 1.12rem on short screens, muted, 46ch."
+      },
+      "panel-line": {
+        "displayName": "Panel line",
+        "purpose": "Three lines of the person's door: 1.08rem phone, 1.3rem sm, key words 600, 28px outline icon."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Sentence under a section headline, muted ink, 44ch to 54ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text; long-form uses .prose-semblic at 1.02rem, line-height 1.78."
+      },
+      "nav-link": {
+        "displayName": "Nav link",
+        "purpose": "Main navigation, 0.98rem at 500 in muted ink; the active route 600 in ink with aria-current."
+      },
+      "label-large": {
+        "displayName": "Label, large",
+        "purpose": "The two 56px door actions, 1.1rem at 600."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Button and control labels, sentence case. 0.82rem small, 0.92rem medium, 0.95rem nav pills, 0.98rem large."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Live registry counts, Geist Mono with tabular figures."
+      }
+    },
+    "shadows": [
+      {
+        "name": "nav-settled",
+        "value": "0 10px 30px -22px rgba(23,21,15,0.35)",
+        "purpose": "Sticky header after 24px of scroll."
+      },
+      {
+        "name": "floating-panel",
+        "value": "0 24px 60px -30px rgba(23,21,15,0.35)",
+        "purpose": "Nav dropdowns; the cookie preferences panel uses a -24px spread."
+      },
+      {
+        "name": "cookie-bar",
+        "value": "0 18px 40px -20px rgba(23,21,15,0.55)",
+        "purpose": "The one-line ink cookie bar."
+      },
+      {
+        "name": "photo-pill",
+        "value": "0 2px 10px rgba(23,21,15,0.12)",
+        "purpose": "The white Certificato SEMBLIC pill set on a certified shot."
+      },
+      {
+        "name": "drawer",
+        "value": "-20px 0 60px rgba(23,21,15,0.18)",
+        "purpose": "Mobile menu drawer."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-brand",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Reveals, nav underline, dropdowns, tile zoom."
+      },
+      {
+        "name": "duration-control",
+        "value": "200ms",
+        "purpose": "Button colour and border change; press scales to 0.98."
+      },
+      {
+        "name": "duration-underline",
+        "value": "300ms",
+        "purpose": "Nav link underline growing from the left."
+      },
+      {
+        "name": "duration-theme",
+        "value": "350ms ease",
+        "purpose": "Colour transition when the theme changes."
+      },
+      {
+        "name": "duration-nav",
+        "value": "500ms",
+        "purpose": "Header height (76px to 57.6px) and background change on scroll."
+      },
+      {
+        "name": "reveal",
+        "value": "600ms, rise 20px, blur 4px to 0, once, bottom margin 18%",
+        "purpose": "Section entrance (Reveal); stagger items 550ms at 90ms gaps."
+      },
+      {
+        "name": "porta-sale",
+        "value": "translateY 18px to 0 over 900ms, brand curve, second door 80ms later, transform only",
+        "purpose": "The only entrance motion of the home first viewport; off under reduced motion."
+      },
+      {
+        "name": "tile-zoom",
+        "value": "scale 1.04 over 700ms",
+        "purpose": "Portrait hover inside an avatar tile."
+      },
+      {
+        "name": "drawer-spring",
+        "value": "spring damping 30 stiffness 300",
+        "purpose": "Mobile drawer slide-in."
+      },
+      {
+        "name": "smooth-scroll",
+        "value": "Lenis duration 1.1, mouse devices only",
+        "purpose": "Desktop scroll smoothing; touch uses CSS smooth anchors."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "nav-compact",
+        "value": "720px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "short-screen",
+        "value": "(min-width: 1024px) and (max-height: 880px)"
+      },
+      {
+        "name": "doors-swipe",
+        "value": "below 1024px: doors become a sideways snap row, 86% columns, 62% from 640px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled action: amber pill with deep brown label.",
+      "html": "<button class=\"ds-btn-primary\">Crea con volti veri</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 24px; border: none; border-radius: 9999px; background: var(--amber-c, #E29A2E); color: var(--on-amber-c, #412402); font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; font-size: 0.92rem; font-weight: 600; letter-spacing: 0.01em; cursor: pointer; transition: background-color 200ms, transform 200ms; } .ds-btn-primary:hover { background: var(--amber-hover-c, #D08A22); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--bg, #F7F4EE), 0 0 0 4px rgba(226,154,46,0.6); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Transparent pill with warm edge border; the border warms to amber on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Tutti gli 11 volti</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 24px; border: 1px solid var(--edge, #D9D3C5); border-radius: 9999px; background: transparent; color: var(--text, #17150F); font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; font-size: 0.92rem; font-weight: 600; letter-spacing: 0.01em; cursor: pointer; transition: border-color 200ms, transform 200ms; } .ds-btn-secondary:hover { border-color: rgba(226,154,46,0.7); } .ds-btn-secondary:active { transform: scale(0.98); } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--bg, #F7F4EE), 0 0 0 4px rgba(226,154,46,0.6); }"
+    },
+    {
+      "name": "Ink Button",
+      "kind": "button",
+      "refersTo": "button-ink",
+      "description": "Ink pill with ivory label: Registrati in the nav and the person's door action.",
+      "html": "<button class=\"ds-btn-ink\">Registrati</button>",
+      "css": ".ds-btn-ink { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border: none; border-radius: 9999px; background: var(--text, #17150F); color: var(--bg, #F7F4EE); font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.01em; cursor: pointer; transition: opacity 200ms, transform 200ms; } .ds-btn-ink:hover { opacity: 0.9; } .ds-btn-ink:active { transform: scale(0.98); } .ds-btn-ink:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--bg, #F7F4EE), 0 0 0 4px rgba(226,154,46,0.6); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat white surface, hairline border, 20px corners.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Consenso vivo</h3><p class=\"ds-card-body\">Una revoca ferma il motore nello stesso secondo.</p></div>",
+      "css": ".ds-card { background: var(--surface, #FFFFFF); border: 1px solid var(--hairline, #E6E1D6); border-radius: 20px; padding: 24px; max-width: 320px; font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; color: var(--text, #17150F); } .ds-card-title { margin: 0; font-size: 1.3rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; } .ds-card-body { margin: 8px 0 0; font-size: 1rem; line-height: 1.5; color: var(--text-muted, #5B564B); }"
+    },
+    {
+      "name": "Consent Chip",
+      "kind": "chip",
+      "refersTo": "chip-verified",
+      "description": "Green wash pill with a dot for live consent; brick variant for revoked.",
+      "html": "<span class=\"ds-chip\"><i class=\"ds-chip-dot\"></i>Consenso attivo</span> <span class=\"ds-chip ds-chip--revoked\"><i class=\"ds-chip-dot\"></i>Revocato</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; background: var(--verified-soft, #E3F1EC); border: 1px solid rgba(47,117,99,0.45); color: var(--on-verified-c, #16352A); font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; } .ds-chip-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--verified-c, #2F7563); } .ds-chip--revoked { background: var(--blocked-soft, #F8E6E0); border-color: rgba(176,71,43,0.45); color: var(--on-blocked-c, #5A201B); } .ds-chip--revoked .ds-chip-dot { background: var(--blocked-c, #B0472B); }"
+    },
+    {
+      "name": "Avatar Tile",
+      "kind": "custom",
+      "refersTo": "avatar-tile",
+      "description": "3:4 real portrait, 18px corners, consent chip top left, name bottom left, zoom on hover.",
+      "html": "<a class=\"ds-tile\" href=\"#\"><span class=\"ds-tile-img\"></span><span class=\"ds-tile-chip\"><i></i>Verificata</span><span class=\"ds-tile-shade\"></span><span class=\"ds-tile-name\">Gabriella</span></a>",
+      "css": ".ds-tile { position: relative; display: block; width: 200px; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 18px; background: #E7E1D3; text-decoration: none; font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; } .ds-tile-img { position: absolute; inset: 0; background: linear-gradient(160deg, #D9CFBD, #A89A84); transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1); } .ds-tile:hover .ds-tile-img { transform: scale(1.04); } .ds-tile:focus-visible { outline: 2px solid #E29A2E; outline-offset: 2px; } .ds-tile-chip { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; background: rgba(255,255,255,0.92); color: #16352A; font-size: 0.75rem; font-weight: 600; } .ds-tile-chip i { width: 6px; height: 6px; border-radius: 9999px; background: #2F7563; } .ds-tile-shade { position: absolute; inset: 50% 0 0 0; background: linear-gradient(to top, rgba(0,0,0,0.55), transparent); } .ds-tile-name { position: absolute; left: 14px; bottom: 12px; color: #FFFFFF; font-size: 0.95rem; font-weight: 600; text-shadow: 0 1px 10px rgba(0,0,0,0.45); }"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "nav-bar",
+      "description": "Sticky frosted ivory bar, 76px, 1380px container: Registro, Crea, Proteggi, Prezzi, Academy; active route in ink 600; 44px Accedi and Registrati pills.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-nav-logo\">SEMBLIC</span><span class=\"ds-nav-links\"><a href=\"#\" aria-current=\"page\">Registro</a><a href=\"#\">Crea</a><a href=\"#\">Proteggi</a><a href=\"#\">Prezzi</a><a href=\"#\">Academy</a></span><span class=\"ds-nav-actions\"><a class=\"ds-nav-login\" href=\"#\">Accedi</a><a class=\"ds-nav-signup\" href=\"#\">Registrati</a></span></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 1380px; height: 76px; padding: 0 32px; background: rgba(247,244,238,0.78); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--hairline, #E6E1D6); font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; } .ds-nav-logo { font-size: 0.875rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text, #17150F); } .ds-nav-links { display: flex; gap: 20px; } .ds-nav-links a { position: relative; font-size: 0.98rem; font-weight: 500; color: var(--text-muted, #5B564B); text-decoration: none; white-space: nowrap; transition: color 300ms; } .ds-nav-links a[aria-current=\"page\"] { font-weight: 600; color: var(--text, #17150F); } .ds-nav-links a::after { content: \"\"; position: absolute; left: 0; bottom: -6px; width: 100%; height: 1px; background: var(--amber-c, #E29A2E); transform: scaleX(0); transform-origin: left; transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1); } .ds-nav-links a:hover { color: var(--text, #17150F); } .ds-nav-links a:hover::after, .ds-nav-links a:focus-visible::after { transform: scaleX(1); } .ds-nav-actions { display: flex; gap: 12px; } .ds-nav-login, .ds-nav-signup { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 9999px; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.01em; text-decoration: none; transition: border-color 200ms, opacity 200ms; } .ds-nav-login { border: 1px solid var(--edge, #D9D3C5); color: var(--text, #17150F); } .ds-nav-login:hover { border-color: rgba(226,154,46,0.7); } .ds-nav-signup { background: var(--text, #17150F); color: var(--bg, #F7F4EE); } .ds-nav-signup:hover { opacity: 0.9; } .ds-nav-login:focus-visible, .ds-nav-signup:focus-visible { outline: 2px solid var(--amber-c, #E29A2E); outline-offset: 2px; }"
+    },
+    {
+      "name": "The Two Doors",
+      "kind": "custom",
+      "refersTo": "door-creator",
+      "description": "Home first viewport (DuePorte): one certified shot seen from both sides; white creator door with price and amber action, rose-paper person door with consent pill and ink action.",
+      "html": "<div class=\"ds-doors\"><article class=\"ds-door ds-door--creator\"><div class=\"ds-door-shot\"><a class=\"ds-door-cert\" href=\"#\">Certificato SEMBLIC</a></div><p class=\"ds-door-meta\">Scatto 3:2, alta qualità</p><p class=\"ds-door-price\">0,41 €</p><a class=\"ds-door-cta ds-door-cta--amber\" href=\"#\">Crea con volti veri</a></article><article class=\"ds-door ds-door--person\"><div class=\"ds-door-who\"><span class=\"ds-door-portrait\"></span><div><a class=\"ds-door-name\" href=\"#\">Gabriella</a><p class=\"ds-door-consent\"><i></i>consenso attivo</p></div></div><ul class=\"ds-door-lines\"><li><b>Ha ricevuto</b> 0,12 € per questo scatto</li><li><b>Revoca</b> quando vuole, vale subito</li><li><b>Decide lei</b> a cosa dice no, con parole sue</li></ul><a class=\"ds-door-cta ds-door-cta--ink\" href=\"#\">Metti il tuo volto</a></article></div>",
+      "css": ".ds-doors { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; color: var(--text, #17150F); } .ds-door { display: flex; flex-direction: column; padding: 28px; border-radius: 20px; animation: ds-porta-sale 900ms cubic-bezier(0.22, 1, 0.36, 1) both; } .ds-door + .ds-door { animation-delay: 80ms; } @keyframes ds-porta-sale { from { transform: translateY(18px); } to { transform: none; } } @media (prefers-reduced-motion: reduce) { .ds-door { animation: none; } } .ds-door--creator { background: var(--surface, #FFFFFF); border: 1px solid var(--hairline, #E6E1D6); } .ds-door--person { background: var(--pannello-persona, #F1EAE8); } .ds-door-shot { position: relative; aspect-ratio: 3 / 2; border-radius: 14px; background: linear-gradient(160deg, #D9CFBD, #A89A84); } .ds-door-cert { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 9999px; background: rgba(255,255,255,0.95); color: #17150F; font-size: 0.9rem; font-weight: 600; text-decoration: none; box-shadow: 0 2px 10px rgba(23,21,15,0.12); transition: transform 200ms; } .ds-door-cert:hover { transform: translateY(-1px); } .ds-door-meta { margin: 20px 0 0; font-size: 1.05rem; color: var(--text-muted, #5B564B); } .ds-door-price { margin: 4px 0 0; font-size: 3.4rem; font-weight: 600; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; } .ds-door-who { display: flex; align-items: center; gap: 20px; } .ds-door-portrait { width: 104px; height: 124px; border-radius: 14px; background: linear-gradient(160deg, #D9CFBD, #A89A84); flex-shrink: 0; } .ds-door-name { font-size: 1.9rem; font-weight: 600; letter-spacing: -0.02em; color: inherit; text-decoration: none; } .ds-door-name:hover { text-decoration: underline; text-underline-offset: 4px; } .ds-door-consent { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; margin: 8px 0 0; padding: 0 14px; border-radius: 9999px; background: var(--consenso-pill, #D6EBCF); color: var(--on-consenso-pill, #184A1D); font-size: 1.05rem; font-weight: 500; white-space: nowrap; } .ds-door-consent i { width: 10px; height: 10px; border-radius: 9999px; background: var(--verified-c, #2F7563); } .ds-door-lines { display: grid; gap: 24px; margin: 40px 0 0; padding: 0; list-style: none; font-size: 1.3rem; } .ds-door-lines b { font-weight: 600; } .ds-door-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 56px; margin-top: auto; padding: 0 24px; border-radius: 9999px; font-size: 1.1rem; font-weight: 600; text-decoration: none; transition: background-color 200ms, transform 200ms; } .ds-door--creator .ds-door-cta, .ds-door--person .ds-door-cta { margin-top: 32px; } .ds-door-cta--amber { background: var(--amber-c, #E29A2E); color: var(--on-amber-c, #412402); } .ds-door-cta--amber:hover { background: var(--amber-hover-c, #D08A22); } .ds-door-cta--ink { background: var(--text, #17150F); color: var(--bg, #F7F4EE); } .ds-door-cta--ink:hover { transform: translateY(-1px); } .ds-door-cta:active { transform: scale(0.98); } .ds-door-cta:focus-visible, .ds-door-cert:focus-visible { outline: 2px solid var(--amber-c, #E29A2E); outline-offset: 3px; }"
+    },
+    {
+      "name": "Cookie Bar",
+      "kind": "custom",
+      "refersTo": "cookie-bar",
+      "description": "One-line ink bar: essential cookies only, a Dettagli link, an amber Ok. The full panel opens from /cookie.",
+      "html": "<div class=\"ds-cookie\"><p>Solo cookie essenziali, niente profilazione. <a href=\"#\">Dettagli</a></p><button class=\"ds-cookie-ok\">Ok</button></div>",
+      "css": ".ds-cookie { display: flex; align-items: center; gap: 12px; max-width: 512px; padding: 10px 10px 10px 16px; border-radius: 16px; background: var(--text, #17150F); color: var(--bg, #F7F4EE); box-shadow: 0 18px 40px -20px rgba(23,21,15,0.55); font-family: var(--font-instrument), \"Instrument Sans\", system-ui, sans-serif; font-size: 0.9rem; } .ds-cookie p { flex: 1; min-width: 0; margin: 0; line-height: 1.375; } .ds-cookie a { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; } .ds-cookie-ok { display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border: none; border-radius: 9999px; background: var(--amber-c, #E29A2E); color: var(--on-amber-c, #412402); font: inherit; font-weight: 600; cursor: pointer; transition: background-color 200ms; } .ds-cookie-ok:hover { background: var(--amber-hover-c, #D08A22); } .ds-cookie-ok:focus-visible { outline: 2px solid var(--amber-c, #E29A2E); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Warm Registry",
+    "overview": "SEMBLIC reads like a well-kept public register printed on warm paper: an ivory page (never pure white), near-black ink, hairline rules, and real faces in rounded frames. One colour acts, the amber; two colours testify, a quiet green for consent that is live and a brick red for consent that is revoked or blocked. Everything else is ink at three strengths on ivory, white and a faint rose paper for the person's side.\n\nThe page is light by default (`data-theme=\"light\"` is set before first paint in `app/layout.tsx`). The home opens on **the two doors**: one real certified photo seen from both sides, the creator's panel in white with the price and the amber action, the person's panel in `person-panel` with her portrait, what she received and a black action. The two audiences weigh the same. **Islands** (a section marked `data-theme=\"dark\"` that flips every token inside it to night blue with cream text, 28px corners) still exist lower on the home page (IlSet, WardSection, ClosingCTA) and on other surfaces; direction B asks for light surfaces throughout the home, so those three are recorded as current state and pending.\n\nDensity is calm and generous: a 1380px container for the nav and the home first viewport, 1280px elsewhere, 16 to 20px phone gutters and 32px from `sm`, sections opened by 80 to 96px of air, headlines heavy and tightly tracked, body copy in a single modern sans. Motion is soft and short, on one brand curve, and every moving piece has a reduced-motion exit.",
+    "keyCharacteristics": [
+      "Warm ivory ground (`ivory-bg`) with white cards and hairline borders; flat, tonal layering, shadows only on floating layers.",
+      "One filled action colour (amber) with a dark brown label; the ink pill is the second, quieter action; pills everywhere a person can act.",
+      "Consent states carry their own colour pair (green or brick, each with a soft tint and a dark \"on\" ink).",
+      "Instrument Sans for everything, weights 400 to 700; Geist Mono only for live registry counts and small technical labels.",
+      "Real, watermarked photography: registry portraits in 3:4 tiles and real certified shots; no stock imagery, no illustration.",
+      "Dark islands (`data-theme=\"dark\"`) as the only way to go dark inside a light page, now used below the fold only."
+    ],
+    "rules": [
+      {
+        "name": "The One Filled Colour Rule",
+        "body": "Amber is the only colour a button is ever filled with, apart from the ink button. Gradients (`--grad-tramonto`, `--grad-aurora`, `--grad-fiducia`) exist for section backgrounds only and never touch a button (stated in `lib/ui.ts`).",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Doors Rule",
+        "body": "Where the page speaks to both audiences at once, the creator's action is amber and the person's action is ink, at the same size (56px pills, full width of their panel). Neither door is ever secondary.",
+        "section": "colors"
+      },
+      {
+        "name": "The Token-Only Rule",
+        "body": "Components read colours through the theme variables (`var(--bg)`, `var(--pannello-persona)`, Tailwind `bg-surface`, `text-muted`, `lib/ui.ts` `colors.*`), never through hex literals, so the same component works on the ivory page and inside an island.",
+        "section": "colors"
+      },
+      {
+        "name": "The Consent Colour Rule",
+        "body": "Green and brick mean consent state and nothing else. They are not decoration and not a second accent.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tight Heavy Head Rule",
+        "body": "Anything at headline size or above is weight 700 with negative tracking between -0.035em and -0.04em and line-height at or under 1.02. Reading text is never tracked. The price is the one large figure at 600 with -0.03em.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measured Numbers Rule",
+        "body": "Every figure that comes from the database is set with tabular figures, so a changing number does not jitter: registry counts in Geist Mono, prices and earnings in Instrument Sans `tabular-nums`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ramp Rule",
+        "body": "Home sizes 2.6rem, 3.8rem, 4.9rem, 3.4rem, 1.9rem, 1.3rem and 1.1rem are intentional steps of the ramp above, not one-offs; new sizes join the ramp here before they ship.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Cards, doors and tiles carry a hairline border or a tonal fill and no shadow. A shadow means the layer is floating over content.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Frosted Bars Rule",
+        "body": "Glass is for fixed bars only: the sticky header (ivory at 78%, 94% once scrolled, strong backdrop blur) and the passport's phone buy bar (ivory at 94%, medium blur); the cookie preferences panel is the one frosted floating card.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** build on the theme variables (`var(--bg)`, `var(--surface)`, `var(--text)`, `var(--pannello-persona)`, Tailwind `bg-surface`, `text-muted`, `border-border`) so a component works on the ivory page and inside an island.",
+      "**Do** use amber fill with the deep brown label for the one main action in view; everything else is secondary, ghost or a link. Where both audiences are addressed, pair it with an ink action of the same size.",
+      "**Do** use pills (9999px) for every button, chip and badge, at least 44px tall where a thumb presses them.",
+      "**Do** show consent with the green or brick pair, including the soft wash and the \"on\" ink, next to every real face.",
+      "**Do** set headlines at 700 with -0.035em to -0.04em tracking and line-height at or under 1.02, and set every database figure with tabular figures.",
+      "**Do** keep cards flat: white, 1px hairline, 20px corners, 24px padding.",
+      "**Do** turn long phone lists into a horizontal snap row (`.riga-scorrevole`, or the doors' 86% columns) instead of a long column.",
+      "**Do** give every animation a reduced-motion exit and use the brand curve `cubic-bezier(0.22, 1, 0.36, 1)`; animate transform, not the photo's paint."
+    ],
+    "donts": [
+      "**Don't** put a gradient on a button; gradients are for section backgrounds only.",
+      "**Don't** set white text on amber; the label on amber is always the deep brown (`on-amber`).",
+      "**Don't** use green or brick as decoration or as a second accent.",
+      "**Don't** use pure white as the page background; the page is ivory, white is for surfaces on it.",
+      "**Don't** hard-code hex values in components; the legacy literal `#F2A93B` (glows, selection, 34 uses), the dot `#2E9E44` in the consent pill and the certificate pill's `#17150F` are not tokens and are not a pattern to extend.",
+      "**Don't** add shadows to cards, doors or tiles at rest.",
+      "**Don't** set any text below 12px. The current mono section label (`.kicker`, 0.6875rem uppercase with 0.18em tracking, 61 files), its 0.52rem account variant in the nav and the 0.58rem to 0.62rem chips and badges are carried by the build, below that floor, and are not a pattern to extend."
+    ]
+  }
+}
