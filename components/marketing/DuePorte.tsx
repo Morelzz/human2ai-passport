@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Database, ShieldCheck, UserRound } from "lucide-react";
 import type { ScattoVetrina } from "@/lib/vetrina";
+import { ContaEuro } from "@/components/motion/ContaEuro";
 
 // ──────────────────────────────────────────────────────────────────────────
 // LE DUE PORTE (27/9/2026, proposta 3 approvata da Morelz). La prima pagina
@@ -22,19 +23,19 @@ const NOME_QUALITA: Record<ScattoVetrina["qualita"], string> = { bozza: "bozza v
 
 export function DuePorte({ vetrina }: { vetrina: ScattoVetrina | null }) {
   return (
-    <section aria-labelledby="titolo-home" className="mx-auto max-w-[1380px] px-4 pb-16 pt-8 sm:px-8 sm:pt-12 lg:pb-24 lg:pt-7">
+    <section aria-labelledby="titolo-porte" className="mx-auto max-w-[1380px] px-4 pb-16 pt-16 sm:px-8 sm:pt-24 lg:pb-28 lg:pt-28">
       <div className="mx-auto max-w-4xl text-center">
-        <h1 id="titolo-home" className="titolo-home text-balance text-[2.6rem] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[3.8rem] lg:text-[4.9rem]">
-          Ogni volto qui ha detto sì.
-        </h1>
-        <p className="sub-home mx-auto mt-4 max-w-[46ch] text-pretty text-[1.1rem] leading-relaxed text-muted sm:text-[1.3rem]">
-          Una foto, due persone contente: chi la crea e chi ci mette la faccia.
+        <h2 id="titolo-porte" className="text-balance text-[2.3rem] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[3.2rem] lg:text-[4rem]">
+          Una foto, due persone contente.
+        </h2>
+        <p className="mx-auto mt-4 max-w-[46ch] text-pretty text-[1.1rem] leading-relaxed text-muted sm:text-[1.3rem]">
+          Lo stesso scatto visto dalle due parti: quello che paga chi lo crea, quello che riceve chi ci mette la faccia.
         </p>
       </div>
 
       {/* Sotto il computer le due meta' si scorrono di lato (regola del telefono:
           niente colonne infinite): la seconda porta spunta a destra. */}
-      <div className="porte-home mt-10 grid gap-4 max-lg:-mx-4 max-lg:snap-x max-lg:snap-mandatory max-lg:auto-cols-[86%] max-lg:grid-flow-col max-lg:overflow-x-auto max-lg:scroll-px-4 max-lg:items-start max-lg:px-4 max-lg:pb-2 sm:mt-12 lg:mt-9 sm:max-lg:auto-cols-[62%] lg:grid-cols-2 lg:gap-5">
+      <div className="porte-home mt-10 grid gap-4 max-lg:-mx-4 max-lg:snap-x max-lg:snap-mandatory max-lg:auto-cols-[86%] max-lg:grid-flow-col max-lg:overflow-x-auto max-lg:scroll-px-4 max-lg:items-start max-lg:px-4 max-lg:pb-2 sm:mt-12 sm:max-lg:auto-cols-[62%] lg:grid-cols-2 lg:gap-5">
         {/* Chi crea */}
         <article className="porta-home flex snap-start flex-col rounded-[20px] border border-border bg-surface p-5 sm:p-7">
           {vetrina ? (
@@ -51,9 +52,9 @@ export function DuePorte({ vetrina }: { vetrina: ScattoVetrina | null }) {
                     alt={`${vetrina.nome} legge un libro al tavolino di un caffè in piazza: scatto certificato Semblic`}
                     width={1536}
                     height={1024}
-                    fetchPriority="high"
+                    loading="lazy"
                     decoding="async"
-                    className="foto-porta aspect-[3/2] h-auto w-full object-cover"
+                    className="aspect-[3/2] h-auto w-full object-cover"
                   />
                 </picture>
                 <Link
@@ -67,7 +68,7 @@ export function DuePorte({ vetrina }: { vetrina: ScattoVetrina | null }) {
                 Scatto {vetrina.formato}, {NOME_QUALITA[vetrina.qualita]}
               </p>
               <p className="mt-1 text-[2.9rem] font-semibold leading-none tracking-[-0.03em] tabular-nums sm:text-[3.4rem]">
-                {euro(vetrina.prezzoCent)}
+                <ContaEuro cent={vetrina.prezzoCent} />
               </p>
             </>
           ) : (
@@ -115,7 +116,7 @@ export function DuePorte({ vetrina }: { vetrina: ScattoVetrina | null }) {
             <li className="flex items-center gap-4">
               <Database aria-hidden className="h-7 w-7 shrink-0" strokeWidth={1.6} />
               <span>
-                {vetrina ? <><b className="font-semibold">Ha ricevuto</b> <span className="tabular-nums">{euro(vetrina.allaPersonaCent)}</span> per questo scatto</> : <><b className="font-semibold">Guadagni</b> a ogni foto che fanno con il tuo volto</>}
+                {vetrina ? <><b className="font-semibold">Ha ricevuto</b> <ContaEuro cent={vetrina.allaPersonaCent} durata={1400} /> per questo scatto</> : <><b className="font-semibold">Guadagni</b> a ogni foto che fanno con il tuo volto</>}
               </span>
             </li>
             <li className="flex items-center gap-4">

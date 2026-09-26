@@ -82,7 +82,7 @@ export async function proxy(request: NextRequest) {
     // La foto delle due porte (27/9/2026) e' l'elemento piu' grande della home.
     response.headers.set(
       "Link",
-      `</home/scatto-gabriella-1200.webp>; rel=preload; as=image; type="image/webp"; imagesrcset="/home/scatto-gabriella-760.webp 760w, /home/scatto-gabriella-1200.webp 1200w"; imagesizes="(min-width: 1024px) 38vw, 92vw"; fetchpriority=high`,
+      `</home/scatto-gabriella-1536.webp>; rel=preload; as=image; type="image/webp"; imagesrcset="/home/scatto-gabriella-760.webp 760w, /home/scatto-gabriella-1200.webp 1200w, /home/scatto-gabriella-1536.webp 1536w"; imagesizes="100vw"; fetchpriority=high`,
     );
   }
 

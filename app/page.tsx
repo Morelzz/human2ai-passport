@@ -3,6 +3,8 @@ import { registroPubblico } from "@/lib/registro-cache";
 import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { DuePorte } from "@/components/marketing/DuePorte";
+import { HeroCinema } from "@/components/marketing/HeroCinema";
+import { FORMATI, qualitaPer } from "@/app/match/crea/opzioni";
 import { scattoInVetrina } from "@/lib/vetrina";
 import { ProvaGratis, type VoltoProva } from "@/components/marketing/ProvaGratis";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
@@ -60,6 +62,7 @@ export default async function Home() {
     <div className="relative min-h-screen overflow-x-hidden">
       <SiteNav />
       <main>
+        <HeroCinema vetrina={vetrina} prezzoDaCent={Math.min(...FORMATI.flatMap((f) => qualitaPer(f.v).map((q) => q.volt)))} />
         <DuePorte vetrina={vetrina} />
         {voltiProva.length > 0 && (
           <div className="px-5 pb-2 sm:px-8">
