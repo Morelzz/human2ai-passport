@@ -4,6 +4,7 @@ import { FAQ_ITEMS } from "@/content/faq";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
+import { jsonLdSicuro } from "@/lib/json-ld";
 
 export const metadata = {
   title: "Domande frequenti",
@@ -80,7 +81,7 @@ export default function FaqPage() {
       </div>
 
       {/* Schema FAQPage (stessa fonte dei contenuti visibili) */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSicuro(jsonLd) }} />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { ShareBar } from "../ShareBar";
 import { siteUrl } from "@/lib/site";
+import { jsonLdSicuro } from "@/lib/json-ld";
 
 // A3 — pagina articolo. Il corpo è markdown renderizzato server-side da file
 // nel repo (contenuto fidato). SEO per-articolo via generateMetadata.
@@ -77,7 +78,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdSicuro(jsonLd) }}
         />
         <article className="mx-auto max-w-2xl px-5 py-16 sm:px-8 sm:py-24">
           {/* Testata */}

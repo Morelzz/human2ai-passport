@@ -1,13 +1,14 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase";
 import { isPublicAvatar } from "@/lib/registry";
-import { Avatar, ConsentEvent, TIER_CONFIG } from "@/lib/types";
+import { Avatar, ConsentEvent, TIER_CONFIG, IDENTITY_KIT } from "@/lib/types";
 import { truncateToken } from "@/lib/token";
 import { galleryFromRow } from "@/lib/sample-galleries";
 import { siteUrl } from "@/lib/site";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import PassportClient from "./PassportClient";
+import { jsonLdSicuro } from "@/lib/json-ld";
 
 // Handle storici rinominati: redirect permanente (308) al nuovo handle, per i
 // vecchi link gia' indicizzati. (0.4 naming: 'mario-r' e' diventato 'random'.)
@@ -49,6 +50,19 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
+const CAMPI_PUBBLICI = [
+  "id", "handle", "alias", "real_name", "instagram", "facebook", "tier", "portrait_url",
+  "consent_start", "revoked_at", "commercial_consent", "video_consent", "usage_count",
+  "royalty_accrued_cents", "token_hash", "verification_status", "protection_only", "is_demo",
+  ...Object.keys(IDENTITY_KIT),
+] as const;
+
+function soloPubblico(riga: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const k of CAMPI_PUBBLICI) if (k in riga) out[k] = riga[k];
+  return out;
+}
+
 export default async function PassportPage({ params }: Props) {
   const { handle } = await params;
   const supabase = createServerClient();
@@ -68,25 +82,30 @@ export default async function PassportPage({ params }: Props) {
   // PROTEZIONE (VETO) non compaiono mai su una superficie pubblica (isPublicAvatar).
   if (!isPublicAvatar(avatar)) notFound();
 
-  const { data: events } = await supabase
-    .from("consent_events")
-    .select("*")
-    .eq("avatar_id", avatar.id)
-    .order("occurred_at", { ascending: true });
+  // Cronologia e verifica del titolare partono insieme (27/9/2026): una dopo
+  // l'altra costavano 230 ms, insieme meno di 100.
+  const [{ data: events }, { data: ownerProfile }] = await Promise.all([
+    supabase
+      .from("consent_events")
+      .select("id, avatar_id, event_type, occurred_at")
+      .eq("avatar_id", avatar.id)
+      .order("occurred_at", { ascending: true }),
+    avatar.owner_id
+      ? supabase.from("profiles").select("kyc_status").eq("id", avatar.owner_id).single()
+      : Promise.resolve({ data: null as { kyc_status: string | null } | null }),
+  ]);
 
-  const consentEvents: ConsentEvent[] = events ?? [];
-  const av: Avatar = avatar as Avatar;
+  // PAGINA PUBBLICA (27/9/2026): la cronologia mostra solo il tipo di evento e
+  // la data. Le note restano interne: dicevano chi dello staff aveva raccolto un
+  // si' a voce, e dal 23/9 conterrebbero il testo delle regole che la persona
+  // ha scritto, che non si pubblica mai.
+  const consentEvents: ConsentEvent[] = (events ?? []).map((e) => ({ ...(e as Omit<ConsentEvent, "detail">), detail: null }));
+  // Al browser vanno solo i campi che la pagina mostra: mai proprietario,
+  // wallet, organizzazione, riferimenti del motore o le regole scritte.
+  const av = soloPubblico(avatar) as unknown as Avatar;
 
   // Creatore verificato? (avatar con proprietario il cui KYC è approvato)
-  let ownerVerified = false;
-  if (avatar.owner_id) {
-    const { data: ownerProfile } = await supabase
-      .from("profiles")
-      .select("kyc_status")
-      .eq("id", avatar.owner_id)
-      .single();
-    ownerVerified = ownerProfile?.kyc_status === "approved";
-  }
+  const ownerVerified = ownerProfile?.kyc_status === "approved";
 
   const status = av.revoked_at ? "REVOCATO" : "ATTIVO";
   const tier = TIER_CONFIG[av.tier];
@@ -128,7 +147,7 @@ export default async function PassportPage({ params }: Props) {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSicuro(personJsonLd) }} />
 <div className="relative z-[2]">
         <SiteNav />
         <PassportClient

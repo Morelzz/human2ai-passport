@@ -15,23 +15,27 @@ export async function SiteNav() {
   let unseen = 0;
   let volt: number | null = null; // null = VOLT non configurato: badge nascosto
   if (user) {
-    volt = await voltBalance(user.id);
-    const { data: profile } = await auth.from("profiles").select("full_name").eq("id", user.id).single();
-    // Senza full_name si usa la parte locale dell'email (mai l'email intera in nav).
-    const full = profile?.full_name?.trim() || user.email?.split("@")[0] || "";
-    firstName = full ? String(full).trim().split(/\s+/)[0] : "Account";
-
     // Notifiche "+N": generazioni con certificato completate DOPO l'ultima visita
     // a "I miei contenuti" (cookie). Senza cookie, conta tutte le esistenti.
     const seenIso = (await cookies()).get(CONTENTS_SEEN_COOKIE)?.value ?? "1970-01-01";
     const admin = createServerClient();
-    const { count } = await admin
-      .from("generations")
-      .select("id", { count: "exact", head: true })
-      .eq("buyer_id", user.id)
-      .eq("mode", "commercial")
-      .not("certificate", "is", null)
-      .gt("created_at", seenIso);
+    // Le tre letture partono insieme (27/9/2026): una dopo l'altra tenevano ferma
+    // la pagina 150-400 ms per chi e' entrato, in tutte le pagine con la nav.
+    const [saldo, { data: profile }, { count }] = await Promise.all([
+      voltBalance(user.id),
+      auth.from("profiles").select("full_name").eq("id", user.id).single(),
+      admin
+        .from("generations")
+        .select("id", { count: "exact", head: true })
+        .eq("buyer_id", user.id)
+        .eq("mode", "commercial")
+        .not("certificate", "is", null)
+        .gt("created_at", seenIso),
+    ]);
+    volt = saldo;
+    // Senza full_name si usa la parte locale dell'email (mai l'email intera in nav).
+    const full = profile?.full_name?.trim() || user.email?.split("@")[0] || "";
+    firstName = full ? String(full).trim().split(/\s+/)[0] : "Account";
     unseen = count ?? 0;
   }
 

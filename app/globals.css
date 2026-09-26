@@ -138,6 +138,9 @@ html.theme-anim, html.theme-anim * {
   transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease;
 }
 
+/* Sui telefoni Lenis non parte (SmoothScroll): le ancore scorrono morbide col CSS. */
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
 /* CSS richiesto da Lenis (smooth scroll). */
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }

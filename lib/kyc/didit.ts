@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { siteUrl } from "../site";
+import { percorsoInterno } from "@/lib/percorso-interno";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Didit KYC — client server-only. Verifica d'identita' automatica (documento +
@@ -25,10 +26,7 @@ export function diditConfigured(): boolean {
 // redireziona il browser, quindi un valore non controllato sarebbe un open
 // redirect. PURA e testabile; fuori forma -> fallback.
 export function safeInternalPath(input: unknown, fallback: string): string {
-  if (typeof input !== "string" || input.length === 0) return fallback;
-  if (!input.startsWith("/")) return fallback;
-  if (input.startsWith("//") || input.startsWith("/\\")) return fallback;
-  return input;
+  return percorsoInterno(input) ?? fallback;
 }
 
 export interface DiditWebhookPayload {

@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
 import { Field, Shell, submitClass, authErrorMessage } from "../auth-ui";
+import { percorsoInterno } from "@/lib/percorso-interno";
 
 // Accetta solo path interni (niente open redirect): "/x" si', "//x" o "http..." no.
 function safeNext(raw: string | null): string | null {
-  // "/\host" per il browser vale come "//host": anche quello e' un sito esterno.
-  return raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.startsWith("/\\") ? raw : null;
+  // Una regola sola per tutto il sito (lib/percorso-interno): anche "/<TAB>/host" e' fuori.
+  return percorsoInterno(raw);
 }
 
 export default function LoginPage() {

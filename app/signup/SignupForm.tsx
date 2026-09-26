@@ -7,11 +7,12 @@ import { createClient } from "@/lib/supabase-browser";
 import { Field, Shell, labelClass, inputClass, submitClass, passwordIssue, authErrorMessage } from "../auth-ui";
 import { isAdult } from "@/lib/age";
 import { cn } from "@/lib/utils";
+import { percorsoInterno } from "@/lib/percorso-interno";
 
 // Accetta solo path interni (niente open redirect).
 function safeNext(raw: string | null): string | null {
-  // "/\host" per il browser vale come "//host": anche quello e' un sito esterno.
-  return raw && raw.startsWith("/") && !raw.startsWith("//") && !raw.startsWith("/\\") ? raw : null;
+  // Una regola sola per tutto il sito (lib/percorso-interno): anche "/<TAB>/host" e' fuori.
+  return percorsoInterno(raw);
 }
 
 export default function SignupForm() {

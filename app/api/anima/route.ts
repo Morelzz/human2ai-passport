@@ -6,6 +6,7 @@ import { allowRequest } from "@/lib/rate-limit";
 import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
 import { avatarVetoReason } from "@/lib/avatar-gate";
 import { logBlockedRequest } from "@/lib/blocked";
+import { controllaRegole } from "@/lib/regole-consenso";
 import { spendVolt, grantVolt } from "@/lib/volt";
 import { animaConfigurata, inviaVideo, isDurata, isLivello, movimentoVietato, prezzoAnima, MOVIMENTI, LIVELLI, type LivelloVideo } from "@/lib/engines/anima";
 
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
   // Lo scatto deve essere del buyer, commerciale e certificato.
   const { data: gen } = await admin
     .from("generations")
-    .select("id, avatar_id, image_url, buyer_id, mode")
+    .select("id, avatar_id, image_url, buyer_id, mode, prompt")
     .eq("certificate", certificate)
     .maybeSingle();
   if (!gen || gen.buyer_id !== user.id || gen.mode !== "commercial" || !gen.image_url) {
@@ -97,6 +98,20 @@ export async function POST(request: Request) {
         logBlockedRequest(admin, { source: "anima", reason: "no_video_consent", category: null });
         return NextResponse.json({ error: `${x.alias} non ha ancora dato il consenso al video.`, code: "no_video_consent" }, { status: 403 });
       }
+    }
+  }
+
+  // Il consenso che si legge vale anche per il video (27/9): il movimento e' una
+  // scena nuova. "Alza un bicchiere di whisky e beve" tocca "niente alcol" anche
+  // se lo scatto di partenza non lo toccava. E le regole possono essere state
+  // scritte dopo lo scatto: si rilegge tutto, per ogni persona nella foto.
+  {
+    const scelto = MOVIMENTI.find((m) => m.v === movimento);
+    const scenaVideo = `Video animato dallo scatto "${String((gen as { prompt?: string | null }).prompt ?? "").slice(0, 400)}". Movimento: ${scelto ? scelto.l : movimento}`;
+    const regole = await controllaRegole(admin, [avatar.id as string, ...altri], scenaVideo, null);
+    if (!regole.via) {
+      logBlockedRequest(admin, { source: "anima", reason: "rules_excluded", category: null });
+      return NextResponse.json({ error: regole.messaggio, code: "regole_persona" }, { status: 403 });
     }
   }
 

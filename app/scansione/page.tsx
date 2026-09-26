@@ -8,6 +8,7 @@ import { KineticText } from "@/components/motion/KineticText";
 import { SediMap } from "@/components/marketing/SediMap";
 import { getSedi, SCAN_PRICE_CENTS } from "@/lib/scan";
 import { siteUrl } from "@/lib/site";
+import { jsonLdSicuro } from "@/lib/json-ld";
 
 export const metadata = {
   title: "La scansione umana",
@@ -49,7 +50,7 @@ export default async function ScansionePage() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSicuro(jsonLd) }} />
 <div className="relative z-[2]">
         <SiteNav />
 

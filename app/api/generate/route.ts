@@ -68,7 +68,15 @@ export async function POST(request: Request) {
   const model = isValidModel(body?.model) ? body.model : DEFAULT_MODEL;
   const styleId = body?.styleId && isValidStyle(String(body.styleId)) ? String(body.styleId) : null;
   // Modalità: 'preview' (watermark, gratis, no royalty) o 'commercial' (paga + royalty + certificato).
-  const isPreview = body?.mode === "preview";
+  // CHIUSA il 27/9/2026: nessuna pagina la usa piu', ma l'API la accettava
+  // ancora. Era gratis, fino al 4K, senza tetto giornaliero e senza leggere il
+  // consenso commerciale ne' le regole scritte della persona: un rubinetto
+  // aperto sul motore e un modo di fare foto che la persona aveva escluso. Se
+  // l'anteprima tornera', dovra' passare dagli stessi controlli dello scatto vero.
+  if (body?.mode === "preview") {
+    return NextResponse.json({ error: "L'anteprima gratuita non c'e' piu': ogni scatto passa dal consenso e dal prezzo vero." }, { status: 400 });
+  }
+  const isPreview = false;
   if (!handle) return NextResponse.json({ error: "Avatar mancante" }, { status: 400 });
 
   const admin = createServerClient();
@@ -130,17 +138,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `"${avatar.alias}" non ha autorizzato l'uso commerciale del proprio volto` }, { status: 403 });
   }
 
-  // Il consenso che si legge (lib/regole-consenso, 23/9): se la persona ha
-  // scritto dei limiti, la scena si controlla adesso, prima di spendere. Chi
-  // non ne ha scritti passa senza attese. Fail-closed per chi li ha.
-  if (!isPreview) {
-    const regole = await controllaRegole(admin, [avatar.id as string], scene, category);
-    if (!regole.via) {
-      logBlockedRequest(admin, { source: "generate", reason: "rules_excluded", category });
-      return NextResponse.json({ error: regole.messaggio, code: "regole_persona" }, { status: 403 });
-    }
-  }
-
   // ECHO (gpt-image-2 con identity-lock dal reference-set) e' l'unico motore.
   // Il ramo Higgsfield resta nel file ma irraggiungibile (dormiente).
   const useEcho = true;
@@ -180,6 +177,24 @@ export async function POST(request: Request) {
   }
   // Prefisso identità: i metadati verificati dell'avatar rafforzano le reference.
   const identityText = useEcho ? identityPromptFor(avatar) : null;
+
+  // Il consenso che si legge (lib/regole-consenso, 23/9): se la persona ha
+  // scritto dei limiti, la scena si controlla adesso, prima di spendere. Chi
+  // non ne ha scritti passa senza attese. Fail-closed per chi li ha.
+  // Dal 27/9 il giudice legge TUTTO quello che finisce nella scena, non solo il
+  // testo: gli oggetti aggiunti (ruolo, descrizione e immagine) e la posa. Una
+  // bottiglia di birra allegata a "al bancone" tocca "niente alcol".
+  {
+    const allegatiScena = await prepareExtras(extraRefs);
+    const regole = await controllaRegole(admin, [avatar.id as string], scene, category, "it", {
+      dettagli: [...allegatiScena.map((e) => `${e.role}: ${e.desc}`), ...(poseText ? [`posa: ${poseText}`] : [])],
+      immagini: allegatiScena.map((e) => Buffer.from(e.data, "base64")),
+    });
+    if (!regole.via) {
+      logBlockedRequest(admin, { source: "generate", reason: "rules_excluded", category });
+      return NextResponse.json({ error: regole.messaggio, code: "regole_persona" }, { status: 403 });
+    }
+  }
 
   // ── ECHO COMMERCIALE → ASINCRONO ──────────────────────────────────────────
   // La chiamata a gpt-image-2 (con reference) dura da ~1 a ~3 minuti, oltre il

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 import { colors, radius, buttonPrimary } from "@/lib/ui";
-import { createClient } from "@/lib/supabase-browser";
 import {
   isStandalone,
   isIOS,
@@ -95,6 +94,8 @@ export function PwaManager() {
     // non deve trovarsi un tutorial sopra la pagina che sta leggendo.
     let vivo = true;
     const t = setTimeout(async () => {
+      // supabase-js (57 KB) si carica qui e solo qui: prima viaggiava in ogni pagina.
+      const { createClient } = await import("@/lib/supabase-browser");
       const { data } = await createClient().auth.getSession().catch(() => ({ data: { session: null } }));
       if (vivo && data.session) setOverlay(pickNext());
     }, 1400);

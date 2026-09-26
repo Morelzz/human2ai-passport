@@ -8,6 +8,7 @@ import { CookieBanner } from "@/components/legal/CookieBanner";
 import { PwaManager } from "@/components/pwa/PwaManager";
 import { VercelAnalytics } from "@/components/analytics/VercelAnalytics";
 import { siteUrl, INSTAGRAM_URL } from "@/lib/site";
+import { jsonLdSicuro } from "@/lib/json-ld";
 
 // Casa nuova: Instrument Sans per titoli e testo (pesi 400-700, variabile),
 // Geist Mono resta per etichette e numeri.
@@ -125,7 +126,7 @@ export default function RootLayout({
           />
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+            dangerouslySetInnerHTML={{ __html: jsonLdSicuro(orgJsonLd) }}
           />
           <SmoothScroll />
           {children}

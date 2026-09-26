@@ -154,6 +154,12 @@ export async function POST(request: Request) {
   if (alias.length < 2) {
     return NextResponse.json({ error: "Nome troppo corto" }, { status: 400 });
   }
+  // Il nome va sul passaporto pubblico, nei dati strutturati e nel badge: niente
+  // simboli da codice ne' caratteri di controllo, e una lunghezza da nome vero.
+  // eslint-disable-next-line no-control-regex
+  if (alias.length > 60 || /[<>{}`\\\u0000-\u001f\u007f]/.test(alias)) {
+    return NextResponse.json({ error: "Nome non valido: usa lettere, spazi e punteggiatura semplice (massimo 60 caratteri)." }, { status: 400 });
+  }
   if (!commercialConsent) {
     return NextResponse.json({ error: "Serve il consenso all'uso commerciale per creare un avatar (per la sola protezione del volto usa Ward)." }, { status: 400 });
   }
