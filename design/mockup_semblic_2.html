@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEMBLIC · Due porte (proposta)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F4EE; --surface:#FFFFFF; --edge:#D9D3C5; --dark:#0E1016;
+    --text:#17150F; --muted:#5B564B; --faint:#6E685D;
+    --hairline:#E6E1D6; --soft:#EFEBE2;
+    --verified:#2F7563; --verified-soft:#E3F1EC;
+    --amber:#E29A2E; --amber-soft:#F8E9CF; --amber-ink:#8E4508; --on-amber:#3A2002;
+    --font:"Instrument Sans",system-ui,-apple-system,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+    --r-card:16px; --r-pic:16px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:#E9E4DA;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  img{display:block;max-width:100%}
+  ::selection{background:var(--amber-soft);color:var(--text)}
+  a{text-underline-offset:3px}
+  a{color:inherit}
+
+  /* impaginato del foglio (non fa parte del sito) */
+  .foglio{max-width:1320px;margin:0 auto;padding:36px 22px 90px}
+  .titolone{font-size:30px;font-weight:700;letter-spacing:-.035em}
+  .sotto{color:var(--muted);font-size:15px;max-width:82ch;margin-top:8px}
+  .nota{background:#fff;border:1px solid var(--hairline);border-radius:12px;padding:13px 16px;color:var(--muted);font-size:13.5px;margin:18px 0 8px;max-width:960px}
+  .nota b{color:var(--text)}
+  .capitolo{font-size:20px;font-weight:700;letter-spacing:-.02em;margin:46px 0 4px}
+  .capitolo + p{color:var(--muted);font-size:14px;margin-bottom:14px;max-width:80ch}
+  .coppia{display:grid;grid-template-columns:1fr;gap:26px;justify-items:stretch}
+  .coppia .tel{justify-self:center}
+  .schermo{border:1px solid var(--edge);border-radius:18px;overflow:hidden;background:var(--bg);box-shadow:0 30px 60px -40px rgba(40,30,10,.45)}
+  .barra{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#EDE8DE;border-bottom:1px solid var(--hairline)}
+  .pallino{width:10px;height:10px;border-radius:50%;background:#D9D3C5}
+  .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .tel{width:100%;max-width:390px;border:10px solid #17150F;border-radius:42px;overflow:hidden;background:var(--bg);position:relative}
+  .tel .scorre{height:760px;overflow:auto}
+
+  /* ── il sito ─────────────────────────────────────────── */
+  .nav{display:flex;align-items:center;gap:26px;padding:16px 34px;border-bottom:1px solid var(--hairline);background:var(--bg)}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.14em;font-size:14px}
+  .logo i{width:30px;height:30px;border-radius:9px;background:var(--dark);display:block}
+  .voci{display:flex;gap:24px;margin-left:auto;font-size:14.5px;color:var(--muted)}
+  .voci b{color:var(--text);font-weight:600}
+  .azioni{display:flex;gap:10px;align-items:center}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;font-family:var(--font);font-weight:700;font-size:14.5px;padding:12px 22px;white-space:nowrap;cursor:pointer;text-decoration:none;transition:transform .15s ease}
+  .btn:active{transform:scale(.98)}
+  .btn:focus-visible,.porta:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+  .btn.primario{background:var(--amber);color:var(--on-amber)}
+  .btn.scuro{background:var(--text);color:#F7F4EE}
+  .btn.vuoto{background:transparent;color:var(--text);border:1px solid var(--edge)}
+  .btn.piccolo{padding:9px 16px;font-size:13.5px}
+
+  /* hero A: la casa di oggi, con le due porte */
+  .heroA{margin:14px 22px 22px;border-radius:28px;background:radial-gradient(120% 90% at 0% 0%,#2A2113 0%,var(--dark) 55%);color:#F4EEE3;padding:52px 56px 44px;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  .heroA h1{font-size:72px;line-height:.98;letter-spacing:-.04em;font-weight:700}
+  .heroA h1 span{color:var(--amber)}
+  .heroA .sub{color:#CFC7B8;font-size:17px;margin-top:18px;max-width:44ch}
+  .heroA .foto{border-radius:22px;overflow:hidden;aspect-ratio:1/1}
+  .heroA .foto img{width:100%;height:100%;object-fit:cover}
+
+  /* le due porte (comuni ad A e B) */
+  .porte{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px}
+  .porta{display:flex;flex-direction:column;gap:3px;border-radius:16px;padding:16px 18px;text-decoration:none;border:1px solid transparent;transition:transform .2s ease,border-color .2s ease}
+  .porta:hover{transform:translateY(-2px)}
+  .porta b{font-size:17px;letter-spacing:-.01em}
+  .porta small{font-size:13.5px}
+  .porta.compra{background:var(--amber);color:var(--on-amber)}
+  .porta.compra small{color:#5A3408}
+  .heroA .porta.volto{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18);color:#F4EE E3}
+  .heroA .porta.volto{color:#F4EEE3}
+  .heroA .porta.volto small{color:#CFC7B8}
+  .numeri{display:flex;gap:34px;margin-top:26px;color:#B8AF9F;font-size:13px}
+  .numeri b{display:block;color:#F4EEE3;font-size:22px;font-family:var(--mono);font-weight:600}
+
+  /* hero B: luminosa */
+  .heroB{padding:56px 56px 50px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+  .heroB h1{font-size:68px;line-height:1.0;letter-spacing:-.04em;font-weight:700;max-width:12ch;text-wrap:balance}
+  .heroB .sub{color:var(--muted);font-size:17.5px;margin-top:16px;max-width:42ch}
+  .heroB .porta.volto{background:var(--surface);border-color:var(--hairline);color:var(--text)}
+  .heroB .porta.volto small{color:var(--muted)}
+  .mosaico{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:1fr 1fr;gap:12px;height:470px}
+  .mosaico figure{border-radius:var(--r-pic);overflow:hidden;position:relative;background:#DDD6C8}
+  .mosaico figure:first-child{grid-row:span 2}
+  .mosaico img{width:100%;height:100%;object-fit:cover}
+  .mosaico figcaption{position:absolute;left:10px;bottom:10px;background:rgba(255,255,255,.92);border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:600;display:flex;gap:6px;align-items:center}
+  .mosaico figcaption em{font-style:normal;color:var(--verified)}
+  .prova{display:flex;gap:28px;padding:4px 56px 40px;color:var(--muted);font-size:14px;flex-wrap:wrap}
+  .prova b{color:var(--text);font-size:18px;margin-right:6px}
+
+  /* passaporto */
+  .pass{display:grid;grid-template-columns:420px 1fr;gap:40px;padding:34px 44px;align-items:start}
+  .colonna{position:sticky;top:18px;display:flex;flex-direction:column;gap:14px}
+  .ritratto{border-radius:var(--r-card);overflow:hidden;aspect-ratio:4/5;background:#DDD6C8}
+  .ritratto img{width:100%;height:100%;object-fit:cover}
+  .compra-box{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-card);padding:18px}
+  .compra-box .riga{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--muted)}
+  .compra-box .prezzo{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.03em}
+  .compra-box .btn{width:100%;margin-top:12px}
+  .compra-box .alei{margin-top:10px;font-size:13px;color:var(--verified)}
+  .pass h2{font-size:44px;letter-spacing:-.035em;line-height:1}
+  .pass .chi{color:var(--muted);margin-top:6px;font-size:15px}
+  .stato{display:inline-flex;gap:8px;align-items:center;background:var(--verified-soft);color:#16352A;border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:600;margin-top:14px}
+  .blocco{margin-top:30px}
+  .blocco h3{font-size:17px;letter-spacing:-.01em;margin-bottom:10px}
+  .galleria{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .galleria div{aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:#DDD6C8}
+  .galleria img{width:100%;height:100%;object-fit:cover}
+  .tempo{display:grid;gap:12px;border-left:2px solid var(--hairline);padding-left:16px}
+  .tempo div{font-size:14.5px}
+  .tempo small{display:block;color:var(--faint);font-size:12.5px}
+
+  /* telefono: parti del sito */
+  .tel .nav{padding:14px 16px}
+  .tel .voci{display:none}
+  .tel .heroA{margin:8px;padding:22px 18px 18px;grid-template-columns:1fr;gap:18px;border-radius:24px}
+  .tel .heroA h1{font-size:40px}
+  .tel .heroA .sub{font-size:15px;margin-top:12px}
+  .tel .heroB{padding:24px 16px 18px;grid-template-columns:1fr;gap:18px}
+  .tel .heroB h1{font-size:38px}
+  .tel .heroB .sub{font-size:15.5px}
+  .tel .porte{grid-template-columns:1fr;margin-top:18px;gap:10px}
+  .tel .mosaico{height:auto;grid-template-columns:none;grid-template-rows:none;grid-auto-flow:column;grid-auto-columns:72%;overflow-x:auto;scroll-snap-type:x mandatory}
+  .tel .mosaico figure{height:250px;grid-row:auto;scroll-snap-align:start}
+  .tel .numeri{gap:20px}
+  .barra-cookie{position:absolute;left:10px;right:10px;bottom:12px;background:var(--text);color:#EFE9DD;border-radius:16px;padding:11px 12px 11px 16px;display:flex;align-items:center;gap:10px;font-size:13px}
+  .barra-cookie a{color:#F4C98A}
+  .barra-cookie .btn{margin-left:auto;padding:8px 16px;font-size:13px}
+  .barra-compra{position:absolute;left:0;right:0;bottom:0;background:rgba(247,244,238,.96);backdrop-filter:blur(12px);border-top:1px solid var(--hairline);padding:12px 16px 16px;display:flex;align-items:center;gap:12px}
+  .barra-compra div{font-size:12.5px;color:var(--muted);line-height:1.3}
+  .barra-compra b{display:block;font-size:17px;color:var(--text)}
+  .barra-compra .btn{margin-left:auto}
+  .tel .pass{grid-template-columns:1fr;padding:16px 16px 110px;gap:18px}
+  .tel .colonna{position:static}
+  .tel .pass h2{font-size:34px}
+  .tel .galleria{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:46%;overflow-x:auto}
+
+  /* registrazione */
+  .porta-conto{max-width:420px;margin:40px auto;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-card);padding:26px}
+  .porta-conto h2{font-size:26px;letter-spacing:-.03em}
+  .porta-conto p{color:var(--muted);font-size:14.5px;margin-top:6px}
+  .scelta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+  .scelta span{border:1px solid var(--hairline);border-radius:14px;padding:11px 12px;font-size:13.5px;font-weight:600}
+  .scelta span.on{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+  .scelta small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+  .campo{margin-top:14px}
+  .campo label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+  .campo div{border:1px solid var(--edge);border-radius:12px;padding:12px 14px;color:var(--faint);font-size:14.5px;background:#fff}
+  .porta-conto .btn{width:100%;margin-top:16px}
+  .gia{text-align:center;margin-top:14px;font-size:14px;color:var(--muted)}
+  .gia a{color:var(--text);font-weight:700}
+
+  /* prezzi sul telefono */
+  .piani{display:grid;grid-auto-flow:column;grid-auto-columns:78%;gap:12px;overflow-x:auto;padding:4px 16px 16px;scroll-snap-type:x mandatory}
+  .piano{scroll-snap-align:start;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-card);padding:18px}
+  .piano.scelto{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
+  .piano h4{font-size:16px}
+  .piano .cifra{font-size:30px;font-weight:700;letter-spacing:-.03em;margin-top:6px}
+  .piano p{font-size:13.5px;color:var(--muted);margin-top:6px}
+  .puntini{display:flex;gap:6px;justify-content:center;padding-bottom:12px}
+  .puntini i{width:7px;height:7px;border-radius:50%;background:var(--edge)}
+  .puntini i:first-child{background:var(--text)}
+
+  /* l'unico momento animato: le due porte arrivano insieme al titolo */
+  @media (prefers-reduced-motion: no-preference){
+    .entra{animation:entra .7s cubic-bezier(.16,1,.3,1) both}
+    .entra.d1{animation-delay:.08s}.entra.d2{animation-delay:.16s}.entra.d3{animation-delay:.26s}
+    @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  }
+  @media (max-width:1100px){ .heroA,.heroB{grid-template-columns:1fr} .pass{grid-template-columns:1fr} .colonna{position:static} .voci{display:none} }
+  @media (max-width:600px){ .heroA{padding:26px 20px} .heroA h1,.heroB h1{font-size:40px} .heroB{padding:26px 18px} .porte{grid-template-columns:1fr} .mosaico{height:360px} .pass{padding:18px} .nav{padding:14px 16px} .azioni .btn.vuoto{display:none} }
+</style>
+</head>
+<body>
+<div class="foglio">
+  <p class="titolone">Semblic, due porte</p>
+  <p class="sotto">Il controllo di design ha misurato dove il sito perde le persone: chi vuole mettere il volto o provare lo Studio finisce su "Bentornato", sul telefono il primo schermo non ha un bottone, i prezzi sono nascosti sotto "Fiducia", il passaporto perde il bottone mentre scorri. Questa proposta sistema il percorso senza cambiare il marchio.</p>
+  <div class="nota"><b>Da scegliere: A o B per la prima pagina.</b> A tiene la casa scura di oggi e la sua frase in inglese, con le due porte al posto di "Esplora il registro". B è luminosa, in italiano, con i volti veri al posto del video. Il resto (passaporto, registrazione, cookie, prezzi) vale per tutte e due. Foto, nomi e prezzi sono quelli veri del sito.</div>
+
+  <!-- ───────────────── A ───────────────── -->
+  <p class="capitolo">A · La casa di oggi, con due porte</p>
+  <p>Cambia poco: il titolo resta, ma sotto ci sono due strade chiare, una per chi compra e una per chi mette il volto. Sul telefono titolo e porte vengono prima della foto.</p>
+  <div class="coppia">
+    <div class="schermo">
+      <div class="barra"><span class="pallino"></span><span class="pallino"></span><span class="pallino"></span><span class="url">semblic.com</span></div>
+      <nav class="nav" aria-label="Principale">
+        <span class="logo"><i></i>SEMBLIC</span>
+        <span class="voci"><b>Registro</b><span>Crea</span><span>Proteggi</span><span>Prezzi</span><span>Academy</span></span>
+        <span class="azioni"><a class="btn vuoto piccolo" href="#">Accedi</a><a class="btn scuro piccolo" href="#">Registrati</a></span>
+      </nav>
+      <section class="heroA">
+        <div>
+          <h1 class="entra">Real Humans.<br>Real Rights.<br>Real <span>Earnings.</span></h1>
+          <p class="sub entra d1">Foto e video con persone vere che hanno detto sì. Ogni scatto è certificato e paga chi ci mette la faccia.</p>
+          <div class="porte entra d2">
+            <a class="porta compra" href="#"><b>Crea con volti veri</b><small>da 0,21 € a scatto</small></a>
+            <a class="porta volto" href="#"><b>Metti il tuo volto</b><small>gratis, guadagni a ogni foto</small></a>
+          </div>
+        </div>
+        <div class="foto entra d1"><img src="https://ktjebfavzherochwhtis.supabase.co/storage/v1/object/public/assets/hero-v3-poster.jpg" alt="Ritratto dal video della prima pagina"></div>
+      </section>
+      <div class="prova"><span><b>11</b>volti nel registro</span><span><b>75</b>scatti pagati alle persone</span><span><b>2</b>volti protetti, mai generabili</span></div>
+    </div>
+
+    <div class="tel" aria-label="Telefono, versione A">
+      <div class="scorre">
+        <nav class="nav"><span class="logo"><i></i>SEMBLIC</span><span class="azioni" style="margin-left:auto"><a class="btn scuro piccolo" href="#">Registrati</a></span></nav>
+        <section class="heroA">
+          <div>
+            <h1>Real Humans.<br>Real Rights.<br>Real <span>Earnings.</span></h1>
+            <p class="sub">Foto e video con persone vere che hanno detto sì. Ogni scatto paga chi ci mette la faccia.</p>
+            <div class="porte">
+              <a class="porta compra" href="#"><b>Crea con volti veri</b><small>da 0,21 € a scatto</small></a>
+              <a class="porta volto" href="#"><b>Metti il tuo volto</b><small>gratis, guadagni a ogni foto</small></a>
+            </div>
+          </div>
+          <div class="foto"><img src="https://ktjebfavzherochwhtis.supabase.co/storage/v1/object/public/assets/hero-v3-poster.jpg" alt=""></div>
+        </section>
+      </div>
+      <div class="barra-cookie">Solo cookie essenziali. <a href="#">Dettagli</a><span class="btn primario">Ok</span></div>
+    </div>
+  </div>
+
+  <!-- ───────────────── B ───────────────── -->
+  <p class="capitolo">B · Luminosa, in italiano, con i volti</p>
+  <p>Il chiaro che ti piace in tutto il sito, niente più blocco scuro. Al posto del video, tre persone vere del registro con il loro stato di consenso: è la cosa che nessun concorrente può mostrare.</p>
+  <div class="coppia">
+    <div class="schermo">
+      <div class="barra"><span class="pallino"></span><span class="pallino"></span><span class="pallino"></span><span class="url">semblic.com</span></div>
+      <nav class="nav" aria-label="Principale">
+        <span class="logo"><i></i>SEMBLIC</span>
+        <span class="voci"><b>Registro</b><span>Crea</span><span>Proteggi</span><span>Prezzi</span><span>Academy</span></span>
+        <span class="azioni"><a class="btn vuoto piccolo" href="#">Accedi</a><a class="btn scuro piccolo" href="#">Registrati</a></span>
+      </nav>
+      <section class="heroB">
+        <div>
+          <h1 class="entra">Ogni volto qui ha detto sì.</h1>
+          <p class="sub entra d1">Foto e video con persone vere, consenso verificato e certificato su ogni scatto. Chi ci mette la faccia viene pagato.</p>
+          <div class="porte entra d2">
+            <a class="porta compra" href="#"><b>Crea con volti veri</b><small>da 0,21 € a scatto</small></a>
+            <a class="porta volto" href="#"><b>Metti il tuo volto</b><small>gratis, guadagni a ogni foto</small></a>
+          </div>
+        </div>
+        <div class="mosaico entra d1">
+          <figure><img src="http://localhost:3000/api/sample/gabriella/0?w=720" alt="Gabriella"><figcaption>Gabriella <em>consenso attivo</em></figcaption></figure>
+          <figure><img src="http://localhost:3000/api/sample/stella/0?w=480" alt="Stella"><figcaption>Stella <em>consenso attivo</em></figcaption></figure>
+          <figure><img src="http://localhost:3000/api/sample/luca-agnelli/0?w=480" alt="Luca Agnelli"><figcaption>Luca <em>consenso attivo</em></figcaption></figure>
+        </div>
+      </section>
+      <div class="prova"><span><b>11</b>volti nel registro</span><span><b>75</b>scatti pagati alle persone</span><span><b>2</b>volti protetti, mai generabili</span></div>
+    </div>
+
+    <div class="tel" aria-label="Telefono, versione B">
+      <div class="scorre">
+        <nav class="nav"><span class="logo"><i></i>SEMBLIC</span><span class="azioni" style="margin-left:auto"><a class="btn scuro piccolo" href="#">Registrati</a></span></nav>
+        <section class="heroB">
+          <div>
+            <h1>Ogni volto qui ha detto sì.</h1>
+            <p class="sub">Foto e video con persone vere e consenso verificato. Chi ci mette la faccia viene pagato.</p>
+            <div class="porte">
+              <a class="porta compra" href="#"><b>Crea con volti veri</b><small>da 0,21 € a scatto</small></a>
+              <a class="porta volto" href="#"><b>Metti il tuo volto</b><small>gratis, guadagni a ogni foto</small></a>
+            </div>
+          </div>
+          <div class="mosaico">
+            <figure><img src="http://localhost:3000/api/sample/gabriella/0?w=480" alt="Gabriella"><figcaption>Gabriella <em>sì</em></figcaption></figure>
+            <figure><img src="http://localhost:3000/api/sample/stella/0?w=480" alt="Stella"><figcaption>Stella <em>sì</em></figcaption></figure>
+            <figure><img src="http://localhost:3000/api/sample/luca-agnelli/0?w=480" alt="Luca Agnelli"><figcaption>Luca <em>sì</em></figcaption></figure>
+          </div>
+        </section>
+      </div>
+      <div class="barra-cookie">Solo cookie essenziali. <a href="#">Dettagli</a><span class="btn primario">Ok</span></div>
+    </div>
+  </div>
+
+  <!-- ───────────────── passaporto ───────────────── -->
+  <p class="capitolo">Il passaporto: il bottone non scappa più</p>
+  <p>Sul computer la colonna con la foto e il prezzo resta ferma mentre leggi (oggi scorre via e lascia metà pagina vuota). Sul telefono una barra in basso con prezzo e bottone. La cronologia mostra solo eventi e date, niente note interne.</p>
+  <div class="coppia">
+    <div class="schermo">
+      <div class="barra"><span class="pallino"></span><span class="pallino"></span><span class="pallino"></span><span class="url">semblic.com/passport/gabriella</span></div>
+      <section class="pass">
+        <div class="colonna">
+          <div class="ritratto"><img src="http://localhost:3000/api/sample/gabriella/0?w=720" alt="Gabriella"></div>
+          <div class="compra-box">
+            <div class="riga"><span>Uno scatto verticale</span><span class="prezzo">0,24 €</span></div>
+            <a class="btn primario" href="#">Crea con Gabriella</a>
+            <p class="alei">0,07 € vanno a Gabriella</p>
+          </div>
+        </div>
+        <div>
+          <h2>Gabriella</h2>
+          <p class="chi">Nel registro dal 10 giugno 2026 · scelta 23 volte</p>
+          <span class="stato">Consenso attivo · foto e video</span>
+          <div class="blocco"><h3>Scatti di esempio</h3>
+            <div class="galleria"><div><img src="http://localhost:3000/api/sample/gabriella/1?w=480" alt=""></div><div><img src="http://localhost:3000/api/sample/gabriella/2?w=480" alt=""></div><div><img src="http://localhost:3000/api/sample/gabriella/3?w=480" alt=""></div></div>
+          </div>
+          <div class="blocco"><h3>La storia del consenso</h3>
+            <div class="tempo"><div>Consenso concesso<small>10 giugno 2026</small></div><div>Consenso concesso, anche al video<small>19 settembre 2026</small></div><div>Consenso attivo, revocabile in ogni momento<small>oggi</small></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="tel" aria-label="Telefono, passaporto">
+      <div class="scorre">
+        <section class="pass">
+          <div class="colonna"><div class="ritratto"><img src="http://localhost:3000/api/sample/gabriella/0?w=480" alt="Gabriella"></div></div>
+          <div>
+            <h2>Gabriella</h2>
+            <p class="chi">Nel registro dal 10 giugno 2026</p>
+            <span class="stato">Consenso attivo · foto e video</span>
+            <div class="blocco"><h3>Scatti di esempio</h3>
+              <div class="galleria"><div><img src="http://localhost:3000/api/sample/gabriella/1?w=480" alt=""></div><div><img src="http://localhost:3000/api/sample/gabriella/2?w=480" alt=""></div><div><img src="http://localhost:3000/api/sample/gabriella/3?w=480" alt=""></div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="barra-compra"><div>Uno scatto<b>0,24 €</b></div><a class="btn primario" href="#">Crea con Gabriella</a></div>
+    </div>
+  </div>
+
+  <!-- ───────────────── registrazione e prezzi ───────────────── -->
+  <p class="capitolo">Chi arriva nuovo trova "Crea il tuo account", non "Bentornato"</p>
+  <p>"Metti il tuo volto", "Proteggi" e "Crea" portano qui se non sei entrato, e dopo ti riportano dove volevi andare. Chi ha già un account ha il suo link, grande e chiaro. A destra i prezzi sul telefono: i piani scorrono di lato invece di una colonna di 6 metri.</p>
+  <div class="coppia">
+    <div class="schermo">
+      <div class="barra"><span class="pallino"></span><span class="pallino"></span><span class="pallino"></span><span class="url">semblic.com/signup?next=/proteggi</span></div>
+      <div class="porta-conto">
+        <h2>Crea il tuo account</h2>
+        <p>Un minuto, poi torni a proteggere il tuo volto.</p>
+        <div class="scelta"><span class="on">Voglio creare<small>foto con volti veri</small></span><span>Metto il mio volto<small>e vengo pagato</small></span></div>
+        <div class="campo"><label for="m">Email</label><div id="m">nome@esempio.it</div></div>
+        <a class="btn scuro" href="#">Crea l'account</a>
+        <p class="gia">Hai già un account? <a href="#">Accedi</a></p>
+      </div>
+    </div>
+    <div class="tel" aria-label="Telefono, prezzi">
+      <div class="scorre" style="height:auto;padding-top:18px">
+        <p style="padding:0 16px;font-size:28px;font-weight:700;letter-spacing:-.03em">Paghi solo lo scatto</p>
+        <p style="padding:6px 16px 14px;color:var(--muted);font-size:14.5px">Niente abbonamento obbligatorio. Se uno scatto non tiene il volto, non lo paghi.</p>
+        <div class="piani">
+          <div class="piano"><h4>Bozza veloce</h4><div class="cifra">0,24 €</div><p>per provare idee · 0,07 € alla persona</p></div>
+          <div class="piano scelto"><h4>Alta</h4><div class="cifra">0,50 €</div><p>massimo dettaglio · 0,11 € alla persona</p></div>
+          <div class="piano"><h4>Stampa 4K</h4><div class="cifra">0,81 €</div><p>stampa e schermi grandi · 0,12 € alla persona</p></div>
+        </div>
+        <div class="puntini"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nota" style="margin-top:36px"><b>Cosa non cambia:</b> i colori del marchio, il carattere, i bottoni a pillola, le foto vere con filigrana, la tabella onesta dei prezzi, i filtri del catalogo che scorrono di lato, "Segnala un abuso". <b>Cosa sparisce:</b> il banner dei cookie che dice "Accetta tutto" quando non c'è niente da accettare, la finta zona "trascina qui" di Sigil, i testi sotto i 12 pixel.</div>
+</div>
+</body>
+</html>
