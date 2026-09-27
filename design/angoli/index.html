@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crea, gli angoli di ripresa</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#F7F4EE; --surface:#FFFFFF; --ink:#17150F; --muted:#5B564B; --faint:#8a8377; --edge:#D9D3C5; --amber:#E29A2E; --amber-soft:#F8E9CF; --on-amber:#412402; --amber-ink:#9A4A0B; --verde:#3DDC97; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .w { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  .testa { padding: 48px 0 0; }
+  .testa h1 { font-size: 2.6rem; letter-spacing: -0.045em; line-height: 1; }
+  .testa p { color: var(--muted); max-width: 68ch; margin-top: 12px; line-height: 1.55; }
+  .etichetta { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; padding: 52px 0 8px; }
+  .lettera { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 99px; background: var(--ink); color: var(--bg); font-weight: 700; flex: none; }
+  .etichetta b { font-size: 1.7rem; letter-spacing: -0.035em; }
+  .spiega { color: var(--muted); max-width: 70ch; font-size: 1rem; line-height: 1.55; margin: 6px 0 22px 54px; }
+  .mono { font-family: "Geist Mono", monospace; }
+  .comp { background: var(--surface); border: 1px solid var(--edge); border-radius: 28px; padding: 18px 22px; box-shadow: 0 34px 70px -40px rgba(23,21,15,.4); }
+  .riga { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; border-radius: 99px; border: 1px solid var(--edge); background: var(--surface); padding: 0 14px; font-size: .9rem; white-space: nowrap; }
+  .chip.on { background: var(--amber-soft); border-color: transparent; color: var(--on-amber); font-weight: 600; }
+  .chip.aperta { border-color: var(--ink); }
+  .chip img { width: 30px; height: 30px; border-radius: 99px; object-fit: cover; object-position: 50% 20%; margin-left: -8px; }
+  .scintilla { color: var(--amber); }
+  .frase { font-size: 1.35rem; line-height: 1.45; padding: 14px 4px; }
+  .frase mark { background: none; color: inherit; border-bottom: 2px solid var(--amber); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 22px; border-radius: 99px; background: var(--amber); color: var(--on-amber); font-weight: 700; border: 0; font-size: 1rem; }
+  .fine { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .prezzo { font-size: .88rem; color: var(--muted); text-align: right; line-height: 1.3; }
+  .prezzo b { color: var(--ink); display: block; font-size: 1rem; }
+  .nota { font-size: .82rem; color: var(--amber-ink); }
+
+  /* il pannello degli angoli */
+  .pannello { margin-top: 12px; border: 1px solid var(--edge); border-radius: 24px; background: var(--bg); padding: 18px; box-shadow: 0 30px 70px -35px rgba(12,15,23,.45); animation: entra .35s cubic-bezier(.2,.8,.2,1) both; }
+  .gruppo + .gruppo { margin-top: 18px; }
+  .gruppo h3 { font-size: .95rem; font-weight: 600; }
+  .gruppo h3 span { color: var(--faint); font-weight: 400; margin-left: 8px; font-size: .85rem; }
+  .carte { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 8px; margin-top: 10px; }
+  .carta { border: 1px solid var(--edge); background: var(--surface); border-radius: 16px; padding: 8px 8px 10px; text-align: left; cursor: pointer; transition: border-color .25s, transform .2s, box-shadow .25s; font: inherit; color: inherit; }
+  .carta:hover { border-color: rgba(226,154,46,.6); transform: translateY(-2px); box-shadow: 0 14px 28px -20px rgba(23,21,15,.4); }
+  .carta:active { transform: scale(.98); }
+  .carta.on { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(226,154,46,.18); }
+  .carta .foto { position: relative; aspect-ratio: 3/4; border-radius: 11px; overflow: hidden; background: #E9E2D5; }
+  .carta .foto img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .carta:hover .foto img { transform: scale(1.05); }
+  .carta .foto.vuota::after { content: "in arrivo"; position: absolute; inset: 0; display: grid; place-items: center; font: 500 .7rem "Geist Mono", monospace; color: var(--faint); background: linear-gradient(100deg, #E9E2D5 30%, #F3EEE5 50%, #E9E2D5 70%); background-size: 200% 100%; animation: luccica 1.4s linear infinite; }
+  @keyframes luccica { to { background-position: -200% 0; } }
+  .carta b { display: block; font-size: .84rem; margin-top: 7px; letter-spacing: -.01em; }
+  .carta small { display: block; font-size: .72rem; color: var(--muted); line-height: 1.3; margin-top: 2px; }
+  @keyframes entra { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+  /* la serie di angoli */
+  .modo { display: inline-flex; background: #ece6da; border-radius: 99px; padding: 4px; gap: 4px; }
+  .modo span { padding: 8px 16px; border-radius: 99px; font-size: .9rem; font-weight: 600; color: var(--muted); }
+  .modo span.on { background: var(--surface); color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .cosa { display: inline-flex; gap: 6px; margin-left: 10px; font-size: .85rem; color: var(--muted); align-items: center; }
+  .cosa i { font-style: normal; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--edge); }
+  .cosa i.on { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+  .scelti { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 8px; margin-top: 14px; }
+  .griglia { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; margin-top: 16px; }
+  .scatto { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 2/3; background: #ddd; }
+  .scatto img { width: 100%; height: 100%; object-fit: cover; }
+  .scatto span { position: absolute; left: 8px; bottom: 8px; background: rgba(14,12,9,.66); color: #F4EEE3; border-radius: 99px; padding: 4px 9px; font-size: .7rem; font-family: "Geist Mono", monospace; }
+  .avviso { font-size: .8rem; color: var(--faint); margin-top: 10px; }
+
+  /* la vetrina */
+  .vetrina { background: #0E0C09; color: #F2E9D8; border-radius: 28px; padding: 28px; }
+  .vetrina h2 { font-size: 2rem; letter-spacing: -.04em; line-height: 1.05; }
+  .vetrina p { color: #bdb3a2; max-width: 60ch; margin-top: 10px; line-height: 1.5; }
+  .muro { display: grid; grid-template-columns: repeat(10, minmax(0,1fr)); gap: 6px; margin-top: 20px; }
+  .muro div { aspect-ratio: 3/4; border-radius: 10px; background-size: cover; background-position: 50% 25%; position: relative; overflow: hidden; }
+  .muro div::after { content: attr(data-n); position: absolute; left: 6px; bottom: 6px; font: 500 .62rem "Geist Mono", monospace; color: #F2E9D8; background: rgba(0,0,0,.5); padding: 2px 6px; border-radius: 99px; }
+  .fondo { height: 80px; }
+
+  @media (max-width: 760px) {
+    .spiega { margin-left: 0; }
+    .testa h1 { font-size: 2rem; }
+    /* sul telefono le carte scorrono di lato, niente colonne infinite */
+    .carte, .scelti, .griglia { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+    .carta { flex: none; width: 128px; scroll-snap-align: start; }
+    .scelti .carta { width: 118px; }
+    .griglia .scatto { flex: none; width: 46%; scroll-snap-align: start; }
+    .muro { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .frase { font-size: 1.1rem; }
+    .cosa { margin: 10px 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pannello { animation: none; } .carta, .carta .foto img { transition: none; } .carta .foto.vuota::after { animation: none; } }
+</style>
+</head>
+<body>
+<div class="w">
+
+  <div class="testa">
+    <h1>Gli angoli di ripresa</h1>
+    <p>Dal reel dei 34 tipi di inquadratura: nel nostro Crea oggi ci sono inquadratura (primo piano, mezzo busto), pose e ottiche, ma manca dove sta la camera. Tre pezzi, tutti sullo stesso motore e sullo stesso controllo del volto.</p>
+  </div>
+
+  <!-- A: LA PILLOLA ANGOLO -->
+  <div class="etichetta"><span class="lettera">A</span><b>La pillola Angolo</b></div>
+  <p class="spiega">Una pillola nuova accanto a Luce. Si apre su venti angoli divisi in tre famiglie; ogni carta e' una foto vera della stessa persona presa da quella camera, cosi' si capisce senza conoscere i nomi da set. Le foto qui sotto sono uscite dal nostro motore: Chiara, stesso cappotto, stessa via, cambia solo la camera. Tocca una carta e la frase non cambia: l'angolo va al motore come la luce. Sul telefono ogni famiglia scorre di lato.</p>
+  <div class="comp">
+    <div class="riga">
+      <span class="chip on"><img src="foto/occhi.webp" alt="">Chiara</span>
+      <span class="chip" style="border-style:dashed;color:var(--amber-ink)">+ Aggiungi qualcuno</span>
+    </div>
+    <p class="frase">in una via del centro storico nel tardo pomeriggio, cappotto color cammello, maglietta bianca</p>
+    <div class="riga">
+      <span class="chip">Cinema ⌄</span>
+      <span class="chip">Luce ⌄</span>
+      <span class="chip aperta on" id="pillola">Dal basso ⌄</span>
+      <span class="chip">Vestiti · 1</span>
+      <span class="chip">Verticale ⌄</span>
+      <span class="chip">Alta ⌄</span>
+    </div>
+    <div class="pannello">
+      <div id="gruppi"></div>
+    </div>
+    <div class="fine">
+      <span class="nota">Il volto si misura come sempre: da angoli estremi (a picco, da terra, di spalle) il controllo e' piu' severo e lo dice prima.</span>
+      <span style="display:flex;gap:12px;align-items:center"><span class="prezzo"><b>50 ⚡</b>0,11 € a Chiara</span><button class="btn">Genera ↑</button></span>
+    </div>
+  </div>
+
+  <!-- B: LA SERIE DI ANGOLI -->
+  <div class="etichetta"><span class="lettera">B</span><b>La serie di angoli</b></div>
+  <p class="spiega">E' il reel fatto prodotto. Nella Serie per campagna si sceglie cosa cambia: la situazione (come oggi) o l'angolo. Con l'angolo, la scena resta una e si scelgono fino a sei angoli: esce un servizio fotografico vero, la stessa persona nello stesso momento vista da sei camere. Il primo scatto fa da guida come nella serie di oggi; prezzo in chiaro, i non tenuti non si pagano.</p>
+  <div class="comp">
+    <div class="riga"><span class="modo"><span>Scatto</span><span class="on">Serie per campagna</span></span><span class="cosa">cambia <i>la situazione</i><i class="on">l'angolo</i></span></div>
+    <p class="frase">in una via del centro storico nel tardo pomeriggio, cappotto color cammello, maglietta bianca</p>
+    <p style="font-weight:600;font-size:.95rem">Sei angoli <span style="color:var(--faint);font-weight:400">tocca per togliere, + per aggiungere</span></p>
+    <div class="scelti" id="scelti"></div>
+    <div class="fine">
+      <span class="nota">stessa scena, stessi vestiti, stessa luce: cambia solo la camera</span>
+      <span style="display:flex;gap:12px;align-items:center"><span class="prezzo"><b>6 scatti · 300 ⚡</b>0,66 € a Chiara · i non tenuti non si pagano</span><button class="btn">Crea la serie ↑</button></span>
+    </div>
+  </div>
+  <div class="griglia" id="griglia"></div>
+  <p class="avviso">Sei foto vere dal nostro motore: una scena, sei camere.</p>
+
+  <!-- C: IL DIRETTORE CAPISCE GLI ANGOLI -->
+  <div class="etichetta"><span class="lettera">C</span><b>Il direttore capisce gli angoli</b></div>
+  <p class="spiega">Chi scrive "ripresa dal basso" o "sopra la spalla di lui" non deve cercare la pillola: il direttore la accende con la scintilla, come fa gia' con luce e vestiti.</p>
+  <div class="comp">
+    <p class="frase">lui al tavolo di un ristorante, <mark>vista da sopra la spalla</mark> di lei che gli parla, <mark>luce calda di candele</mark></p>
+    <div class="riga">
+      <span class="chip">Naturale ⌄</span>
+      <span class="chip on"><span class="scintilla">✦</span> Golden hour</span>
+      <span class="chip on"><span class="scintilla">✦</span> Sopra la spalla</span>
+      <span class="chip">Verticale ⌄</span>
+    </div>
+  </div>
+
+  <!-- D: LA VETRINA -->
+  <div class="etichetta"><span class="lettera">D</span><b>La vetrina: una persona, venti camere</b></div>
+  <p class="spiega">Il reel funziona perche' e' sempre lo stesso ragazzo in 34 foto. Noi possiamo farlo meglio, con un volto vero del registro e il consenso: una pagina (e un reel nostro) con la stessa persona in venti angoli, ogni foto col suo certificato e la percentuale di somiglianza. E' la prova piu' chiara di quello che vendiamo. Costo stimato: venti scatti in qualita' alta dall'account interno.</p>
+  <div class="vetrina">
+    <h2>Chiara, venti camere.</h2>
+    <p>La stessa persona, lo stesso giorno, venti angoli di ripresa. Ogni foto certificata, il volto misurato ogni volta.</p>
+    <div class="muro" id="muro"></div>
+  </div>
+  <p class="avviso">Tutte foto vere dal nostro motore, account interno, ognuna col suo certificato.</p>
+
+  <div class="fondo"></div>
+</div>
+
+<script>
+// Ogni angolo e' una foto vera (design/angoli/foto/<k>.webp) con la percentuale del volto.
+const ANGOLI = [
+  { k: "occhi", n: "Altezza occhi", d: "neutra, come guardarsi", f: 0 },
+  { k: "basso", n: "Dal basso", d: "potente, eroica", f: 0 },
+  { k: "alto", n: "Dall'alto", d: "piccola, fragile", f: 0 },
+  { k: "picco", n: "A picco", d: "dritta dall'alto", f: 0 },
+  { k: "terra", n: "Da terra", d: "camera sul selciato", f: 0 },
+  { k: "aerea", n: "Aerea", d: "dal drone, lei piccola", f: 0 },
+  { k: "spalla", n: "Sopra la spalla", d: "dietro chi ascolta", f: 1 },
+  { k: "soggettiva", n: "Soggettiva", d: "quello che vede lei", f: 1 },
+  { k: "tre_quarti", n: "Tre quarti", d: "girata di poco", f: 1 },
+  { k: "profilo", n: "Profilo", d: "di fianco, netta", f: 1 },
+  { k: "spalle", n: "Di spalle", d: "se ne va", f: 1 },
+  { k: "selfie", n: "Selfie", d: "dal telefono, braccio teso", f: 1 },
+  { k: "inclinata", n: "Inclinata", d: "orizzonte storto, tensione", f: 2 },
+  { k: "grandangolo", n: "Grandangolo da vicino", d: "viso vicino, via larga", f: 2 },
+  { k: "fisheye", n: "Fisheye", d: "tutto curvo", f: 2 },
+  { k: "silhouette", n: "Silhouette", d: "controluce, solo la forma", f: 2 },
+  { k: "davanti", n: "Qualcosa davanti", d: "foglie in primo piano", f: 2 },
+  { k: "fuoco_dietro", n: "Fuoco dietro", d: "lei sfocata, via nitida", f: 2 },
+  { k: "riflesso", n: "Riflesso", d: "nella vetrina", f: 2 },
+  { k: "buco", n: "Da un buco", d: "dal basso, cornice di terra", f: 2 },
+];
+const FAMIGLIE = [["Altezza della camera", "da dove guarda"], ["Intorno alla persona", "da che lato"], ["Ottica e trucchi", "come la vede"]];
+const foto = (o) => `<div class="foto vuota" data-k="${o.k}"><img src="foto/${o.k}.webp" alt="${o.n}" loading="lazy" onload="this.parentNode.classList.remove('vuota')" onerror="this.remove()"></div>`;
+const carta = (o, on) => `<button class="carta${on ? " on" : ""}" type="button">${foto(o)}<b>${o.n}</b><small>${o.d}</small></button>`;
+
+document.getElementById("gruppi").innerHTML = FAMIGLIE.map(([t, d], i) =>
+  `<div class="gruppo"><h3>${t}<span>${d}</span></h3><div class="carte">${ANGOLI.filter((o) => o.f === i).map((o) => carta(o, o.k === "basso")).join("")}</div></div>`).join("");
+const sei = ["occhi", "basso", "spalla", "profilo", "davanti", "alto"];
+document.getElementById("scelti").innerHTML = sei.map((k) => carta(ANGOLI.find((o) => o.k === k), true)).join("");
+document.getElementById("griglia").innerHTML = sei.map((k, i) => { const o = ANGOLI.find((x) => x.k === k); return `<div class="scatto"><img src="foto/${k}.webp" alt="" onerror="this.remove()"><span>${String(i + 1).padStart(2, "0")} ${o.n.toLowerCase()}</span></div>`; }).join("");
+document.getElementById("muro").innerHTML = ANGOLI.map((o, i) => `<div data-n="${String(i + 1).padStart(2, "0")} ${o.n.toLowerCase()}" style="background-image:url(foto/${o.k}.webp)"></div>`).join("");
+document.querySelectorAll("#gruppi .carta").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll("#gruppi .carta").forEach((x) => x.classList.remove("on"));
+  b.classList.add("on");
+  document.getElementById("pillola").textContent = b.querySelector("b").textContent + " ⌄";
+}));
+document.querySelectorAll("#scelti .carta").forEach((b) => b.addEventListener("click", () => b.classList.toggle("on")));
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crea, tre novità</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#F7F4EE; --surface:#FFFFFF; --ink:#17150F; --muted:#5B564B; --faint:#8a8377; --edge:#D9D3C5; --amber:#E29A2E; --amber-soft:#F8E9CF; --on-amber:#412402; --amber-ink:#9A4A0B; --scena:#0E0C09; --verde:#3DDC97; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .w { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  .etichetta { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; padding: 56px 0 8px; }
+  .lettera { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 99px; background: var(--ink); color: var(--bg); font-weight: 700; flex: none; }
+  .etichetta b { font-size: 1.7rem; letter-spacing: -0.035em; }
+  .spiega { color: var(--muted); max-width: 70ch; font-size: 1rem; line-height: 1.55; margin: 6px 0 22px 54px; }
+  .mono { font-family: "Geist Mono", monospace; }
+  .comp { background: var(--surface); border: 1px solid var(--edge); border-radius: 28px; padding: 18px 22px; box-shadow: 0 34px 70px -40px rgba(23,21,15,.4); }
+  .riga { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; border-radius: 99px; border: 1px solid var(--edge); background: var(--surface); padding: 0 14px; font-size: .9rem; white-space: nowrap; }
+  .chip.on { background: var(--amber-soft); border-color: transparent; color: var(--on-amber); font-weight: 600; }
+  .chip .x { opacity: .5; font-size: .8rem; }
+  .chip img { width: 30px; height: 30px; border-radius: 99px; object-fit: cover; object-position: 50% 20%; margin-left: -8px; }
+  .frase { font-size: 1.35rem; line-height: 1.45; padding: 14px 4px; min-height: 76px; }
+  .frase mark { background: none; color: inherit; border-bottom: 2px solid var(--amber); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 22px; border-radius: 99px; background: var(--amber); color: var(--on-amber); font-weight: 700; border: 0; font-size: 1rem; }
+  .btn.ghost { background: transparent; border: 1px solid var(--edge); color: var(--ink); font-weight: 600; height: 44px; }
+  .fine { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .prezzo { font-size: .88rem; color: var(--muted); text-align: right; line-height: 1.3; }
+  .prezzo b { color: var(--ink); display: block; font-size: 1rem; }
+  .nota { font-size: .82rem; color: var(--amber-ink); display: inline-flex; gap: 6px; align-items: center; }
+  .scintilla { color: var(--amber); }
+  .griglia { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+  .scatto { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 4/5; background: #ddd; }
+  .scatto img { width: 100%; height: 100%; object-fit: cover; }
+  .scatto span { position: absolute; left: 10px; bottom: 10px; background: rgba(14,12,9,.66); color: #F4EEE3; border-radius: 99px; padding: 5px 10px; font-size: .75rem; backdrop-filter: blur(6px); }
+  .scatto .dopo { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(247,244,238,.72); color: var(--muted); font-size: .85rem; text-align: center; padding: 10px; }
+  .ricette { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+  .ricetta { flex: none; width: 250px; border-radius: 20px; border: 1px solid var(--edge); background: var(--surface); overflow: hidden; }
+  .ricetta .foto { height: 120px; background-size: cover; background-position: 50% 30%; position: relative; }
+  .ricetta .foto i { position: absolute; top: 10px; left: 10px; font-style: normal; font-size: .72rem; background: rgba(14,12,9,.66); color: #fff; border-radius: 99px; padding: 4px 9px; }
+  .ricetta .dentro { padding: 12px 14px 14px; }
+  .ricetta b { display: block; font-size: 1rem; letter-spacing: -.01em; }
+  .ricetta p { font-size: .8rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  .ricetta .usa { margin-top: 10px; height: 38px; width: 100%; border-radius: 99px; border: 1px solid var(--edge); background: var(--bg); font-weight: 600; font-size: .85rem; }
+  .ricetta.nuova { display: grid; place-items: center; border-style: dashed; color: var(--amber-ink); min-height: 250px; font-weight: 600; text-align: center; padding: 20px; }
+  .modo { display: inline-flex; background: #ece6da; border-radius: 99px; padding: 4px; gap: 4px; }
+  .modo span { padding: 8px 16px; border-radius: 99px; font-size: .9rem; font-weight: 600; color: var(--muted); }
+  .modo span.on { background: var(--surface); color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .situazioni { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; margin-top: 14px; }
+  .sit { border: 1px solid var(--edge); border-radius: 14px; padding: 10px 12px; font-size: .88rem; background: var(--bg); display: flex; gap: 8px; }
+  .sit .n { font-family: "Geist Mono", monospace; color: var(--faint); font-size: .75rem; padding-top: 2px; }
+  .fisso { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .fisso .chip { height: 34px; font-size: .82rem; }
+  .lucchetto { font-size: .75rem; color: var(--faint); }
+  .due { display: grid; grid-template-columns: 1.05fr .95fr; gap: 16px; align-items: start; }
+  hr { border: 0; border-top: 1px solid var(--edge); margin: 16px 0; }
+  .fondo { height: 80px; }
+  @media (max-width: 760px) {
+    .spiega { margin-left: 0; }
+    .griglia { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .due { grid-template-columns: 1fr; }
+    .frase { font-size: 1.1rem; }
+    .etichetta b { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="w">
+
+  <!-- A: IL DIRETTORE -->
+  <div class="etichetta"><span class="lettera">A</span><b>Il direttore compila per te</b></div>
+  <p class="spiega">Scrivi a parole libere, come parli. Mentre scrivi, il direttore legge la frase e accende da solo le pillole: luce, vestiti, formato, inquadratura. Le parole che ha capito si sottolineano; ogni pillola accesa da lui ha la scintilla e si cambia o si spegne con un tocco. Non costa niente e non genera niente: prepara soltanto.</p>
+  <div class="comp">
+    <div class="riga">
+      <span class="chip on"><img src="entra-960.webp" alt="">Greta <span class="x">✕</span></span>
+      <span class="chip" style="border-style:dashed;color:var(--amber-ink)">+ Aggiungi qualcuno</span>
+    </div>
+    <p class="frase">lei in <mark>giubbotto di pelle</mark> e <mark>jeans neri</mark>, in un parcheggio sotterraneo di <mark>notte</mark>, <mark>luce dura da destra</mark>, foto <mark>orizzontale</mark> a <mark>mezzo busto</mark></p>
+    <div class="riga">
+      <span class="chip">Naturale ⌄</span>
+      <span class="chip on"><span class="scintilla">✦</span> Di taglio da destra</span>
+      <span class="chip on"><span class="scintilla">✦</span> Vestiti · 1</span>
+      <span class="chip on"><span class="scintilla">✦</span> Orizzontale</span>
+      <span class="chip">Alta ⌄</span>
+      <span class="chip on"><span class="scintilla">✦</span> Regia · mezzo busto</span>
+    </div>
+    <div class="fine">
+      <span class="nota"><span class="scintilla">✦</span> Il direttore ha impostato 4 scelte dalla tua frase · <u>rimetti tutto com'era</u></span>
+      <span style="display:flex;gap:12px;align-items:center"><span class="prezzo"><b>50 ⚡</b>0,11 € a Greta</span><button class="btn">Genera ↑</button></span>
+    </div>
+  </div>
+
+  <!-- B: LE RICETTE -->
+  <div class="etichetta"><span class="lettera">B</span><b>Le ricette</b></div>
+  <p class="spiega">Quando uno scatto ti piace, "Salva come ricetta": si tengono scena, luce, vestiti, formato e look, non la persona. La ricetta si riusa con chiunque del registro, in un tocco, e per le agenzie diventa il kit del brand. Le ricette stanno in cima a Crea, prima delle idee.</p>
+  <div class="ricette">
+    <div class="ricetta"><div class="foto" style="background-image:url(verify-960.webp)"><i>✦ la tua</i></div><div class="dentro"><b>Ritratto noir, fondo verde</b><p>Luce di taglio da destra · dolcevita nero · orizzontale</p><button class="usa">Usa con…</button></div></div>
+    <div class="ricetta"><div class="foto" style="background-image:url(studio-960.webp)"><i>✦ la tua</i></div><div class="dentro"><b>Backstage sfilata</b><p>Controluce · abito di raso nero · cinema</p><button class="usa">Usa con…</button></div></div>
+    <div class="ricetta"><div class="foto" style="background-image:url(academy-960.webp)"><i>kit Brand Rossi</i></div><div class="dentro"><b>Ufficio luminoso</b><p>Finestra · maglione blu · quadrato · logo nel kit</p><button class="usa">Usa con…</button></div></div>
+    <div class="ricetta nuova">+ Salva lo scatto che ti piace<br>come ricetta</div>
+  </div>
+  <div class="comp" style="margin-top:14px">
+    <p class="mono" style="font-size:.75rem;color:var(--faint);letter-spacing:.14em">DOPO "USA CON…": SCELGO ASIA</p>
+    <div class="riga" style="margin-top:10px">
+      <span class="chip on"><img src="ward-960.webp" alt="">Asia <span class="x">✕</span></span>
+      <span class="chip on">Ricetta: Ritratto noir, fondo verde <span class="x">✕</span></span>
+      <span class="chip">Di taglio da destra</span><span class="chip">Vestiti · 1</span><span class="chip">Orizzontale</span>
+    </div>
+  </div>
+
+  <!-- C: LA SERIE PER LE CAMPAGNE -->
+  <div class="etichetta"><span class="lettera">C</span><b>La serie per le campagne</b></div>
+  <p class="spiega">In cima a Crea si sceglie fra "Scatto" e "Serie". Nella serie si fissano una volta persona, vestiti, luce e look (il lucchetto), e si scrivono le situazioni, una per riga, fino a 6. Il primo scatto accettato diventa il riferimento degli altri: stesso vestito, stessa luce, sembra lo stesso servizio fotografico. Il prezzo è quello degli scatti, in chiaro prima di partire; ogni scatto che non tiene il volto non si paga.</p>
+  <div class="due">
+    <div class="comp">
+      <div class="modo"><span>Scatto</span><span class="on">Serie per campagna</span></div>
+      <div class="fisso">
+        <span class="lucchetto mono">FISSI PER TUTTA LA SERIE</span>
+      </div>
+      <div class="fisso">
+        <span class="chip on"><img src="scansione-960.webp" alt="">Chiara</span>
+        <span class="chip">🔒 Camicia di lino bianca</span>
+        <span class="chip">🔒 Golden hour</span>
+        <span class="chip">🔒 Naturale · verticale · Alta</span>
+      </div>
+      <hr>
+      <p style="font-weight:600">Le situazioni</p>
+      <div class="situazioni">
+        <div class="sit"><span class="n">01</span>al tavolino di un bar, ride</div>
+        <div class="sit"><span class="n">02</span>cammina in centro con una borsa</div>
+        <div class="sit"><span class="n">03</span>sul terrazzo, guarda il tramonto</div>
+        <div class="sit"><span class="n">04</span>al mercato, sceglie la frutta</div>
+        <div class="sit"><span class="n">05</span>in bici su un viale alberato</div>
+        <div class="sit" style="border-style:dashed;color:var(--amber-ink)"><span class="n">06</span>+ aggiungi</div>
+      </div>
+      <div class="fine">
+        <span class="prezzo" style="text-align:left"><b>5 scatti · 250 ⚡</b>0,55 € a Chiara · i non tenuti non si pagano</span>
+        <button class="btn">Crea la serie ↑</button>
+      </div>
+    </div>
+    <div>
+      <div class="griglia">
+        <div class="scatto"><img src="scansione-960.webp" alt=""><span>01 · 98%</span></div>
+        <div class="scatto"><img src="contatti-960.webp" alt="" style="filter:saturate(.9)"><span>02 · in corso</span><div class="dopo">sta girando…</div></div>
+        <div class="scatto"><img src="entra-960.webp" alt=""><div class="dopo">03 in coda</div></div>
+        <div class="scatto"><img src="academy-960.webp" alt=""><div class="dopo">04 in coda</div></div>
+        <div class="scatto"><img src="tutela-960.webp" alt=""><div class="dopo">05 in coda</div></div>
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:10px">Anteprima del mockup: le foto qui sono segnaposto presi dal sito. Nella serie vera sono tutte della stessa persona, con lo stesso vestito e la stessa luce.</p>
+    </div>
+  </div>
+  <div class="fondo"></div>
+</div>
+</body>
+</html>
