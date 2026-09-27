@@ -121,10 +121,15 @@ export async function voltiIn(img: Buffer): Promise<Volto[]> {
   const { data, info } = await sharp(img).rotate().removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const t = faceapi.tf.tensor3d(new Uint8Array(data), [info.height, info.width, 3]);
   try {
-    const dets: { descriptor: Float32Array; detection: { box: { width: number; x: number } } }[] = await faceapi
-      .detectAllFaces(t, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
-      .withFaceLandmarks()
-      .withFaceDescriptors();
+    type Det = { descriptor: Float32Array; detection: { box: { width: number; x: number } } };
+    const cerca = async (minConfidence: number): Promise<Det[]> =>
+      faceapi.detectAllFaces(t, new faceapi.SsdMobilenetv1Options({ minConfidence })).withFaceLandmarks().withFaceDescriptors();
+    // Secondo passaggio (27/9): un volto di tre quarti puo' uscire a 0,49 e con
+    // la soglia a 0,5 lo scatto passava SENZA misura (la Chiara di Prezzi, che
+    // non le somigliava). Se al primo giro non c'e' nessun volto, si guarda
+    // meglio; con volti gia' trovati non si abbassa niente.
+    let dets = await cerca(0.5);
+    if (dets.length === 0) dets = await cerca(0.35);
     return dets.map((d) => ({ desc: Array.from(d.descriptor), lato: Math.round(d.detection.box.width), x: Math.round(d.detection.box.x + d.detection.box.width / 2) }));
   } finally {
     t.dispose();
