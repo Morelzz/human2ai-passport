@@ -5,9 +5,9 @@ describe("le copertine delle pagine", () => {
   it("si mostrano solo con il consenso vivo di tutti quelli dentro", () => {
     const tutti = new Set(Object.values(FOTO_PAGINE).flatMap((f) => f.persone.map((p) => p.handle)));
     expect(copertinaDa("catalogo", tutti)?.src1600).toBe("/pagine/catalogo-1600.webp");
-    const senzaAsia = new Set([...tutti].filter((h) => h !== "asia"));
-    expect(copertinaDa("catalogo", senzaAsia)).toBeNull(); // Asia e' nel trio del catalogo
-    expect(copertinaDa("prezzi", senzaAsia)).not.toBeNull();
+    const senzaGreta = new Set([...tutti].filter((h) => h !== "greta"));
+    expect(copertinaDa("catalogo", senzaGreta)).toBeNull(); // Greta e' nel trio del catalogo
+    expect(copertinaDa("prezzi", senzaGreta)).not.toBeNull();
   });
 
   it("ogni copertina ha il suo certificato intero e i numeri veri", () => {

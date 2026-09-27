@@ -2,7 +2,8 @@
 // LE COPERTINE DELLE PAGINE (27/9/2026, notte). Ogni pagina apre su uno scatto
 // VERO di Semblic: pagato, con il suo certificato e la parte andata alle
 // persone (numeri letti dal database il giorno della scelta, generati da
-// .tmp/esporta-pagine.mjs). Le foto stanno in public/pagine/<chiave>-<w>.webp.
+// .tmp/esporta-pagine.mjs). Rifatte tutte il 27/9 col motore di oggi (luce e
+// vestiti scelti), una persona diversa per quasi ogni pagina. Le foto stanno in public/pagine/<chiave>-<w>.webp.
 //
 // Come la vetrina della prima pagina: prima di mostrarle si legge il consenso
 // VIVO di chi c'e' dentro. Se una persona revoca, la sua foto esce dal sito da
@@ -24,23 +25,19 @@ export interface FotoPagina {
 }
 
 export const FOTO_PAGINE = {
-  "catalogo": { certificato: "a7d5377da2c518fb10019c5e11152a2350b62e457e66901258ce38e8ffa29c63", persone: [{"handle":"alessia","alias":"Alessia"},{"handle":"asia","alias":"Asia"},{"handle":"random","alias":"Random"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 35%" },
-  "prezzi": { certificato: "22bcaa7cc65aa947e33be1673eb095009af6aa10ece0a22b82b9b46eecf23dac", persone: [{"handle":"gabriella","alias":"Gabriella"},{"handle":"stella","alias":"Stella"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 30%" },
-  "proteggi": { certificato: "b778fde6ea0697811458ea8fef8f3f47b161965023900e7686aab3f7d957410a", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 36, royaltyCents: 24, larghezza: 1024, altezza: 1024, fuoco: "50% 28%" },
-  "ward": { certificato: "f2190ed61cb51989b18ff61598e70d78f63eeeb909a2d01815a8281a77e2701a", persone: [{"handle":"gabriella","alias":"Gabriella"}], grossCents: 36, royaltyCents: 24, larghezza: 1024, altezza: 1024, fuoco: "50% 25%" },
-  "verify": { certificato: "c6fb19b7c234b408548416c3d5a2779bafb8df0f42d123348a0b488c988f72de", persone: [{"handle":"gabriella","alias":"Gabriella"},{"handle":"stella","alias":"Stella"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 35%" },
-  "entra": { certificato: "c4468df76b3478a35ab3d45000793b98e1330ce5c55d9d204a289aca7a546ae6", persone: [{"handle":"gabriella","alias":"Gabriella"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 28%" },
-  "signup": { certificato: "f6d5c88e820d3ee6e10f55e44b210f1e634f0a72ba6f2bd82680cedbd1f9d863", persone: [{"handle":"chiara","alias":"Chiara"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 30%" },
-  "login": { certificato: "40128d9304d3d26a50fe98c0ff3d9c359c3de7ebd2a9ee56a9a94330d64ad730", persone: [{"handle":"stella","alias":"Stella"}], grossCents: 12, royaltyCents: 4, larghezza: 1024, altezza: 1024, fuoco: "50% 30%" },
-  "sviluppatori": { certificato: "f0622c1081e97f6123a532b60e65e34c1f9bd6da3a3f610262bee3a89efe9546", persone: [{"handle":"claire","alias":"Claire"}], grossCents: 37, royaltyCents: 24, larghezza: 1024, altezza: 1536, fuoco: "50% 30%" },
-  "enterprise": { certificato: "256564a167718b34d757c92ec8bed1b0d7210e306df6f001a89d51cb9d3f4199", persone: [{"handle":"claire","alias":"Claire"}], grossCents: 36, royaltyCents: 24, larghezza: 1024, altezza: 1024, fuoco: "50% 35%" },
-  "studio": { certificato: "d22d284d8a539138725eafd2dfd7ff7b76b7cee998db4855ddc3b00ed4449eef", persone: [{"handle":"random","alias":"Random"}], grossCents: 120, royaltyCents: 96, larghezza: 2560, altezza: 1440, fuoco: "60% 30%" },
-  "academy": { certificato: "e58286c485e753a801cccb419596beb20f9d3653a489036fbf0649306021e3ae", persone: [{"handle":"random","alias":"Random"}], grossCents: 21, royaltyCents: 6, larghezza: 1024, altezza: 1024, fuoco: "50% 25%" },
-  "partner": { certificato: "5b6f2b87574063e9cf16015c363f91f61959b65035619297fd6fe604b0adcfda", persone: [{"handle":"random","alias":"Random"}], grossCents: 70, royaltyCents: 24, larghezza: 1024, altezza: 1536, fuoco: "50% 30%" },
-  "tutela": { certificato: "abb06d3d3159f11b6bb16e1550545a29751229d3fbc87f45a19d1e7e8711f8bc", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 36, royaltyCents: 24, larghezza: 1024, altezza: 1024, fuoco: "50% 25%" },
-  "scansione": { certificato: "e9851b6244184ab03d1db523202ef81783352bf7fa9b279b92dc7827150d66a3", persone: [{"handle":"claire","alias":"Claire"}], grossCents: 37, royaltyCents: 24, larghezza: 1024, altezza: 1536, fuoco: "50% 35%" },
-  "contatti": { certificato: "c4e8251e0ef82de67b1339167c90524d4e6a91f4ad0536a3a960c7b214e82048", persone: [{"handle":"alessia","alias":"Alessia"}], grossCents: 37, royaltyCents: 24, larghezza: 1024, altezza: 1536, fuoco: "50% 30%" },
-  "apocalisse": { certificato: "5a3b489baff0927e1ce724a3f01e3527f13e03b2d563ac86c592e6f236822aad", persone: [{"handle":"gabriella","alias":"Gabriella"},{"handle":"stella","alias":"Stella"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 30%" },
+  "catalogo": { certificato: "68b6323b83af422306aa8e211c1ceab399bd0b1b83509031e397900195246f1b", persone: [{"handle":"greta","alias":"Greta"},{"handle":"veronica","alias":"Veronica"},{"handle":"candies","alias":"Candies"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 30%" },
+  "prezzi": { certificato: "26dc5a90c0a9228b22f54ce06af599c242be8b8a12701cb1751e31c9eeb00711", persone: [{"handle":"chiara","alias":"Chiara"},{"handle":"random","alias":"Random"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 30%" },
+  "ward": { certificato: "f5050fd8dcdc870c42d769a913dce109ffb2c79f30bbab3e8456b4d79d14f663", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 20%" },
+  "verify": { certificato: "ac0ea7f6c554d8d5b268ed8ebdf6ee1b1f447adc544ab05a8cb9889c2f76d2d1", persone: [{"handle":"claire","alias":"Claire"}], grossCents: 50, royaltyCents: 11, larghezza: 1536, altezza: 1024, fuoco: "50% 32%" },
+  "entra": { certificato: "13cd5ae2d5856f0c554b99dbedf6555b3c6c84034e19ce6c20b7412c0b8609ef", persone: [{"handle":"greta","alias":"Greta"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "55% 22%" },
+  "sviluppatori": { certificato: "22ad8bc9e5e5361fbe4b0b8de561061655c7013b818b7db87f5ce1b0f0522b09", persone: [{"handle":"candies","alias":"Candies"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "45% 25%" },
+  "enterprise": { certificato: "198ef9075f9b292d0f6c530be7c21255a0c8463681ed780b5b4d7c2d35b61b94", persone: [{"handle":"alessia","alias":"Alessia"}], grossCents: 42, royaltyCents: 9, larghezza: 1024, altezza: 1024, fuoco: "50% 22%" },
+  "studio": { certificato: "4c9def922baea1f811e4be13b5afba72f3605e162dd2967f8a16b6f8db927086", persone: [{"handle":"veronica","alias":"Veronica"}], grossCents: 50, royaltyCents: 11, larghezza: 1536, altezza: 1024, fuoco: "50% 28%" },
+  "academy": { certificato: "4221f533a4dec543bf89e7c310a540cd4825bddba516a1f811399743a2d8ac13", persone: [{"handle":"stella","alias":"Stella"}], grossCents: 42, royaltyCents: 9, larghezza: 1024, altezza: 1024, fuoco: "45% 25%" },
+  "partner": { certificato: "4f5cf3ec81716e0d12148f7128af062187e3547d3499dd3bb8c2f4f2b2845af3", persone: [{"handle":"random","alias":"Random"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 14%" },
+  "tutela": { certificato: "fb182e5f0de67406293a47bd905a0743e7494f7585bbd71e33b57c2e4c8dc240", persone: [{"handle":"gabriella","alias":"Gabriella"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "45% 18%" },
+  "scansione": { certificato: "2f8e4238510e5f0cbae695bf78020f113fd9cce7a23296407dc0ce2723252de2", persone: [{"handle":"chiara","alias":"Chiara"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 16%" },
+  "contatti": { certificato: "c9acd43f499f983fd2dcf1e1ead52346c79e7cde2f1da789aba359943b9ce88d", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 20%" },
 } satisfies Record<string, FotoPagina>;
 
 export type ChiaveFoto = keyof typeof FOTO_PAGINE;

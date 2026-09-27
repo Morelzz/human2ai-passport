@@ -1,13 +1,13 @@
 {
- "certificato": "d22d284d8a539138725eafd2dfd7ff7b76b7cee998db4855ddc3b00ed4449eef",
+ "certificato": "4c9def922baea1f811e4be13b5afba72f3605e162dd2967f8a16b6f8db927086",
  "persone": [
   {
-   "handle": "random",
-   "alias": "Random"
+   "handle": "veronica",
+   "alias": "Veronica"
   }
  ],
- "gross_cents": 120,
- "royalty_cents": 96,
- "creato": "2026-06-08T01:57:19.167584+00:00",
+ "gross_cents": 50,
+ "royalty_cents": 11,
+ "creato": "2026-09-27T06:14:29.530651+00:00",
  "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
 }

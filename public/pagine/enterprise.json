@@ -1,13 +1,13 @@
 {
- "certificato": "256564a167718b34d757c92ec8bed1b0d7210e306df6f001a89d51cb9d3f4199",
+ "certificato": "198ef9075f9b292d0f6c530be7c21255a0c8463681ed780b5b4d7c2d35b61b94",
  "persone": [
   {
-   "handle": "claire",
-   "alias": "Claire"
+   "handle": "alessia",
+   "alias": "Alessia"
   }
  ],
- "gross_cents": 36,
- "royalty_cents": 24,
- "creato": "2026-06-19T00:59:16.289778+00:00",
+ "gross_cents": 42,
+ "royalty_cents": 9,
+ "creato": "2026-09-27T06:13:41.782096+00:00",
  "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
 }

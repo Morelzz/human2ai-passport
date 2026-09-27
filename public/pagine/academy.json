@@ -1,13 +1,13 @@
 {
- "certificato": "e58286c485e753a801cccb419596beb20f9d3653a489036fbf0649306021e3ae",
+ "certificato": "4221f533a4dec543bf89e7c310a540cd4825bddba516a1f811399743a2d8ac13",
  "persone": [
   {
-   "handle": "random",
-   "alias": "Random"
+   "handle": "stella",
+   "alias": "Stella"
   }
  ],
- "gross_cents": 21,
- "royalty_cents": 6,
- "creato": "2026-09-14T01:30:52.208031+00:00",
+ "gross_cents": 42,
+ "royalty_cents": 9,
+ "creato": "2026-09-27T06:15:13.396329+00:00",
  "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
 }

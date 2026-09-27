@@ -1,21 +1,21 @@
 {
- "certificato": "a7d5377da2c518fb10019c5e11152a2350b62e457e66901258ce38e8ffa29c63",
+ "certificato": "68b6323b83af422306aa8e211c1ceab399bd0b1b83509031e397900195246f1b",
  "persone": [
   {
-   "handle": "alessia",
-   "alias": "Alessia"
+   "handle": "greta",
+   "alias": "Greta"
   },
   {
-   "handle": "asia",
-   "alias": "Asia"
+   "handle": "veronica",
+   "alias": "Veronica"
   },
   {
-   "handle": "random",
-   "alias": "Random"
+   "handle": "candies",
+   "alias": "Candies"
   }
  ],
  "gross_cents": 100,
  "royalty_cents": 22,
- "creato": "2026-09-27T03:01:29.470913+00:00",
+ "creato": "2026-09-27T06:08:59.166726+00:00",
  "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
 }

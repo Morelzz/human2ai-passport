@@ -1,13 +1,13 @@
 {
- "certificato": "f2190ed61cb51989b18ff61598e70d78f63eeeb909a2d01815a8281a77e2701a",
+ "certificato": "f5050fd8dcdc870c42d769a913dce109ffb2c79f30bbab3e8456b4d79d14f663",
  "persone": [
   {
-   "handle": "gabriella",
-   "alias": "Gabriella"
+   "handle": "asia",
+   "alias": "Asia"
   }
  ],
- "gross_cents": 36,
- "royalty_cents": 24,
- "creato": "2026-06-14T18:34:26.789585+00:00",
+ "gross_cents": 50,
+ "royalty_cents": 11,
+ "creato": "2026-09-27T06:10:36.200003+00:00",
  "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
 }

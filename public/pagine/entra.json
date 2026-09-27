@@ -1,13 +1,13 @@
 {
- "certificato": "c4468df76b3478a35ab3d45000793b98e1330ce5c55d9d204a289aca7a546ae6",
+ "certificato": "13cd5ae2d5856f0c554b99dbedf6555b3c6c84034e19ce6c20b7412c0b8609ef",
  "persone": [
   {
-   "handle": "gabriella",
-   "alias": "Gabriella"
+   "handle": "greta",
+   "alias": "Greta"
   }
  ],
  "gross_cents": 50,
  "royalty_cents": 11,
- "creato": "2026-09-14T02:02:51.590692+00:00",
+ "creato": "2026-09-27T06:12:16.661265+00:00",
  "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
 }

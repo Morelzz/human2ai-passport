@@ -1,13 +1,13 @@
 {
- "certificato": "f0622c1081e97f6123a532b60e65e34c1f9bd6da3a3f610262bee3a89efe9546",
+ "certificato": "22ad8bc9e5e5361fbe4b0b8de561061655c7013b818b7db87f5ce1b0f0522b09",
  "persone": [
   {
-   "handle": "claire",
-   "alias": "Claire"
+   "handle": "candies",
+   "alias": "Candies"
   }
  ],
- "gross_cents": 37,
- "royalty_cents": 24,
- "creato": "2026-06-19T00:55:42.707674+00:00",
+ "gross_cents": 50,
+ "royalty_cents": 11,
+ "creato": "2026-09-27T06:12:53.939416+00:00",
  "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
 }
