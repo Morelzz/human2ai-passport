@@ -1,10 +1,13 @@
 import { createServerClient } from "@/lib/supabase";
 import { galleryFromRow } from "@/lib/sample-galleries";
-import { watermarkBuffer } from "@/lib/watermark";
+import sharp from "sharp";
 import { sampleWidth } from "@/lib/sample-size";
 
-// Serve un'immagine campione della galleria, WATERMARKATA.
-// L'URL pulito del motore non lascia mai il server: il client vede solo questa.
+// Serve un'immagine campione della galleria, ridimensionata.
+// 27/9/2026: niente piu' filigrana visibile "SEMBLIC · ANTEPRIMA" (decisione di
+// Morelz): le foto del registro sono la vetrina delle persone che hanno detto
+// si', e la scritta sopra le rovinava. La prova di provenienza resta la
+// filigrana invisibile dei contenuti certificati (Sigil).
 // Fonte: avatars.gallery_urls (fallback: mappa storica in lib/sample-galleries).
 export async function GET(
   req: Request,
@@ -30,8 +33,11 @@ export async function GET(
 
   let buf: Buffer;
   try {
-    // ?w= fra le larghezze ammesse: miniatura leggera, filigranata come l'originale.
-    buf = await watermarkBuffer(src, sampleWidth(new URL(req.url).searchParams.get("w")) ?? undefined);
+    // ?w= fra le larghezze ammesse: miniatura leggera.
+    const res = await fetch(src);
+    if (!res.ok) throw new Error(`sorgente ${res.status}`);
+    const w = sampleWidth(new URL(req.url).searchParams.get("w")) ?? undefined;
+    buf = await sharp(Buffer.from(await res.arrayBuffer())).rotate().resize(w ? { width: w, withoutEnlargement: true } : undefined).jpeg({ quality: 84, mozjpeg: true }).toBuffer();
   } catch {
     return new Response("Errore immagine", { status: 502 });
   }
@@ -39,8 +45,8 @@ export async function GET(
   return new Response(new Uint8Array(buf), {
     headers: {
       "Content-Type": "image/jpeg",
-      // s-maxage: la CDN di Vercel tiene la versione filigranata, cosi' la filigrana
-      // si calcola una volta per immagine e larghezza, non a ogni visitatore.
+      // s-maxage: la CDN di Vercel tiene la versione ridimensionata, calcolata
+      // una volta per immagine e larghezza, non a ogni visitatore.
       "Cache-Control": "public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800",
     },
   });
