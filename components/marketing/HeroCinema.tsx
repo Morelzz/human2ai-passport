@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Check, ScanFace } from "lucide-react";
 import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
+import { Magnetic } from "@/components/motion/Magnetic";
 import type { ScattoVetrina } from "@/lib/vetrina";
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -174,19 +175,19 @@ export function HeroCinema({ vetrina, prezzoDaCent }: { vetrina: ScattoVetrina |
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: ferma ? 0 : 0.8, duration: 0.7, ease: EASE }}
           >
-            <Link
+            <Magnetic strength={0.22} className="flex"><Link
               href="/match"
-              className="group inline-flex min-h-[58px] items-center justify-center gap-3 rounded-full bg-amber px-8 text-[1.08rem] font-semibold text-on-amber shadow-[0_12px_30px_-10px_rgba(226,154,46,0.7)] transition-[transform,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:bg-amber-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+              className="group inline-flex w-full min-h-[58px] items-center sm:w-auto justify-center gap-3 rounded-full bg-amber px-8 text-[1.08rem] font-semibold text-on-amber shadow-[0_12px_30px_-10px_rgba(226,154,46,0.7)] transition-[transform,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:bg-amber-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
             >
               Crea con volti veri
               <span className="rounded-full bg-black/10 px-2.5 py-0.5 text-[0.9rem] tabular-nums">da {euro(prezzoDaCent)}</span>
-            </Link>
-            <Link
+            </Link></Magnetic>
+            <Magnetic strength={0.22} className="flex"><Link
               href="/entra"
-              className="inline-flex min-h-[58px] items-center justify-center rounded-full border border-white/35 bg-white/10 px-8 text-[1.08rem] font-semibold text-white backdrop-blur-md transition-[transform,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/20 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+              className="inline-flex w-full min-h-[58px] items-center justify-center rounded-full border border-white/35 sm:w-auto bg-white/10 px-8 text-[1.08rem] font-semibold text-white backdrop-blur-md transition-[transform,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/20 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
             >
               Metti il tuo volto
-            </Link>
+            </Link></Magnetic>
           </motion.div>
         </motion.div>
       </div>

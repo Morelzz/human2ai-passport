@@ -4,13 +4,16 @@ import { Tier } from "@/lib/types";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { DuePorte } from "@/components/marketing/DuePorte";
 import { HeroCinema } from "@/components/marketing/HeroCinema";
+import { ScenaDivisa } from "@/components/marketing/scene/ScenaDivisa";
+import { FraseAccesa } from "@/components/marketing/scene/FraseAccesa";
+import { RegistroInCorsa } from "@/components/marketing/scene/RegistroInCorsa";
+import { PassiImpilati } from "@/components/marketing/scene/PassiImpilati";
 import { FORMATI, qualitaPer } from "@/app/match/crea/opzioni";
 import { scattoInVetrina } from "@/lib/vetrina";
 import { ProvaGratis, type VoltoProva } from "@/components/marketing/ProvaGratis";
-import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { IlSet } from "@/components/marketing/IlSet";
 import { Trust } from "@/components/marketing/Trust";
-import { Registry, FeaturedAvatar } from "@/components/marketing/Registry";
+import type { FeaturedAvatar } from "@/components/marketing/Registry";
 import { WardSection } from "@/components/marketing/WardSection";
 import { AiActStrip } from "@/components/marketing/AiActStrip";
 import { ToolsBusiness } from "@/components/marketing/ToolsBusiness";
@@ -59,19 +62,27 @@ export default async function Home() {
     }));
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-clip">
       <SiteNav />
       <main>
         <HeroCinema vetrina={vetrina} prezzoDaCent={Math.min(...FORMATI.flatMap((f) => qualitaPer(f.v).map((q) => q.volt)))} />
-        <DuePorte vetrina={vetrina} />
+        {/* La foto che si divide sul computer; sul telefono (e con "riduci
+            animazioni") le due porte che scorrono di lato. */}
+        {vetrina && <ScenaDivisa vetrina={vetrina} />}
+        <div className={vetrina ? "lg:hidden motion-reduce:lg:block" : ""}>
+          <DuePorte vetrina={vetrina} />
+        </div>
+        <FraseAccesa />
         {voltiProva.length > 0 && (
           <div className="px-5 pb-2 sm:px-8">
             <ProvaGratis volti={voltiProva} compatta />
           </div>
         )}
-        <div className="sv"><Registry avatars={featured} total={approved.length} /></div>
-        {/* Le card di Come funziona entrano una per una: .sv sta dentro, sulle card. */}
-        <HowItWorks />
+        <RegistroInCorsa
+          volti={featured.map((a) => ({ handle: a.handle, alias: a.alias, src: sampleSrc(portraitFor(a as never), 720), utilizzi: a.usage_count }))}
+          totale={approved.length}
+        />
+        <PassiImpilati />
         <IlSet />
         <div className="sv"><WardSection /></div>
         <div className="sv"><Trust /></div>
