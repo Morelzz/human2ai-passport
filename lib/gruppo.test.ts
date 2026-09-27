@@ -24,6 +24,12 @@ describe("scene di gruppo", () => {
     expect(t).toContain("Person 1 (first from the LEFT) is exactly the person in reference images 1-4, gabriella identity");
     expect(t).toContain("Person 2 (second from the LEFT) is exactly the person in reference images 5-8");
     expect(promptPassaggio(1, 3)).toContain("second from the LEFT");
+    // luce e vestiti vengono dalla scena, non dalle foto dello studio
+    expect(t).toContain("Do NOT copy their lighting");
+    expect(promptPassaggio(0, 2)).toContain("Light the new face exactly like the FIRST image");
+    expect(promptPassaggio(0, 2)).toContain("ignore their lighting, clothes and background");
+    const lunga = "hard light from the right, ".repeat(30) + "Person 2 (right) wears a white linen shirt";
+    expect(promptScena(lunga, [p("gabriella"), p("stella")])).toContain("white linen shirt");
   });
 
   it("l'identikit entra nel prompt in forma breve", () => {

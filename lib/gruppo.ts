@@ -16,6 +16,7 @@
 import { abbina, voltiIn, verdetto, type MisuraSomiglianza, type Riferimento } from "@/lib/identity-score";
 import { MAX_PERSONE_GRUPPO } from "@/lib/gruppo-prezzi";
 import { preferisci, type VerdettoQualita } from "@/lib/qualita";
+import { MAX_SCENA, SOLO_IDENTITA } from "@/lib/echo-prompt";
 
 export { MAX_PERSONE_GRUPPO, dividiRoyalty, prezzoGruppo } from "@/lib/gruppo-prezzi";
 const MAX_IMMAGINI = 10; // limite del motore (gpt-image-2.5)
@@ -57,11 +58,12 @@ export function promptScena(scena: string, persone: Protagonista[], fotografia?:
     const d = descrizioneBreve(p.identityText);
     return `Person ${i + 1} (${ORDINALI[i]} from the LEFT) is exactly the person in reference image${k > 1 ? `s ${da}-${a}` : ` ${da}`}${d ? `, ${d}` : ""}.`;
   }).join(" ");
-  const pulita = scena.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
+  const pulita = scena.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, MAX_SCENA);
   return [
     `Photorealistic group photograph of exactly ${persone.length} people, standing or sitting side by side from left to right in this order. ${chi}`,
     "Each person keeps their own face, eyes, eyebrows, nose, lips, hairline, hairstyle around the face (fringe or bangs, parting) and distinctive features identical to their references.",
-    "All faces large, sharp, fully visible and inside the frame, turned roughly toward the camera. Nobody else in the foreground; any background people far away, out of focus and not recognizable.",
+    SOLO_IDENTITA,
+    "All faces large, sharp and inside the frame, turned roughly toward the camera (partly in shadow if the lighting asks for it). Nobody else in the foreground; any background people far away, out of focus and not recognizable.",
     fotografia ? fotografia.trim() : "",
     `Scene: ${pulita}.`,
   ].filter(Boolean).join(" ");
@@ -71,6 +73,8 @@ export function promptPassaggio(posizione: number, totale: number): string {
   return [
     `Edit the FIRST image. It shows ${totale} people. Change ONLY the face of the person who is ${ORDINALI[posizione]} from the LEFT`,
     "so that it is exactly the same person as in all the other reference images: same face shape, eyes, eyebrows, nose, lips, jaw, hairline and hairstyle around the face (fringe or bangs, parting, hair colour), exactly as in those references.",
+    "The other reference images are ONLY for the identity: ignore their lighting, clothes and background.",
+    "Light the new face exactly like the FIRST image: same light direction, same shadows and contrast on the face, same colour temperature.",
     "Keep that person's expression, head angle, pose, clothes and accessories, and keep every other person, the light and the background completely unchanged. Photorealistic.",
   ].join(" ");
 }

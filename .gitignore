@@ -63,3 +63,4 @@ AVVIA-SITO.bat
 
 # Script e2e locali: leggono .env.local, mai sul repo pubblico
 *.e2e.ts
+.tmp/

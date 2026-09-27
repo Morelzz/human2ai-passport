@@ -7,6 +7,18 @@
 
 export type ExtraMeta = { role: string; desc: string };
 
+// La scena si taglia qui. Era 600: il 27/9 una scena con la luce e i vestiti
+// descritti bene (1046 caratteri) ha perso i vestiti per strada, e nessuno lo
+// diceva al cliente. Il motore regge prompt molto piu' lunghi.
+export const MAX_SCENA = 1500;
+
+// Le foto di riferimento sono foto da studio: luce frontale e i vestiti del
+// giorno della scansione. Il modello tendeva a copiarle (27/9: luce dura da
+// destra chiesta, uscita piatta; vestiti chiesti, usciti quelli dello studio).
+// Le foto dicono CHI e', non come e' illuminato ne' come e' vestito.
+export const SOLO_IDENTITA =
+  "The identity reference photographs define ONLY who the person is (face and hair). Do NOT copy their lighting, shadows, background, clothing, pose or camera angle: light direction, contrast, shadows on the face, clothes and setting come exclusively from the scene description, even if that leaves part of the face in deep shadow.";
+
 function clauseForExtra(e: ExtraMeta): string {
   const d = e.desc.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
   switch (e.role) {
@@ -31,12 +43,13 @@ export function buildEchoPrompt(
   identityText?: string | null,
   photographic?: string | null
 ): string {
-  const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
+  const safe = scene.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, MAX_SCENA);
   let base =
     "Photorealistic image that preserves the exact facial identity, hair and distinctive features of the same real person shown in the reference photographs. Natural, true-to-life skin and proportions, high-quality commercial photography.";
   // Protagonisti e folla (19/9/2026): l'unico volto riconoscibile e' quello con
   // il consenso; chiunque altro resta sullo sfondo, piccolo e sfocato.
   base += " This person is the only recognizable face in the image: any other people stay in the background, small, out of focus and not recognizable.";
+  base += ` ${SOLO_IDENTITA}`;
   if (identityText) base += ` ${identityText}`;
   if (poseText) base += ` The person's body pose: ${poseText}.`;
   const clauses = extras.map(clauseForExtra);
