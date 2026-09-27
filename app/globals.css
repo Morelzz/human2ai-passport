@@ -456,3 +456,10 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 .lente-scena[data-lente="viva"] .lente-tela { opacity: 1; }
 .lente-scena:not([data-lente]) .lente-lettura { left: 58%; top: 20%; }
 @media (max-width: 767px) { .lente-scena:not([data-lente]) .lente-lettura { left: 16px; top: 14%; } }
+
+/* Il palco di Crea: i volti entrano in scena e la lente li scandisce. */
+@keyframes palco-entra { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: none; } }
+.palco-volto { animation: palco-entra 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes palco-scan { 0% { top: 8%; opacity: 0; } 15% { opacity: 1; } 55% { top: 58%; opacity: 1; } 70%, 100% { top: 58%; opacity: 0; } }
+.palco-scan { position: absolute; left: 12%; right: 12%; height: 2px; top: 8%; background: linear-gradient(90deg, transparent, #3DDC97, transparent); box-shadow: 0 0 12px #3DDC97; animation: palco-scan 3.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .palco-volto, .palco-scan { animation: none; } .palco-scan { display: none; } }

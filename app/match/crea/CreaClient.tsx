@@ -8,21 +8,25 @@ import { useDictation } from "@/components/voice/useDictation";
 import { joinScene } from "@/lib/voice/dictation";
 import { AgeGateModal } from "../AgeGateModal";
 import {
-  LOOKS, FORMATI, INQUADRATURE, ESPRESSIONI, POSE, IDEE, RUOLI,
+  LOOKS, LUCI, SPUNTI_VESTITI, FORMATI, INQUADRATURE, ESPRESSIONI, POSE, IDEE, RUOLI,
   qualitaPer, terminiNonFoto, ridimensiona, nomi,
   type FormatoVal, type QualitaVal, type Idea,
 } from "./opzioni";
 import { SceltaVolto, type Volto } from "./SceltaVolto";
 import { SulSet, type StatoSet } from "./SulSet";
+import { Palco } from "./Palco";
 import { Risultato, type Esito } from "./Risultato";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo, scattiPerGruppo } from "@/lib/gruppo-prezzi";
 
 export interface Scatto { certificate: string; image_url: string | null; alias: string }
 
-type Pannello = "look" | "formato" | "qualita" | "regia" | null;
+type Pannello = "look" | "luce" | "vestiti" | "formato" | "qualita" | "regia" | null;
 type Riferimento = { dataUrl: string; role: string };
 
 const FMT = new Intl.NumberFormat("it-IT");
+const MAX_FRASE = 1200; // il motore ne legge 1500: il resto e' per i vestiti di ognuno
+const SENZA_NOME = "_"; // i vestiti scritti prima di scegliere chi c'e' in scena
+
 
 // Crea, flusso "una frase sola" (mockup approvato il 17/9/2026): un volto, una
 // frase, quattro scelte a pillola e il pulsante. Tutto il resto lo imposta il
@@ -36,8 +40,15 @@ export function CreaClient({
   iniziale: string | null;
   ultimi: Scatto[];
 }) {
-  const [scelto, setScelto] = useState<string | null>(() => (iniziale && volti.some((v) => v.handle === iniziale) ? iniziale : null));
+  // Chi e' nella scena, da sinistra a destra (27/9): uno = scatto singolo,
+  // due o piu' = scena di gruppo senza passare dal casting.
+  const [cast, setCast] = useState<string[]>(() => (iniziale && volti.some((v) => v.handle === iniziale) ? [iniziale] : []));
+  const scelto = cast[0] ?? null;
+  const setScelto = useCallback((h: string | null) => setCast(h ? [h] : []), []);
   const [sceltaAperta, setSceltaAperta] = useState(false);
+  const [aggiungendo, setAggiungendo] = useState(false);
+  const [luce, setLuce] = useState<string>("auto");
+  const [vestiti, setVestiti] = useState<Record<string, string>>({});
   const [scena, setScena] = useState("");
   const [look, setLook] = useState("naturale");
   const [formato, setFormato] = useState<FormatoVal>("verticale");
@@ -91,14 +102,18 @@ export function CreaClient({
   const dettatura = useDictation(useCallback((pezzo: string) => setScena((s) => joinScene(s, pezzo)), []));
 
   const volto = volti.find((v) => v.handle === scelto) ?? null;
+  const inScenaOra = cast.map((h) => volti.find((v) => v.handle === h)).filter((v): v is Volto => Boolean(v));
+  const gruppoScelto = inScenaOra.length > 1;
   const lookSel = LOOKS.find((l) => l.v === look) ?? LOOKS[0];
+  const luceSel = LUCI.find((l) => l.v === luce) ?? LUCI[0];
+  const vestitiScritti = Object.values(vestiti).filter((v) => v.trim()).length;
   const livelli = useMemo(() => qualitaPer(formato), [formato]);
   const livello = livelli.find((q) => q.v === qualita) ?? livelli[1];
   const formatoSel = FORMATI.find((f) => f.v === formato) ?? FORMATI[0];
-  const regiaAttiva = [inquadratura !== "auto", espressione !== "auto", posa !== "nessuna"].filter(Boolean).length;
+  const regiaAttiva = gruppoScelto ? 0 : [inquadratura !== "auto", espressione !== "auto", posa !== "nessuna"].filter(Boolean).length;
   const avvisoFoto = terminiNonFoto(scena);
   const puoGenerare = scena.trim().length >= 3 || (Boolean(volto) && riferimenti.length > 0);
-  const riepilogo = `${lookSel.l} · ${formatoSel.l} · ${livello.l}`;
+  const riepilogo = `${lookSel.l}${luce !== "auto" ? ` · luce ${luceSel.l.toLowerCase()}` : ""} · ${formatoSel.l} · ${livello.l}`;
   const miniatura = volto?.src ?? volti[0]?.src ?? "";
 
   function suInizio() {
@@ -113,6 +128,8 @@ export function CreaClient({
     setLook(i.look);
     setInquadratura(i.inquadratura ?? "auto");
     setPosa(i.posa ?? "nessuna");
+    setLuce(i.luce ?? "auto");
+    if (i.vestiti) setVestiti((v) => ({ ...v, [scelto ?? SENZA_NOME]: i.vestiti! }));
     setProposta(null);
   }
 
@@ -212,7 +229,7 @@ export function CreaClient({
     }
   }
 
-  function corpoScatto() {
+  function corpoScatto(persone: string[]) {
     return {
       mode: "commercial",
       category: null,
@@ -227,12 +244,15 @@ export function CreaClient({
       colorStyle: lookSel.colorStyle,
       camera: lookSel.camera,
       lens: lookSel.lens,
-      light: null,
+      light: luce === "auto" ? null : luce,
+      vestiti: persone.map((h, i) => (vestiti[h] ?? (i === 0 ? vestiti[SENZA_NOME] : "") ?? "").trim()),
       styleId: null,
     };
   }
 
   async function genera(override?: Volto, dalCasting = false) {
+    // Due o piu' persone scelte a mano: scena di gruppo, niente casting.
+    if (!override && inScenaOra.length > 1) { await generaGruppo(inScenaOra, false); return; }
     const volto = override ?? volti.find((v) => v.handle === scelto) ?? null;
     if (!volto) { await casting(); return; }
     if (!(scena.trim().length >= 3 || riferimenti.length > 0)) return;
@@ -240,7 +260,7 @@ export function CreaClient({
     if (!override) { await casting(volto); return; }
     const perSemblic = dalCasting || (sceltoDaSemblic && !override);
     setInGruppo(null);
-    await avvia({ handle: volto.handle, ...corpoScatto() }, volto, perSemblic, null);
+    await avvia({ handle: volto.handle, ...corpoScatto([volto.handle]) }, volto, perSemblic, null);
   }
 
   // Scena di gruppo: niente riferimenti, posa, inquadratura
@@ -250,7 +270,7 @@ export function CreaClient({
     setPropostaGruppo(null);
     setInGruppo(lista);
     await avvia(
-      { handle: lista[0].handle, gruppo: lista.map((v) => v.handle), ...corpoScatto(), extraRefs: [], pose: "nessuna", framing: null, expression: null },
+      { handle: lista[0].handle, gruppo: lista.map((v) => v.handle), ...corpoScatto(lista.map((v) => v.handle)), extraRefs: [], pose: "nessuna", framing: null, expression: null },
       lista[0],
       dalCasting,
       lista,
@@ -459,13 +479,22 @@ export function CreaClient({
     </button>
   );
 
-  const prezzo = saldo !== null ? `${FMT.format(livello.volt)} ⚡` : formatEur(livello.volt);
+  const prezzoScena = gruppoScelto
+    ? prezzoGruppo({ gross_cents: livello.volt, fee_cents: livello.volt - livello.royaltyCents, net_cents: livello.royaltyCents, surcharge_cents: 0 }, inScenaOra.length)
+    : null;
+  const lordo = prezzoScena ? prezzoScena.gross_cents : livello.volt;
+  const prezzo = saldo !== null ? `${FMT.format(lordo)} ⚡` : formatEur(lordo);
+  const allePersone = prezzoScena
+    ? `${formatEur(prezzoScena.quote[0])} a ciascuno`
+    : volto ? `${formatEur(livello.royaltyCents)} a ${volto.alias}` : null;
   const pillole = (
     <>
       {pillola("look", lookSel.l)}
+      {pillola("luce", luce === "auto" ? "Luce" : luceSel.l)}
+      {pillola("vestiti", vestitiScritti ? `Vestiti · ${vestitiScritti}` : "Vestiti")}
       {pillola("formato", formatoSel.l)}
       {pillola("qualita", livello.l)}
-      {pillola("regia", regiaAttiva ? `Regia · ${regiaAttiva}` : "Regia")}
+      {!gruppoScelto && pillola("regia", regiaAttiva ? `Regia · ${regiaAttiva}` : "Regia")}
     </>
   );
 
@@ -521,6 +550,74 @@ export function CreaClient({
             ), "overflow-hidden"),
           )}
         </div>
+      </>
+    ) : pannello === "luce" ? (
+      <>
+        <p className="mb-1 text-[0.95rem] font-semibold">Da dove arriva la luce?</p>
+        <p className="mb-3 text-[0.85rem] text-muted">L&apos;anteprima mostra la direzione, non è lo scatto. Le luci di taglio lasciano metà volto nell&apos;ombra.</p>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
+          {LUCI.map((l) =>
+            scheda(l.v, l.v === luce, () => { setLuce(l.v); setPannello(null); }, (
+              <span className="flex flex-col overflow-hidden rounded-2xl">
+                <span className="relative block h-24 overflow-hidden bg-[#1a1612]">
+                  {miniatura && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={miniatura} alt="" className="h-full w-full object-cover object-[center_14%]" style={{ filter: l.filtro }} />
+                  )}
+                  <span aria-hidden className="absolute inset-0" style={{ background: l.velo }} />
+                </span>
+                <span className="flex flex-col px-3 py-2">
+                  <span className="text-[0.9rem] font-semibold leading-tight">{l.l}</span>
+                  <span className="text-[0.76rem] text-muted">{l.desc}</span>
+                </span>
+              </span>
+            ), "overflow-hidden"),
+          )}
+        </div>
+      </>
+    ) : pannello === "vestiti" ? (
+      <>
+        <p className="mb-1 text-[0.95rem] font-semibold">Cosa indossa{gruppoScelto ? " ognuno" : ""}?</p>
+        <p className="mb-3 text-[0.85rem] text-muted">
+          Facoltativo. {gruppoScelto ? "Ogni capo va alla sua persona, nell'ordine della scena da sinistra." : "Scrivi il capo, il colore e il materiale: il motore ne tiene la forma."}
+        </p>
+        <div className="flex flex-col gap-3">
+          {(inScenaOra.length ? inScenaOra : [null]).map((v, i) => {
+            const chiave = v?.handle ?? SENZA_NOME;
+            return (
+              <div key={chiave} className="flex flex-col gap-2">
+                <label htmlFor={`vestiti-${chiave}`} className="flex items-center gap-2 text-[0.85rem] font-semibold">
+                  {v && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={v.src} alt="" className="h-7 w-7 rounded-full object-cover object-top" />
+                  )}
+                  {v ? v.alias : "La persona"}
+                  {gruppoScelto && <span className="font-normal text-faint">{i === 0 ? "a sinistra" : i === inScenaOra.length - 1 ? "a destra" : `${i + 1}ª da sinistra`}</span>}
+                </label>
+                <input
+                  id={`vestiti-${chiave}`}
+                  value={vestiti[chiave] ?? ""}
+                  maxLength={160}
+                  onChange={(e) => setVestiti((all) => ({ ...all, [chiave]: e.target.value }))}
+                  placeholder="es. giubbotto di pelle nera, maglietta bianca"
+                  className="h-12 rounded-2xl border border-border bg-surface px-4 text-[16px] outline-none placeholder:text-faint focus:border-amber/60"
+                />
+                <div className="senza-barra -mx-1 flex gap-1.5 overflow-x-auto px-1">
+                  {SPUNTI_VESTITI.map((t) => (
+                    <button key={t} type="button" onClick={() => setVestiti((all) => ({ ...all, [chiave]: t }))} className="h-8 shrink-0 rounded-full border border-border px-3 text-[0.8rem] text-muted transition-colors hover:border-amber/60 hover:text-foreground">
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {!gruppoScelto && (
+          <button type="button" onClick={() => { setPannello(null); fileRef.current?.click(); }} disabled={riferimenti.length >= 2} className="mt-4 inline-flex h-10 items-center gap-2 rounded-full border border-border px-4 text-[0.85rem] font-semibold transition-colors hover:border-amber/60 disabled:opacity-40">
+            {icona.img} Oppure carica la foto del capo
+          </button>
+        )}
       </>
     ) : pannello === "formato" ? (
       <>
@@ -578,44 +675,71 @@ export function CreaClient({
     ) : null;
 
   return (
-    <main className="mx-auto w-full max-w-[960px] px-5 pb-[250px] pt-8 sm:px-8 sm:pb-20 sm:pt-14">
-      <div className="flex flex-col items-start sm:items-center sm:text-center">
-        <span className="kicker">Crea</span>
-        <h1 className="mt-3 text-balance text-[2.2rem] font-bold leading-[1.02] tracking-[-0.045em] sm:text-[3.4rem]">
-          Una persona vera. Una frase.<br className="hidden sm:block" /> Uno scatto certificato.
-        </h1>
-        <p className="mt-3 max-w-[60ch] text-pretty text-[1rem] leading-relaxed text-muted sm:text-[1.08rem]">
-          Scegli chi e scrivi cosa succede. Luce, posa e formato li imposta il set: li cambi con un tocco.
-        </p>
-      </div>
+    <main className="mx-auto w-full max-w-[1180px] px-5 pb-[250px] sm:px-8 sm:pb-20">
+      <Palco
+        inScena={inScenaOra}
+        velo={luceSel.velo}
+        filtro={[lookSel.filtro, luceSel.filtro].filter((f) => f && f !== "none").join(" ") || undefined}
+        onScegli={() => setSceltaAperta(true)}
+      />
 
       {/* ── Il compositore: in pagina su desktop, agganciato in basso sul telefono ── */}
-      <div className="fixed inset-x-0 bottom-0 z-30 sm:relative sm:inset-auto sm:z-auto sm:mt-8">
+      <div className="fixed inset-x-0 bottom-0 z-30 sm:relative sm:inset-auto sm:z-10 sm:mx-auto sm:-mt-14 sm:max-w-[960px]">
         <div className="rounded-t-[26px] border border-border bg-surface px-3.5 pb-4 pt-3 shadow-[0_-18px_40px_-26px_rgba(23,21,15,0.35)] sm:rounded-[28px] sm:px-5 sm:pb-4 sm:pt-4 sm:shadow-[0_34px_70px_-40px_rgba(23,21,15,0.4)]">
           <div className="senza-barra flex items-center gap-2 overflow-x-auto">
             <span className="hidden text-[0.95rem] text-faint sm:inline">Con</span>
-            <button
-              type="button"
-              onClick={() => setSceltaAperta(true)}
-              className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full pr-3 text-[0.95rem] font-semibold transition-colors ${
-                volto ? "bg-amber-soft pl-1 text-on-amber" : "border border-amber/50 bg-surface pl-3 text-amber-ink"
-              }`}
-            >
-              {volto ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={volto.src} alt="" className="h-8 w-8 rounded-full object-cover object-top" />
-              ) : null}
-              {!volto && icona.stella}
-              {volto ? volto.alias : "Semblic sceglie per te"}
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m6 9 6 6 6-6" /></svg>
-            </button>
-            {volto && (
+            {inScenaOra.length <= 1 ? (
+              <button
+                type="button"
+                onClick={() => setSceltaAperta(true)}
+                className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full pr-3 text-[0.95rem] font-semibold transition-colors ${
+                  volto ? "bg-amber-soft pl-1 text-on-amber" : "border border-amber/50 bg-surface pl-3 text-amber-ink"
+                }`}
+              >
+                {volto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={volto.src} alt="" className="h-8 w-8 rounded-full object-cover object-top" />
+                ) : null}
+                {!volto && icona.stella}
+                {volto ? volto.alias : "Semblic sceglie per te"}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m6 9 6 6 6-6" /></svg>
+              </button>
+            ) : (
+              inScenaOra.map((v, i) => (
+                <span key={v.handle} className="inline-flex h-10 shrink-0 items-center gap-1 rounded-full bg-amber-soft pl-1 pr-1 text-[0.92rem] font-semibold text-on-amber">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={v.src} alt="" className="h-8 w-8 rounded-full object-cover object-top" />
+                  <span className="px-1">{v.alias}</span>
+                  {i > 0 && (
+                    <button type="button" aria-label={`Sposta ${v.alias} a sinistra`} onClick={() => setCast((c) => { const n = [...c]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; return n; })} className="flex h-8 w-7 items-center justify-center rounded-full hover:bg-[rgba(65,36,2,0.1)]">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m15 18-6-6 6-6" /></svg>
+                    </button>
+                  )}
+                  <button type="button" aria-label={`Togli ${v.alias} dalla scena`} onClick={() => setCast((c) => c.filter((h) => h !== v.handle))} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[rgba(65,36,2,0.1)]">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round" aria-hidden><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                  </button>
+                </span>
+              ))
+            )}
+            {inScenaOra.length > 0 && inScenaOra.length < MAX_PERSONE_GRUPPO && (
+              <button
+                type="button"
+                onClick={() => setAggiungendo(true)}
+                aria-label="Aggiungi una persona alla scena"
+                title="Aggiungi una persona alla scena"
+                className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-dashed border-amber/60 px-3 text-[0.88rem] font-semibold text-amber-ink transition-colors hover:bg-amber-soft"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round" aria-hidden><path d="M12 5v14" /><path d="M5 12h14" /></svg>
+                <span className="hidden sm:inline">{inScenaOra.length === 1 ? "Aggiungi qualcuno" : "Aggiungi"}</span>
+              </button>
+            )}
+            {volto && !gruppoScelto && (
               <span className="hidden items-center gap-1.5 text-[0.85rem] text-verified sm:inline-flex">
                 <i aria-hidden className="h-1.5 w-1.5 rounded-full bg-verified" />
                 {sceltoDaSemblic ? "scelta da Semblic" : "consenso attivo"}
               </span>
             )}
-            {volto && sceltoDaSemblic && (
+            {volto && sceltoDaSemblic && !gruppoScelto && (
               <button type="button" onClick={() => { setScelto(null); setSceltoDaSemblic(false); }} className="hidden text-[0.85rem] font-semibold text-amber-ink hover:underline sm:inline">
                 fai scegliere di nuovo
               </button>
@@ -639,7 +763,8 @@ export function CreaClient({
               value={scena}
               onChange={(e) => { setScena(e.target.value); setProposta(null); setPropostaGruppo(null); }}
               onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); genera(); } }}
-              placeholder="Cosa succede nella foto? Es. cammina in centro al tramonto"
+              placeholder={gruppoScelto ? "Cosa succede nella scena? Es. ridono insieme su una terrazza al tramonto" : "Cosa succede nella foto? Es. cammina in centro al tramonto"}
+              maxLength={MAX_FRASE}
               rows={2}
               className="min-h-[64px] flex-1 resize-none rounded-2xl bg-[var(--bg)] px-3.5 py-3 text-[16px] leading-snug text-foreground outline-none placeholder:text-faint sm:min-h-[76px] sm:rounded-none sm:bg-transparent sm:px-1 sm:text-[1.35rem] sm:leading-[1.45]"
             />
@@ -657,6 +782,11 @@ export function CreaClient({
             </span>
           </div>
 
+          {scena.length > MAX_FRASE * 0.7 && (
+            <p className={`mt-1 px-1 text-right font-mono text-[0.75rem] tabular-nums ${scena.length >= MAX_FRASE ? "text-blocked" : "text-faint"}`}>
+              {scena.length}/{MAX_FRASE}
+            </p>
+          )}
           {dettatura.listening && (
             <p className="mt-1 truncate px-1 text-[0.82rem] italic text-muted" aria-live="polite">{dettatura.interim || "Parla pure…"}</p>
           )}
@@ -710,8 +840,8 @@ export function CreaClient({
             </div>
             <div className="flex shrink-0 items-center gap-3.5">
               <span className="text-right text-[0.88rem] leading-tight text-muted">
-                <span className="block font-semibold text-foreground">{prezzo}</span>
-                {volto && <span className="block">{formatEur(livello.royaltyCents)} a {volto.alias}</span>}
+                <span className="block font-semibold text-foreground">{prezzo}{gruppoScelto ? ` · ${inScenaOra.length} persone` : ""}</span>
+                {allePersone && <span className="block">{allePersone}</span>}
               </span>
               <button
                 type="button"
@@ -719,7 +849,7 @@ export function CreaClient({
                 disabled={!puoGenerare || castingInCorso}
                 className="inline-flex h-[52px] items-center gap-2 rounded-full bg-amber px-6 text-[1rem] font-bold text-on-amber transition-colors hover:bg-amber-hover disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {castingInCorso ? (volto ? "Leggo la scena…" : "Scelgo il volto…") : "Genera"}
+                {castingInCorso ? (volto ? "Leggo la scena…" : "Scelgo il volto…") : gruppoScelto ? "Crea la scena" : "Genera"}
                 {icona.su}
               </button>
             </div>
@@ -727,7 +857,7 @@ export function CreaClient({
 
           <p className="mt-2 px-1 text-center text-[0.8rem] text-muted sm:hidden">
             {prezzo}
-            {volto ? ` · ${formatEur(livello.royaltyCents)} a ${volto.alias}` : ""}
+            {allePersone ? ` · ${allePersone}` : ""}
             {scena.trim() && (
               <>
                 {" · "}
@@ -937,6 +1067,16 @@ export function CreaClient({
           scelto={scelto}
           onScegli={(h) => { setScelto(h); setSceltoDaSemblic(false); setSceltaAperta(false); setErrore(null); setDubbio(null); }}
           onChiudi={() => setSceltaAperta(false)}
+        />
+      )}
+      {aggiungendo && (
+        <SceltaVolto
+          volti={volti}
+          scelto={null}
+          aggiungi
+          esclusi={cast}
+          onScegli={(h) => { setCast((c) => (c.includes(h) || c.length >= MAX_PERSONE_GRUPPO ? c : [...c, h])); setSceltoDaSemblic(false); setAggiungendo(false); setErrore(null); setDubbio(null); setPropostaGruppo(null); }}
+          onChiudi={() => setAggiungendo(false)}
         />
       )}
       {ageGate && (

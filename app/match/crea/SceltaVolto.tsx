@@ -19,11 +19,15 @@ export function SceltaVolto({
   scelto,
   onScegli,
   onChiudi,
+  aggiungi = false,
+  esclusi = [],
 }: {
   volti: Volto[];
   scelto: string | null;
   onScegli: (handle: string) => void;
   onChiudi: () => void;
+  aggiungi?: boolean; // scena di gruppo: si aggiunge una persona a chi c'e' gia'
+  esclusi?: string[]; // chi e' gia' nella scena
 }) {
   const [testo, setTesto] = useState("");
   const [cerco, setCerco] = useState(false);
@@ -70,7 +74,7 @@ export function SceltaVolto({
     else { setAvviso("no"); setErrore("Avviso non salvato, riprova"); }
   }
 
-  const mostrati = trovati ? volti.filter((v) => trovati.includes(v.handle)) : volti;
+  const mostrati = (trovati ? volti.filter((v) => trovati.includes(v.handle)) : volti).filter((v) => !esclusi.includes(v.handle));
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="scelta-volto-titolo">
@@ -78,8 +82,8 @@ export function SceltaVolto({
       <div className="relative flex max-h-[88vh] w-full max-w-[880px] flex-col overflow-hidden rounded-t-[28px] bg-[var(--bg)] shadow-[0_40px_90px_-30px_rgba(12,15,23,0.6)] sm:rounded-[28px]">
         <div className="flex items-start justify-between gap-4 px-5 pb-3 pt-5 sm:px-7 sm:pt-7">
           <div>
-            <h2 id="scelta-volto-titolo" className="text-[1.7rem] font-bold leading-tight tracking-[-0.035em] sm:text-[2.1rem]">Chi sarà nella foto?</h2>
-            <p className="mt-1 text-[0.95rem] text-muted">Solo persone reali che hanno detto sì al proprio volto.</p>
+            <h2 id="scelta-volto-titolo" className="text-[1.7rem] font-bold leading-tight tracking-[-0.035em] sm:text-[2.1rem]">{aggiungi ? "Chi aggiungi alla scena?" : "Chi sarà nella foto?"}</h2>
+            <p className="mt-1 text-[0.95rem] text-muted">{aggiungi ? "Fino a quattro persone vere, messe da sinistra a destra nell'ordine in cui le scegli." : "Solo persone reali che hanno detto sì al proprio volto."}</p>
           </div>
           <button type="button" onClick={onChiudi} aria-label="Chiudi" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-amber/60">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" aria-hidden><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>

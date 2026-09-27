@@ -4,7 +4,7 @@
 // Niente testo libero come parametro: solo valori dei cataloghi.
 
 import { splitEcho } from "@/lib/wallet";
-import type { CameraVal, ColorStyleVal, ExpressionVal, FramingVal, LensVal } from "@/lib/studio-options";
+import type { CameraVal, ColorStyleVal, ExpressionVal, FramingVal, LensVal, LightVal } from "@/lib/studio-options";
 
 export type FormatoVal = "verticale" | "quadrato" | "orizzontale";
 export type QualitaVal = "bozza" | "alta" | "massima";
@@ -29,6 +29,39 @@ export const LOOKS: Look[] = [
   { v: "bn", l: "Bianco e nero", desc: "senza tempo", colorStyle: "bn", camera: "full_frame", lens: "50mm", filtro: "grayscale(1) contrast(1.12)" },
   { v: "flash", l: "Flash", desc: "sera, festa, riviste", colorStyle: "flash", camera: "full_frame", lens: "35mm", filtro: "brightness(1.12) contrast(1.3) saturate(1.1)" },
   { v: "pellicola", l: "Pellicola", desc: "grana e colori morbidi", colorStyle: "naturale", camera: "analogica", lens: "50mm", filtro: "sepia(0.35) saturate(0.8) contrast(0.95)" },
+];
+
+// La luce (27/9): prima la decideva solo la frase, e il motore copiava la luce
+// frontale delle foto da studio. Ora si sceglie, e ogni scelta si vede subito
+// sulla miniatura con un velo CSS che imita da dove arriva (non e' il risultato).
+export interface Luce {
+  v: LightVal | "auto";
+  l: string;
+  desc: string;
+  velo: string; // background del velo sopra la miniatura
+  filtro?: string;
+}
+export const LUCI: Luce[] = [
+  { v: "auto", l: "Automatica", desc: "la decide la scena", velo: "none" },
+  { v: "morbida", l: "Finestra", desc: "morbida, da un lato", velo: "linear-gradient(90deg, rgba(255,246,230,0.28) 0%, transparent 45%, rgba(10,8,6,0.35) 100%)" },
+  { v: "golden", l: "Golden hour", desc: "calda, bassa", velo: "linear-gradient(120deg, rgba(255,170,70,0.42) 0%, rgba(255,120,40,0.12) 55%, rgba(40,20,10,0.3) 100%)" },
+  { v: "taglio_destra", l: "Di taglio da destra", desc: "metà volto in ombra", velo: "linear-gradient(90deg, rgba(5,4,3,0.88) 0%, rgba(5,4,3,0.7) 42%, rgba(5,4,3,0.05) 62%, rgba(255,250,240,0.12) 100%)", filtro: "contrast(1.25)" },
+  { v: "taglio_sinistra", l: "Di taglio da sinistra", desc: "metà volto in ombra", velo: "linear-gradient(270deg, rgba(5,4,3,0.88) 0%, rgba(5,4,3,0.7) 42%, rgba(5,4,3,0.05) 62%, rgba(255,250,240,0.12) 100%)", filtro: "contrast(1.25)" },
+  { v: "cupa", l: "Cupa", desc: "quasi tutto nel buio", velo: "radial-gradient(60% 55% at 55% 32%, transparent 0%, rgba(4,3,2,0.55) 55%, rgba(4,3,2,0.92) 100%)", filtro: "contrast(1.3) brightness(0.8)" },
+  { v: "dall_alto", l: "Dall'alto", desc: "ombre sotto gli occhi", velo: "linear-gradient(180deg, rgba(255,250,240,0.18) 0%, transparent 30%, rgba(5,4,3,0.7) 100%)", filtro: "contrast(1.2)" },
+  { v: "controluce", l: "Controluce", desc: "bordo di luce", velo: "radial-gradient(70% 60% at 50% 0%, rgba(255,240,210,0.55) 0%, transparent 60%), linear-gradient(0deg, rgba(10,8,6,0.45), transparent)" },
+  { v: "neon", l: "Neon", desc: "notte, colori freddi", velo: "linear-gradient(110deg, rgba(255,40,160,0.45) 0%, transparent 45%, rgba(40,120,255,0.5) 100%)", filtro: "contrast(1.15) saturate(1.2)" },
+  { v: "studio", l: "Studio", desc: "pulita e uniforme", velo: "linear-gradient(0deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1))", filtro: "brightness(1.06)" },
+];
+
+// Spunti per i vestiti: riempiono il campo, poi si cambia quello che si vuole.
+export const SPUNTI_VESTITI = [
+  "giubbotto di pelle nera, maglietta bianca",
+  "abito da sera nero lungo",
+  "camicia di lino bianca, collo aperto",
+  "felpa oversize grigia e jeans",
+  "tailleur color sabbia",
+  "tuta da lavoro blu con le maniche arrotolate",
 ];
 
 export const FORMATI: { v: FormatoVal; l: string; desc: string }[] = [
@@ -108,6 +141,8 @@ export interface Idea {
   look: string;
   inquadratura?: FramingVal;
   posa?: string;
+  luce?: LightVal;
+  vestiti?: string;
 }
 
 // Punti di partenza: riempiono la frase e le scelte, poi l'utente cambia cio' che vuole.
@@ -116,7 +151,9 @@ export const IDEE: Idea[] = [
   { l: "Ritratto LinkedIn", testo: "ritratto professionale su sfondo chiaro e pulito, giacca scura, sguardo sicuro in camera", formato: "verticale", look: "editoriale", inquadratura: "primo_piano" },
   { l: "Foto prodotto", testo: "tiene il prodotto in mano all'altezza del viso, sfondo da studio pulito, luce uniforme", formato: "quadrato", look: "editoriale", posa: "prodotto_mano" },
   { l: "Campagna", testo: "cammina in centro città al tramonto, giacca di lino chiara, luce dorata tra i palazzi", formato: "orizzontale", look: "cinema", posa: "camminata" },
-  { l: "Editoriale moda", testo: "su una terrazza di cemento a mezzogiorno, abito nero minimale, ombre nette", formato: "verticale", look: "bn" },
+  { l: "Editoriale moda", testo: "su una terrazza di cemento a mezzogiorno, ombre nette", formato: "verticale", look: "bn", vestiti: "abito nero minimale" },
+  { l: "Noir", testo: "in un capannone vuoto di notte, fumo leggero nell'aria, sguardo intenso in camera", formato: "orizzontale", look: "cinema", luce: "taglio_destra", vestiti: "giubbotto di pelle nera, maglietta bianca" },
+  { l: "Notte in città", testo: "sotto le insegne di un vicolo di Tokyo dopo la pioggia, asfalto bagnato che riflette le luci", formato: "verticale", look: "cinema", luce: "neon" },
 ];
 
 // Guardia fotorealismo: ECHO fa fotografie. Termini da illustrazione fanno
