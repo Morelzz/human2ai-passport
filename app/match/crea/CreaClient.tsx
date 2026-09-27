@@ -394,6 +394,7 @@ export function CreaClient({
           volt={saldo !== null ? livello.volt * scattiPerGruppo(inGruppo.length) : null}
           inScena={sceltoDaSemblic ? "gruppo" : null}
           gruppo={inGruppo.map((v) => v.alias)}
+          ritratti={inGruppo.map((v) => v.src)}
         />
       </main>
     );

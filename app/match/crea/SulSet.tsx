@@ -19,6 +19,7 @@ export function SulSet({
   volt,
   inScena = null,
   gruppo = null,
+  ritratti = null,
 }: {
   alias: string;
   ritratto: string;
@@ -28,6 +29,7 @@ export function SulSet({
   volt: number | null;
   inScena?: string | null; // casting automatico: il ruolo nella scena per cui Semblic ha scelto il volto
   gruppo?: string[] | null; // scena di gruppo: i nomi, da sinistra
+  ritratti?: string[] | null; // scena di gruppo: i volti, da sinistra
 }) {
   const [adesso, setAdesso] = useState(inizio);
   useEffect(() => {
@@ -73,8 +75,19 @@ export function SulSet({
             className="absolute inset-0"
             style={{ backgroundImage: "linear-gradient(rgba(242,233,216,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(242,233,216,0.06) 1px, transparent 1px)", backgroundSize: "44px 44px" }}
           />
+          {ritratti && ritratti.length > 1 && (
+            <div aria-hidden className="absolute inset-x-4 top-[12%] flex justify-center gap-2.5">
+              {ritratti.map((r, i) => (
+                <span key={i} className="palco-volto relative block aspect-[3/4] w-[min(28%,120px)] overflow-hidden rounded-[14px] ring-1 ring-white/15" style={{ animationDelay: `${i * 120}ms` }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={r} alt="" className="h-full w-full object-cover object-top" />
+                  <span className="palco-scan" style={{ animationDelay: `${i * 0.5}s` }} />
+                </span>
+              ))}
+            </div>
+          )}
           <span aria-hidden className="set-scan" />
-          <div className="absolute inset-x-0 top-[42%] flex flex-col items-center gap-1.5 text-center">
+          <div className={`absolute inset-x-0 flex flex-col items-center gap-1.5 text-center ${ritratti && ritratti.length > 1 ? "bottom-[14%]" : "top-[42%]"}`}>
             <span className="text-[1.05rem] font-semibold text-foreground">{accettato ? "Sviluppo in corso" : "Preparo il set"}</span>
             <span className="text-[0.85rem] text-muted">{chi ? "qualche minuto: la scena e la misura di ogni volto" : "di solito meno di un minuto"}</span>
           </div>
