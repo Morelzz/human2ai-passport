@@ -55,19 +55,21 @@ export async function voltBalance(userId: string): Promise<number | null> {
 // Spesa atomica (lock per utente nel DB). Esiti:
 //  { ok: true, balance }  spesa registrata
 //  { ok: false, reason: "insufficient", balance }  saldo non basta
-//  { ok: false, reason: "unconfigured" }  migrazione assente o errore
+//  { ok: false, reason: "errore" }  il database non ha risposto: si ferma tutto
+//  (27/9: prima si chiamava "unconfigured" e le rotte andavano avanti GRATIS,
+//  un ricordo di quando i VOLT non esistevano ancora)
 export async function spendVolt(
   userId: string,
   amount: number,
   ref: string
-): Promise<{ ok: true; balance: number } | { ok: false; reason: "insufficient" | "unconfigured"; balance?: number }> {
+): Promise<{ ok: true; balance: number } | { ok: false; reason: "insufficient" | "errore"; balance?: number }> {
   const admin = createServerClient();
   const { data, error } = await admin.rpc("spend_volt", {
     p_user: userId,
     p_amount: amount,
     p_ref: ref,
   });
-  if (error) return { ok: false, reason: "unconfigured" };
+  if (error) return { ok: false, reason: "errore" };
   if (typeof data !== "number" || data < 0) {
     const balance = await voltBalance(userId);
     return { ok: false, reason: "insufficient", balance: balance ?? 0 };
@@ -129,3 +131,6 @@ export async function grantWelcomeVoltOnce(userId: string): Promise<boolean> {
   const balance = await grantVolt(userId, WELCOME_VOLT, "bonus", WELCOME_REF);
   return balance !== null;
 }
+
+/** La risposta quando il pagamento non passa per un errore: niente pagamento, niente lavoro. */
+export const MESSAGGIO_VOLT_ERRORE = "Il pagamento in VOLT non è riuscito: riprova tra un attimo. Non ti abbiamo addebitato nulla.";

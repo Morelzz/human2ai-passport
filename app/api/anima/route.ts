@@ -7,7 +7,7 @@ import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
 import { avatarVetoReason } from "@/lib/avatar-gate";
 import { logBlockedRequest } from "@/lib/blocked";
 import { controllaRegole } from "@/lib/regole-consenso";
-import { spendVolt, grantVolt } from "@/lib/volt";
+import { spendVolt, grantVolt, MESSAGGIO_VOLT_ERRORE } from "@/lib/volt";
 import { animaConfigurata, inviaVideo, isDurata, isLivello, movimentoVietato, prezzoAnima, MOVIMENTI, LIVELLI, type LivelloVideo } from "@/lib/engines/anima";
 
 export const runtime = "nodejs";
@@ -123,6 +123,10 @@ export async function POST(request: Request) {
       { error: "Saldo VOLT insufficiente", volt: { needed: prezzo.gross_cents, balance: spesa.balance ?? 0, missing: prezzo.gross_cents - (spesa.balance ?? 0) } },
       { status: 402 },
     );
+  }
+  if (!spesa.ok) {
+    console.error("[volt] spesa non riuscita: il lavoro non parte");
+    return NextResponse.json({ error: MESSAGGIO_VOLT_ERRORE, code: "volt_errore" }, { status: 503 });
   }
 
   // Prima si registra, poi si invia: se la registrazione non riesce il motore

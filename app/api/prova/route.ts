@@ -5,7 +5,7 @@ import { isEchoConfigured } from "@/lib/engines/echo";
 import { getReferenceSet } from "@/lib/references";
 import { identityPromptFor } from "@/lib/echo-job";
 import { splitEcho } from "@/lib/wallet";
-import { spendVolt, grantVolt } from "@/lib/volt";
+import { spendVolt, grantVolt, MESSAGGIO_VOLT_ERRORE } from "@/lib/volt";
 import { allowRequestStrict, ipFrom } from "@/lib/rate-limit";
 import { getPublicAvatars } from "@/lib/registry";
 import {
@@ -99,6 +99,10 @@ export async function POST(request: Request) {
   if (!spesa.ok && spesa.reason === "insufficient") {
     console.warn("[prova] l'account di servizio ha finito i VOLT: prove sospese");
     return NextResponse.json({ error: "Per oggi le prove sono finite. Torna domani, o entra e genera quando vuoi.", code: "finite" }, { status: 429 });
+  }
+  if (!spesa.ok) {
+    console.error("[volt] spesa non riuscita: il lavoro non parte");
+    return NextResponse.json({ error: MESSAGGIO_VOLT_ERRORE, code: "volt_errore" }, { status: 503 });
   }
 
   const { data: job, error: jobErr } = await admin

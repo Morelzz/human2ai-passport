@@ -19,7 +19,7 @@ import { photographicSegment, poseToken, validEnum, CAMERAS, LENSES, LIGHTS, COL
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { logBlockedRequest } from "@/lib/blocked";
 import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
-import { spendVolt, grantVolt } from "@/lib/volt";
+import { spendVolt, grantVolt, MESSAGGIO_VOLT_ERRORE } from "@/lib/volt";
 import { contiInterni, spesaMotoreOggi, sforaTetto, tettoGiorno } from "@/lib/tetto-giorno";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo } from "@/lib/gruppo-prezzi";
 import sharp from "sharp";
@@ -249,6 +249,10 @@ export async function POST(request: Request) {
         { status: 402 }
       );
     }
+    if (!spent.ok) {
+      console.error("[volt] spesa non riuscita: il lavoro non parte");
+      return NextResponse.json({ error: MESSAGGIO_VOLT_ERRORE, code: "volt_errore" }, { status: 503 });
+    }
     if (spent.ok) voltBalanceAfter = spent.balance;
     const { data: job, error: jobErr } = await admin
       .from("generation_jobs")
@@ -291,6 +295,10 @@ export async function POST(request: Request) {
         { error: "Saldo VOLT insufficiente", volt: { needed: syncCost, balance: spent.balance ?? 0, missing: syncCost - (spent.balance ?? 0) } },
         { status: 402 }
       );
+    }
+    if (!spent.ok) {
+      console.error("[volt] spesa non riuscita: il lavoro non parte");
+      return NextResponse.json({ error: MESSAGGIO_VOLT_ERRORE, code: "volt_errore" }, { status: 503 });
     }
     if (spent.ok) {
       voltCharged = true;
@@ -589,6 +597,10 @@ async function accodaGruppo(
       { error: "Saldo VOLT insufficiente", volt: { needed: prezzo.gross_cents, balance: spent.balance ?? 0, missing: prezzo.gross_cents - (spent.balance ?? 0) } },
       { status: 402 }
     );
+  }
+  if (!spent.ok) {
+    console.error("[volt] spesa non riuscita: il lavoro non parte");
+    return NextResponse.json({ error: MESSAGGIO_VOLT_ERRORE, code: "volt_errore" }, { status: 503 });
   }
   const { data: job, error: jobErr } = await admin
     .from("generation_jobs")
