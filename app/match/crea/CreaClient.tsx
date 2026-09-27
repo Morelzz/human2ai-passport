@@ -18,6 +18,8 @@ import { Palco } from "./Palco";
 import { Risultato, type Esito } from "./Risultato";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo, scattiPerGruppo } from "@/lib/gruppo-prezzi";
 import { intervalli, type SceltaDirettore } from "@/lib/direttore";
+import { RigaRicette, type Impostazioni } from "./Ricette";
+import type { Ricetta } from "@/lib/ricette";
 
 // I campi che il direttore puo' accendere (mockup A, 27/9).
 type CampoDirettore = "luce" | "formato" | "inquadratura" | "espressione" | "posa" | "look" | "vestiti";
@@ -71,6 +73,12 @@ export function CreaClient({
   const [posa, setPosa] = useState("nessuna");
   const [riferimenti, setRiferimenti] = useState<Riferimento[]>([]);
   const [pannello, setPannello] = useState<Pannello>(null);
+  // Le ricette (mockup B): null = non ancora lette o tabella non pronta.
+  const [ricette, setRicette] = useState<Ricetta[] | null>(null);
+  const [ricettaAttiva, setRicettaAttiva] = useState<Ricetta | null>(null);
+  const [lampo, setLampo] = useState(0); // il compositore si accende quando arriva una ricetta
+  const impostazioniOra = useRef<Impostazioni | null>(null);
+  const compositore = useRef<HTMLDivElement>(null);
 
   const [fase, setFase] = useState<"componi" | "set" | "fatto">("componi");
   const [statoSet, setStatoSet] = useState<StatoSet>("invio");
@@ -102,6 +110,7 @@ export function CreaClient({
   useEffect(() => {
     vivo.current = true;
     fetch("/api/volt").then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.configured) setSaldo(d.balance); }).catch(() => {});
+    fetch("/api/ricette").then((r) => (r.ok ? r.json() : null)).then((d) => { if (d && Array.isArray(d.ricette) && vivo.current) setRicette(d.ricette); }).catch(() => {});
     return () => { vivo.current = false; };
   }, []);
 
@@ -144,6 +153,34 @@ export function CreaClient({
     setLuce(i.luce ?? "auto");
     if (i.vestiti) setVestiti((v) => ({ ...v, [scelto ?? SENZA_NOME]: i.vestiti! }));
     setProposta(null);
+  }
+
+  // Una ricetta riempie tutto tranne la persona. I vestiti vanno per posto:
+  // il primo a chi e' primo da sinistra, e cosi' via. Il direttore non tocca
+  // piu' niente (e' tutto scelto), e se non c'e' nessuno in scena si sceglie.
+  function usaRicetta(rc: Ricetta) {
+    setScena(rc.scena);
+    setLuce(rc.luce ?? "auto");
+    setFormato(rc.formato);
+    setLook(rc.look);
+    setQualita(rc.qualita);
+    setInquadratura(rc.inquadratura ?? "auto");
+    setEspressione(rc.espressione ?? "auto");
+    setPosa(rc.posa ?? "nessuna");
+    const v: Record<string, string> = {};
+    if (cast.length) cast.forEach((h, i) => { if (rc.vestiti[i]) v[h] = rc.vestiti[i]; });
+    else if (rc.vestiti[0]) v[SENZA_NOME] = rc.vestiti[0];
+    setVestiti(v);
+    (["luce", "formato", "inquadratura", "espressione", "posa", "look", "vestiti"] as CampoDirettore[]).forEach((c) => aMano.current.add(c));
+    ultimaLetta.current = rc.scena.trim();
+    primaDelDirettore.current = null;
+    setDaDirettore(new Set());
+    setEvidenze([]);
+    setProposta(null);
+    setPropostaGruppo(null);
+    setRicettaAttiva(rc);
+    setLampo((n) => n + 1);
+    if (!cast.length) setSceltaAperta(true);
   }
 
   // Un campo toccato a mano resta tuo: il direttore non lo cambia piu'.
@@ -360,6 +397,17 @@ export function CreaClient({
   }
 
   async function avvia(corpo: Record<string, unknown>, volto: Volto, perSemblic: boolean, gruppo: Volto[] | null) {
+    impostazioniOra.current = {
+      scena: scena.trim(),
+      luce: luce === "auto" ? null : luce,
+      vestiti: Array.isArray(corpo.vestiti) ? (corpo.vestiti as string[]) : [],
+      formato,
+      look: look as Impostazioni["look"],
+      qualita,
+      inquadratura: gruppo || inquadratura === "auto" ? null : inquadratura,
+      espressione: gruppo || espressione === "auto" ? null : espressione,
+      posa: gruppo || posa === "nessuna" ? null : posa,
+    };
     setPannello(null);
     setErrore(null);
     setVoltGate(null);
@@ -441,6 +489,7 @@ export function CreaClient({
           spent: volt?.spent,
           riepilogo,
           secondi: Math.round((Date.now() - t0) / 1000),
+          impostazioni: impostazioniOra.current && impostazioniOra.current.scena.length >= 3 ? impostazioniOra.current : undefined,
         };
         setEsito(nuovo);
         setSessione((s) => [nuovo, ...s]);
@@ -507,6 +556,7 @@ export function CreaClient({
           onNuovo={() => { setFase("componi"); suInizio(); }}
           onCambiaPersona={() => { setFase("componi"); setSceltaAperta(true); suInizio(); }}
           varianteVolt={saldo !== null ? livello.volt * (esito.persone && esito.persone.length > 1 ? scattiPerGruppo(esito.persone.length) : 1) : null}
+          onRicettaSalvata={(rc) => setRicette((l) => [rc, ...(l ?? [])])}
         />
       </main>
     );
@@ -779,8 +829,8 @@ export function CreaClient({
       />
 
       {/* ── Il compositore: in pagina su desktop, agganciato in basso sul telefono ── */}
-      <div className="fixed inset-x-0 bottom-0 z-30 sm:relative sm:inset-auto sm:z-10 sm:mx-auto sm:-mt-14 sm:max-w-[960px]">
-        <div className="rounded-t-[26px] border border-border bg-surface px-3.5 pb-4 pt-3 shadow-[0_-18px_40px_-26px_rgba(23,21,15,0.35)] sm:rounded-[28px] sm:px-5 sm:pb-4 sm:pt-4 sm:shadow-[0_34px_70px_-40px_rgba(23,21,15,0.4)]">
+      <div ref={compositore} className="fixed inset-x-0 bottom-0 z-30 sm:relative sm:inset-auto sm:z-10 sm:mx-auto sm:-mt-14 sm:max-w-[960px]">
+        <div key={`comp-${lampo}`} className={`${lampo ? "compositore-lampo " : ""}rounded-t-[26px] border border-border bg-surface px-3.5 pb-4 pt-3 shadow-[0_-18px_40px_-26px_rgba(23,21,15,0.35)] sm:rounded-[28px] sm:px-5 sm:pb-4 sm:pt-4 sm:shadow-[0_34px_70px_-40px_rgba(23,21,15,0.4)]`}>
           <div className="senza-barra flex items-center gap-2 overflow-x-auto">
             <span className="hidden text-[0.95rem] text-faint sm:inline">Con</span>
             {inScenaOra.length <= 1 ? (
@@ -828,7 +878,15 @@ export function CreaClient({
                 <span className="hidden sm:inline">{inScenaOra.length === 1 ? "Aggiungi qualcuno" : "Aggiungi"}</span>
               </button>
             )}
-            {volto && !gruppoScelto && (
+            {ricettaAttiva && (
+              <span className="ricetta-in-uso inline-flex h-10 shrink-0 items-center gap-1 rounded-full border border-amber/60 pl-3.5 pr-1 text-[0.88rem] font-semibold text-amber-ink">
+                <span className="max-w-[180px] truncate">Ricetta: {ricettaAttiva.nome}</span>
+                <button type="button" aria-label="Smetti di usare la ricetta" onClick={() => setRicettaAttiva(null)} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-amber-soft">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.8} strokeLinecap="round" aria-hidden><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                </button>
+              </span>
+            )}
+            {volto && !gruppoScelto && !ricettaAttiva && (
               <span className="hidden items-center gap-1.5 text-[0.85rem] text-verified sm:inline-flex">
                 <i aria-hidden className="h-1.5 w-1.5 rounded-full bg-verified" />
                 {sceltoDaSemblic ? "scelta da Semblic" : "consenso attivo"}
@@ -1127,6 +1185,26 @@ export function CreaClient({
             </div>
           )}
         </div>
+      )}
+
+      {ricette && ricette.length > 0 && (
+        <RigaRicette
+          ricette={ricette}
+          conChi={inScenaOra.length ? nomi(inScenaOra.map((v) => v.alias)) : null}
+          attiva={ricettaAttiva?.id ?? null}
+          onUsa={(rc) => {
+            usaRicetta(rc);
+            // sul computer si torna al compositore; sul telefono e' gia' li', agganciato in basso
+            const el = compositore.current;
+            if (!el || window.matchMedia("(max-width: 639px)").matches) return;
+            const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - 160);
+            const lenis = (window as Window & { __lenis?: { scrollTo: (t: number, o?: { immediate?: boolean }) => void } }).__lenis;
+            const ferma = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (lenis) lenis.scrollTo(y, { immediate: ferma });
+            else window.scrollTo({ top: y, behavior: ferma ? "auto" : "smooth" });
+          }}
+          onTolta={(id) => { setRicette((l) => (l ?? []).filter((x) => x.id !== id)); if (ricettaAttiva?.id === id) setRicettaAttiva(null); }}
+        />
       )}
 
       <div className="mt-5 flex flex-wrap items-center gap-2 sm:justify-center">

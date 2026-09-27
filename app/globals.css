@@ -494,3 +494,11 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 @keyframes direttore-riga { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 .direttore-riga { animation: direttore-riga 0.35s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .pillola-direttore, .direttore-parola, .direttore-pensa, .direttore-luccica, .direttore-riga { animation: none; } .direttore-luccica { color: var(--amber-ink); background: none; } }
+
+/* Le ricette (27/9): quando arriva una ricetta il compositore si accende un
+   attimo di ambra, e la pillola "Ricetta: ..." entra con un piccolo scatto. */
+@keyframes compositore-lampo { 0% { box-shadow: 0 0 0 0 rgba(226, 154, 46, 0.6); border-color: var(--amber-c); } 100% { box-shadow: 0 0 0 16px rgba(226, 154, 46, 0); } }
+.compositore-lampo { animation: compositore-lampo 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes ricetta-in-uso { from { opacity: 0; transform: translateX(-6px) scale(0.96); } to { opacity: 1; transform: none; } }
+.ricetta-in-uso { animation: ricetta-in-uso 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .compositore-lampo, .ricetta-in-uso { animation: none; } }

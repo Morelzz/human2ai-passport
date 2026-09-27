@@ -6,6 +6,8 @@ import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 import { Anima } from "./Anima";
 import { nomi } from "./opzioni";
 import { KitButton } from "@/components/content/KitButton";
+import { SalvaRicetta, type Impostazioni } from "./Ricette";
+import type { Ricetta } from "@/lib/ricette";
 
 export interface Esito {
   certificate: string;
@@ -21,6 +23,7 @@ export interface Esito {
   spent?: number;
   riepilogo: string;
   secondi: number;
+  impostazioni?: Impostazioni; // com'era impostato Crea: diventa una ricetta
 }
 
 // Scatto pronto: l'immagine certificata, le tre azioni che servono (scaricare,
@@ -34,6 +37,7 @@ export function Risultato({
   onNuovo,
   onCambiaPersona,
   varianteVolt,
+  onRicettaSalvata,
 }: {
   esito: Esito;
   sessione: Esito[];
@@ -42,6 +46,7 @@ export function Risultato({
   onNuovo: () => void;
   onCambiaPersona?: () => void;
   varianteVolt: number | null;
+  onRicettaSalvata?: (r: Ricetta) => void;
 }) {
   const img = `/api/content/${esito.certificate}`;
   const [w, h] = (esito.size ?? "1024x1536").split("x").map(Number);
@@ -132,6 +137,10 @@ export function Risultato({
             className="inline-flex h-[52px] items-center rounded-full border border-edge bg-surface px-5 text-[0.98rem] font-semibold text-foreground transition-colors hover:border-amber/70 disabled:opacity-50"
           />
         </div>
+
+        {esito.impostazioni && (
+          <SalvaRicetta key={esito.certificate} certificate={esito.certificate} impostazioni={esito.impostazioni} onSalvata={onRicettaSalvata} />
+        )}
 
         <Anima certificate={esito.certificate} alias={esito.alias} immagine={img} conVolt={Boolean(esito.spent)} gruppo={Boolean(gruppo)} />
 
