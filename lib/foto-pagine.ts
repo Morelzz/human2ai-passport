@@ -38,7 +38,7 @@ export const FOTO_PAGINE = {
   "tutela": { certificato: "fb182e5f0de67406293a47bd905a0743e7494f7585bbd71e33b57c2e4c8dc240", persone: [{"handle":"gabriella","alias":"Gabriella"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "45% 18%" },
   "scansione": { certificato: "2f8e4238510e5f0cbae695bf78020f113fd9cce7a23296407dc0ce2723252de2", persone: [{"handle":"chiara","alias":"Chiara"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 16%" },
   "contatti": { certificato: "c9acd43f499f983fd2dcf1e1ead52346c79e7cde2f1da789aba359943b9ce88d", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 20%" },
-  "divisa": { certificato: "8a0555ab4d43745dd2f7a71d46a5df3b266e378ba15b2bfe42ac3a6bb1092d40", persone: [{"handle":"alessia","alias":"Alessia"}], grossCents: 50, royaltyCents: 11, larghezza: 1536, altezza: 1024, fuoco: "50% 26%" },
+  "divisa": { certificato: "1353c6027be817d41367d98fbd5d02ba651c19e1f5c3d010ec56b7afba808e44", persone: [{"handle":"alessia","alias":"Alessia"}], grossCents: 50, royaltyCents: 11, larghezza: 1536, altezza: 1024, fuoco: "50% 26%" },
 } satisfies Record<string, FotoPagina>;
 
 export type ChiaveFoto = keyof typeof FOTO_PAGINE;
