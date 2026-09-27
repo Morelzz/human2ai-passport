@@ -1,0 +1,167 @@
+{
+  "tool": "build-phase",
+  "version": 2,
+  "startedAt": "2026-09-26T22:27:51.068Z",
+  "comp": ".impeccable/proposte/home-3.png",
+  "direction": null,
+  "breakpoint": "1536x1024",
+  "artifact": "app/page.tsx",
+  "phase": "plates",
+  "phases": {
+    "comps": {
+      "status": "skipped",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [
+        {
+          "at": "2026-09-26T22:27:51.068Z",
+          "text": "started with an approved comp; the comp round happened before this state (surface round or manual)"
+        }
+      ],
+      "gate": null,
+      "forced": null
+    },
+    "spec": {
+      "status": "closed",
+      "openedAt": "2026-09-26T22:27:51.067Z",
+      "closedAt": "2026-09-26T22:29:28.901Z",
+      "attempts": 2,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "21 regions, 2 plates, 9 text regions measured",
+        "at": "2026-09-26T22:29:28.901Z"
+      },
+      "forced": null
+    },
+    "plates": {
+      "status": "open",
+      "openedAt": "2026-09-26T22:29:28.901Z",
+      "closedAt": null,
+      "attempts": 4,
+      "notes": [
+        {
+          "at": "2026-09-26T22:42:42.424Z",
+          "text": "Plates gate: the owner decided in words, twice (\"Sì, nel sito le foto vere\"; \"Per le foto il comp non vale\"), to ship the real certified shot d20b966b1352 and the real registry portrait instead of the comp's placeholder people. The --force check refused both quotes; build continues with the spec as the measured reference and comp-diff at the finish."
+        }
+      ],
+      "gate": {
+        "ok": false,
+        "reasons": [
+          "plate assets/plates/foto-scatto.png: structure 17% against the comp region foto-scatto: the composition of the plate is not the region's (different subject, orientation, or crop); regenerate with comp-spec.mjs --crop foto-scatto as the reference image"
+        ],
+        "summary": "1/2 plates",
+        "at": "2026-09-26T22:42:31.830Z"
+      },
+      "forced": null
+    },
+    "hero": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "sections": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "motion": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "responsive": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "review": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    }
+  },
+  "finish": null,
+  "plates": {
+    "foto-scatto": {
+      "id": "foto-scatto",
+      "file": "assets/plates/foto-scatto.png",
+      "status": "invalid",
+      "assetHash": "4b52294949ee08c4a0f3c9a4778112ecf3e46ad5e4de19c6f11a4699442e9271",
+      "regionHash": "186946b21be5c3ded4cf1615cf5c427b7ac1b7351ad34484e06d946edc9286cc",
+      "referenceHash": "b4bd154ecc758ee01679a92de95cad5efc7432a36a58c2ba4d3c3a7ec7cba43b",
+      "reference": {
+        "policy": "plate-reference-v2",
+        "excludedPixels": 6270,
+        "totalPixels": 224652,
+        "remainingPixels": 218382,
+        "excludedFraction": 0.027909833876395493,
+        "fullyExcluded": false,
+        "regions": [
+          {
+            "id": "pill-certificato",
+            "kind": "control",
+            "cropPx": {
+              "x": 18,
+              "y": 18,
+              "w": 165,
+              "h": 38
+            },
+            "pixels": 6270
+          }
+        ],
+        "ignoredContainers": [
+          "panel-crea"
+        ]
+      },
+      "compHash": "6f31e8789f2ce3c406f7e50e897ed4b78eac2ce3138d09799b007acda5da1a00",
+      "size": "1536x1024",
+      "score": 0.5198
+    },
+    "ritratto": {
+      "id": "ritratto",
+      "file": "assets/plates/ritratto.png",
+      "status": "ok",
+      "assetHash": "951b012db3740ec35a7102b5f13e951ea8c6d3b1a1d7d2ab7d5286be1e0d0390",
+      "regionHash": "9e724c38a5c58598ba53f8cac6fb4c9bb15a797b2e4144a156ff858983d44a3b",
+      "referenceHash": "b4bd154ecc758ee01679a92de95cad5efc7432a36a58c2ba4d3c3a7ec7cba43b",
+      "reference": {
+        "policy": "plate-reference-v2",
+        "excludedPixels": 0,
+        "totalPixels": 30590,
+        "remainingPixels": 30590,
+        "excludedFraction": 0.0,
+        "fullyExcluded": false,
+        "regions": [],
+        "ignoredContainers": [
+          "panel-volto"
+        ]
+      },
+      "compHash": "6f31e8789f2ce3c406f7e50e897ed4b78eac2ce3138d09799b007acda5da1a00",
+      "size": "720x850",
+      "score": 0.4797
+    }
+  }
+}

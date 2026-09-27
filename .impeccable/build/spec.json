@@ -1,0 +1,1302 @@
+{
+  "tool": "comp-spec",
+  "version": 1,
+  "createdAt": "2026-09-26T22:28:39.313Z",
+  "comp": ".impeccable/proposte/home-3.png",
+  "warnings": [
+    "region panel-crea: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region foto-scatto: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region pill-certificato: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)",
+    "region panel-volto: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region ritratto: \"bleed\": true set in the regions file (the clipped-artwork refusal is overridden: the page crops it there)",
+    "region pill-consenso: \"codeDrawn\": true set in the regions file (the painted-material refusal is overridden: code draws this region)"
+  ],
+  "uncoveredInkCells": [
+    "C2"
+  ],
+  "compSize": {
+    "width": 1536,
+    "height": 1024
+  },
+  "aspect": 1.5,
+  "orientation": "landscape",
+  "palette": [
+    {
+      "hex": "#f6f4ea",
+      "coverage": 0.8447
+    },
+    {
+      "hex": "#1d1b19",
+      "coverage": 0.0694
+    },
+    {
+      "hex": "#cdc3bb",
+      "coverage": 0.0438
+    },
+    {
+      "hex": "#e89836",
+      "coverage": 0.0222
+    },
+    {
+      "hex": "#473f34",
+      "coverage": 0.0199
+    }
+  ],
+  "bands": [
+    {
+      "y": 0.0353,
+      "strength": 0.2246
+    },
+    {
+      "y": 0.0588,
+      "strength": 0.2252
+    },
+    {
+      "y": 0.1647,
+      "strength": 0.7855
+    },
+    {
+      "y": 0.2,
+      "strength": 0.5712
+    },
+    {
+      "y": 0.3176,
+      "strength": 0.3738
+    },
+    {
+      "y": 0.3765,
+      "strength": 0.2652
+    },
+    {
+      "y": 0.5176,
+      "strength": 0.2239
+    },
+    {
+      "y": 0.5882,
+      "strength": 0.2876
+    },
+    {
+      "y": 0.7059,
+      "strength": 0.3678
+    },
+    {
+      "y": 0.7294,
+      "strength": 0.235
+    },
+    {
+      "y": 0.8353,
+      "strength": 1
+    },
+    {
+      "y": 0.8941,
+      "strength": 1
+    }
+  ],
+  "regions": [
+    {
+      "id": "logo",
+      "kind": "chrome",
+      "note": "black rounded square mark and wordmark SEMBLIC",
+      "grid": null,
+      "box": {
+        "x": 0.0378,
+        "y": 0.0273,
+        "w": 0.1016,
+        "h": 0.0391
+      },
+      "px": {
+        "x": 58,
+        "y": 28,
+        "w": 156,
+        "h": 40
+      },
+      "aspect": 3.9,
+      "palette": [
+        {
+          "hex": "#f7f7eb",
+          "coverage": 0.7019
+        },
+        {
+          "hex": "#141412",
+          "coverage": 0.2308
+        },
+        {
+          "hex": "#82817e",
+          "coverage": 0.0288
+        },
+        {
+          "hex": "#383731",
+          "coverage": 0.0234
+        },
+        {
+          "hex": "#b8b5af",
+          "coverage": 0.0151
+        }
+      ],
+      "detail": {
+        "energy": 27.9156
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "nav-links",
+      "kind": "text",
+      "note": "nav links Registro Crea Proteggi Prezzi Academy",
+      "grid": null,
+      "box": {
+        "x": 0.5352,
+        "y": 0.0332,
+        "w": 0.2734,
+        "h": 0.0273
+      },
+      "px": {
+        "x": 822,
+        "y": 34,
+        "w": 420,
+        "h": 28
+      },
+      "aspect": 15,
+      "palette": [
+        {
+          "hex": "#f7f7e9",
+          "coverage": 0.8599
+        },
+        {
+          "hex": "#b2b1ad",
+          "coverage": 0.0758
+        },
+        {
+          "hex": "#71716d",
+          "coverage": 0.0465
+        },
+        {
+          "hex": "#524d48",
+          "coverage": 0.01
+        },
+        {
+          "hex": "#111111",
+          "coverage": 0.0079
+        }
+      ],
+      "detail": {
+        "energy": 43.7141
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 29,
+          "capHeightPx": 12.9,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6952,
+          "advTall": 0.7145,
+          "advX": 0.6179,
+          "gap": 0.0772,
+          "xRatio": 0.7464,
+          "stemW": 0.1542,
+          "contrast": 1.0864,
+          "serif": null,
+          "densTall": 0.4392,
+          "densX": 0.5127,
+          "weight": 0.4392
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "nav-accedi",
+      "kind": "control",
+      "note": "outlined pill Accedi",
+      "grid": null,
+      "box": {
+        "x": 0.8242,
+        "y": 0.0244,
+        "w": 0.0586,
+        "h": 0.043
+      },
+      "px": {
+        "x": 1266,
+        "y": 25,
+        "w": 90,
+        "h": 44
+      },
+      "aspect": 2.0455,
+      "palette": [
+        {
+          "hex": "#f5f5e8",
+          "coverage": 0.9044
+        },
+        {
+          "hex": "#c2c3bd",
+          "coverage": 0.0533
+        },
+        {
+          "hex": "#565351",
+          "coverage": 0.02
+        },
+        {
+          "hex": "#83837d",
+          "coverage": 0.0133
+        },
+        {
+          "hex": "#0c0c08",
+          "coverage": 0.0089
+        }
+      ],
+      "detail": {
+        "energy": 15.1275
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "nav-registrati",
+      "kind": "control",
+      "note": "black pill Registrati",
+      "grid": null,
+      "box": {
+        "x": 0.8893,
+        "y": 0.0244,
+        "w": 0.0742,
+        "h": 0.043
+      },
+      "px": {
+        "x": 1366,
+        "y": 25,
+        "w": 114,
+        "h": 44
+      },
+      "aspect": 2.5909,
+      "palette": [
+        {
+          "hex": "#161616",
+          "coverage": 0.7385
+        },
+        {
+          "hex": "#f6f5ed",
+          "coverage": 0.1307
+        },
+        {
+          "hex": "#afaeab",
+          "coverage": 0.0707
+        },
+        {
+          "hex": "#474743",
+          "coverage": 0.0353
+        },
+        {
+          "hex": "#787978",
+          "coverage": 0.0247
+        }
+      ],
+      "detail": {
+        "energy": 28.7865
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "nav-rule",
+      "kind": "chrome",
+      "note": "hairline under the navigation",
+      "grid": null,
+      "box": {
+        "x": 0,
+        "y": 0.085,
+        "w": 1,
+        "h": 0.0029
+      },
+      "px": {
+        "x": 0,
+        "y": 87,
+        "w": 1536,
+        "h": 3
+      },
+      "aspect": 512,
+      "palette": [
+        {
+          "hex": "#f8f8f1",
+          "coverage": 1
+        }
+      ],
+      "detail": {
+        "energy": 5.3511
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "headline",
+      "kind": "text",
+      "note": "headline Ogni volto qui ha detto si",
+      "grid": null,
+      "box": {
+        "x": 0.2174,
+        "y": 0.1387,
+        "w": 0.5651,
+        "h": 0.0801
+      },
+      "px": {
+        "x": 334,
+        "y": 142,
+        "w": 868,
+        "h": 82
+      },
+      "aspect": 10.5854,
+      "palette": [
+        {
+          "hex": "#f8f7ea",
+          "coverage": 0.6776
+        },
+        {
+          "hex": "#161612",
+          "coverage": 0.282
+        },
+        {
+          "hex": "#464540",
+          "coverage": 0.0152
+        },
+        {
+          "hex": "#94938e",
+          "coverage": 0.014
+        },
+        {
+          "hex": "#ceccc9",
+          "coverage": 0.0113
+        }
+      ],
+      "detail": {
+        "energy": 104.8386
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 18,
+          "capHeightPx": 57.1,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6655,
+          "advTall": 0.5429,
+          "advX": 0.7093,
+          "gap": 0.0701,
+          "xRatio": 0.7006,
+          "stemW": 0.2051,
+          "contrast": 1.1551,
+          "serif": 0.9959,
+          "densTall": 0.5606,
+          "densX": 0.629,
+          "weight": 0.5606
+        },
+        "widthClass": "normal",
+        "weightClass": "bold",
+        "chosen": {
+          "family": "Instrument Sans",
+          "weight": 700,
+          "fontSizePx": 79,
+          "source": "index",
+          "fp": {
+            "lines": 1,
+            "glyphs": 21,
+            "capHeightPx": 57.1,
+            "inkIsDark": true,
+            "allCaps": false,
+            "advance": 0.6832,
+            "advTall": 0.5256,
+            "advX": 0.7446,
+            "gap": 0.1051,
+            "xRatio": 0.7008,
+            "stemW": 0.2136,
+            "contrast": 1.2577,
+            "serif": 1,
+            "densTall": 0.5537,
+            "densX": 0.6234,
+            "weight": 0.5537
+          },
+          "stamp": "1f7aa4f48572"
+        }
+      }
+    },
+    {
+      "id": "subline",
+      "kind": "text",
+      "note": "grey line Una foto, due persone contente",
+      "grid": null,
+      "box": {
+        "x": 0.2904,
+        "y": 0.2324,
+        "w": 0.4206,
+        "h": 0.0273
+      },
+      "px": {
+        "x": 446,
+        "y": 238,
+        "w": 646,
+        "h": 28
+      },
+      "aspect": 23.0714,
+      "palette": [
+        {
+          "hex": "#f6f5ea",
+          "coverage": 0.8632
+        },
+        {
+          "hex": "#878683",
+          "coverage": 0.0821
+        },
+        {
+          "hex": "#b9b8b4",
+          "coverage": 0.0547
+        }
+      ],
+      "detail": {
+        "energy": 44.7404
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 49,
+          "capHeightPx": 16.4,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6243,
+          "advTall": 0.4415,
+          "advX": 0.6395,
+          "gap": 0.0914,
+          "xRatio": 0.6867,
+          "stemW": 0.1521,
+          "contrast": 1.1221,
+          "serif": null,
+          "densTall": 0.4617,
+          "densX": 0.5408,
+          "weight": 0.4617
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "panel-crea",
+      "kind": "chrome",
+      "note": "white rounded panel for the creator side",
+      "grid": null,
+      "container": true,
+      "box": {
+        "x": 0.0723,
+        "y": 0.2988,
+        "w": 0.4212,
+        "h": 0.625
+      },
+      "px": {
+        "x": 111,
+        "y": 306,
+        "w": 647,
+        "h": 640
+      },
+      "aspect": 1.0109,
+      "palette": [
+        {
+          "hex": "#f8f7f7",
+          "coverage": 0.5481
+        },
+        {
+          "hex": "#cec1b8",
+          "coverage": 0.1611
+        },
+        {
+          "hex": "#292521",
+          "coverage": 0.1209
+        },
+        {
+          "hex": "#e89836",
+          "coverage": 0.1025
+        },
+        {
+          "hex": "#9c8e7f",
+          "coverage": 0.0674
+        }
+      ],
+      "detail": {
+        "energy": 30.8552
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "foto-scatto",
+      "kind": "image",
+      "note": "certified lifestyle photo of a woman reading in a sunny cafe; ships as the real certified Semblic shot",
+      "grid": null,
+      "bleed": true,
+      "parentId": "panel-crea",
+      "box": {
+        "x": 0.0944,
+        "y": 0.3213,
+        "w": 0.377,
+        "h": 0.3789
+      },
+      "px": {
+        "x": 145,
+        "y": 329,
+        "w": 579,
+        "h": 388
+      },
+      "aspect": 1.4923,
+      "palette": [
+        {
+          "hex": "#cebfb6",
+          "coverage": 0.3524
+        },
+        {
+          "hex": "#292323",
+          "coverage": 0.1808
+        },
+        {
+          "hex": "#9b8d7f",
+          "coverage": 0.1696
+        },
+        {
+          "hex": "#f2f0ed",
+          "coverage": 0.1635
+        },
+        {
+          "hex": "#504338",
+          "coverage": 0.1336
+        }
+      ],
+      "detail": {
+        "energy": 38.6815
+      },
+      "medium": "raster",
+      "plate": "assets/plates/foto-scatto.png",
+      "text": null
+    },
+    {
+      "id": "pill-certificato",
+      "kind": "control",
+      "note": "white label Certificato SEMBLIC over the top left corner of the image",
+      "grid": null,
+      "codeDrawn": true,
+      "parentId": "panel-crea",
+      "box": {
+        "x": 0.1061,
+        "y": 0.3389,
+        "w": 0.1074,
+        "h": 0.0371
+      },
+      "px": {
+        "x": 163,
+        "y": 347,
+        "w": 165,
+        "h": 38
+      },
+      "aspect": 4.3421,
+      "palette": [
+        {
+          "hex": "#f6f6f5",
+          "coverage": 0.8671
+        },
+        {
+          "hex": "#121212",
+          "coverage": 0.0487
+        },
+        {
+          "hex": "#c8c2c4",
+          "coverage": 0.0295
+        },
+        {
+          "hex": "#80807d",
+          "coverage": 0.0281
+        },
+        {
+          "hex": "#4a4944",
+          "coverage": 0.0266
+        }
+      ],
+      "detail": {
+        "energy": 36.464
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "caption-scatto",
+      "kind": "text",
+      "note": "grey caption Scatto verticale, alta qualita",
+      "grid": null,
+      "parentId": "panel-crea",
+      "box": {
+        "x": 0.0944,
+        "y": 0.7236,
+        "w": 0.1615,
+        "h": 0.0254
+      },
+      "px": {
+        "x": 145,
+        "y": 741,
+        "w": 248,
+        "h": 26
+      },
+      "aspect": 9.5385,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.7898
+        },
+        {
+          "hex": "#858484",
+          "coverage": 0.1232
+        },
+        {
+          "hex": "#c5c5c5",
+          "coverage": 0.0843
+        },
+        {
+          "hex": "#a8b0a0",
+          "coverage": 0.0027
+        }
+      ],
+      "detail": {
+        "energy": 38.7873
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 25,
+          "capHeightPx": 14.4,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5894,
+          "advTall": 0.4333,
+          "advX": 0.624,
+          "gap": 0.104,
+          "xRatio": 0.711,
+          "stemW": 0.1543,
+          "contrast": 1.0583,
+          "serif": null,
+          "densTall": 0.5077,
+          "densX": 0.5874,
+          "weight": 0.5077
+        },
+        "widthClass": "normal",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "prezzo",
+      "kind": "text",
+      "note": "large price 0,50 euro",
+      "grid": null,
+      "parentId": "panel-crea",
+      "box": {
+        "x": 0.0944,
+        "y": 0.7598,
+        "w": 0.1055,
+        "h": 0.0527
+      },
+      "px": {
+        "x": 145,
+        "y": 778,
+        "w": 162,
+        "h": 54
+      },
+      "aspect": 3,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.6241
+        },
+        {
+          "hex": "#141411",
+          "coverage": 0.3074
+        },
+        {
+          "hex": "#a1a1a1",
+          "coverage": 0.0312
+        },
+        {
+          "hex": "#494948",
+          "coverage": 0.0239
+        },
+        {
+          "hex": "#737371",
+          "coverage": 0.0135
+        }
+      ],
+      "detail": {
+        "energy": 36.6851
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 4,
+          "capHeightPx": 39,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.8205,
+          "advTall": 0.8205,
+          "advX": null,
+          "gap": 0.0769,
+          "xRatio": 0.6876,
+          "stemW": 0.2263,
+          "contrast": 1.1833,
+          "serif": null,
+          "densTall": 0.5507,
+          "densX": null,
+          "weight": 0.5507
+        },
+        "widthClass": "wide",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "btn-crea",
+      "kind": "control",
+      "note": "amber full-width pill Crea con volti veri",
+      "grid": null,
+      "parentId": "panel-crea",
+      "box": {
+        "x": 0.0944,
+        "y": 0.8311,
+        "w": 0.377,
+        "h": 0.0586
+      },
+      "px": {
+        "x": 145,
+        "y": 851,
+        "w": 579,
+        "h": 60
+      },
+      "aspect": 9.65,
+      "palette": [
+        {
+          "hex": "#e89835",
+          "coverage": 0.9582
+        },
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.0216
+        },
+        {
+          "hex": "#0e0808",
+          "coverage": 0.0103
+        },
+        {
+          "hex": "#ac7428",
+          "coverage": 0.0053
+        },
+        {
+          "hex": "#2c1c08",
+          "coverage": 0.0047
+        }
+      ],
+      "detail": {
+        "energy": 10.3203
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "panel-volto",
+      "kind": "chrome",
+      "note": "light warm grey rounded panel for the person side",
+      "grid": null,
+      "container": true,
+      "box": {
+        "x": 0.5072,
+        "y": 0.2988,
+        "w": 0.4219,
+        "h": 0.625
+      },
+      "px": {
+        "x": 779,
+        "y": 306,
+        "w": 648,
+        "h": 640
+      },
+      "aspect": 1.0125,
+      "palette": [
+        {
+          "hex": "#f2e8e7",
+          "coverage": 0.8571
+        },
+        {
+          "hex": "#1b1a19",
+          "coverage": 0.1089
+        },
+        {
+          "hex": "#cee8c8",
+          "coverage": 0.0115
+        },
+        {
+          "hex": "#b8b4ae",
+          "coverage": 0.0115
+        },
+        {
+          "hex": "#45403a",
+          "coverage": 0.0109
+        }
+      ],
+      "detail": {
+        "energy": 15.7394
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "ritratto",
+      "kind": "image",
+      "note": "small studio portrait of the same woman; ships as the real registry portrait",
+      "grid": null,
+      "bleed": true,
+      "parentId": "panel-volto",
+      "box": {
+        "x": 0.5299,
+        "y": 0.333,
+        "w": 0.1048,
+        "h": 0.1855
+      },
+      "px": {
+        "x": 814,
+        "y": 341,
+        "w": 161,
+        "h": 190
+      },
+      "aspect": 0.8474,
+      "palette": [
+        {
+          "hex": "#2e2723",
+          "coverage": 0.3927
+        },
+        {
+          "hex": "#cdc8c5",
+          "coverage": 0.3721
+        },
+        {
+          "hex": "#d3a68d",
+          "coverage": 0.1494
+        },
+        {
+          "hex": "#997561",
+          "coverage": 0.043
+        },
+        {
+          "hex": "#614b3d",
+          "coverage": 0.0427
+        }
+      ],
+      "detail": {
+        "energy": 13.1507
+      },
+      "medium": "raster",
+      "plate": "assets/plates/ritratto.png",
+      "text": null
+    },
+    {
+      "id": "nome",
+      "kind": "text",
+      "note": "first name Anna",
+      "grid": null,
+      "parentId": "panel-volto",
+      "box": {
+        "x": 0.6543,
+        "y": 0.3789,
+        "w": 0.0495,
+        "h": 0.0332
+      },
+      "px": {
+        "x": 1005,
+        "y": 388,
+        "w": 76,
+        "h": 34
+      },
+      "aspect": 2.2353,
+      "palette": [
+        {
+          "hex": "#f5edea",
+          "coverage": 0.741
+        },
+        {
+          "hex": "#141210",
+          "coverage": 0.1738
+        },
+        {
+          "hex": "#474742",
+          "coverage": 0.0426
+        },
+        {
+          "hex": "#d3d1cd",
+          "coverage": 0.023
+        },
+        {
+          "hex": "#80807b",
+          "coverage": 0.0197
+        }
+      ],
+      "detail": {
+        "energy": 22.6504
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 4,
+          "capHeightPx": 22.5,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6672,
+          "advTall": 0.9341,
+          "advX": 0.6672,
+          "gap": 0.0667,
+          "xRatio": 0.7234,
+          "stemW": 0.1939,
+          "contrast": 1.1931,
+          "serif": null,
+          "densTall": 0.4587,
+          "densX": 0.6354,
+          "weight": 0.4587
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "pill-consenso",
+      "kind": "control",
+      "note": "green label consenso attivo with dot",
+      "grid": null,
+      "codeDrawn": true,
+      "parentId": "panel-volto",
+      "box": {
+        "x": 0.6543,
+        "y": 0.4229,
+        "w": 0.11,
+        "h": 0.0352
+      },
+      "px": {
+        "x": 1005,
+        "y": 433,
+        "w": 169,
+        "h": 36
+      },
+      "aspect": 4.6944,
+      "palette": [
+        {
+          "hex": "#d1e9ca",
+          "coverage": 0.8211
+        },
+        {
+          "hex": "#184a1d",
+          "coverage": 0.0571
+        },
+        {
+          "hex": "#f3e8e8",
+          "coverage": 0.0556
+        },
+        {
+          "hex": "#5a8c60",
+          "coverage": 0.0346
+        },
+        {
+          "hex": "#97c39a",
+          "coverage": 0.0316
+        }
+      ],
+      "detail": {
+        "energy": 21.8537
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "riga-ricevuto",
+      "kind": "text",
+      "note": "icon and line Ha ricevuto 0,11 euro per questo scatto",
+      "grid": null,
+      "parentId": "panel-volto",
+      "box": {
+        "x": 0.5326,
+        "y": 0.5635,
+        "w": 0.2669,
+        "h": 0.0352
+      },
+      "px": {
+        "x": 818,
+        "y": 577,
+        "w": 410,
+        "h": 36
+      },
+      "aspect": 11.3889,
+      "palette": [
+        {
+          "hex": "#f1eae8",
+          "coverage": 0.8275
+        },
+        {
+          "hex": "#383736",
+          "coverage": 0.063
+        },
+        {
+          "hex": "#11100f",
+          "coverage": 0.0379
+        },
+        {
+          "hex": "#b5b4b0",
+          "coverage": 0.0379
+        },
+        {
+          "hex": "#747471",
+          "coverage": 0.0336
+        }
+      ],
+      "detail": {
+        "energy": 62.3101
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 30,
+          "capHeightPx": 15.6,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.608,
+          "advTall": 0.448,
+          "advX": 0.672,
+          "gap": 0.096,
+          "xRatio": 0.7087,
+          "stemW": 0.1566,
+          "contrast": 1.0649,
+          "serif": 0.573,
+          "densTall": 0.4595,
+          "densX": 0.5011,
+          "weight": 0.4595
+        },
+        "widthClass": "normal",
+        "weightClass": "regular"
+      }
+    },
+    {
+      "id": "riga-revoca",
+      "kind": "text",
+      "note": "shield icon and line Revoca quando vuole, vale subito",
+      "grid": null,
+      "parentId": "panel-volto",
+      "box": {
+        "x": 0.5326,
+        "y": 0.6406,
+        "w": 0.2461,
+        "h": 0.0352
+      },
+      "px": {
+        "x": 818,
+        "y": 656,
+        "w": 378,
+        "h": 36
+      },
+      "aspect": 10.5,
+      "palette": [
+        {
+          "hex": "#f1eae9",
+          "coverage": 0.8329
+        },
+        {
+          "hex": "#191818",
+          "coverage": 0.0632
+        },
+        {
+          "hex": "#6b6968",
+          "coverage": 0.0413
+        },
+        {
+          "hex": "#b9b6b2",
+          "coverage": 0.0313
+        },
+        {
+          "hex": "#3f3d3d",
+          "coverage": 0.0313
+        }
+      ],
+      "detail": {
+        "energy": 63.9678
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 26,
+          "capHeightPx": 18.9,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.5465,
+          "advTall": null,
+          "advX": 0.5377,
+          "gap": 0.1058,
+          "xRatio": 0.5775,
+          "stemW": 0.1154,
+          "contrast": 0.9813,
+          "serif": 0.9023,
+          "densTall": null,
+          "densX": 0.4862,
+          "weight": 0.4862
+        },
+        "widthClass": "condensed",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "riga-regole",
+      "kind": "text",
+      "note": "person icon and line Decide lei a cosa dice no, con parole sue",
+      "grid": null,
+      "parentId": "panel-volto",
+      "box": {
+        "x": 0.5326,
+        "y": 0.7188,
+        "w": 0.2904,
+        "h": 0.0352
+      },
+      "px": {
+        "x": 818,
+        "y": 736,
+        "w": 446,
+        "h": 36
+      },
+      "aspect": 12.3889,
+      "palette": [
+        {
+          "hex": "#f1eae8",
+          "coverage": 0.8583
+        },
+        {
+          "hex": "#414140",
+          "coverage": 0.0567
+        },
+        {
+          "hex": "#908f8e",
+          "coverage": 0.0482
+        },
+        {
+          "hex": "#bbb8af",
+          "coverage": 0.0187
+        },
+        {
+          "hex": "#101214",
+          "coverage": 0.0181
+        }
+      ],
+      "detail": {
+        "energy": 63.0267
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 33,
+          "capHeightPx": 16,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6559,
+          "advTall": 0.1562,
+          "advX": 0.6559,
+          "gap": 0.0937,
+          "xRatio": 0.7034,
+          "stemW": 0.1489,
+          "contrast": 1.0906,
+          "serif": null,
+          "densTall": 0.7623,
+          "densX": 0.5102,
+          "weight": 0.7623
+        },
+        "widthClass": "normal",
+        "weightClass": "black"
+      }
+    },
+    {
+      "id": "btn-volto",
+      "kind": "control",
+      "note": "black full-width pill Metti il tuo volto",
+      "grid": null,
+      "parentId": "panel-volto",
+      "box": {
+        "x": 0.5299,
+        "y": 0.8311,
+        "w": 0.3763,
+        "h": 0.0586
+      },
+      "px": {
+        "x": 814,
+        "y": 851,
+        "w": 578,
+        "h": 60
+      },
+      "aspect": 9.6333,
+      "palette": [
+        {
+          "hex": "#171717",
+          "coverage": 0.9453
+        },
+        {
+          "hex": "#f3efef",
+          "coverage": 0.0364
+        },
+        {
+          "hex": "#939494",
+          "coverage": 0.0081
+        },
+        {
+          "hex": "#c6c6c6",
+          "coverage": 0.0052
+        },
+        {
+          "hex": "#696969",
+          "coverage": 0.005
+        }
+      ],
+      "detail": {
+        "energy": 19.8001
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    }
+  ],
+  "compSha256": "c8a1846fd8423a5099133b486fc4daa94f4366cc7a43791518c068c0ee083663",
+  "regionsSource": {
+    "path": ".impeccable/build/regions.json",
+    "sha256": "e7d2d28d742b2727839671e796c473cdb0b8866aa5887fd500a30b3857047fda"
+  }
+}

@@ -64,3 +64,6 @@ AVVIA-SITO.bat
 # Script e2e locali: leggono .env.local, mai sul repo pubblico
 *.e2e.ts
 .tmp/
+
+# schermate di revisione della skill di design (100 MB), restano sul PC
+.impeccable/review/
