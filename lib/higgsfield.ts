@@ -186,15 +186,33 @@ export async function createSoulFromImages(name: string, photos: SoulPhoto[]): P
   const { HiggsfieldClient, InputImageType } = await import("@higgsfield/client");
   const client = new HiggsfieldClient({ apiKey, apiSecret });
 
-  // 1. Upload delle foto sulla CDN del motore -> URL utilizzabili.
+  // 1. Le foto al motore. Non con client.uploadImage: il link firmato di
+  // Higgsfield include l'intestazione x-amz-tagging con un valore che l'SDK non
+  // conosce, e S3 risponde 403 SignatureDoesNotMatch (provato il 27/9 con 0.2.1
+  // e 0.2.6, anche a mano). Le foto vanno per pochi minuti in una cartella
+  // PRIVATA nostra, il motore le legge da link firmati che scadono in 15 minuti,
+  // poi la cartella si cancella.
+  const { createServerClient } = await import("@/lib/supabase");
+  const admin = createServerClient();
+  const cartella = `_motore/${crypto.randomUUID()}`;
   const inputImages: { type: typeof InputImageType.IMAGE_URL; image_url: string }[] = [];
-  for (const p of photos) {
-    const url = await client.uploadImage(p.buffer, p.format);
-    inputImages.push({ type: InputImageType.IMAGE_URL, image_url: url });
-  }
+  const percorsi: string[] = [];
+  try {
+    for (const [i, p] of photos.entries()) {
+      const percorso = `${cartella}/${i}.${p.format === "jpeg" ? "jpg" : p.format}`;
+      const up = await admin.storage.from("references").upload(percorso, p.buffer, { contentType: `image/${p.format}`, upsert: true });
+      if (up.error) throw new Error(`foto al motore: ${up.error.message}`);
+      percorsi.push(percorso);
+      const firmato = await admin.storage.from("references").createSignedUrl(percorso, 15 * 60);
+      if (firmato.error || !firmato.data) throw new Error("foto al motore: link firmato non creato");
+      inputImages.push({ type: InputImageType.IMAGE_URL, image_url: firmato.data.signedUrl });
+    }
 
-  // 2. Addestra il Soul (withPolling: attende il completamento).
-  const soul = await client.createSoulId({ name, input_images: inputImages }, true);
-  if (!soul.isCompleted) return null;
-  return { id: soul.id };
+    // 2. Addestra il Soul (withPolling: attende il completamento).
+    const soul = await client.createSoulId({ name, input_images: inputImages }, true);
+    if (!soul.isCompleted) return null;
+    return { id: soul.id };
+  } finally {
+    if (percorsi.length) await admin.storage.from("references").remove(percorsi).catch(() => {});
+  }
 }
