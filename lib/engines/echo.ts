@@ -130,7 +130,13 @@ export function promptSobrio(prompt: string): string {
 function echoApiError(endpoint: "edit" | "generation", status: number, body: string): Error {
   console.error(`[ECHO] OpenAI ${endpoint} ${status}: ${body.slice(0, 1000)}`);
   try {
-    const j = JSON.parse(body) as { error?: { code?: string; moderation_details?: { moderation_stage?: string } } };
+    const j = JSON.parse(body) as { error?: { code?: string; type?: string; moderation_details?: { moderation_stage?: string } } };
+    // Credito OpenAI finito (27/9 sera): non e' "temporaneo" e riguarda tutti i
+    // clienti. Nel log va come ALLARME, al cliente un messaggio onesto.
+    if (j?.error?.code === "credit_balance_exhausted" || j?.error?.type === "insufficient_quota") {
+      console.error("[ECHO] ALLARME: credito OpenAI finito, il set e' fermo per tutti");
+      return new Error("Il set di Semblic è fermo per manutenzione. Nessun costo per te: i VOLT tornano sul conto. Riprova più tardi.");
+    }
     if (j?.error?.code === "moderation_blocked") {
       // La moderazione OpenAI è PROBABILISTICA: stesso input può passare al
       // tentativo successivo. stage=input -> reference; stage=output -> risultato.
