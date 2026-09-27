@@ -17,6 +17,10 @@ import { SulSet, type StatoSet } from "./SulSet";
 import { Palco } from "./Palco";
 import { Risultato, type Esito } from "./Risultato";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo, scattiPerGruppo } from "@/lib/gruppo-prezzi";
+import { intervalli, type SceltaDirettore } from "@/lib/direttore";
+
+// I campi che il direttore puo' accendere (mockup A, 27/9).
+type CampoDirettore = "luce" | "formato" | "inquadratura" | "espressione" | "posa" | "look" | "vestiti";
 
 export interface Scatto { certificate: string; image_url: string | null; alias: string }
 
@@ -49,6 +53,15 @@ export function CreaClient({
   const [aggiungendo, setAggiungendo] = useState(false);
   const [luce, setLuce] = useState<string>("auto");
   const [vestiti, setVestiti] = useState<Record<string, string>>({});
+  // Il direttore: cosa ha acceso lui, cosa hai toccato tu (quello non lo cambia
+  // piu'), le parole che ha capito e com'era prima, per rimettere tutto.
+  const [daDirettore, setDaDirettore] = useState<Set<CampoDirettore>>(new Set());
+  const aMano = useRef<Set<CampoDirettore>>(new Set());
+  const [evidenze, setEvidenze] = useState<string[]>([]);
+  const [leggendo, setLeggendo] = useState(false);
+  const primaDelDirettore = useRef<Record<string, unknown> | null>(null);
+  const ultimaLetta = useRef("");
+  const specchio = useRef<HTMLDivElement>(null);
   const [scena, setScena] = useState("");
   const [look, setLook] = useState("naturale");
   const [formato, setFormato] = useState<FormatoVal>("verticale");
@@ -132,6 +145,75 @@ export function CreaClient({
     if (i.vestiti) setVestiti((v) => ({ ...v, [scelto ?? SENZA_NOME]: i.vestiti! }));
     setProposta(null);
   }
+
+  // Un campo toccato a mano resta tuo: il direttore non lo cambia piu'.
+  function aManoSu(c: CampoDirettore) {
+    aMano.current.add(c);
+    setDaDirettore((d) => { if (!d.has(c)) return d; const n = new Set(d); n.delete(c); return n; });
+  }
+
+  function rimettiComEra() {
+    const p = primaDelDirettore.current;
+    if (p) {
+      setLuce(p.luce as string); setFormato(p.formato as FormatoVal); setInquadratura(p.inquadratura as string);
+      setEspressione(p.espressione as string); setPosa(p.posa as string); setLook(p.look as string); setVestiti(p.vestiti as Record<string, string>);
+    }
+    primaDelDirettore.current = null;
+    setDaDirettore(new Set());
+    setEvidenze([]);
+    ultimaLetta.current = scena.trim(); // non rileggere subito la stessa frase
+  }
+
+  // Il direttore legge la frase quando smetti di scrivere (1,3 s). Accende solo
+  // i campi che non hai toccato tu; non riscrive niente e non costa crediti.
+  useEffect(() => {
+    const frase = scena.trim();
+    if (frase.length < 12 || frase === ultimaLetta.current) return;
+    const t = setTimeout(async () => {
+      ultimaLetta.current = frase;
+      setLeggendo(true);
+      try {
+        const res = await fetch("/api/crea/direttore", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ frase, nomi: inScenaOra.map((v) => v.alias) }),
+        });
+        if (!res.ok || !vivo.current) return;
+        const d = (await res.json()) as SceltaDirettore;
+        const libero = (c: CampoDirettore) => !aMano.current.has(c);
+        const acceso = new Set<CampoDirettore>();
+        if (!primaDelDirettore.current) primaDelDirettore.current = { luce, formato, inquadratura, espressione, posa, look, vestiti };
+        if (d.luce && libero("luce")) { setLuce(d.luce); acceso.add("luce"); }
+        if (d.formato && libero("formato")) { setFormato(d.formato); acceso.add("formato"); }
+        if (d.look && libero("look")) { setLook(d.look); acceso.add("look"); }
+        if (!gruppoScelto) {
+          if (d.inquadratura && libero("inquadratura")) { setInquadratura(d.inquadratura); acceso.add("inquadratura"); }
+          if (d.espressione && libero("espressione")) { setEspressione(d.espressione); acceso.add("espressione"); }
+          if (d.posa && libero("posa")) { setPosa(d.posa); acceso.add("posa"); }
+        }
+        const nuovi = Object.entries(d.vestiti);
+        if (nuovi.length && libero("vestiti")) {
+          setVestiti((vv) => {
+            const n = { ...vv };
+            for (const [chi, cosa] of nuovi) {
+              const v = chi === "_" ? null : inScenaOra.find((x) => x.alias === chi);
+              n[v ? v.handle : (scelto ?? SENZA_NOME)] = cosa;
+            }
+            return n;
+          });
+          acceso.add("vestiti");
+        }
+        setDaDirettore((prima) => new Set([...prima, ...acceso]));
+        setEvidenze(d.evidenze);
+      } catch {
+        /* il direttore tace: la frase resta com'e' */
+      } finally {
+        if (vivo.current) setLeggendo(false);
+      }
+    }, 1300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scena, cast.join(",")]);
 
   async function aggiungiRiferimento(file: File | undefined) {
     if (!file || riferimenti.length >= 2) return;
@@ -431,19 +513,31 @@ export function CreaClient({
   }
 
   // ── Pillole e pannelli ─────────────────────────────────────────────────────
-  const pillola = (id: Exclude<Pannello, null>, etichetta: string) => (
+  const campiPillola: Partial<Record<Exclude<Pannello, null>, CampoDirettore[]>> = {
+    look: ["look"], luce: ["luce"], vestiti: ["vestiti"], formato: ["formato"], regia: ["inquadratura", "espressione", "posa"],
+  };
+  const pillola = (id: Exclude<Pannello, null>, etichetta: string) => {
+    const dalDirettore = (campiPillola[id] ?? []).some((c) => daDirettore.has(c));
+    return (
     <button
+      key={`${id}-${dalDirettore ? "d" : "n"}`}
       type="button"
       onClick={() => setPannello((p) => (p === id ? null : id))}
       aria-expanded={pannello === id}
-      className={`inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[0.9rem] transition-colors ${
-        pannello === id ? "border-foreground bg-surface text-foreground" : "border-border bg-surface text-foreground hover:border-amber/60"
+      className={`inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-[0.9rem] transition-[background-color,border-color,color] duration-300 ${
+        pannello === id
+          ? "border-foreground bg-surface text-foreground"
+          : dalDirettore
+            ? "pillola-direttore border-transparent bg-amber-soft font-semibold text-on-amber"
+            : "border-border bg-surface text-foreground hover:border-amber/60"
       }`}
     >
+      {dalDirettore && <span aria-hidden className="text-amber">✦</span>}
       {etichetta}
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" className="text-faint" aria-hidden><path d="m6 9 6 6 6-6" /></svg>
     </button>
-  );
+    );
+  };
 
   const icona = {
     mic: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><path d="M12 19v3" /></svg>,
@@ -535,7 +629,7 @@ export function CreaClient({
         <p className="mb-3 text-[0.95rem] font-semibold">Che aria deve avere?</p>
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
           {LOOKS.map((l) =>
-            scheda(l.v, l.v === look, () => { setLook(l.v); setPannello(null); }, (
+            scheda(l.v, l.v === look, () => { setLook(l.v); aManoSu("look"); setPannello(null); }, (
               <span className="flex flex-col overflow-hidden rounded-2xl">
                 <span className="block h-24 overflow-hidden bg-[var(--hairline)]">
                   {miniatura && (
@@ -558,7 +652,7 @@ export function CreaClient({
         <p className="mb-3 text-[0.85rem] text-muted">L&apos;anteprima mostra la direzione, non è lo scatto. Le luci di taglio lasciano metà volto nell&apos;ombra.</p>
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
           {LUCI.map((l) =>
-            scheda(l.v, l.v === luce, () => { setLuce(l.v); setPannello(null); }, (
+            scheda(l.v, l.v === luce, () => { setLuce(l.v); aManoSu("luce"); setPannello(null); }, (
               <span className="flex flex-col overflow-hidden rounded-2xl">
                 <span className="relative block h-24 overflow-hidden bg-[#1a1612]">
                   {miniatura && (
@@ -599,13 +693,13 @@ export function CreaClient({
                   id={`vestiti-${chiave}`}
                   value={vestiti[chiave] ?? ""}
                   maxLength={160}
-                  onChange={(e) => setVestiti((all) => ({ ...all, [chiave]: e.target.value }))}
+                  onChange={(e) => { setVestiti((all) => ({ ...all, [chiave]: e.target.value })); aManoSu("vestiti"); }}
                   placeholder="es. giubbotto di pelle nera, maglietta bianca"
                   className="h-12 rounded-2xl border border-border bg-surface px-4 text-[16px] outline-none placeholder:text-faint focus:border-amber/60"
                 />
                 <div className="senza-barra -mx-1 flex gap-1.5 overflow-x-auto px-1">
                   {SPUNTI_VESTITI.map((t) => (
-                    <button key={t} type="button" onClick={() => setVestiti((all) => ({ ...all, [chiave]: t }))} className="h-8 shrink-0 rounded-full border border-border px-3 text-[0.8rem] text-muted transition-colors hover:border-amber/60 hover:text-foreground">
+                    <button key={t} type="button" onClick={() => { setVestiti((all) => ({ ...all, [chiave]: t })); aManoSu("vestiti"); }} className="h-8 shrink-0 rounded-full border border-border px-3 text-[0.8rem] text-muted transition-colors hover:border-amber/60 hover:text-foreground">
                       {t}
                     </button>
                   ))}
@@ -625,7 +719,7 @@ export function CreaClient({
         <p className="mb-3 text-[0.95rem] font-semibold">Formato</p>
         <div className="grid gap-2.5 sm:grid-cols-3">
           {FORMATI.map((f) =>
-            scheda(f.v, f.v === formato, () => { setFormato(f.v); setPannello(null); }, (
+            scheda(f.v, f.v === formato, () => { setFormato(f.v); aManoSu("formato"); setPannello(null); }, (
               <span className="flex items-center gap-3 px-4 py-3">
                 <span aria-hidden className={`shrink-0 rounded-[4px] border-2 border-foreground ${f.v === "verticale" ? "h-6 w-4" : f.v === "quadrato" ? "h-5 w-5" : "h-4 w-6"}`} />
                 <span className="flex flex-col">
@@ -667,11 +761,11 @@ export function CreaClient({
         </div>
         <p className="mb-3 text-[0.85rem] text-muted">Facoltativa: se non scegli niente, decide il set leggendo la tua frase.</p>
         <p className="mb-2 text-[0.8rem] font-semibold text-muted">Inquadratura</p>
-        <div className="mb-3 flex flex-wrap gap-2">{INQUADRATURE.map((o) => chip(o.v === inquadratura, () => setInquadratura(o.v), o.l))}</div>
+        <div className="mb-3 flex flex-wrap gap-2">{INQUADRATURE.map((o) => chip(o.v === inquadratura, () => { setInquadratura(o.v); aManoSu("inquadratura"); }, o.l))}</div>
         <p className="mb-2 text-[0.8rem] font-semibold text-muted">Espressione</p>
-        <div className="mb-3 flex flex-wrap gap-2">{ESPRESSIONI.map((o) => chip(o.v === espressione, () => setEspressione(o.v), o.l))}</div>
+        <div className="mb-3 flex flex-wrap gap-2">{ESPRESSIONI.map((o) => chip(o.v === espressione, () => { setEspressione(o.v); aManoSu("espressione"); }, o.l))}</div>
         <p className="mb-2 text-[0.8rem] font-semibold text-muted">Posa</p>
-        <div className="flex flex-wrap gap-2">{POSE.map((o) => chip(o.v === posa, () => setPosa(o.v), o.l))}</div>
+        <div className="flex flex-wrap gap-2">{POSE.map((o) => chip(o.v === posa, () => { setPosa(o.v); aManoSu("posa"); }, o.l))}</div>
       </>
     ) : null;
 
@@ -759,16 +853,38 @@ export function CreaClient({
 
           <div className="mt-2.5 flex items-end gap-2 sm:mt-2">
             <label htmlFor="frase" className="sr-only">Cosa succede nella foto</label>
+            <div className="relative flex min-w-0 flex-1 rounded-2xl bg-[var(--bg)] sm:rounded-none sm:bg-transparent">
+            {/* Lo specchio: stessa frase, stesso corpo, testo invisibile; sotto le
+                parole che il direttore ha capito compare il filo ambra. */}
+            <div
+              ref={specchio}
+              aria-hidden
+              className="pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap break-words px-3.5 py-3 text-[16px] leading-snug text-transparent sm:px-1 sm:text-[1.35rem] sm:leading-[1.45]"
+            >
+              {(() => {
+                const pezzi: React.ReactNode[] = [];
+                let da = 0;
+                intervalli(scena, evidenze).forEach(([a, b], i) => {
+                  pezzi.push(scena.slice(da, a));
+                  pezzi.push(<mark key={i} className="direttore-parola bg-transparent text-transparent" style={{ animationDelay: `${i * 70}ms` }}>{scena.slice(a, b)}</mark>);
+                  da = b;
+                });
+                pezzi.push(scena.slice(da));
+                return pezzi;
+              })()}
+            </div>
             <textarea
               id="frase"
               value={scena}
-              onChange={(e) => { setScena(e.target.value); setProposta(null); setPropostaGruppo(null); }}
+              onScroll={(e) => { if (specchio.current) specchio.current.scrollTop = e.currentTarget.scrollTop; }}
+              onChange={(e) => { setScena(e.target.value); setProposta(null); setPropostaGruppo(null); if (evidenze.length) setEvidenze([]); }}
               onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); genera(); } }}
               placeholder={gruppoScelto ? "Cosa succede nella scena? Es. ridono insieme su una terrazza al tramonto" : "Cosa succede nella foto? Es. cammina in centro al tramonto"}
               maxLength={MAX_FRASE}
               rows={2}
-              className="min-h-[64px] flex-1 resize-none rounded-2xl bg-[var(--bg)] px-3.5 py-3 text-[16px] leading-snug text-foreground outline-none placeholder:text-faint sm:min-h-[76px] sm:rounded-none sm:bg-transparent sm:px-1 sm:text-[1.35rem] sm:leading-[1.45]"
+              className="relative min-h-[64px] w-full resize-none bg-transparent px-3.5 py-3 text-[16px] leading-snug text-foreground outline-none placeholder:text-faint sm:min-h-[76px] sm:px-1 sm:text-[1.35rem] sm:leading-[1.45]"
             />
+            </div>
             <span className="flex gap-2 sm:hidden">
               {bottoneMic}
               <button
@@ -783,6 +899,19 @@ export function CreaClient({
             </span>
           </div>
 
+          {(leggendo || daDirettore.size > 0) && (
+            <p className="direttore-riga mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 px-1 text-[0.82rem] text-amber-ink" aria-live="polite">
+              <span aria-hidden className={leggendo ? "direttore-pensa" : ""}>✦</span>
+              {leggendo ? (
+                <span className="direttore-luccica">Il direttore legge la scena…</span>
+              ) : (
+                <>
+                  <span>Il direttore ha impostato {daDirettore.size === 1 ? "una scelta" : `${daDirettore.size} scelte`} dalla tua frase</span>
+                  <button type="button" onClick={rimettiComEra} className="font-semibold underline underline-offset-4 hover:text-foreground">rimetti com&apos;era</button>
+                </>
+              )}
+            </p>
+          )}
           {scena.length > MAX_FRASE * 0.7 && (
             <p className={`mt-1 px-1 text-right font-mono text-[0.75rem] tabular-nums ${scena.length >= MAX_FRASE ? "text-blocked" : "text-faint"}`}>
               {scena.length}/{MAX_FRASE}
