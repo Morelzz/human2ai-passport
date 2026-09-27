@@ -5,8 +5,8 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 // Lo scatto che si divide (27/9 sera): non piu' la foto di Gabriella della
-// vetrina, che in prima pagina tornava tre volte, ma uno scatto suo (Asia al
-// mercato dei fiori), col volto al centro esatto: la divisione passa in mezzo.
+// vetrina, che in prima pagina tornava tre volte, ma uno scatto suo (Alessia
+// su una terrazza in Liguria), col volto al centro esatto: la divisione passa in mezzo.
 export interface FotoDivisa { nome: string; prezzoCent: number; allaPersonaCent: number; src960: string; src1600: string }
 
 gsap.registerPlugin(ScrollTrigger);

@@ -48,6 +48,7 @@ export default async function PrezziPage() {
 
         <Copertina
           copertina={copertina}
+          taglio="lato"
           occhiello="Prezzi, dal costo reale del motore"
           titolo="Chi mette il volto non paga mai."
           sotto={
