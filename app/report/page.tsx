@@ -1,6 +1,7 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import ReportClient from "./ReportClient";
+import { TestataTesto } from "@/components/marketing/pagine/TestataTesto";
 
 interface Props {
   searchParams: Promise<{ handle?: string; cert?: string }>;
@@ -22,16 +23,14 @@ export default async function ReportPage({ searchParams }: Props) {
 <div className="relative z-[2]">
         <SiteNav />
 
-        <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
-          <div className="mb-8">
-            <span className="kicker text-blocked">Tutela del registro</span>
-            <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Segnala un abuso</h1>
-            <p className="mt-3 leading-relaxed text-muted">
-              Se un avatar non rappresenta una persona realmente consenziente, è un&apos;<span className="text-foreground">impersonazione</span>,
-              o un contenuto è stato usato senza consenso, segnalalo. Gli operatori revisionano
-              ogni segnalazione e, se accolta, l&apos;avatar viene rimosso dal registro pubblico.
-            </p>
-          </div>
+        <TestataTesto
+          larghezza="max-w-3xl"
+          occhiello="Tutela del registro"
+          titolo="Segnala un abuso."
+          sotto="Se un avatar non rappresenta una persona realmente consenziente, è un'impersonazione, o un contenuto è stato usato senza consenso, segnalalo. Una persona del team legge ogni segnalazione e, se accolta, l'avatar esce dal registro pubblico."
+          dato="letta da una persona"
+        />
+        <main className="mx-auto max-w-3xl px-5 pb-14 sm:px-8">
           <ReportClient initialHandle={handle ?? ""} initialCert={cert ?? ""} />
         </main>
         <Footer />

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
+import type { CopertinaPagina } from "@/lib/foto-pagine";
 import { NemesisMark } from "./NemesisMark";
 
 // Gradiente "tramonto" (amber->coral) = identita di Nemesis, lo strike.
@@ -26,32 +27,28 @@ const STEPS = [
   },
 ];
 
-export function WardIntro() {
+export function WardIntro({ copertina }: { copertina: CopertinaPagina | null }) {
   return (
     <div className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-12">
       <Link href="/" className="inline-flex items-center gap-1 text-sm text-muted transition-colors hover:text-foreground">
         <span aria-hidden className="text-lg leading-none">&lsaquo;</span> Indietro
       </Link>
 
-      <span className="mt-8 block kicker">Ward</span>
-      <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-foreground sm:text-6xl">
-        Le tue immagini,
-        <br />
-        trovate ovunque.
-      </h1>
-      <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
-        Ward cerca sul web le copie delle immagini che generi su Semblic. Le trova, le tagga e decidi tu cosa fare.{" "}
-        <span className="text-foreground">Niente foto da caricare, niente consenso:</span> Ward lavora sulle immagini che già possiedi.
-      </p>
-
-      <div className="mt-7 flex flex-wrap gap-3">
-        <Button asChild size="lg">
-          <Link href="/account">Vai alle tue creazioni</Link>
-        </Button>
+      <div className="-mx-5 mt-5 sm:-mx-8">
+        <Copertina
+          copertina={copertina}
+          occhiello="Ward, il finder"
+          titolo="Le tue immagini, trovate ovunque."
+          sotto={
+            <>
+              Ward cerca sul web le copie delle immagini che generi su Semblic. Le trova, le tagga e decidi tu cosa fare.
+              Niente foto da caricare, niente consenso: lavora sulle immagini che già possiedi.
+              <span className="mt-3 block text-[0.92rem] text-white/55">Apri una tua immagine generata e premi «Cerca copie sul web».</span>
+            </>
+          }
+          azioni={<Link href="/account" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Vai alle tue creazioni</Link>}
+        />
       </div>
-      <p className="mt-4 text-sm text-faint">
-        Apri una tua immagine generata e premi <span className="text-muted">&ldquo;Cerca copie sul web&rdquo;</span>.
-      </p>
 
       <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3">
         {STEPS.map((s, i) => (

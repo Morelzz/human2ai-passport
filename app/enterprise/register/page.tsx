@@ -3,6 +3,7 @@ import { createAuthClient } from "@/lib/supabase-auth";
 import { createServerClient } from "@/lib/supabase";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import RegisterOrgClient from "./RegisterOrgClient";
+import { TestataTesto } from "@/components/marketing/pagine/TestataTesto";
 
 export const metadata = {
   title: "Registra la tua agenzia",
@@ -33,16 +34,13 @@ export default async function EnterpriseRegisterPage() {
     <div className="relative min-h-screen overflow-x-hidden">
 <div className="relative z-[2]">
         <SiteNav />
-        <section className="mx-auto max-w-2xl px-5 pb-24 pt-16 sm:px-8 sm:pt-24">
-          <span className="kicker">Enterprise · KYB</span>
-          <h1 className="mt-4 text-balance text-3xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-4xl">
-            Registra la tua agenzia.
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted">
-            Verifichiamo l&apos;azienda (KYB) prima di darti accesso all&apos;onboarding del roster.
-            È la stessa serietà del controllo identità che chiediamo alle persone: un volto entra nel
-            registro solo se chi lo gestisce è verificato.
-          </p>
+        <TestataTesto
+          larghezza="max-w-3xl"
+          occhiello="Enterprise, verifica dell'azienda"
+          titolo="Registra la tua agenzia."
+          sotto="Verifichiamo l'azienda (KYB) prima di darti accesso al tuo roster. È la stessa serietà del controllo d'identità che chiediamo alle persone: un volto entra nel registro solo se chi lo gestisce è verificato."
+        />
+        <section className="mx-auto max-w-3xl px-5 pb-24 sm:px-8">
 
           {blocked ? (
             <div className="card mt-8 rounded-2xl border-blocked/50 p-6">
