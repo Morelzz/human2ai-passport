@@ -28,11 +28,18 @@ export const LENSES = [
   { v: "200mm", l: "200mm", token: "200mm telephoto, compressed perspective" },
 ] as const satisfies readonly Opt[];
 
-// 3.9 Luce
+// 3.9 Luce. Dal 27/9 anche le luci che scolpiscono il volto: il motore tende
+// a copiare la luce frontale delle foto da studio, quindi queste sono frasi
+// intere e decise (provato: "hard light from frame right" da solo non basta).
 export const LIGHTS = [
   { v: "naturale", l: "Naturale", token: "natural light" },
+  { v: "morbida", l: "Finestra", token: "soft diffused window light from one side, gentle gradual shadows on the face" },
   { v: "golden", l: "Golden hour", token: "golden hour warm light" },
   { v: "studio", l: "Studio", token: "studio softbox lighting" },
+  { v: "taglio_destra", l: "Di taglio da destra", token: "one single hard light from frame right at head height, no fill light: the side of each face toward frame-right is brightly lit, the side toward frame-left falls into deep shadow with a hard nose shadow (split lighting)" },
+  { v: "taglio_sinistra", l: "Di taglio da sinistra", token: "one single hard light from frame left at head height, no fill light: the side of each face toward frame-left is brightly lit, the side toward frame-right falls into deep shadow with a hard nose shadow (split lighting)" },
+  { v: "cupa", l: "Cupa", token: "low-key lighting: one dim hard source, most of the frame in darkness, faces sculpted by shadow, deep blacks, moody" },
+  { v: "dall_alto", l: "Dall'alto", token: "hard overhead top light, deep shadows under the brows, nose and chin" },
   { v: "controluce", l: "Controluce", token: "backlight, rim light" },
   { v: "neon", l: "Neon", token: "nighttime neon lighting" },
 ] as const satisfies readonly Opt[];

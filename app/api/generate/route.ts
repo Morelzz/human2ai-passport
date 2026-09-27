@@ -24,6 +24,7 @@ import { spesaMotoreOggi, sforaTetto, tettoGiorno } from "@/lib/tetto-giorno";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo } from "@/lib/gruppo-prezzi";
 import sharp from "sharp";
 import { controllaRegole } from "@/lib/regole-consenso";
+import { scenaConVestiti, vestitiDa } from "@/lib/vestiti";
 
 export const runtime = "nodejs";
 // Le generazioni ad alta risoluzione (2K/4K) possono durare minuti: alziamo il
@@ -62,7 +63,9 @@ export async function POST(request: Request) {
   // "scene" = direzione artistica libera (azione, ambientazione, luce, stile).
   // Va al motore: l'identità è garantita dal Soul, NON dalle parole del prompt.
   // Retro-compatibilità: accetta anche il vecchio campo "prompt".
-  const scene = String(body?.scene ?? body?.prompt ?? "").trim();
+  // I vestiti scritti nel loro campo vanno davanti alla scena (lib/vestiti):
+  // cosi' li leggono anche le regole della persona e non si perdono in fondo.
+  const scene = scenaConVestiti(String(body?.scene ?? body?.prompt ?? "").trim(), vestitiDa(body?.vestiti, 1), false);
   const category = body?.category ? String(body.category).trim() : null;
   // Modello di generazione (default Soul 2.0) e stile (solo Soul ID).
   const model = isValidModel(body?.model) ? body.model : DEFAULT_MODEL;
@@ -540,7 +543,7 @@ async function accodaGruppo(
   }
   const persone = avatars as NonNullable<(typeof avatars)[number]>[];
 
-  const scene = String(body?.scene ?? body?.prompt ?? "").trim();
+  const scene = scenaConVestiti(String(body?.scene ?? body?.prompt ?? "").trim(), vestitiDa(body?.vestiti, persone.length), true);
 
   // Le regole di ognuno, prima di spendere (lib/regole-consenso).
   const regole = await controllaRegole(admin, persone.map((a) => a.id as string), scene, category);
