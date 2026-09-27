@@ -20,7 +20,7 @@ import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { logBlockedRequest } from "@/lib/blocked";
 import { adultGateReason, type AdultGateState } from "@/lib/adult-gate";
 import { spendVolt, grantVolt } from "@/lib/volt";
-import { spesaMotoreOggi, sforaTetto, tettoGiorno } from "@/lib/tetto-giorno";
+import { contiInterni, spesaMotoreOggi, sforaTetto, tettoGiorno } from "@/lib/tetto-giorno";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo } from "@/lib/gruppo-prezzi";
 import sharp from "sharp";
 import { controllaRegole } from "@/lib/regole-consenso";
@@ -236,7 +236,7 @@ export async function POST(request: Request) {
     // Tetto di spesa giornaliero sul motore (lib/tetto-giorno): prima di
     // spendere VOLT e crediti OpenAI.
     const tetto = tettoGiorno();
-    if (tetto > 0 && sforaTetto(await spesaMotoreOggi(admin), surcharge_cents, tetto)) {
+    if (tetto > 0 && !contiInterni().has(user.id) && sforaTetto(await spesaMotoreOggi(admin), surcharge_cents, tetto)) {
       console.warn(`[generate] tetto giornaliero raggiunto (${tetto} cent stimati)`);
       return NextResponse.json({ error: "Per oggi il set ha finito l'energia: riprova domani. Non ti abbiamo addebitato nulla.", code: "daily_cap" }, { status: 503 });
     }
@@ -578,7 +578,7 @@ async function accodaGruppo(
   };
 
   const tetto = tettoGiorno();
-  if (tetto > 0 && sforaTetto(await spesaMotoreOggi(admin), prezzo.surcharge_cents, tetto)) {
+  if (tetto > 0 && !contiInterni().has(userId) && sforaTetto(await spesaMotoreOggi(admin), prezzo.surcharge_cents, tetto)) {
     console.warn(`[generate] tetto giornaliero raggiunto (${tetto} cent stimati)`);
     return NextResponse.json({ error: "Per oggi il set ha finito l'energia: riprova domani. Non ti abbiamo addebitato nulla.", code: "daily_cap" }, { status: 503 });
   }

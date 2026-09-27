@@ -14,3 +14,16 @@ describe("tetto giornaliero", () => {
     expect(sforaTetto(9999, 50, 0)).toBe(false);
   });
 });
+
+import { sommaSpesa } from "./tetto-giorno";
+describe("i conti interni non consumano il tetto dei clienti", () => {
+  it("la spesa dei conti interni non si conta", () => {
+    const lavori = [
+      { buyer_id: "cliente", params: { pricing: { surcharge_cents: 40 } } },
+      { buyer_id: "prova", params: { pricing: { surcharge_cents: 250 } } },
+      { buyer_id: null, params: { pricing: { surcharge_cents: 10 } } },
+    ];
+    expect(sommaSpesa(lavori, new Set())).toBe(300);
+    expect(sommaSpesa(lavori, new Set(["prova"]))).toBe(50);
+  });
+});

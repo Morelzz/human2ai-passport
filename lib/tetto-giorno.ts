@@ -32,14 +32,29 @@ export function sforaTetto(spesiOggi: number, nuovo: number, tetto: number): boo
   return tetto > 0 && spesiOggi + nuovo > tetto;
 }
 
-export async function spesaMotoreOggi(admin: Admin): Promise<number> {
-  const { data } = await admin
-    .from("generation_jobs")
-    .select("params, status")
-    .gte("created_at", mezzanotteItalia())
-    .neq("status", "error");
-  return (data ?? []).reduce((s, j) => {
+// I conti interni (27/9/2026): il 27/9 notte le prove di Semblic (account di
+// prova, contenuti per il sito) hanno finito il tetto del giorno e il set si e'
+// fermato anche per i clienti veri. I conti in ECHO_CONTI_INTERNI (id utente,
+// separati da virgole) non contano nel tetto e non ne sono fermati: la loro
+// spesa la decide Morelz, non il tetto dei clienti.
+export function contiInterni(): Set<string> {
+  return new Set(String(process.env.ECHO_CONTI_INTERNI ?? "").split(",").map((x) => x.trim()).filter(Boolean));
+}
+
+/** Pura: la spesa stimata dei lavori, senza quelli dei conti interni. */
+export function sommaSpesa(lavori: { buyer_id?: string | null; params: unknown }[], esclusi: Set<string>): number {
+  return lavori.reduce((s, j) => {
+    if (j.buyer_id && esclusi.has(j.buyer_id)) return s;
     const c = (j.params as { pricing?: { surcharge_cents?: number } } | null)?.pricing?.surcharge_cents;
     return s + (typeof c === "number" ? c : 0);
   }, 0);
+}
+
+export async function spesaMotoreOggi(admin: Admin): Promise<number> {
+  const { data } = await admin
+    .from("generation_jobs")
+    .select("params, status, buyer_id")
+    .gte("created_at", mezzanotteItalia())
+    .neq("status", "error");
+  return sommaSpesa(data ?? [], contiInterni());
 }
