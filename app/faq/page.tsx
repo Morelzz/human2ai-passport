@@ -5,6 +5,7 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
 import { jsonLdSicuro } from "@/lib/json-ld";
+import { TestataTesto } from "@/components/marketing/pagine/TestataTesto";
 
 export const metadata = {
   title: "Domande frequenti",
@@ -32,17 +33,14 @@ export default function FaqPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        <section className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
-          <div className="text-center">
-            <span className="kicker">Domande frequenti</span>
-            <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
-              Le domande giuste. <span className="text-gradient">Risposte oneste.</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-              Il tuo volto, i tuoi dati, i tuoi soldi: qui c&apos;è scritto come funziona davvero.
-              Se non trovi la risposta, scrivici.
-            </p>
-          </div>
+        <TestataTesto
+          larghezza="max-w-3xl"
+          occhiello="Domande frequenti"
+          titolo="Le domande giuste. Risposte oneste."
+          sotto="Il tuo volto, i tuoi dati, i tuoi soldi: qui c'è scritto come funziona. Se non trovi la risposta, scrivici."
+          dato={`${FAQ_ITEMS.length} risposte`}
+        />
+        <section className="mx-auto max-w-3xl px-5 pb-16 sm:px-8 sm:pb-24">
 
           <Reveal>
             <div className="mt-12 flex flex-col gap-3">

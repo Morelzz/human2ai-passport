@@ -1,6 +1,8 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import FilterDemo from "./FilterDemo";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Il Filtro Semblic (API) · Sviluppatori",
@@ -10,7 +12,8 @@ export const metadata = {
 
 // Pagina ADDITIVA: documenta l'API filtro (consent-check) + demo live.
 // Realizza la Fase 2 della roadmap pubblica: "Il Filtro per tutti".
-export default function SviluppatoriPage() {
+export default async function SviluppatoriPage() {
+  const copertina = await fotoPagina("sviluppatori");
   const exampleResponse = `{
   "semblic": "consent-filter",
   "subject": "random",
@@ -32,19 +35,19 @@ export default function SviluppatoriPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        <main className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
-          <div className="mb-10">
-            <span className="kicker">Fase 2 · il filtro per tutti</span>
-            <h1 className="mt-2 text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">
-              Il filtro del consenso, via API.
-            </h1>
-            <p className="mt-4 leading-relaxed text-muted">
-              Prima di generare un essere umano, qualsiasi sistema può chiedere a Semblic se quella
-              persona ha <span className="text-foreground">acconsentito</span>, per quella categoria d&apos;uso.
-              È il passaggio che trasforma il consenso in <span className="text-foreground">infrastruttura</span>:
-              senza <code className="rounded bg-verified-soft px-1.5 py-0.5 font-mono text-sm text-verified">ALLOW</code>, non si genera.
-            </p>
-          </div>
+        <Copertina
+          copertina={copertina}
+          occhiello="Il filtro per tutti, via API e MCP"
+          titolo="Il filtro del consenso, dentro il tuo codice."
+          sotto={
+            <>
+              Prima di generare un essere umano, qualsiasi sistema può chiedere a Semblic se quella persona ha
+              acconsentito, per quella categoria d&apos;uso. Senza <code className="rounded bg-[#3DDC97]/15 px-1.5 py-0.5 font-mono text-[0.9em] text-[#7FD9A8]">ALLOW</code>, non si genera.
+            </>
+          }
+          azioni={<a href="#prova" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Provalo dal vivo</a>}
+        />
+        <main id="prova" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-12 sm:px-8 sm:py-16">
 
           {/* Demo live */}
           <FilterDemo />

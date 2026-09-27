@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { CatalogoGriglia } from "./CatalogoGriglia";
 import { voltoCatalogo } from "@/lib/catalogo";
 import { splitEcho } from "@/lib/wallet";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Avatar, il catalogo dei volti verificati",
@@ -37,26 +39,31 @@ export default async function CatalogoPage() {
   // "da X euro": lo scatto piu' economico del listino (bozza quadrata), dalla
   // stessa funzione che fa pagare. Un prezzo vero non si nasconde.
   const daCent = splitEcho(null, "1024x1024", "medium").gross_cents;
+  const copertina = await fotoPagina("catalogo");
+  const attivi = avatars.length - revocati;
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       <SiteNav />
+      <Copertina
+        copertina={copertina}
+        bassa
+        occhiello={`Il registro, ${attivi} ${attivi === 1 ? "volto attivo" : "volti attivi"}`}
+        titolo={<>{avatars.length} {avatars.length === 1 ? "volto" : "volti"}, ognuno col suo sì.</>}
+        sotto={
+          <>
+            Persone vere, verificate e pagate a ogni scatto. Tocca un volto per il suo passaporto pubblico.
+            {revocati > 0 && ` ${revocati === 1 ? "Una persona ha cambiato idea: il sistema ha obbedito." : `${revocati} persone hanno cambiato idea: il sistema ha obbedito.`}`}
+          </>
+        }
+        azioni={
+          <>
+            <Button asChild size="lg"><Link href="/match">Crea con uno di loro</Link></Button>
+            <Link href="/entra" className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[0.95rem] font-semibold text-[#F4EEE3] transition-colors hover:border-[#E29A2E]">Metti il tuo volto</Link>
+          </>
+        }
+      />
       <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex flex-col gap-3">
-            <span className="kicker">Il registro</span>
-            <h1 className="text-balance text-[2.4rem] font-bold leading-[1] tracking-[-0.035em] sm:text-[3.5rem]">
-              {avatars.length} {avatars.length === 1 ? "volto" : "volti"} nel registro
-            </h1>
-            <p className="max-w-[54ch] text-pretty text-[1.05rem] leading-relaxed text-muted">
-              Ogni volto è una persona vera, verificata e consenziente. Tocca un volto per vederne il passaporto pubblico.
-              {revocati > 0 && ` ${revocati === 1 ? "Una persona ha cambiato idea: il sistema ha obbedito." : `${revocati} persone hanno cambiato idea: il sistema ha obbedito.`}`}
-            </p>
-          </div>
-          <Button asChild variant="secondary" className="shrink-0 self-start sm:self-auto">
-            <Link href="/match">Cerca un volto</Link>
-          </Button>
-        </div>
 
         {avatars.length === 0 ? (
           <div className="card mt-8 p-8 text-center">

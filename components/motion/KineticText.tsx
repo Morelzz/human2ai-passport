@@ -21,6 +21,8 @@ const charV: Variants = {
 // Quindi: il gradiente vive su uno span INTERNO con solo `animate` infinito,
 // il reveal vive su uno span ESTERNO con solo variants. Niente lettere annidate
 // nel gradiente (background-clip:text + figli trasformati = pittura rotta).
+const GRADIENTE_ACCESO = false;
+
 export function KineticText({
   text,
   className,
@@ -34,8 +36,10 @@ export function KineticText({
 }) {
   const reduce = useReducedMotionSafe();
 
-  // ── Variante GRADIENTE: blocco unico (no per-lettera), robusta al 100% ────
-  if (gradient) {
+  // ── Variante GRADIENTE: spenta il 27/9 (la parola colorata nel titolo era
+  // la stessa mossa su venti pagine). Resta per chi la chiede esplicitamente
+  // con GRADIENTE_ACCESO; di norma la parola esce come le altre.
+  if (gradient && GRADIENTE_ACCESO) {
     const inner = (
       <motion.span
         className={`${className ?? ""} inline-block bg-[length:200%_auto] bg-clip-text text-transparent`}

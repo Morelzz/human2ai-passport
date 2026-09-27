@@ -2,6 +2,7 @@ import { listPosts } from "@/lib/blog";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { BlogList } from "./BlogList";
+import { TestataTesto } from "@/components/marketing/pagine/TestataTesto";
 
 export const metadata = {
   title: "Blog: AI, consenso e diritto d'immagine",
@@ -19,17 +20,14 @@ export default async function BlogIndexPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        <section className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
-          <div className="reveal mb-12">
-            <span className="kicker">Il blog</span>
-            <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">
-              Voci sull&apos;era dei <span className="text-gradient">volti generati</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-              AI, diritto d&apos;immagine, consenso, provenienza. Quello che sta succedendo
-              ai volti umani nell&apos;era generativa, e come tenerli in mani umane.
-            </p>
-          </div>
+        <TestataTesto
+          larghezza="max-w-3xl"
+          occhiello="Il blog"
+          titolo="Voci sull'era dei volti generati."
+          sotto="AI, diritto d'immagine, consenso, provenienza. Quello che sta succedendo ai volti umani nell'era generativa, e come tenerli in mani umane."
+          dato={`${posts.length} ${posts.length === 1 ? "articolo" : "articoli"}`}
+        />
+        <section className="mx-auto max-w-3xl px-5 pb-16 sm:px-8 sm:pb-24">
 
           {posts.length === 0 ? (
             <p className="reveal text-muted">Primi articoli in arrivo.</p>

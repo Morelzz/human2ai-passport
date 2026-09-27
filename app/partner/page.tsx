@@ -2,8 +2,9 @@ import { Camera, FileSignature, MapPin, Coins, Repeat, Handshake } from "lucide-
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
 import { ApplyForm } from "./ApplyForm";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Diventa Capture Partner",
@@ -14,29 +15,20 @@ export const metadata = {
 // B1 — pagina narrativa Capture Partner (EXPANSION_V3): racconta il programma
 // e raccoglie candidature. Il flusso completo (onboarding, dashboard, revenue
 // share) arriva dopo il lancio: qui si costruisce la lista d'attesa reale.
-export default function PartnerPage() {
+export default async function PartnerPage() {
+  const copertina = await fotoPagina("partner");
   return (
     <div className="relative min-h-screen overflow-x-hidden">
 <div className="relative z-[2]">
         <SiteNav />
 
         {/* Hero — il messaggio di reclutamento del doc */}
-        <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker">Programma Capture Partner</span>
-          <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
-            <KineticText text="L'AI ti ha tolto lavoro?" />
-            <span className="mt-2 block">
-              <KineticText text="Diventa chi acquisisce i volti per" delay={0.25} />{" "}
-              <KineticText text="l'AI etica" gradient delay={0.5} />
-              <KineticText text="." delay={0.6} />
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            Ogni volto del registro nasce da uno shooting vero, fatto da un professionista vero.
-            Stiamo costruendo la rete di fotografi e videomaker certificati SEMBLIC: i punti
-            d&apos;ingresso fisici della piattaforma, città per città.
-          </p>
-        </section>
+        <Copertina
+          copertina={copertina}
+          occhiello="Programma Capture Partner"
+          titolo="L'AI ti ha tolto lavoro? Diventa chi acquisisce i volti per l'AI etica."
+          sotto="Ogni volto del registro nasce da uno shooting vero, fatto da un professionista vero. Stiamo costruendo la rete di fotografi e videomaker certificati Semblic: i punti d'ingresso fisici della piattaforma, città per città."
+        />
 
         {/* Cosa fa un partner */}
         <Reveal>

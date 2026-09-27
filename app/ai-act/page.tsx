@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
+import { TestataTesto } from "@/components/marketing/pagine/TestataTesto";
 
 export const metadata = {
   title: "AI Act, conformi dal giorno uno",
@@ -53,25 +53,14 @@ export default function AiActPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        <main className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="kicker">AI Act · in applicazione dal 2 agosto 2026</span>
-            <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
-              <KineticText text="La trasparenza è" />
-              <span className="mt-1 block">
-                <KineticText text="diventata legge." delay={0.2} />
-              </span>
-              <span className="mt-1 block">
-                <KineticText text="Noi eravamo già pronti" gradient delay={0.4} />
-                <KineticText text="." delay={0.55} />
-              </span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-              Dal 2 agosto 2026 si applicano gli obblighi di trasparenza del Regolamento europeo
-              sull&apos;intelligenza artificiale: i contenuti generati o modificati dall&apos;AI vanno
-              dichiarati e resi riconoscibili. Semblic non si è adeguata: è nata così.
-            </p>
-          </div>
+        <TestataTesto
+          larghezza="max-w-5xl"
+          occhiello="AI Act"
+          titolo="La trasparenza è diventata legge. Noi eravamo già pronti."
+          sotto="Dal 2 agosto 2026 si applicano gli obblighi di trasparenza del Regolamento europeo sull'intelligenza artificiale: i contenuti generati o modificati dall'AI vanno dichiarati e resi riconoscibili. Semblic non si è adeguata: è nata così."
+          dato="in applicazione dal 2 agosto 2026"
+        />
+        <main className="mx-auto max-w-5xl px-5 pb-16 sm:px-8 sm:pb-24">
 
           <Reveal>
             <div className="mt-12 grid gap-4 sm:grid-cols-2">

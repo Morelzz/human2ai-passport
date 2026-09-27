@@ -2,8 +2,9 @@ import { ClipboardList, Users, PackageCheck, ShieldCheck, Fingerprint, Scale } f
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
 import { InquiryForm } from "@/components/business/InquiryForm";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "SEMBLIC Studio",
@@ -14,28 +15,21 @@ export const metadata = {
 // B4 — SEMBLIC Studio (EXPANSION_V3): il livello "done for you". Il brand
 // descrive la campagna, noi consegniamo i contenuti finiti con avatar
 // consenzienti. Pagina narrativa + form: vende il servizio e genera richieste.
-export default function StudioPage() {
+export default async function StudioPage() {
+  const copertina = await fotoPagina("studio");
   return (
     <div className="relative min-h-screen overflow-x-hidden">
 <div className="relative z-[2]">
         <SiteNav />
 
         {/* Hero */}
-        <section className="mx-auto max-w-3xl px-5 pb-14 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker">Semblic Studio</span>
-          <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.02] tracking-[-0.03em] sm:text-5xl">
-            <KineticText text="Tu descrivi la campagna." />
-            <span className="mt-2 block">
-              <KineticText text="Noi consegniamo i contenuti" delay={0.25} />{" "}
-              <KineticText text="finiti" gradient delay={0.5} />
-              <KineticText text="." delay={0.6} />
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            Il servizio completo: brief, volto giusto dal registro, produzione con i nostri
-            motori, consegna con certificato di provenienza. Tu firmi il brief, noi il resto.
-          </p>
-        </section>
+        <Copertina
+          copertina={copertina}
+          occhiello="Semblic Studio"
+          titolo="Tu descrivi la campagna. Noi consegniamo i contenuti finiti."
+          sotto="Il servizio completo: brief, volto giusto dal registro, produzione con i nostri motori, consegna con certificato di provenienza. Tu firmi il brief, noi il resto."
+          azioni={<a href="#brief" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Racconta la campagna</a>}
+        />
 
         {/* Come funziona */}
         <Reveal>
@@ -85,7 +79,7 @@ export default function StudioPage() {
 
         {/* Form */}
         <Reveal>
-          <section className="mx-auto max-w-3xl px-5 py-12 pb-24 sm:px-8">
+          <section id="brief" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-12 pb-24 sm:px-8">
             <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-10">
               <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_90%_at_50%_0%,rgba(242,169,59,0.10),transparent_70%)]" />
               <div className="relative">

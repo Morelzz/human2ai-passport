@@ -9,6 +9,8 @@ import { SediMap } from "@/components/marketing/SediMap";
 import { getSedi, SCAN_PRICE_CENTS } from "@/lib/scan";
 import { siteUrl } from "@/lib/site";
 import { jsonLdSicuro } from "@/lib/json-ld";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "La scansione umana",
@@ -25,6 +27,7 @@ export const metadata = {
 const BOOKING_HREF = "/scansione/prenota"; // H2 — il booking vero
 
 export default async function ScansionePage() {
+  const copertina = await fotoPagina("scansione");
   const isDev = process.env.NODE_ENV !== "production";
   // H4 — sedi per la mappa (tabella `sedi`; fallback Studio Void se assente).
   const sedi = await getSedi();
@@ -55,24 +58,18 @@ export default async function ScansionePage() {
         <SiteNav />
 
         {/* ── HERO ─────────────────────────────────────────────────────── */}
-        <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker">La scansione umana</span>
-          <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
-            <KineticText text="Il momento in cui il tuo volto" />
-            <span className="mt-1 block">
-              <KineticText text="diventa tuo" gradient delay={0.3} />{" "}
-              <KineticText text="per sempre." delay={0.45} />
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            L&apos;ingresso nel registro: una sessione fotografica che cattura il tuo volto com&apos;è
-            davvero e lo trasforma in un avatar che lavora per te, alle tue condizioni.
-          </p>
-          <div className="mt-9 flex flex-wrap justify-center gap-3">
-            <Button asChild size="lg"><Link href={BOOKING_HREF}>Prenota la tua scansione</Link></Button>
-            <Button asChild size="lg" variant="secondary"><Link href="#standard">Leggi lo standard</Link></Button>
-          </div>
-        </section>
+        <Copertina
+          copertina={copertina}
+          occhiello="La scansione umana"
+          titolo="Il momento in cui il tuo volto diventa tuo per sempre."
+          sotto="L'ingresso nel registro: una sessione fotografica che cattura il tuo volto com'è davvero e lo trasforma in un avatar che lavora per te, alle tue condizioni."
+          azioni={
+            <>
+              <Link href={BOOKING_HREF} className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Prenota la tua scansione</Link>
+              <Link href="#standard" className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[0.95rem] font-semibold text-[#F4EEE3] transition-colors hover:border-[#E29A2E]">Leggi lo standard</Link>
+            </>
+          }
+        />
 
         {/* ── IL PERCORSO ──────────────────────────────────────────────── */}
         <Reveal>

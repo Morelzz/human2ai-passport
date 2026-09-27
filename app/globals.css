@@ -311,11 +311,10 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 .reveal { opacity: 0; transform: translateY(18px); animation: reveal-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 @keyframes reveal-up { to { opacity: 1; transform: none; } }
 
-.text-gradient {
-  /* dal tema: bruciato sull'avorio (contrasto AA), luminoso nelle isole scure */
-  background: var(--grad-testo);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
+/* La parola colorata nel titolo (27/9 notte): era la stessa mossa su venti
+   pagine, il segno piu' riconoscibile di una pagina fatta in serie. Spenta:
+   il titolo resta uno, nello stesso colore. */
+.text-gradient { color: inherit; }
 
 /* ── Tipografia del blog (.prose-semblic) ── */
 .prose-semblic { font-size: 1.02rem; line-height: 1.78; color: var(--text-muted); }
@@ -463,3 +462,20 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 @keyframes palco-scan { 0% { top: 8%; opacity: 0; } 15% { opacity: 1; } 55% { top: 58%; opacity: 1; } 70%, 100% { top: 58%; opacity: 0; } }
 .palco-scan { position: absolute; left: 12%; right: 12%; height: 2px; top: 8%; background: linear-gradient(90deg, transparent, #3DDC97, transparent); box-shadow: 0 0 12px #3DDC97; animation: palco-scan 3.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .palco-volto, .palco-scan { animation: none; } .palco-scan { display: none; } }
+
+/* Le copertine delle pagine (27/9 notte): la foto respira piano, una riga di
+   luce passa sul set, la lente sul volto si accende. Tutto fermo con
+   "riduci animazioni". */
+@keyframes copertina-respiro { from { transform: scale(1.06); } to { transform: scale(1); } }
+.copertina-foto { animation: copertina-respiro 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes copertina-riga { 0% { transform: translateY(-10%); opacity: 0; } 12% { opacity: 0.9; } 70% { opacity: 0.9; } 100% { transform: translateY(110vh); opacity: 0; } }
+.copertina-riga { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(61, 220, 151, 0.55), transparent); box-shadow: 0 0 18px rgba(61, 220, 151, 0.45); animation: copertina-riga 2.6s 0.4s cubic-bezier(0.5, 0, 0.3, 1) both; pointer-events: none; }
+@keyframes copertina-lente { from { opacity: 0; transform: scale(1.18); } to { opacity: 1; transform: none; } }
+.copertina-lente { animation: copertina-lente 0.7s 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .copertina-foto, .copertina-lente { animation: none; } .copertina-riga { display: none; } }
+@keyframes testata-filo { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.testata-filo { transform-origin: left; animation: testata-filo 1.1s 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .testata-filo { animation: none; } }
+@keyframes ingresso-riga { 0% { top: -2%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+.ingresso-riga { position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(61, 220, 151, 0.5), transparent); box-shadow: 0 0 16px rgba(61, 220, 151, 0.35); animation: ingresso-riga 6s ease-in-out infinite; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .ingresso-riga { display: none; } }

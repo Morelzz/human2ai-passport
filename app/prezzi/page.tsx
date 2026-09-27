@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Prezzi, dal costo reale del motore",
@@ -32,39 +33,48 @@ const GRUPPI = Array.from({ length: MAX_PERSONE_GRUPPO - 1 }, (_, i) => i + 2).m
 }));
 const VIDEO = (["rapido", "standard", "cinema"] as const).map((l) => ({ livello: LIVELLI[l], durate: DURATE.map((d) => ({ d, p: prezzoAnima(l, d) })) }));
 const eur = (c: number) => formatEur(c);
+// Lo scatto piu' economico e il piu' caro del listino, dalla stessa funzione.
+const TUTTI = TABELLA.flatMap((t) => t.livelli);
+const MINIMO = Math.min(...TUTTI.map((l) => l.volt));
+const MASSIMO = Math.max(...TUTTI.map((l) => l.volt));
 
-export default function PrezziPage() {
+export default async function PrezziPage() {
+  const copertina = await fotoPagina("prezzi");
+  const chi = copertina?.persone.map((p) => p.alias).join(" e ");
   return (
     <div className="relative min-h-screen overflow-x-hidden">
 <div className="relative z-[2]">
         <SiteNav />
 
-        {/* Hero: il principio, grande */}
-        <section className="mx-auto max-w-3xl px-5 pb-16 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker">Prezzi</span>
-          <h1 className="mt-4 text-balance text-[2.6rem] font-bold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
-            <KineticText text="Chi mette il volto" />{" "}
-            <KineticText text="non paga mai" gradient delay={0.3} />
-            <KineticText text="." delay={0.45} />
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            Il valore qui dentro sono le persone. Per questo entrare nel registro è gratis, per sempre.
-            Paga solo chi genera contenuti commerciali, a un prezzo onesto, e una parte va sempre
-            alla persona reale.
-          </p>
-        </section>
+        <Copertina
+          copertina={copertina}
+          occhiello="Prezzi, dal costo reale del motore"
+          titolo="Chi mette il volto non paga mai."
+          sotto={
+            copertina ? (
+              <>Questo scatto è costato <strong className="font-semibold text-white">{eur(copertina.grossCents)}</strong>: <strong className="font-semibold text-[#7FD9A8]">{eur(copertina.royaltyCents)}</strong> sono andati a {chi}. Qui sotto il listino vero, lo stesso che fa pagare Crea.</>
+            ) : (
+              <>Entrare nel registro è gratis, per sempre. Paga solo chi genera, a un prezzo onesto, e una parte va sempre alla persona reale.</>
+            )
+          }
+          azioni={
+            <>
+              <Button asChild size="lg"><Link href="#listino">Vedi il listino</Link></Button>
+              <Link href="/entra" className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[0.95rem] font-semibold text-[#F4EEE3] transition-colors hover:border-[#E29A2E]">Metti il tuo volto, gratis</Link>
+            </>
+          }
+        />
 
         {/* Le due parti: chi mette il volto / chi genera */}
         <Reveal>
-          <section className="mx-auto max-w-5xl px-5 py-6 sm:px-8">
-            <div className="grid gap-4 sm:grid-cols-2">
+          <section className="mx-auto max-w-[1380px] px-5 pb-6 pt-14 sm:px-8 sm:pt-20">
+            <div className="grid gap-3 lg:grid-cols-2">
               {/* Sellers: gratis sempre */}
-              <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-9">
-                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,var(--verified-c),transparent)]" />
-                <span className="kicker text-verified">Metti il tuo volto</span>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-5xl font-bold tracking-[-0.04em]">0 €</span>
-                  <span className="text-sm font-semibold text-muted">per sempre</span>
+              <div className="relative overflow-hidden rounded-[28px] bg-[var(--pannello-persona)] p-7 sm:p-10">
+                <span className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-verified">Metti il tuo volto</span>
+                <div className="mt-4 flex items-baseline gap-3">
+                  <span className="text-[5.5rem] font-bold leading-[0.85] tracking-[-0.06em] sm:text-[7.5rem]">0 €</span>
+                  <span className="text-[1rem] font-semibold text-muted">per sempre</span>
                 </div>
                 <p className="mt-2 text-sm font-bold text-verified">Sei tu il valore. Non il cliente.</p>
                 <ul className="mt-6 flex flex-col gap-3">
@@ -89,14 +99,16 @@ export default function PrezziPage() {
               </div>
 
               {/* Buyers: a consumo */}
-              <div className="card relative overflow-hidden rounded-[2rem] p-7 sm:p-9">
-                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,var(--amber-c),transparent)]" />
-                <span className="kicker">Generi contenuti</span>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-5xl font-bold tracking-[-0.04em]">a consumo</span>
+              <div data-theme="dark" className="relative overflow-hidden rounded-[28px] bg-[#0E0C09] p-7 text-[#F4EEE3] sm:p-10">
+                <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_70%_at_90%_10%,rgba(226,154,46,0.18),transparent_70%)]" />
+                <span className="relative font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[#E29A2E]">Generi contenuti</span>
+                <div className="relative mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="text-[1rem] font-semibold text-white/60">da</span>
+                  <span className="text-[5.5rem] font-bold leading-[0.85] tracking-[-0.06em] sm:text-[7.5rem]">{eur(MINIMO)}</span>
+                  <span className="text-[1rem] font-semibold text-white/60">a scatto, mai oltre {eur(MASSIMO)}</span>
                 </div>
-                <p className="mt-2 text-sm font-bold text-amber-ink">Paghi solo quello che generi.</p>
-                <ul className="mt-6 flex flex-col gap-3">
+                <p className="relative mt-2 text-sm font-bold text-[#E5B57A]">Paghi solo quello che generi.</p>
+                <ul className="relative mt-6 flex flex-col gap-3">
                   {[
                     "Volti reali, verificati e consenzienti",
                     "Licenza d'uso commerciale, full-res",
@@ -104,15 +116,15 @@ export default function PrezziPage() {
                     "Prezzo in chiaro prima di generare (qui sotto)",
                     "La persona dietro il volto viene pagata, sempre",
                   ].map((f) => (
-                    <li key={f} className="flex gap-2.5 text-sm leading-snug text-muted">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-ink" />
+                    <li key={f} className="flex gap-2.5 text-sm leading-snug text-white/70">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#E5B57A]" />
                       {f}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-8">
-                  <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-                    <Link href="/match">Trova un volto</Link>
+                <div className="relative mt-8">
+                  <Button asChild size="lg" className="w-full sm:w-auto">
+                    <Link href="/match">Crea con un volto vero</Link>
                   </Button>
                 </div>
               </div>
@@ -122,13 +134,13 @@ export default function PrezziPage() {
 
         {/* Quanto costa generare: foto, scene di gruppo, video */}
         <Reveal>
-          <section className="mx-auto max-w-5xl px-5 py-14 sm:px-8">
-            <div className="text-center">
-              <span className="kicker">Quanto costa generare</span>
-              <h2 className="mt-2 text-balance text-[1.7rem] font-bold leading-tight tracking-[-0.03em] sm:text-4xl">
-                Paghi quanto costa, più un piccolo ricarico equo.
+          <section id="listino" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-14 sm:px-8 sm:py-20">
+            <div>
+              <span className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-amber-ink">Il listino</span>
+              <h2 className="mt-3 max-w-[20ch] text-balance text-[2.2rem] font-bold leading-[0.98] tracking-[-0.045em] sm:text-[3.4rem]">
+                Quanto costa il motore, più un ricarico equo.
               </h2>
-              <p className="mx-auto mt-3 max-w-xl text-pretty text-sm leading-relaxed text-muted sm:text-base">
+              <p className="mt-4 max-w-[60ch] text-pretty text-[1rem] leading-relaxed text-muted sm:text-[1.1rem]">
                 Il prezzo parte dal costo reale del motore. Sopra, un ricarico onesto: una parte a noi,
                 una parte sempre alla persona. Gli stessi numeri che vedi in Crea prima di premere Genera.
               </p>

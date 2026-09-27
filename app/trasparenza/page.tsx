@@ -6,6 +6,7 @@ import { formatEur } from "@/lib/wallet";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { PublicRoadmapCompact } from "@/components/marketing/PublicRoadmap";
+import { TestataTesto } from "@/components/marketing/pagine/TestataTesto";
 
 export const metadata = {
   // Review B4: solo il nome pagina — il suffisso lo aggiunge il template layout.
@@ -55,17 +56,14 @@ export default async function TrasparenzaPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        <section className="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-24">
-          {/* Intro */}
-          <div className="reveal mb-12 text-center">
-            <span className="kicker">Rapporto di trasparenza</span>
-            <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">La prova è nei numeri</h1>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-              Ogni volto è una persona reale che ha acconsentito. Ogni generazione è tracciata e
-              paga chi c&apos;è dietro. Niente di nascosto: questi sono i numeri del registro,
-              letti in tempo reale.
-            </p>
-          </div>
+        <TestataTesto
+          larghezza="max-w-4xl"
+          occhiello="Rapporto di trasparenza"
+          titolo="La prova è nei numeri."
+          sotto="Ogni volto è una persona reale che ha acconsentito. Ogni generazione è tracciata e paga chi c'è dietro. Niente di nascosto: questi sono i numeri del registro, letti in tempo reale."
+          dato="numeri letti dal database"
+        />
+        <section className="mx-auto max-w-4xl px-5 pb-16 sm:px-8 sm:pb-24">
 
           {/* I DUE numeri MANIFESTO (Fase 4.1): il filtro che blocca (richieste
               rifiutate) e le persone che hanno detto no (volti protetti). Reali dal DB. */}

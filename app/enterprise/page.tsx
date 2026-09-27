@@ -3,8 +3,9 @@ import { Lock, CalendarRange, UserCheck, BadgeCheck, HeartHandshake, RefreshCcw 
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
 import { InquiryForm } from "@/components/business/InquiryForm";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Enterprise: Roster riservato",
@@ -16,39 +17,32 @@ export const metadata = {
 // tempo per i brand. Tecnicamente è un'estensione dello scope di consenso
 // (categoria riservata nel ledger per la durata del contratto) — qui la
 // proposta di valore + contatto commerciale; il flusso completo dopo il lancio.
-export default function EnterprisePage() {
+export default async function EnterprisePage() {
+  const copertina = await fotoPagina("enterprise");
   return (
     <div className="relative min-h-screen overflow-x-hidden">
 <div className="relative z-[2]">
         <SiteNav />
 
         {/* Hero */}
-        <section className="mx-auto max-w-3xl px-5 pb-14 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker">Enterprise</span>
-          <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.02] tracking-[-0.03em] sm:text-5xl">
-            <KineticText text="Il volto giusto," />
-            <span className="mt-2 block">
-              <KineticText text="riservato al tuo" delay={0.25} />{" "}
-              <KineticText text="brand" gradient delay={0.45} />
-              <KineticText text="." delay={0.55} />
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            La licenza prioritaria a tempo: ingaggi un volto verificato del registro per la tua
-            categoria merceologica, per 6 o 12 mesi. Nessun concorrente potrà usarlo lì, finché è tuo.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <a href="#richiesta" className="rounded-full bg-amber px-6 py-3 text-[0.9rem] font-semibold text-on-amber transition hover:brightness-110 focus-ring">
-              Riserva un volto
-            </a>
-            <Link href="/enterprise/register" className="rounded-full border border-border px-6 py-3 text-[0.9rem] font-semibold text-foreground transition hover:border-amber/60 focus-ring">
-              Registra la tua agenzia
-            </Link>
-          </div>
-          <p className="mt-3 text-xs text-faint">
-            Sei un&apos;agenzia che gestisce dei volti? Registra l&apos;azienda, supera il KYB e onboarda il tuo roster.
-          </p>
-        </section>
+        <Copertina
+          copertina={copertina}
+          occhiello="Enterprise"
+          titolo="Il volto giusto, riservato al tuo brand."
+          sotto={
+            <>
+              La licenza prioritaria a tempo: ingaggi un volto verificato del registro per la tua categoria
+              merceologica, per 6 o 12 mesi. Nessun concorrente potrà usarlo lì, finché è tuo.
+              <span className="mt-3 block text-[0.92rem] text-white/55">Sei un&apos;agenzia che gestisce dei volti? Registra l&apos;azienda, supera il KYB e porta il tuo roster.</span>
+            </>
+          }
+          azioni={
+            <>
+              <a href="#richiesta" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Riserva un volto</a>
+              <Link href="/enterprise/register" className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[0.95rem] font-semibold text-[#F4EEE3] transition-colors hover:border-[#E29A2E]">Registra la tua agenzia</Link>
+            </>
+          }
+        />
 
         {/* Come funziona */}
         <Reveal>

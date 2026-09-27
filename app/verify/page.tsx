@@ -1,6 +1,8 @@
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import VerifyClient from "./VerifyClient";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 // Il portale della campagna: i link /verify (e i deep-link ?token=) vengono
 // condivisi da badge, segnalazioni e feed. Solo title/description propri (SEO +
@@ -18,6 +20,7 @@ export default async function VerifyPage({
 }: {
   searchParams: Promise<{ token?: string }>;
 }) {
+  const copertina = await fotoPagina("verify");
   // Deep-link: /verify?token=<cert> precompila e verifica subito (usato dai feed,
   // dal badge, dalle segnalazioni). Senza il parametro, comportamento invariato.
   const { token } = await searchParams;
@@ -26,20 +29,21 @@ export default async function VerifyPage({
 <div className="relative z-[2]">
         <SiteNav />
 
-        <main className="mx-auto max-w-xl px-5 py-14 sm:px-8">
-          <div className="mb-8">
-            <span className="kicker">Sigil</span>
-            {/* Titolo in display sottile (Geist peso 200, tracking -0.04em) */}
-            <h1 className="mt-2 text-4xl font-bold tracking-[-0.04em] sm:text-5xl">Verifica un contenuto</h1>
-            <p className="mt-3 leading-relaxed text-muted">
-              <span className="text-foreground">Sigil</span>{" "}è il verificatore pubblico di Semblic.
-              Carica un&apos;immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e ti mostriamo
-              chi l&apos;ha autorizzato e con quale consenso. Se non lo è, possiamo confrontare il volto col
-              registro, <span className="text-foreground">a tutela della persona</span>.
-            </p>
-            {/* Hairline tramonto, lo stesso filo di passport, catalogo e match */}
-            <div aria-hidden className="mt-6 h-px" style={{ background: "linear-gradient(90deg, rgba(242,169,59,0.5), var(--hairline) 34%, transparent 72%)" }} />
-          </div>
+        <Copertina
+          copertina={token ? null : copertina}
+          taglio="lato"
+          occhiello="Sigil, il verificatore pubblico"
+          titolo="Ogni scatto porta la sua prova."
+          sotto={
+            <>
+              Carica un&apos;immagine: se è un contenuto Semblic leggiamo la filigrana invisibile e ti mostriamo chi l&apos;ha
+              autorizzato e con quale consenso. Se non lo è, possiamo confrontare il volto col registro, a tutela della persona.
+              {copertina && !token && <span className="mt-3 block text-[0.92rem] text-white/55">Prova con questo: tocca il cartellino in alto e Sigil legge il suo certificato.</span>}
+            </>
+          }
+          azioni={<a href="#verifica" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Verifica un contenuto</a>}
+        />
+        <main id="verifica" className="mx-auto max-w-xl scroll-mt-24 px-5 py-10 sm:px-8 sm:py-14">
           <VerifyClient initialToken={token ?? ""} />
         </main>
         <Footer />

@@ -1,0 +1,17 @@
+{
+ "certificato": "22bcaa7cc65aa947e33be1673eb095009af6aa10ece0a22b82b9b46eecf23dac",
+ "persone": [
+  {
+   "handle": "gabriella",
+   "alias": "Gabriella"
+  },
+  {
+   "handle": "stella",
+   "alias": "Stella"
+  }
+ ],
+ "gross_cents": 100,
+ "royalty_cents": 22,
+ "creato": "2026-09-27T02:37:15.228524+00:00",
+ "fonte": "scatto commerciale pagato su Semblic, originale senza filigrana visibile"
+}

@@ -7,6 +7,8 @@ import { TeamSection } from "@/components/marketing/TeamSection";
 import { getSedi } from "@/lib/scan";
 import { ContactForm } from "./ContactForm";
 import { pianoPerId } from "@/lib/abbonamenti";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Contatti e sedi",
@@ -18,6 +20,7 @@ export const metadata = {
 // B3: ?ingaggio=<handle> pre-compila il form per una richiesta di ingaggio reale.
 // ?tema=formazione pre-compila la richiesta di formazione aziendale (da /academy#aziende).
 export default async function ContattiPage({ searchParams }: { searchParams: Promise<{ ingaggio?: string; tema?: string; oggetto?: string; piano?: string }> }) {
+  const copertina = await fotoPagina("contatti");
   const { ingaggio, tema, oggetto, piano } = await searchParams;
   const pianoScelto = pianoPerId(piano);
   const prefill = ingaggio
@@ -43,17 +46,14 @@ export default async function ContattiPage({ searchParams }: { searchParams: Pro
 <div className="relative z-[2]">
         <SiteNav />
 
-        <main className="mx-auto max-w-4xl px-5 py-14 sm:px-8 sm:py-20">
-          <div className="text-center">
-            <span className="kicker">Contatti</span>
-            <h1 className="mt-3 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
-              Parliamone. <span className="text-gradient">Da persone.</span>
-            </h1>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted">
-              Che tu sia un brand, una persona che vuole possedere la propria immagine, un giornalista
-              o un futuro partner: scrivici, rispondiamo noi.
-            </p>
-          </div>
+        <Copertina
+          copertina={copertina}
+          occhiello="Contatti"
+          titolo="Parliamone. Da persone."
+          sotto="Che tu sia un brand, una persona che vuole possedere la propria immagine, un giornalista o un futuro partner: scrivici, rispondiamo noi."
+          azioni={<a href="#scrivici" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Scrivici</a>}
+        />
+        <main id="scrivici" className="mx-auto max-w-4xl scroll-mt-24 px-5 py-4 sm:px-8 sm:py-8">
 
           <Reveal>
             <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_280px]">

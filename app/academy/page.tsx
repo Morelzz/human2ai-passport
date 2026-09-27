@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
 import { TeamSection } from "@/components/marketing/TeamSection";
 import { getCorsi, CorsoLivello } from "@/lib/academy";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Academy, la scuola dei diritti d'immagine",
@@ -74,6 +75,7 @@ const PERCORSI_AZIENDE = [
 ];
 
 export default async function AcademyPage() {
+  const copertina = await fotoPagina("academy");
   const corsi = await getCorsi();
 
   return (
@@ -81,22 +83,14 @@ export default async function AcademyPage() {
 <div className="relative z-[2]">
         <SiteNav />
 
-        <main className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="kicker">SEMBLIC Academy</span>
-            <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl">
-              <KineticText text="Capire i propri diritti" />
-              <span className="mt-1 block">
-                <KineticText text="è il primo modo di" delay={0.25} />{" "}
-                <KineticText text="possederli" gradient delay={0.45} />
-                <KineticText text="." delay={0.55} />
-              </span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-              Tre percorsi, tre pubblici: chi vuole capire, chi vuole creare, chi vuole farne un
-              mestiere. I corsi aprono per gradi, questo è il disegno, onesto e completo.
-            </p>
-          </div>
+        <Copertina
+          copertina={copertina}
+          occhiello="Semblic Academy"
+          titolo="Capire i propri diritti è il primo modo di possederli."
+          sotto="Tre percorsi, tre pubblici: chi vuole capire, chi vuole creare, chi vuole farne un mestiere. I corsi aprono per gradi: questo è il disegno, onesto e completo."
+          azioni={<a href="#aziende" className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[0.95rem] font-semibold text-[#F4EEE3] transition-colors hover:border-[#E29A2E]">Formazione per le aziende</a>}
+        />
+        <main className="mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-16">
 
           <Reveal>
             <div className="mt-12 grid gap-4 sm:grid-cols-3">

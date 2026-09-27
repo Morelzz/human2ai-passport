@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ScanFace, Fingerprint, ShieldCheck, BadgeCheck, Lock, History, ArrowRight } from "lucide-react";
+import { ScanFace, BadgeCheck, Lock, History, ArrowRight } from "lucide-react";
 import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 export const metadata = {
   title: "Tutela dell'identità",
@@ -16,62 +17,42 @@ export const metadata = {
 // dell'avatar: faceprint a 128 numeri, blocco se non combacia, nessuna foto
 // conservata. Solo contenuto + link, stile cinematic condiviso.
 // Vedi docs/superpowers/specs/2026-06-23-pagina-tutela-identita-design.md.
-export default function TutelaPage() {
+export default async function TutelaPage() {
+  const copertina = await fotoPagina("tutela");
   return (
     <div className="relative min-h-screen overflow-x-hidden">
 <div className="relative z-[2]">
         <SiteNav />
 
         {/* ── HERO: il cuore (verifica faceprint confronto) ───────────── */}
-        <section className="mx-auto max-w-3xl px-5 pb-12 pt-16 text-center sm:px-8 sm:pt-24">
-          <span className="kicker">Tutela dell&apos;identità</span>
-          <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-5xl">
-            <KineticText text="Il tuo volto entra nel registro" />
-            <span className="mt-2 block">
-              <KineticText text="solo se sei" delay={0.25} />{" "}
-              <KineticText text="davvero tu" gradient delay={0.4} />
-              <KineticText text="." delay={0.5} />
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            Ti verifichiamo una volta, con un documento e un selfie. Da quel momento le foto
-            del tuo avatar devono combaciare con quel volto. Gli impostori non passano.
-          </p>
-
-          {/* Flusso: tre passi + esito (salvia / coral). Stack su mobile, in riga su desktop. */}
-          <div className="mx-auto mt-9 max-w-xl">
-            <div className="flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center">
-              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
-                <ScanFace className="h-4 w-4 shrink-0" style={{ color: "var(--amber-ink)" }} /> Verifica Didit
+        <Copertina
+          copertina={copertina}
+          occhiello="Tutela dell'identità"
+          titolo="Il tuo volto entra nel registro solo se sei davvero tu."
+          sotto={
+            <>
+              Ti verifichiamo una volta, con un documento e un selfie. Da quel momento le foto del tuo avatar devono
+              combaciare con quel volto. Gli impostori non passano.
+              <span className="mt-5 flex flex-wrap items-center gap-2 font-mono text-[0.78rem]">
+                <span className="rounded-full border border-white/20 px-3 py-1.5">Verifica Didit</span>
+                <span aria-hidden className="text-white/40">→</span>
+                <span className="rounded-full border border-white/20 px-3 py-1.5">Faceprint, 128 numeri</span>
+                <span aria-hidden className="text-white/40">→</span>
+                <span className="rounded-full border border-white/20 px-3 py-1.5">Confronto</span>
               </span>
-              <ArrowRight className="hidden h-4 w-4 shrink-0 text-faint sm:block" aria-hidden />
-              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
-                <Fingerprint className="h-4 w-4 shrink-0" style={{ color: "var(--amber-ink)" }} /> Faceprint, 128 numeri
+              <span className="mt-2 flex flex-wrap gap-2 font-mono text-[0.78rem]">
+                <span className="rounded-full border border-[#3DDC97]/40 px-3 py-1.5 text-[#7FD9A8]">stessa persona, nel registro</span>
+                <span className="rounded-full border border-[#EE7A70]/40 px-3 py-1.5 text-[#EE9A92]">volto diverso, bloccato</span>
               </span>
-              <ArrowRight className="hidden h-4 w-4 shrink-0 text-faint sm:block" aria-hidden />
-              <span className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm">
-                <ShieldCheck className="h-4 w-4 shrink-0" style={{ color: "var(--amber-ink)" }} /> Confronto
-              </span>
-            </div>
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-2.5">
-              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem", border: "1px solid rgba(127,174,150,0.4)", background: "rgba(127,174,150,0.08)", color: "#7FAE96", borderRadius: 999, padding: "0.35rem 0.85rem", fontSize: "0.78rem" }}>
-                <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> Stessa persona, nel registro
-              </span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem", border: "1px solid rgba(238,122,112,0.4)", background: "rgba(238,122,112,0.08)", color: "#EE7A70", borderRadius: 999, padding: "0.35rem 0.85rem", fontSize: "0.78rem" }}>
-                <Lock className="h-3.5 w-3.5" aria-hidden /> Volto diverso, bloccato
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/signup/avatar" className="rounded-full bg-amber px-6 py-3 text-[0.9rem] font-semibold text-on-amber transition hover:brightness-110 focus-ring">
-              Proteggi il tuo volto
-            </Link>
-            <Link href="/verify" className="rounded-full border border-border px-6 py-3 text-[0.9rem] font-semibold text-foreground transition hover:border-amber/60 focus-ring">
-              Verifica con Sigil
-            </Link>
-          </div>
-        </section>
+            </>
+          }
+          azioni={
+            <>
+              <Link href="/signup/avatar" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Proteggi il tuo volto</Link>
+              <Link href="/verify" className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[0.95rem] font-semibold text-[#F4EEE3] transition-colors hover:border-[#E29A2E]">Verifica con Sigil</Link>
+            </>
+          }
+        />
 
         {/* ── I PILASTRI ──────────────────────────────────────────────────── */}
         <Reveal>

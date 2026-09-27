@@ -4,13 +4,14 @@ import { SiteNav } from "@/components/marketing/SiteNav";
 import { Footer } from "@/components/marketing/Footer";
 import { SectionTitle } from "@/components/marketing/SectionTitle";
 import { Reveal } from "@/components/motion/Reveal";
-import { KineticText } from "@/components/motion/KineticText";
 import { qualitaPer } from "@/app/match/crea/opzioni";
 import { prezzoAnima } from "@/lib/engines/anima-prezzi";
 import { PIANI, contiPiano } from "@/lib/abbonamenti";
 import { formatEur } from "@/lib/wallet";
 import { createServerClient } from "@/lib/supabase";
 import { getPublicAvatars } from "@/lib/registry";
+import { fotoPagina } from "@/lib/foto-pagine";
+import { Copertina } from "@/components/marketing/pagine/Copertina";
 
 // PAGINA PER CHI METTE IL VOLTO (20/9/2026). Prima esisteva solo il flusso
 // chiuso /signup/avatar: chi arrivava da fuori trovava un accesso, non una
@@ -43,6 +44,7 @@ const PASSI = [
 ];
 
 export default async function EntraPage() {
+  const copertina = await fotoPagina("entra");
   const alta = qualitaPer("verticale").find((q) => q.v === "alta")!;
   const video = prezzoAnima("standard", 5);
   const campagna = PIANI.find((p) => p.id === "campagna")!;
@@ -55,31 +57,25 @@ export default async function EntraPage() {
       <div className="relative z-[2]">
         <SiteNav />
 
-        <section className="mx-auto max-w-4xl px-5 pb-8 pt-14 text-center sm:px-8 sm:pt-20">
-          <span className="kicker">Metti il tuo volto</span>
-          <h1 className="mt-4 text-balance text-[2.5rem] font-bold leading-[1.02] tracking-[-0.045em] sm:text-[3.6rem]">
-            <KineticText text="Il tuo volto vale." />{" "}
-            <KineticText text="E decidi tu." gradient delay={0.3} />
-          </h1>
-          <p className="mx-auto mt-5 max-w-[58ch] text-pretty text-[1.05rem] leading-relaxed text-muted">
-            L&apos;intelligenza artificiale oggi genera persone che non esistono, o copia quelle che esistono senza
-            chiedere. Semblic fa il contrario: mette il tuo volto in un registro dove serve il tuo permesso per ogni
-            utilizzo, e ogni utilizzo ti paga. Entrare è gratis, e resti padrone di tutto.
-          </p>
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/signup/avatar" className="inline-flex h-[52px] items-center rounded-full bg-amber px-6 text-[1rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">
-              Entra nel registro
-            </Link>
-            <Link href="/catalogo" className="inline-flex h-[52px] items-center rounded-full border border-edge bg-surface px-6 text-[1rem] font-semibold transition-colors hover:border-amber/70">
-              Guarda chi c&apos;è già
-            </Link>
-          </div>
-          {quanti > 0 && (
-            <p className="mt-4 text-[0.9rem] text-faint">
-              Nel registro ci sono {quanti} volti verificati. Chi entra adesso è tra i primi, e viene scelto più spesso.
-            </p>
-          )}
-        </section>
+        <Copertina
+          copertina={copertina}
+          occhiello="Metti il tuo volto"
+          titolo="Il tuo volto vale. Decidi tu."
+          sotto={
+            <>
+              L&apos;intelligenza artificiale oggi genera persone che non esistono, o copia quelle che esistono senza
+              chiedere. Semblic fa il contrario: serve il tuo permesso per ogni utilizzo, e ogni utilizzo ti paga.
+              Entrare è gratis, e resti padrone di tutto.
+              {quanti > 0 && <span className="mt-3 block text-[0.92rem] text-white/55">Nel registro ci sono {quanti} volti verificati. Chi entra adesso è tra i primi, e viene scelto più spesso.</span>}
+            </>
+          }
+          azioni={
+            <>
+              <Link href="/signup/avatar" className="inline-flex h-12 items-center rounded-full bg-amber px-6 text-[0.98rem] font-bold text-on-amber transition-colors hover:bg-amber-hover">Entra nel registro</Link>
+              <Link href="/catalogo" className="inline-flex h-12 items-center rounded-full border border-white/25 px-5 text-[0.95rem] font-semibold text-[#F4EEE3] transition-colors hover:border-[#E29A2E]">Guarda chi c&apos;è già</Link>
+            </>
+          }
+        />
 
         {/* Quanto si guadagna, senza giri di parole */}
         <Reveal>
