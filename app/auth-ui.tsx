@@ -71,7 +71,7 @@ export function Shell({ title, subtitle, children }: { title: string; subtitle?:
         <div aria-hidden className="pointer-events-none absolute inset-0 opacity-70" style={{ backgroundImage: "linear-gradient(rgba(244,238,227,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(244,238,227,0.045) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_30%_70%,rgba(226,154,46,0.16),transparent_70%)]" />
         <span aria-hidden className="ingresso-riga" />
-        <Link href="/" className="relative w-fit"><Logo size={26} /></Link>
+        <div className="relative w-fit"><Logo size={26} /></div>
         <div className="relative">
           <p className="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-[#E29A2E]">Il registro dei volti</p>
           <p className="mt-4 max-w-[13ch] text-[4.2rem] font-bold leading-[0.92] tracking-[-0.055em]">Ogni volto qui ha detto sì.</p>
