@@ -652,9 +652,12 @@ export default async function AccountPage() {
         <SiteNav />
         <MarkContentsSeen />
 
-        <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
-          {/* ── Testata ── */}
-          <div className="flex flex-wrap items-center gap-4">
+        <main className="mx-auto max-w-6xl px-3 py-4 sm:px-8 sm:py-8">
+          {/* ── Testata: la console al buio, come il set (27/9 notte) ── */}
+          <section data-theme="dark" className="relative overflow-hidden rounded-[28px] bg-[#0E0C09] p-5 text-[#F4EEE3] sm:p-8">
+          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-70" style={{ backgroundImage: "linear-gradient(rgba(244,238,227,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(244,238,227,0.045) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_80%_at_90%_0%,rgba(226,154,46,0.16),transparent_70%)]" />
+          <div className="relative flex flex-wrap items-center gap-4">
             <span aria-hidden className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--amber-c),#E0715F)] text-[1.25rem] font-bold text-white">
               {(profile?.full_name || user.email || "?").trim().charAt(0).toUpperCase()}
             </span>
@@ -670,15 +673,19 @@ export default async function AccountPage() {
               <LogoutButton />
             </div>
           </div>
-          <div aria-hidden className="mt-4 h-px bg-[linear-gradient(90deg,var(--amber-c),var(--hairline)_34%,transparent_72%)] opacity-70" />
+          <div aria-hidden className="relative mt-4 h-px bg-[linear-gradient(90deg,var(--amber-c),rgba(244,238,227,0.12)_34%,transparent_72%)] opacity-70" />
 
-          <Quadro numeri={numeri} />
+          <div className="relative"><Quadro numeri={numeri} /></div>
+          </section>
+
+          <div className="px-2 sm:px-0">
 
           <Linguette schede={schede} />
 
           <p className="mt-10 text-center text-[0.78rem] leading-relaxed text-faint">
             Il tuo profilo è protetto: solo tu puoi vederlo e modificarlo.
           </p>
+          </div>
         </main>
       </div>
     </div>
@@ -687,11 +694,11 @@ export default async function AccountPage() {
 
 function VerifiedBadge() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-verified/35 bg-verified-soft px-2.5 py-1">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--verified-c)" strokeWidth="3" aria-hidden>
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#3DDC97]/40 bg-[#3DDC97]/10 px-2.5 py-1">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3DDC97" strokeWidth="3" aria-hidden>
         <path d="M20 6 9 17l-5-5" />
       </svg>
-      <span className="text-[0.72rem] font-bold tracking-[0.04em] text-on-verified">Creatore verificato</span>
+      <span className="text-[0.72rem] font-bold tracking-[0.04em] text-[#7FD9A8]">Creatore verificato</span>
     </span>
   );
 }
