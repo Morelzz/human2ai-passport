@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { PRESETS } from "@/lib/editor/types";
+import { allowRequest } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 20;
@@ -39,6 +40,10 @@ export async function POST(request: Request) {
     data: { user },
   } = await auth.auth.getUser();
   if (!user) return NextResponse.json({ error: "Devi accedere" }, { status: 401 });
+  // Ogni chiamata costa una lettura di Claude: un tetto per persona (27/9).
+  if (!(await allowRequest(`edit-interpret:${user.id}`, 30, 60))) {
+    return NextResponse.json({ error: "Troppe richieste, attendi un momento" }, { status: 429 });
+  }
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: "Non configurato" }, { status: 503 });
   }

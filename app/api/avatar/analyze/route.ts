@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { analyzeIdentikit, type VisionImage } from "@/lib/identikit-vision";
+import { allowRequest } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -12,6 +13,10 @@ export async function POST(request: Request) {
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return NextResponse.json({ error: "Devi accedere" }, { status: 401 });
+  // Ogni chiamata costa una lettura di Claude: un tetto per persona (27/9).
+  if (!(await allowRequest(`identikit:${user.id}`, 6, 60))) {
+    return NextResponse.json({ error: "Troppe richieste, attendi un momento" }, { status: 429 });
+  }
 
   const body = await request.json().catch(() => null);
   const raw = Array.isArray(body?.images) ? body.images : [];

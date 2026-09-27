@@ -6,12 +6,17 @@ import { galleryFromRow } from "@/lib/sample-galleries";
 import { logBlockedRequest } from "@/lib/blocked";
 import { logMatchSearch } from "@/lib/searches";
 import { isPublicAvatar } from "@/lib/registry";
+import { allowRequest } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   // Richiede autenticazione (la chiamata costa)
   const auth = await createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
   if (!user) return NextResponse.json({ error: "Devi accedere per cercare" }, { status: 401 });
+  // Ogni chiamata costa una lettura di Claude: un tetto per persona (27/9).
+  if (!(await allowRequest(`match:${user.id}`, 20, 60))) {
+    return NextResponse.json({ error: "Troppe richieste, attendi un momento" }, { status: 429 });
+  }
 
   const body = await request.json().catch(() => null);
   // Categoria d'uso scelta esplicitamente dal menu (consenso deliberato, non inferito).
