@@ -6,12 +6,14 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 // ──────────────────────────────────────────────────────────────────────────
 // SCENA 3, IL REGISTRO CHE SCORRE DI LATO (27/9/2026). Sul computer la sezione
 // si ferma e i volti veri del registro passano in orizzontale mentre scorri in
 // verticale; ogni ritratto si muove un filo dentro la sua cornice (parallasse)
-// e porta il suo stato di consenso. Sul telefono la stessa fila scorre col dito.
+// e porta il suo stato di consenso. Anche sul telefono (27/9); con "riduci
+// animazioni" la fila scorre col dito.
 // ──────────────────────────────────────────────────────────────────────────
 
 export interface VoltoInCorsa {
@@ -30,8 +32,8 @@ export function RegistroInCorsa({ volti, totale }: { volti: VoltoInCorsa[]; tota
     const tr = pista.current;
     if (!el || !tr) return;
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-      const distanza = () => tr.scrollWidth - window.innerWidth + 64;
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const distanza = () => tr.scrollWidth - window.innerWidth + (window.innerWidth < 1024 ? 20 : 64);
       const tw = gsap.to(tr, {
         x: () => -distanza(),
         ease: "none",
@@ -47,7 +49,7 @@ export function RegistroInCorsa({ volti, totale }: { volti: VoltoInCorsa[]; tota
   }, []);
 
   return (
-    <section ref={radice} aria-labelledby="titolo-registro" className="relative overflow-hidden py-16 lg:flex lg:h-[100svh] lg:flex-col lg:justify-center lg:py-0">
+    <section ref={radice} aria-labelledby="titolo-registro" className="relative flex h-[100svh] flex-col justify-center overflow-hidden motion-reduce:h-auto motion-reduce:py-16">
       <div className="mx-auto w-full max-w-[1380px] px-5 sm:px-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 id="titolo-registro" className="text-[2.4rem] font-bold leading-none tracking-[-0.04em] sm:text-[3.4rem] lg:text-[4.2rem]">
@@ -57,18 +59,18 @@ export function RegistroInCorsa({ volti, totale }: { volti: VoltoInCorsa[]; tota
             Tutti i {totale} volti
           </Link>
         </div>
-        <p className="mt-3 max-w-[52ch] text-[1.1rem] text-muted">Ognuno ha verificato la sua identità e ha detto sì. Ogni immagine qui è generata da Semblic con il suo consenso.</p>
+        <p className="mt-3 max-w-[52ch] text-[1rem] text-muted sm:text-[1.1rem]">Ognuno ha verificato la sua identità e ha detto sì. Ogni immagine qui è generata da Semblic con il suo consenso.</p>
       </div>
 
       <div
         ref={pista}
-        className="mt-10 flex gap-5 px-5 max-lg:snap-x max-lg:snap-mandatory max-lg:overflow-x-auto sm:px-8 lg:mt-12 lg:w-max lg:gap-7 lg:pl-[max(2rem,calc((100vw-1380px)/2+2rem))]"
+        className="mt-7 flex w-max gap-4 px-5 motion-reduce:w-auto motion-reduce:snap-x motion-reduce:snap-mandatory motion-reduce:overflow-x-auto sm:px-8 lg:mt-12 lg:gap-7 lg:pl-[max(2rem,calc((100vw-1380px)/2+2rem))]"
       >
         {volti.map((v) => (
           <Link
             key={v.handle}
             href={`/passport/${v.handle}`}
-            className="group relative block w-[72vw] shrink-0 snap-start sm:w-[42vw] lg:w-[340px]"
+            className="group relative block w-[min(64vw,46svh)] shrink-0 snap-start sm:w-[42vw] lg:w-[340px]"
           >
             <div className="relative aspect-[3/4] overflow-hidden rounded-[22px] bg-[var(--hairline-soft)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}

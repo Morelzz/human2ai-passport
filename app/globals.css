@@ -189,6 +189,12 @@ html.theme-anim, html.theme-anim * {
   88% { opacity: 1; }
   100% { top: 100%; opacity: 0; }
 }
+/* Il volto di punti: i testi seguono lo scorrimento (--p da 0 a 1, dalla scena). */
+.volto-scena { --p: 0; }
+.volto-scena .volto-prima { opacity: clamp(0.25, calc(1 - var(--p) * 1.6), 1); }
+.volto-scena h2 { opacity: clamp(0.18, calc(var(--p) * 1.7 - 0.25), 1); }
+.volto-scena .volto-dopo { opacity: clamp(0, calc(var(--p) * 2.2 - 1.1), 1); }
+
 /* Portatili bassi: il titolo dell'hero si adatta all'altezza dello schermo. */
 @media (min-width: 1024px) and (max-height: 880px) {
   .titolo-hero { font-size: clamp(3.2rem, 7.4vh, 5.6rem); }

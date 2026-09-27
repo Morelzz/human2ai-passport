@@ -8,6 +8,7 @@ import { ScenaDivisa } from "@/components/marketing/scene/ScenaDivisa";
 import { FraseAccesa } from "@/components/marketing/scene/FraseAccesa";
 import { RegistroInCorsa } from "@/components/marketing/scene/RegistroInCorsa";
 import { PassiImpilati } from "@/components/marketing/scene/PassiImpilati";
+import { VoltoParticelle } from "@/components/marketing/scene/VoltoParticelle";
 import { FORMATI, qualitaPer } from "@/app/match/crea/opzioni";
 import { scattoInVetrina } from "@/lib/vetrina";
 import { ProvaGratis, type VoltoProva } from "@/components/marketing/ProvaGratis";
@@ -69,10 +70,11 @@ export default async function Home() {
         {/* La foto che si divide sul computer; sul telefono (e con "riduci
             animazioni") le due porte che scorrono di lato. */}
         {vetrina && <ScenaDivisa vetrina={vetrina} />}
-        <div className={vetrina ? "lg:hidden motion-reduce:lg:block" : ""}>
+        <div className={vetrina ? "hidden motion-reduce:block" : ""}>
           <DuePorte vetrina={vetrina} />
         </div>
         <FraseAccesa />
+        {vetrina && <VoltoParticelle nome={vetrina.nome} mappa={`/home/volto-punti-${vetrina.handle}.png`} />}
         {voltiProva.length > 0 && (
           <div className="px-5 pb-2 sm:px-8">
             <ProvaGratis volti={voltiProva} compatta />
