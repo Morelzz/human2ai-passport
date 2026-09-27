@@ -26,7 +26,7 @@ export interface FotoPagina {
 
 export const FOTO_PAGINE = {
   "catalogo": { certificato: "68b6323b83af422306aa8e211c1ceab399bd0b1b83509031e397900195246f1b", persone: [{"handle":"greta","alias":"Greta"},{"handle":"veronica","alias":"Veronica"},{"handle":"candies","alias":"Candies"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 30%" },
-  "prezzi": { certificato: "26dc5a90c0a9228b22f54ce06af599c242be8b8a12701cb1751e31c9eeb00711", persone: [{"handle":"chiara","alias":"Chiara"},{"handle":"random","alias":"Random"}], grossCents: 100, royaltyCents: 22, larghezza: 1536, altezza: 1024, fuoco: "50% 30%" },
+  "prezzi": { certificato: "72f938d8460b00c4b060aad6c27f9c5b913ffc33222d9393c0cc2fd5c54c3a24", persone: [{"handle":"chiara","alias":"Chiara"}], grossCents: 50, royaltyCents: 11, larghezza: 1536, altezza: 1024, fuoco: "62% 24%" },
   "ward": { certificato: "f5050fd8dcdc870c42d769a913dce109ffb2c79f30bbab3e8456b4d79d14f663", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 20%" },
   "verify": { certificato: "ac0ea7f6c554d8d5b268ed8ebdf6ee1b1f447adc544ab05a8cb9889c2f76d2d1", persone: [{"handle":"claire","alias":"Claire"}], grossCents: 50, royaltyCents: 11, larghezza: 1536, altezza: 1024, fuoco: "50% 32%" },
   "entra": { certificato: "13cd5ae2d5856f0c554b99dbedf6555b3c6c84034e19ce6c20b7412c0b8609ef", persone: [{"handle":"greta","alias":"Greta"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "55% 22%" },
@@ -38,6 +38,7 @@ export const FOTO_PAGINE = {
   "tutela": { certificato: "fb182e5f0de67406293a47bd905a0743e7494f7585bbd71e33b57c2e4c8dc240", persone: [{"handle":"gabriella","alias":"Gabriella"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "45% 18%" },
   "scansione": { certificato: "2f8e4238510e5f0cbae695bf78020f113fd9cce7a23296407dc0ce2723252de2", persone: [{"handle":"chiara","alias":"Chiara"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 16%" },
   "contatti": { certificato: "c9acd43f499f983fd2dcf1e1ead52346c79e7cde2f1da789aba359943b9ce88d", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 50, royaltyCents: 11, larghezza: 1024, altezza: 1536, fuoco: "50% 20%" },
+  "divisa": { certificato: "4e003c188e7d3f4e705030714956e36eba14ee45f5361edc5d16702414750ade", persone: [{"handle":"asia","alias":"Asia"}], grossCents: 50, royaltyCents: 11, larghezza: 1536, altezza: 1024, fuoco: "50% 26%" },
 } satisfies Record<string, FotoPagina>;
 
 export type ChiaveFoto = keyof typeof FOTO_PAGINE;

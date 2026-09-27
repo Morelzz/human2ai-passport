@@ -39,6 +39,7 @@ export default async function Home() {
     { href: "/ai-act", nome: "AI Act", frase: "Certificato, filigrana e consenso verificabile: la trasparenza che la legge chiede, già dentro.", foto: null },
     { href: "/academy#aziende", nome: "Formazione", frase: "Per le aziende che devono adeguarsi: percorsi a più livelli, sul serio.", foto: "academy" },
   ];
+  const divisa = await fotoPagina("divisa");
   const porte: Porta[] = await Promise.all(
     PORTE.map(async (x) => {
       const c = x.foto ? await fotoPagina(x.foto) : null;
@@ -84,8 +85,10 @@ export default async function Home() {
         <HeroCinema vetrina={vetrina} prezzoDaCent={Math.min(...FORMATI.flatMap((f) => qualitaPer(f.v).map((q) => q.volt)))} />
         {/* La foto che si divide sul computer; sul telefono (e con "riduci
             animazioni") le due porte che scorrono di lato. */}
-        {vetrina && <ScenaDivisa vetrina={vetrina} />}
-        <div className={vetrina ? "hidden motion-reduce:block" : ""}>
+        {divisa && (
+          <ScenaDivisa foto={{ nome: divisa.persone[0].alias, prezzoCent: divisa.grossCents, allaPersonaCent: divisa.royaltyCents, src960: divisa.src960, src1600: divisa.src1600 }} />
+        )}
+        <div className={divisa ? "hidden motion-reduce:block" : ""}>
           <DuePorte vetrina={vetrina} />
         </div>
         <FraseAccesa />

@@ -4,7 +4,10 @@ import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import type { ScattoVetrina } from "@/lib/vetrina";
+// Lo scatto che si divide (27/9 sera): non piu' la foto di Gabriella della
+// vetrina, che in prima pagina tornava tre volte, ma uno scatto suo (Asia al
+// mercato dei fiori), col volto al centro esatto: la divisione passa in mezzo.
+export interface FotoDivisa { nome: string; prezzoCent: number; allaPersonaCent: number; src960: string; src1600: string }
 
 gsap.registerPlugin(ScrollTrigger);
 // Sul telefono la barra degli indirizzi che sparisce non deve far saltare le scene.
@@ -12,7 +15,7 @@ ScrollTrigger.config({ ignoreMobileResize: true });
 
 // ──────────────────────────────────────────────────────────────────────────
 // SCENA 1, LA FOTO CHE SI DIVIDE (27/9/2026). Sul computer la sezione si ferma
-// e, mentre scorri, lo scatto di Gabriella si apre in due meta' che si
+// e, mentre scorri, lo scatto si apre in due meta' che si
 // allontanano: a sinistra resta quello che paga chi lo crea, a destra quello
 // che riceve lei. "Una foto, due persone" detto con la foto stessa.
 // Anche sul telefono (27/9, "gli effetti fighi anche su mobile"): li' la frase
@@ -22,7 +25,7 @@ ScrollTrigger.config({ ignoreMobileResize: true });
 
 const euro = (cent: number) => (cent / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 
-export function ScenaDivisa({ vetrina }: { vetrina: ScattoVetrina }) {
+export function ScenaDivisa({ foto: vetrina }: { foto: FotoDivisa }) {
   const radice = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
@@ -59,10 +62,10 @@ export function ScenaDivisa({ vetrina }: { vetrina: ScattoVetrina }) {
           {(["s", "d"] as const).map((lato) => (
             <div key={lato} className={`sd-meta-${lato} relative h-full w-1/2 overflow-hidden ${lato === "s" ? "rounded-l-[26px]" : "rounded-r-[26px]"} shadow-[0_40px_80px_-40px_rgba(23,21,15,0.55)]`}>
               <picture>
-                <source type="image/webp" srcSet="/home/scatto-gabriella-1200.webp 1200w, /home/scatto-gabriella-1536.webp 1536w" sizes="60vw" />
+                <source type="image/webp" srcSet={`${vetrina.src960} 960w, ${vetrina.src1600} 1600w`} sizes="60vw" />
                 <img
-                  src="/home/scatto-gabriella.jpg"
-                  alt={lato === "s" ? `${vetrina.nome} al caffè, la metà di chi crea lo scatto` : ""}
+                  src={vetrina.src960}
+                  alt={lato === "s" ? `${vetrina.nome}, uno scatto certificato: la metà di chi lo crea` : ""}
                   aria-hidden={lato === "d"}
                   loading="lazy"
                   decoding="async"
