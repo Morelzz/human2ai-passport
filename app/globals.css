@@ -502,3 +502,14 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
 @keyframes ricetta-in-uso { from { opacity: 0; transform: translateX(-6px) scale(0.96); } to { opacity: 1; transform: none; } }
 .ricetta-in-uso { animation: ricetta-in-uso 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 @media (prefers-reduced-motion: reduce) { .compositore-lampo, .ricetta-in-uso { animation: none; } }
+
+/* La serie (27/9): la barra che corre mentre uno scatto gira, e una luce
+   ambra che passa sopra la scheda come sul set. */
+@keyframes serie-barra { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+.serie-barra::after { content: ""; display: block; height: 100%; width: 40%; border-radius: 99px; background: var(--amber-c); animation: serie-barra 1.3s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@keyframes serie-luce { from { background-position: 0 -120%; } to { background-position: 0 220%; } }
+.serie-luce { background: linear-gradient(180deg, transparent 0%, rgba(226, 154, 46, 0.14) 48%, rgba(226, 154, 46, 0.32) 50%, transparent 52%); background-size: 100% 60%; background-repeat: no-repeat; animation: serie-luce 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .serie-barra::after { animation: none; width: 100%; opacity: 0.5; } .serie-luce { animation: none; background: none; } }
+@keyframes serie-entra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.serie-entra, .serie-fissi { animation: serie-entra 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .serie-entra, .serie-fissi { animation: none; } }

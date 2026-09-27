@@ -26,6 +26,10 @@ function clauseForExtra(e: ExtraMeta): string {
       return `the person is wearing the ${d || "outfit"} shown in the additional reference images`;
     case "accessorio":
       return `the person is wearing or using the ${d || "accessory"} shown in the additional reference images`;
+    case "serie":
+      // La serie per le campagne (27/9): il primo scatto accettato fa da guida
+      // agli altri, cosi' sembrano lo stesso servizio fotografico.
+      return "this image belongs to the same photo shoot as the additional reference image: keep exactly the same outfit, hairstyle, lighting quality and colour grade, while the place, action and pose follow the scene description";
     case "sfondo":
       return `the scene takes place in the ${d || "location"} shown in the additional reference images, used as the background and environment`;
     default:

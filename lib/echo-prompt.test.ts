@@ -22,4 +22,11 @@ describe("prompt dello scatto singolo", () => {
     expect(scena.length).toBeGreaterThan(600);
     expect(buildEchoPrompt(scena, [], null, null, null)).toContain("white linen shirt");
   });
+
+  it("nella serie il primo scatto guida vestiti, luce e colore degli altri", () => {
+    const p = buildEchoPrompt("al mercato, sceglie la frutta", [{ role: "serie", desc: "" }], null, null, null);
+    expect(p).toContain("same photo shoot");
+    expect(p).toContain("same outfit");
+    expect(p.indexOf("same photo shoot")).toBeLessThan(p.indexOf("Additional direction"));
+  });
 });

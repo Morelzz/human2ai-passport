@@ -19,6 +19,8 @@ import { Risultato, type Esito } from "./Risultato";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo, scattiPerGruppo } from "@/lib/gruppo-prezzi";
 import { intervalli, type SceltaDirettore } from "@/lib/direttore";
 import { RigaRicette, type Impostazioni } from "./Ricette";
+import { SituazioniSerie, SerieAlLavoro, type SerieDaFare } from "./Serie";
+import { motion } from "framer-motion";
 import type { Ricetta } from "@/lib/ricette";
 
 // I campi che il direttore puo' accendere (mockup A, 27/9).
@@ -80,7 +82,12 @@ export function CreaClient({
   const impostazioniOra = useRef<Impostazioni | null>(null);
   const compositore = useRef<HTMLDivElement>(null);
 
-  const [fase, setFase] = useState<"componi" | "set" | "fatto">("componi");
+  const [fase, setFase] = useState<"componi" | "set" | "fatto" | "serie">("componi");
+  // Scatto o serie per campagna (mockup C): nella serie persona, vestiti, luce
+  // e look restano fissi e si scrivono fino a sei situazioni.
+  const [modo, setModo] = useState<"scatto" | "serie">("scatto");
+  const [situazioni, setSituazioni] = useState<string[]>([""]);
+  const [serie, setSerie] = useState<SerieDaFare | null>(null);
   const [statoSet, setStatoSet] = useState<StatoSet>("invio");
   const [inizio, setInizio] = useState(0);
   const [esito, setEsito] = useState<Esito | null>(null);
@@ -137,6 +144,9 @@ export function CreaClient({
   const puoGenerare = scena.trim().length >= 3 || (Boolean(volto) && riferimenti.length > 0);
   const riepilogo = `${lookSel.l}${luce !== "auto" ? ` · luce ${luceSel.l.toLowerCase()}` : ""} · ${formatoSel.l} · ${livello.l}`;
   const miniatura = volto?.src ?? volti[0]?.src ?? "";
+  const inSerie = modo === "serie";
+  const righeSerie = situazioni.map((x) => x.trim()).filter((x) => x.length >= 3);
+  const puoSerie = righeSerie.length >= 2 && !gruppoScelto;
 
   function suInizio() {
     const lenis = (window as Window & { __lenis?: { scrollTo: (t: number, o?: { immediate?: boolean }) => void } }).__lenis;
@@ -205,7 +215,7 @@ export function CreaClient({
   // i campi che non hai toccato tu; non riscrive niente e non costa crediti.
   useEffect(() => {
     const frase = scena.trim();
-    if (frase.length < 12 || frase === ultimaLetta.current) return;
+    if (modo === "serie" || frase.length < 12 || frase === ultimaLetta.current) return;
     const t = setTimeout(async () => {
       ultimaLetta.current = frase;
       setLeggendo(true);
@@ -250,7 +260,7 @@ export function CreaClient({
     }, 1300);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scena, cast.join(",")]);
+  }, [scena, cast.join(","), modo]);
 
   async function aggiungiRiferimento(file: File | undefined) {
     if (!file || riferimenti.length >= 2) return;
@@ -368,6 +378,26 @@ export function CreaClient({
       styleId: null,
     };
   }
+
+  function cambiaModo(m: "scatto" | "serie") {
+    setModo(m);
+    // una serie ha almeno due situazioni: la prima e' la frase, se c'era
+    if (m === "serie" && situazioni.every((x) => !x.trim())) setSituazioni([scena.trim(), ""]);
+  }
+
+  // La serie parte con la persona scelta; se non c'e' nessuno, prima si sceglie.
+  function avviaSerie() {
+    if (!puoSerie) return;
+    if (!volto) { setSceltaAperta(true); return; }
+    const corpo: Record<string, unknown> = { handle: volto.handle, ...corpoScatto([volto.handle]) };
+    delete corpo.scene;
+    setPannello(null);
+    setErrore(null);
+    setSerie({ situazioni: righeSerie, corpo, alias: volto.alias, voltPerScatto: saldo !== null ? livello.volt : null });
+    setFase("serie");
+    suInizio();
+  }
+  const premi = () => (inSerie ? avviaSerie() : void genera());
 
   async function genera(override?: Volto, dalCasting = false) {
     // Due o piu' persone scelte a mano: scena di gruppo, niente casting.
@@ -537,6 +567,18 @@ export function CreaClient({
       </main>
     );
   }
+  if (fase === "serie" && serie) {
+    return (
+      <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12">
+        <SerieAlLavoro
+          key={serie.situazioni.join("|")}
+          serie={serie}
+          onNuova={() => { setSerie(null); setFase("componi"); suInizio(); }}
+          onRicarica={() => { window.location.href = "/account/volt"; }}
+        />
+      </main>
+    );
+  }
   if (fase === "fatto" && esito) {
     return (
       <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12">
@@ -628,6 +670,10 @@ export function CreaClient({
     ? prezzoGruppo({ gross_cents: livello.volt, fee_cents: livello.volt - livello.royaltyCents, net_cents: livello.royaltyCents, surcharge_cents: 0 }, inScenaOra.length)
     : null;
   const lordo = prezzoScena ? prezzoScena.gross_cents : livello.volt;
+  // La serie: il prezzo e' quello degli scatti, in chiaro prima di partire.
+  const nSerie = Math.max(righeSerie.length, 2);
+  const prezzoSerie = `${nSerie} scatti · ${saldo !== null ? `${FMT.format(livello.volt * nSerie)} ⚡` : formatEur(livello.volt * nSerie)}`;
+  const allaSerie = `${volto ? `${formatEur(livello.royaltyCents * nSerie)} a ${volto.alias} · ` : ""}i non tenuti non si pagano`;
   const prezzo = saldo !== null ? `${FMT.format(lordo)} ⚡` : formatEur(lordo);
   const allePersone = prezzoScena
     ? `${formatEur(prezzoScena.quote[0])} a ciascuno`
@@ -831,6 +877,30 @@ export function CreaClient({
       {/* ── Il compositore: in pagina su desktop, agganciato in basso sul telefono ── */}
       <div ref={compositore} className="fixed inset-x-0 bottom-0 z-30 sm:relative sm:inset-auto sm:z-10 sm:mx-auto sm:-mt-14 sm:max-w-[960px]">
         <div key={`comp-${lampo}`} className={`${lampo ? "compositore-lampo " : ""}rounded-t-[26px] border border-border bg-surface px-3.5 pb-4 pt-3 shadow-[0_-18px_40px_-26px_rgba(23,21,15,0.35)] sm:rounded-[28px] sm:px-5 sm:pb-4 sm:pt-4 sm:shadow-[0_34px_70px_-40px_rgba(23,21,15,0.4)]`}>
+          <div className="mb-2.5 flex items-center justify-between gap-3">
+            <div role="tablist" aria-label="Cosa crei" className="inline-flex rounded-full bg-[var(--bg)] p-1">
+              {(["scatto", "serie"] as const).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  role="tab"
+                  aria-selected={modo === m}
+                  onClick={() => cambiaModo(m)}
+                  className={`relative h-8 rounded-full px-3.5 text-[0.85rem] font-semibold transition-colors ${modo === m ? "text-foreground" : "text-muted hover:text-foreground"}`}
+                >
+                  {modo === m && <motion.span layoutId="modo-crea" transition={{ type: "spring", stiffness: 420, damping: 34 }} className="absolute inset-0 rounded-full border border-border bg-surface shadow-[0_4px_14px_-8px_rgba(23,21,15,0.35)]" />}
+                  <span className="relative whitespace-nowrap">{m === "scatto" ? "Scatto" : <>Serie<span className="hidden sm:inline"> per campagna</span></>}</span>
+                </button>
+              ))}
+            </div>
+            {inSerie && (
+              <span className="serie-fissi inline-flex items-center gap-1.5 text-[0.8rem] text-faint">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+                <span className="hidden sm:inline">persona, vestiti, luce e look fissi per tutta la serie</span>
+                <span className="whitespace-nowrap sm:hidden">cambia solo la situazione</span>
+              </span>
+            )}
+          </div>
           <div className="senza-barra flex items-center gap-2 overflow-x-auto">
             <span className="hidden text-[0.95rem] text-faint sm:inline">Con</span>
             {inScenaOra.length <= 1 ? (
@@ -910,6 +980,12 @@ export function CreaClient({
           </div>
 
           <div className="mt-2.5 flex items-end gap-2 sm:mt-2">
+            {inSerie ? (
+              <div className="serie-entra min-w-0 flex-1">
+                <SituazioniSerie righe={situazioni} onRighe={setSituazioni} />
+                {gruppoScelto && <p className="mt-2 px-1 text-[0.82rem] text-amber-ink">La serie si fa con una persona sola: togli le altre dalla scena.</p>}
+              </div>
+            ) : (<>
             <label htmlFor="frase" className="sr-only">Cosa succede nella foto</label>
             <div className="relative flex min-w-0 flex-1 rounded-2xl bg-[var(--bg)] sm:rounded-none sm:bg-transparent">
             {/* Lo specchio: stessa frase, stesso corpo, testo invisibile; sotto le
@@ -936,20 +1012,21 @@ export function CreaClient({
               value={scena}
               onScroll={(e) => { if (specchio.current) specchio.current.scrollTop = e.currentTarget.scrollTop; }}
               onChange={(e) => { setScena(e.target.value); setProposta(null); setPropostaGruppo(null); if (evidenze.length) setEvidenze([]); }}
-              onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); genera(); } }}
+              onKeyDown={(e) => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); void genera(); } }}
               placeholder={gruppoScelto ? "Cosa succede nella scena? Es. ridono insieme su una terrazza al tramonto" : "Cosa succede nella foto? Es. cammina in centro al tramonto"}
               maxLength={MAX_FRASE}
               rows={2}
               className="relative min-h-[64px] w-full resize-none bg-transparent px-3.5 py-3 text-[16px] leading-snug text-foreground outline-none placeholder:text-faint sm:min-h-[76px] sm:px-1 sm:text-[1.35rem] sm:leading-[1.45]"
             />
             </div>
+            </>)}
             <span className="flex gap-2 sm:hidden">
-              {bottoneMic}
+              {!inSerie && bottoneMic}
               <button
                 type="button"
-                onClick={() => genera()}
-                disabled={!puoGenerare || castingInCorso}
-                aria-label={`Genera, ${prezzo}`}
+                onClick={premi}
+                disabled={inSerie ? !puoSerie : !puoGenerare || castingInCorso}
+                aria-label={inSerie ? `Crea la serie, ${prezzoSerie}` : `Genera, ${prezzo}`}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber text-on-amber transition-opacity disabled:opacity-40"
               >
                 {icona.su}
@@ -957,7 +1034,7 @@ export function CreaClient({
             </span>
           </div>
 
-          {(leggendo || daDirettore.size > 0) && (
+          {!inSerie && (leggendo || daDirettore.size > 0) && (
             <p className="direttore-riga mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 px-1 text-[0.82rem] text-amber-ink" aria-live="polite">
               <span aria-hidden className={leggendo ? "direttore-pensa" : ""}>✦</span>
               {leggendo ? (
@@ -1028,25 +1105,25 @@ export function CreaClient({
             </div>
             <div className="flex shrink-0 items-center gap-3.5">
               <span className="text-right text-[0.88rem] leading-tight text-muted">
-                <span className="block font-semibold text-foreground">{prezzo}{gruppoScelto ? ` · ${inScenaOra.length} persone` : ""}</span>
-                {allePersone && <span className="block">{allePersone}</span>}
+                <span className="block font-semibold text-foreground">{inSerie ? prezzoSerie : `${prezzo}${gruppoScelto ? ` · ${inScenaOra.length} persone` : ""}`}</span>
+                {inSerie ? <span className="block">{allaSerie}</span> : allePersone && <span className="block">{allePersone}</span>}
               </span>
               <button
                 type="button"
-                onClick={() => genera()}
-                disabled={!puoGenerare || castingInCorso}
+                onClick={premi}
+                disabled={inSerie ? !puoSerie : !puoGenerare || castingInCorso}
                 className="inline-flex h-[52px] items-center gap-2 rounded-full bg-amber px-6 text-[1rem] font-bold text-on-amber transition-colors hover:bg-amber-hover disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {castingInCorso ? (volto ? "Leggo la scena…" : "Scelgo il volto…") : gruppoScelto ? "Crea la scena" : "Genera"}
+                {inSerie ? "Crea la serie" : castingInCorso ? (volto ? "Leggo la scena…" : "Scelgo il volto…") : gruppoScelto ? "Crea la scena" : "Genera"}
                 {icona.su}
               </button>
             </div>
           </div>
 
           <p className="mt-2 px-1 text-center text-[0.8rem] text-muted sm:hidden">
-            {prezzo}
-            {allePersone ? ` · ${allePersone}` : ""}
-            {scena.trim() && (
+            {inSerie ? prezzoSerie : prezzo}
+            {inSerie ? ` · ${allaSerie}` : allePersone ? ` · ${allePersone}` : ""}
+            {!inSerie && scena.trim() && (
               <>
                 {" · "}
                 <button type="button" onClick={migliora} disabled={miglioro} className="font-semibold text-amber-ink">{miglioro ? "rifinisco…" : "rendila più precisa"}</button>
