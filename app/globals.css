@@ -190,10 +190,6 @@ html.theme-anim, html.theme-anim * {
   100% { top: 100%; opacity: 0; }
 }
 /* Il volto di punti: i testi seguono lo scorrimento (--p da 0 a 1, dalla scena). */
-.volto-scena { --p: 0; }
-.volto-scena .volto-prima { opacity: clamp(0.25, calc(1 - var(--p) * 1.6), 1); }
-.volto-scena h2 { opacity: clamp(0.18, calc(var(--p) * 1.7 - 0.25), 1); }
-.volto-scena .volto-dopo { opacity: clamp(0, calc(var(--p) * 2.2 - 1.1), 1); }
 
 /* Telefoni bassi (iPhone SE e simili): titolo dell'hero piu' contenuto. */
 @media (max-width: 639px) and (max-height: 740px) {
@@ -453,3 +449,10 @@ html { scrollbar-width: thin; scrollbar-color: var(--elevated) var(--bg); }
   @media (prefers-reduced-motion: reduce) { .sv { animation: none; } }
 }
 @keyframes sv-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* La lente che legge il certificato: finche' WebGL non e' pronto (o se manca,
+   o con riduci animazioni) resta la foto con la lettura ferma accanto al volto. */
+.lente-tela { opacity: 0; transition: opacity 0.7s ease; }
+.lente-scena[data-lente="viva"] .lente-tela { opacity: 1; }
+.lente-scena:not([data-lente]) .lente-lettura { left: 58%; top: 20%; }
+@media (max-width: 767px) { .lente-scena:not([data-lente]) .lente-lettura { left: 16px; top: 14%; } }

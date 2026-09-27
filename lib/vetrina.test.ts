@@ -9,8 +9,12 @@ describe("vetrinaDa", () => {
   it("mostra i numeri veri dello scatto", () => {
     expect(vetrinaDa(gen, av, job)).toEqual({
       certificato: "d20b966b1352abc", handle: "gabriella", nome: "Gabriella",
-      prezzoCent: 50, allaPersonaCent: 11, formato: "orizzontale", qualita: "alta",
+      prezzoCent: 50, allaPersonaCent: 11, formato: "orizzontale", qualita: "alta", consensoDal: null,
     });
+  });
+
+  it("porta il giorno del si' senza l'ora", () => {
+    expect(vetrinaDa(gen, { ...av, consent_start: "2026-06-10T00:00:00+00:00" }, job)?.consensoDal).toBe("2026-06-10");
   });
 
   it("con il consenso revocato la persona esce dalla vetrina", () => {

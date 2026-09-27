@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scena nuova, due proposte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#F7F4EE; --ink:#15120D; --muted:#6B6358; --amber:#E29A2E; --on-amber:#412402; --scena:#0E0C09; --crema:#F4EEE3; --verde:#3DDC97; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .etichetta { max-width: 1380px; margin: 0 auto; padding: 56px 20px 18px; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+  .etichetta b { font-size: 1.6rem; letter-spacing: -0.03em; }
+  .etichetta span { color: var(--muted); font-size: 1rem; max-width: 60ch; }
+  .lettera { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; background: var(--ink); color: var(--bg); font-weight: 700; }
+
+  /* ── scene ─────────────────────────────────────────── */
+  .scena { position: relative; height: 100svh; min-height: 560px; overflow: hidden; background: var(--scena); color: var(--crema); margin: 0 12px; border-radius: 28px; touch-action: pan-y; }
+  .scena canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .testo { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 clamp(20px, 5vw, 72px) clamp(26px, 6vh, 64px); pointer-events: none;
+           background: linear-gradient(to top, rgba(14,12,9,.92) 0%, rgba(14,12,9,.55) 45%, rgba(14,12,9,0) 100%); padding-top: 120px; }
+  .testo h2 { font-size: clamp(2.1rem, 6vw, 4.6rem); line-height: .98; letter-spacing: -0.045em; font-weight: 700; max-width: 14ch; }
+  .testo p { margin-top: 14px; font-size: clamp(1rem, 1.6vw, 1.2rem); color: rgba(244,238,227,.78); max-width: 44ch; line-height: 1.45; }
+
+  /* A: la lettura che segue la lente */
+  .lettura { position: absolute; left: 0; top: 0; pointer-events: none; font-family: "Geist Mono", ui-monospace, monospace; font-size: 12.5px; line-height: 1.55;
+             background: rgba(14,12,9,.62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(226,154,46,.45); border-radius: 14px; padding: 10px 13px; min-width: 210px;
+             transform: translate3d(-999px,-999px,0); opacity: 0; transition: opacity .35s; }
+  .lettura .riga { display: flex; gap: 8px; align-items: center; white-space: nowrap; opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s; }
+  .lettura.on .riga { opacity: 1; transform: none; }
+  .lettura .riga:nth-child(2) { transition-delay: .08s } .lettura .riga:nth-child(3) { transition-delay: .16s } .lettura .riga:nth-child(4) { transition-delay: .24s }
+  .lettura .pallino { width: 7px; height: 7px; border-radius: 99px; background: var(--verde); box-shadow: 0 0 10px var(--verde); flex: none; }
+  .lettura .titolo { color: var(--amber); }
+  .suggerimento { position: absolute; top: clamp(18px, 4vh, 36px); right: clamp(18px, 3vw, 40px); font-family: "Geist Mono", monospace; font-size: 12px; color: rgba(244,238,227,.6);
+                  border: 1px solid rgba(244,238,227,.2); border-radius: 999px; padding: 7px 12px; }
+
+  /* B: l'interruttore del consenso */
+  .interruttore { position: absolute; top: clamp(18px, 4vh, 36px); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none;
+                  background: rgba(14,12,9,.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(244,238,227,.18); border-radius: 999px; padding: 8px 8px 8px 18px; font-weight: 600; font-size: 1rem; z-index: 2; }
+  .interruttore .binario { width: 58px; height: 34px; border-radius: 999px; background: #2a8a5f; position: relative; transition: background .35s; }
+  .interruttore .binario::after { content: ""; position: absolute; top: 4px; left: 28px; width: 26px; height: 26px; border-radius: 99px; background: #fff; transition: left .35s cubic-bezier(.3,1.4,.5,1); }
+  .interruttore.off .binario { background: #5b534a; } .interruttore.off .binario::after { left: 4px; }
+  .interruttore .stato { min-width: 9.5ch; }
+  .note { max-width: 1380px; margin: 0 auto; padding: 18px 20px 0; color: var(--muted); font-size: .95rem; }
+  .fine { height: 80px; }
+  @media (max-width: 640px) { .scena { margin: 0 8px; border-radius: 22px; } .suggerimento { display: none; } .lettura { font-size: 11px; min-width: 0; } }
+</style>
+</head>
+<body>
+
+<div class="etichetta"><span class="lettera">A</span><b>La lente che legge il certificato</b>
+  <span>La filigrana visibile non c'è più: resta quella invisibile. La lente la rende leggibile. Col mouse la muovi tu; sul telefono scorre da sola mentre scendi e la trascini col dito.</span></div>
+<section class="scena" id="scenaA">
+  <canvas></canvas>
+  <div class="suggerimento">passaci sopra</div>
+  <div class="lettura" id="letturaA">
+    <div class="riga titolo">filigrana invisibile, letta</div>
+    <div class="riga"><i class="pallino"></i>Gabriella, consenso attivo</div>
+    <div class="riga">certificato d20b966b1352</div>
+    <div class="riga">sì dato il 10.06.2026</div>
+  </div>
+  <div class="testo">
+    <h2>Non si vede. Si legge.</h2>
+    <p>Ogni scatto porta dentro il suo certificato, invisibile. Chi lo legge trova chi c'è nella foto e quando ha detto sì.</p>
+  </div>
+</section>
+<p class="note">Effetto: WebGL scritto a mano (nessuna libreria), lente con rifrazione vera, bordo con aberrazione cromatica, dentro la lente la foto in due toni e il certificato che affiora dalla trama.</p>
+
+<div class="etichetta"><span class="lettera">B</span><b>Il sì che si toglie</b>
+  <span>Tocchi l'interruttore del consenso e la foto si disfa in brace e scintille, dal basso verso l'alto. Lo riaccendi e torna. Parte da sola quando la scena entra nello schermo.</span></div>
+<section class="scena" id="scenaB">
+  <canvas></canvas>
+  <div class="interruttore" id="interruttoreB" role="switch" aria-checked="true" tabindex="0"><span class="stato">Consenso attivo</span><span class="binario"></span></div>
+  <div class="testo">
+    <h2 id="titoloB">Il sì si toglie con un tocco.</h2>
+    <p id="testoB">Se Gabriella revoca, da quel momento il suo volto non si genera più. Vale subito, per tutti.</p>
+  </div>
+</section>
+<p class="note">Effetto: WebGL, rumore frattale che fa da soglia, bordo incandescente ambra, i frammenti salgono come cenere. Stesso motore della A.</p>
+<div class="fine"></div>
+
+<script>
+// ── motore minimo WebGL1 comune alle due scene ─────────────────────────────
+const VERT = `attribute vec2 p; varying vec2 vUv; void main(){ vUv = p*0.5+0.5; gl_Position = vec4(p,0.,1.); }`;
+const COMUNE = `
+precision highp float;
+varying vec2 vUv;
+uniform vec2 uRes, uImgRes, uFuoco;
+// "cover" come in CSS, tenendo il volto in quadro anche in verticale
+vec2 cover(vec2 uv){
+  float ra = uRes.x/uRes.y, ri = uImgRes.x/uImgRes.y;
+  if (ra > ri) { float s = ri/ra; float c = clamp(uFuoco.y, s*.5, 1.-s*.5); uv.y = c + (uv.y-.5)*s; }
+  else { float s = ra/ri; float c = clamp(uFuoco.x, s*.5, 1.-s*.5); uv.x = c + (uv.x-.5)*s; }
+  return uv;
+}
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.03; a*=.5; } return v; }
+`;
+function crea(canvas, frag) {
+  const gl = canvas.getContext("webgl", { antialias: false, premultipliedAlpha: false });
+  if (!gl) return null;
+  const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(o)); return o; };
+  const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, VERT)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, COMUNE + frag)); gl.linkProgram(pr); gl.useProgram(pr);
+  const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const u = {}; const U = (n) => (u[n] ??= gl.getUniformLocation(pr, n));
+  let unita = 0;
+  return {
+    gl,
+    tex(nome, src, ripeti) {
+      const t = gl.createTexture(); const k = unita++; gl.activeTexture(gl.TEXTURE0 + k); gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+      const w = ripeti ? gl.REPEAT : gl.CLAMP_TO_EDGE;
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, w); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, w);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.uniform1i(U(nome), k);
+    },
+    f(n, ...v) { gl["uniform" + v.length + "f"](U(n), ...v); },
+    misura(dprMax) {
+      const dpr = Math.min(devicePixelRatio || 1, dprMax); const r = canvas.getBoundingClientRect();
+      canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr); gl.viewport(0, 0, canvas.width, canvas.height);
+      return { w: r.width, h: r.height, dpr };
+    },
+    disegna() { gl.drawArrays(gl.TRIANGLES, 0, 3); },
+  };
+}
+const carica = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+const telefono = matchMedia("(max-width: 767px)").matches;
+const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// La scena disegna solo quando si vede.
+function quandoVisibile(el, cb) { new IntersectionObserver(([e]) => cb(e.isIntersecting), { threshold: 0.05 }).observe(el); }
+function progresso(el) { const r = el.getBoundingClientRect(); return Math.max(0, Math.min(1, (innerHeight - r.top) / (innerHeight + r.height))); }
+
+// ── A: la lente ─────────────────────────────────────────────────────────────
+(async () => {
+  const el = document.getElementById("scenaA"), cv = el.querySelector("canvas"), lettura = document.getElementById("letturaA");
+  const FRAG = `
+  uniform sampler2D uImg, uCert;
+  uniform vec2 uLente; uniform float uR, uT, uOn;
+  void main(){
+    vec2 p = vUv*uRes; vec2 d = p - uLente; float dist = length(d); float r = max(uR*uOn, 1.);
+    float dentro = 1. - smoothstep(r-1.5, r+1.5, dist);
+    float k = clamp(dist/r, 0., 1.); vec2 dir = d/max(dist,1.);
+    float curva = 1. - sqrt(max(0., 1.-k*k));
+    vec2 pl = p - dir*curva*r*.42*dentro;             // rifrazione come una goccia di vetro
+    vec2 uvl = cover(pl/uRes);
+    float ca = dentro*pow(k,3.)*.010;                  // aberrazione cromatica sul bordo
+    vec3 lente = vec3(texture2D(uImg, uvl+dir*ca).r, texture2D(uImg, uvl).g, texture2D(uImg, uvl-dir*ca).b);
+    vec3 base = texture2D(uImg, cover(vUv)).rgb;
+    float lum = dot(lente, vec3(.299,.587,.114));
+    vec3 duo = mix(vec3(.035,.03,.025), vec3(1.,.74,.36), smoothstep(.05,.95,lum));
+    vec2 cuv = (pl + vec2(uT*18., 0.)) / vec2(460., 230.);
+    float glifo = texture2D(uCert, cuv).a;
+    float maglia = smoothstep(.93, 1., max(abs(sin(pl.x*.09)), abs(sin(pl.y*.09)))) * .12;
+    vec3 rivela = duo*1.05 + glifo*vec3(.35,1.,.62)*(.12+lum*.8) + maglia*vec3(1.,.74,.36);
+    rivela *= .9 + .1*sin(pl.y*1.3 - uT*7.);
+    vec3 col = mix(base*(1.-.18*uOn), rivela, dentro);
+    col = mix(col, lente, dentro*smoothstep(.72, 1., k)*.55);   // il bordo resta foto, come vetro
+    float anello = exp(-pow((dist-r)/2.2, 2.)) + .35*exp(-pow((dist-r)/10., 2.));
+    col += anello*vec3(1.,.72,.3)*uOn;
+    gl_FragColor = vec4(col, 1.);
+  }`;
+  const g = crea(cv, FRAG); if (!g) return;
+  const img = await carica("scatto-gabriella-1536.webp");
+  // Il certificato come trama: righe di testo ripetute, disegnate una volta.
+  const c = document.createElement("canvas"); c.width = 512; c.height = 256; const x = c.getContext("2d");
+  x.font = "500 15px 'Geist Mono', monospace"; x.fillStyle = "#fff";
+  const righe = ["GABRIELLA  CONSENSO ATTIVO  ", "CERT d20b966b1352  ", "SI 10.06.2026  USO COMMERCIALE  ", "0,11 EUR A GABRIELLA  ", "SEMBLIC  REGISTRO  "];
+  for (let y = 0, i = 0; y < 256; y += 21, i++) { const t = righe[i % righe.length].repeat(4); x.fillText(t, -((i * 67) % 180), y + 16); }
+  g.tex("uImg", img); g.tex("uCert", c, true);
+  g.f("uImgRes", img.width, img.height); g.f("uFuoco", .455, 1 - .30);
+  let dim = g.misura(telefono ? 2 : 1.5);
+  addEventListener("resize", () => (dim = g.misura(telefono ? 2 : 1.5)));
+  const s = { x: dim.w * .46, y: dim.h * .4, tx: dim.w * .46, ty: dim.h * .4, on: 0, mano: 0, visibile: false, t0: performance.now() };
+  el.addEventListener("pointermove", (e) => { const r = cv.getBoundingClientRect(); s.tx = e.clientX - r.left; s.ty = e.clientY - r.top; s.mano = performance.now(); });
+  el.addEventListener("pointerdown", (e) => { const r = cv.getBoundingClientRect(); s.tx = e.clientX - r.left; s.ty = e.clientY - r.top; s.mano = performance.now(); });
+  quandoVisibile(el, (v) => { s.visibile = v; if (v) requestAnimationFrame(giro); });
+  function giro(now) {
+    if (!s.visibile) return;
+    const t = (now - s.t0) / 1000;
+    // Senza mano: la lente gira da sola sul volto (sul telefono la guida lo scorrimento).
+    if (now - s.mano > 2200) {
+      const p = telefono ? progresso(el) : t * .18;
+      const fx = dim.w * (telefono ? .5 : .47), fy = dim.h * (telefono ? .36 : .34);
+      s.tx = fx + Math.cos(p * 6.283 * (telefono ? 1.4 : 1)) * dim.w * (telefono ? .22 : .12);
+      s.ty = fy + Math.sin(p * 6.283 * (telefono ? 2.1 : 1.6)) * dim.h * .1;
+    }
+    s.x += (s.tx - s.x) * .12; s.y += (s.ty - s.y) * .12;
+    s.on += ((quieto ? 1 : 1) - s.on) * .05;
+    const R = Math.min(dim.w, dim.h) * (telefono ? .26 : .17);
+    g.f("uRes", dim.w * dim.dpr, dim.h * dim.dpr); g.f("uLente", s.x * dim.dpr, (dim.h - s.y) * dim.dpr); g.f("uR", R * dim.dpr); g.f("uT", t); g.f("uOn", s.on);
+    g.disegna();
+    // La lettura accanto alla lente, dal lato dove c'è spazio.
+    const aDestra = s.x < dim.w * .6; const lx = aDestra ? s.x + R + 14 : s.x - R - 14 - lettura.offsetWidth; const ly = Math.max(10, Math.min(dim.h - lettura.offsetHeight - 10, s.y - lettura.offsetHeight / 2));
+    lettura.style.transform = `translate3d(${Math.max(8, Math.min(dim.w - lettura.offsetWidth - 8, lx))}px, ${telefono ? Math.min(dim.h * .6, s.y + R + 12) : ly}px, 0)`;
+    lettura.style.opacity = s.on > .5 ? 1 : 0; lettura.classList.toggle("on", s.on > .6);
+    requestAnimationFrame(giro);
+  }
+})();
+
+// ── B: la revoca ────────────────────────────────────────────────────────────
+(async () => {
+  const el = document.getElementById("scenaB"), cv = el.querySelector("canvas"), tasto = document.getElementById("interruttoreB");
+  const FRAG = `
+  uniform sampler2D uImg; uniform float uP, uT;
+  void main(){
+    vec2 uv = vUv;
+    float n = fbm(uv*vec2(7., 9.) + vec2(0., uT*.05))*.75 + (1.-uv.y)*.0;
+    float soglia = uP*1.25 - .45 + (1.-uv.y)*.5*uP;          // si disfa dal basso
+    float v = n - soglia;
+    float resta = smoothstep(0., .015, v);
+    float brace = smoothstep(-.025, 0., v) * (1. - smoothstep(0., .02, v));
+    // i frammenti salgono: pesca la foto un po' piu' in basso, con un tremolio
+    float salita = clamp(-v, 0., .4);
+    vec2 uvs = uv - vec2(sin(uv.y*40. + uT*3.)*.004*salita*10., salita*.55);
+    vec3 foto = texture2D(uImg, cover(uv)).rgb;
+    vec3 cenere = texture2D(uImg, cover(uvs)).rgb;
+    float granelli = step(.965, hash(floor(uvs*vec2(uRes.x, uRes.y)/3.) + floor(uT*12.))) * smoothstep(.4, 0., salita) * step(v, 0.);
+    vec3 fondo = vec3(.055,.047,.035);
+    vec3 col = mix(fondo, foto, resta);
+    col += brace*vec3(1.,.6,.2)*1.25;
+    col += granelli*dot(cenere, vec3(.33))*vec3(1.,.7,.35)*1.4;
+    col = mix(col, vec3(dot(col, vec3(.3,.59,.11))), uP*.15);
+    gl_FragColor = vec4(col, 1.);
+  }`;
+  const g = crea(cv, FRAG); if (!g) return;
+  const img = await carica("scatto-gabriella-1536.webp");
+  g.tex("uImg", img); g.f("uImgRes", img.width, img.height); g.f("uFuoco", .455, 1 - .30);
+  let dim = g.misura(telefono ? 2 : 1.5);
+  addEventListener("resize", () => (dim = g.misura(telefono ? 2 : 1.5)));
+  const s = { p: 0, verso: 0, visibile: false, t0: performance.now(), demo: false };
+  const titolo = document.getElementById("titoloB"), testo = document.getElementById("testoB");
+  function imposta(attivo) {
+    s.verso = attivo ? 0 : 1;
+    tasto.classList.toggle("off", !attivo); tasto.setAttribute("aria-checked", String(attivo));
+    tasto.querySelector(".stato").textContent = attivo ? "Consenso attivo" : "Consenso revocato";
+    titolo.textContent = attivo ? "Il sì si toglie con un tocco." : "Revocato. Non si genera più.";
+    testo.textContent = attivo ? "Se Gabriella revoca, da quel momento il suo volto non si genera più. Vale subito, per tutti." : "Nessuno può più creare foto o video con il suo volto. Quando vuole, lo riaccende.";
+  }
+  tasto.addEventListener("click", () => imposta(s.verso === 1));
+  tasto.addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); imposta(s.verso === 1); } });
+  quandoVisibile(el, (v) => {
+    s.visibile = v; if (!v) return; requestAnimationFrame(giro);
+    // La prima volta si mostra da sola: revoca, poi riaccende.
+    if (!s.demo && !quieto) { s.demo = true; setTimeout(() => imposta(false), 1400); setTimeout(() => imposta(true), 5200); }
+  });
+  function giro(now) {
+    if (!s.visibile) return;
+    s.p += (s.verso - s.p) * (s.verso ? .022 : .035);
+    g.f("uRes", dim.w * dim.dpr, dim.h * dim.dpr); g.f("uP", quieto ? s.verso : s.p); g.f("uT", (now - s.t0) / 1000);
+    g.disegna(); requestAnimationFrame(giro);
+  }
+})();
+</script>
+</body>
+</html>

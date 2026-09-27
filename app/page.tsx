@@ -8,7 +8,7 @@ import { ScenaDivisa } from "@/components/marketing/scene/ScenaDivisa";
 import { FraseAccesa } from "@/components/marketing/scene/FraseAccesa";
 import { RegistroInCorsa } from "@/components/marketing/scene/RegistroInCorsa";
 import { PassiImpilati } from "@/components/marketing/scene/PassiImpilati";
-import { VoltoParticelle } from "@/components/marketing/scene/VoltoParticelle";
+import { LenteCertificato } from "@/components/marketing/scene/LenteCertificato";
 import { FORMATI, qualitaPer } from "@/app/match/crea/opzioni";
 import { scattoInVetrina } from "@/lib/vetrina";
 import { ProvaGratis, type VoltoProva } from "@/components/marketing/ProvaGratis";
@@ -75,10 +75,9 @@ export default async function Home() {
         </div>
         <FraseAccesa />
         {vetrina && (
-          <VoltoParticelle
-            nome={vetrina.nome}
-            colori={`/home/volto-colori-${vetrina.handle}.png`}
-            foto={{ src640: `/home/volto-foto-${vetrina.handle}-640.webp`, src400: `/home/volto-foto-${vetrina.handle}-400.webp` }}
+          <LenteCertificato
+            vetrina={vetrina}
+            foto={{ src760: `/home/scatto-${vetrina.handle}-760.webp`, src1200: `/home/scatto-${vetrina.handle}-1200.webp`, src1536: `/home/scatto-${vetrina.handle}-1536.webp` }}
           />
         )}
         {voltiProva.length > 0 && (

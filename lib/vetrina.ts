@@ -7,7 +7,7 @@
 //
 // Lo scatto: Gabriella al caffe', orizzontale, alta qualita', fatto il 27/9
 // con l'account di prova e pagato come ogni altro (certificato d20b966b1352).
-// Le foto pubbliche con la filigrana visibile stanno in public/home/.
+// Le foto pubbliche stanno in public/home/ (senza filigrana visibile dal 27/9).
 // SERVER-ONLY.
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -25,6 +25,7 @@ export interface ScattoVetrina {
   allaPersonaCent: number; // quanto e' andato alla persona
   formato: "orizzontale" | "verticale" | "quadrato";
   qualita: "bozza" | "alta" | "stampa";
+  consensoDal: string | null; // AAAA-MM-GG, il giorno del si'
 }
 
 function formatoDa(size: string | null | undefined): ScattoVetrina["formato"] {
@@ -36,7 +37,7 @@ function formatoDa(size: string | null | undefined): ScattoVetrina["formato"] {
 /** Pura: dalla riga del database a quello che mostra la pagina, o null se non si puo' mostrare. */
 export function vetrinaDa(
   gen: { certificate: string | null; gross_cents: number | null; royalty_cents: number | null } | null,
-  avatar: { handle: string; alias: string; revoked_at: string | null; commercial_consent: boolean | null; verification_status?: string | null; protection_only?: boolean | null } | null,
+  avatar: { handle: string; alias: string; revoked_at: string | null; commercial_consent: boolean | null; verification_status?: string | null; protection_only?: boolean | null; consent_start?: string | null } | null,
   job: { echoSize?: string | null; echoQuality?: string | null } | null,
 ): ScattoVetrina | null {
   if (!gen?.certificate || gen.gross_cents == null || gen.royalty_cents == null || !avatar) return null;
@@ -52,6 +53,7 @@ export function vetrinaDa(
     allaPersonaCent: gen.royalty_cents,
     formato: formatoDa(job?.echoSize),
     qualita: q,
+    consensoDal: avatar.consent_start ? String(avatar.consent_start).slice(0, 10) : null,
   };
 }
 
@@ -66,7 +68,7 @@ export const scattoInVetrina = unstable_cache(
         .maybeSingle();
       if (!gen) return null;
       const [{ data: avatar }, { data: job }] = await Promise.all([
-        sb.from("avatars").select("handle, alias, revoked_at, commercial_consent, verification_status, protection_only").eq("id", gen.avatar_id).maybeSingle(),
+        sb.from("avatars").select("handle, alias, revoked_at, commercial_consent, verification_status, protection_only, consent_start").eq("id", gen.avatar_id).maybeSingle(),
         sb.from("generation_jobs").select("params").eq("certificate", gen.certificate).maybeSingle(),
       ]);
       const p = (job?.params ?? null) as { echoSize?: string; echoQuality?: string } | null;
