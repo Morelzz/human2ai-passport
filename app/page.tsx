@@ -16,8 +16,8 @@ import { IlSet } from "@/components/marketing/IlSet";
 import { Trust } from "@/components/marketing/Trust";
 import type { FeaturedAvatar } from "@/components/marketing/Registry";
 import { WardSection } from "@/components/marketing/WardSection";
-import { AiActStrip } from "@/components/marketing/AiActStrip";
-import { ToolsBusiness } from "@/components/marketing/ToolsBusiness";
+import { IndicePorte, type Porta } from "@/components/marketing/IndicePorte";
+import { fotoPagina, type ChiaveFoto } from "@/lib/foto-pagine";
 import { ClosingCTA } from "@/components/marketing/ClosingCTA";
 import { Footer } from "@/components/marketing/Footer";
 import { galleryFromRow, portraitFor } from "@/lib/sample-galleries";
@@ -30,6 +30,21 @@ export default async function Home() {
   // volti e stessi contatori di catalogo e trasparenza. Le due letture partono
   // insieme: prima erano tre giri sul DB in fila, e la pagina non partiva.
   const [approved, vetrina] = await Promise.all([registroPubblico(), scattoInVetrina()]);
+  // L'indice delle porte in fondo: ogni porta con lo scatto vero della sua pagina
+  // (gia' filtrato sul consenso vivo), o senza foto se non c'e'.
+  const PORTE: { href: string; nome: string; frase: string; foto: ChiaveFoto | null }[] = [
+    { href: "/studio", nome: "Semblic Studio", frase: "La campagna la facciamo noi: brief, volto giusto, consegna certificata.", foto: "studio" },
+    { href: "/enterprise", nome: "Enterprise", frase: "Un volto riservato al tuo brand, nella tua categoria, per 6 o 12 mesi.", foto: "enterprise" },
+    { href: "/sviluppatori", nome: "API e MCP", frase: "Il consenso come risposta di un endpoint, dentro i tuoi sistemi.", foto: "sviluppatori" },
+    { href: "/ai-act", nome: "AI Act", frase: "Certificato, filigrana e consenso verificabile: la trasparenza che la legge chiede, già dentro.", foto: null },
+    { href: "/academy#aziende", nome: "Formazione", frase: "Per le aziende che devono adeguarsi: percorsi a più livelli, sul serio.", foto: "academy" },
+  ];
+  const porte: Porta[] = await Promise.all(
+    PORTE.map(async (x) => {
+      const c = x.foto ? await fotoPagina(x.foto) : null;
+      return { href: x.href, nome: x.nome, frase: x.frase, foto: c ? { src: c.src960, fuoco: c.fuoco, persone: c.persone.map((q) => q.alias).join(" e ") } : null };
+    }),
+  );
 
   // La fascia "Provalo adesso": c'e' solo quando l'interruttore e' acceso.
   const voltiProva: VoltoProva[] = provaAttiva()
@@ -93,8 +108,7 @@ export default async function Home() {
         <IlSet />
         <div className="sv"><WardSection /></div>
         <div className="sv"><Trust /></div>
-        <div className="sv"><ToolsBusiness /></div>
-        <div className="sv"><AiActStrip /></div>
+        <div className="sv"><IndicePorte porte={porte} /></div>
         <ClosingCTA />
       </main>
         <Footer />
