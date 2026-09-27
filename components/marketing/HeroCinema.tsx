@@ -177,10 +177,10 @@ export function HeroCinema({ vetrina, prezzoDaCent }: { vetrina: ScattoVetrina |
           >
             <Magnetic strength={0.22} className="flex"><Link
               href="/match"
-              className="group inline-flex w-full min-h-[58px] items-center sm:w-auto justify-center gap-3 rounded-full bg-amber px-8 text-[1.08rem] font-semibold text-on-amber shadow-[0_12px_30px_-10px_rgba(226,154,46,0.7)] transition-[transform,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:bg-amber-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+              className="group inline-flex w-full min-h-[58px] items-center whitespace-nowrap sm:w-auto justify-center gap-3 rounded-full bg-amber px-8 text-[1.08rem] font-semibold text-on-amber shadow-[0_12px_30px_-10px_rgba(226,154,46,0.7)] transition-[transform,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:bg-amber-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
             >
               Crea con volti veri
-              <span className="rounded-full bg-black/10 px-2.5 py-0.5 text-[0.9rem] tabular-nums">da {euro(prezzoDaCent)}</span>
+              <span className="whitespace-nowrap rounded-full bg-black/10 px-2.5 py-0.5 text-[0.9rem] tabular-nums max-[400px]:hidden">da {euro(prezzoDaCent)}</span>
             </Link></Magnetic>
             <Magnetic strength={0.22} className="flex"><Link
               href="/entra"

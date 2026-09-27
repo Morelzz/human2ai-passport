@@ -35,7 +35,9 @@ export function ScenaDivisa({ vetrina }: { vetrina: ScattoVetrina }) {
       const apri = computer ? 58 : 16;
       const tl = gsap.timeline({
         defaults: { ease: "none" },
-        scrollTrigger: { trigger: el, start: "top top", end: computer ? "+=170%" : "+=130%", pin: true, scrub: 0.8, anticipatePin: 1 },
+        // Niente pin di GSAP: la scena si ferma con position: sticky (sotto),
+        // che il telefono gestisce senza ritardi. Qui si legge solo lo scorrimento.
+        scrollTrigger: { trigger: el, start: "top top", end: "bottom bottom", scrub: 0.6 },
       });
       tl.fromTo(".sd-foto", { scale: 1.08 }, { scale: 1, duration: 0.25 }, 0)
         .fromTo(".sd-meta-s", { xPercent: 0, rotate: 0 }, { xPercent: -apri, rotate: computer ? -3 : -2, duration: 0.5 }, 0.2)
@@ -50,8 +52,9 @@ export function ScenaDivisa({ vetrina }: { vetrina: ScattoVetrina }) {
   }, []);
 
   return (
-    <section ref={radice} aria-labelledby="titolo-divisa" className="relative h-[100svh] overflow-hidden motion-reduce:hidden">
-      <div className="sd-foto absolute inset-0 flex items-center justify-center pb-[18svh] pt-[10svh] lg:p-0">
+    <section ref={radice} aria-labelledby="titolo-divisa" className="relative h-[230svh] motion-reduce:hidden lg:h-[270svh]">
+      <div className="sticky top-0 h-[100svh] overflow-hidden">
+      <div className="sd-foto absolute inset-0 flex items-center justify-center pb-[19svh] pt-[16svh] lg:pb-0 lg:pt-[4.75rem]">
         <div className="relative flex h-[min(38svh,61vw)] w-[min(92vw,57svh)] lg:h-[min(62vh,40vw)] lg:w-[min(93vh,60vw)]">
           {(["s", "d"] as const).map((lato) => (
             <div key={lato} className={`sd-meta-${lato} relative h-full w-1/2 overflow-hidden ${lato === "s" ? "rounded-l-[26px]" : "rounded-r-[26px]"} shadow-[0_40px_80px_-40px_rgba(23,21,15,0.55)]`}>
@@ -108,9 +111,10 @@ export function ScenaDivisa({ vetrina }: { vetrina: ScattoVetrina }) {
       {/* Telefono: la frase in alto. Computer: nel varco fra le due meta'. */}
       <div className="sd-centro pointer-events-none invisible absolute inset-x-0 top-[calc(4.75rem+1svh)] flex justify-center px-6 lg:inset-0 lg:top-0 lg:items-center lg:px-0">
         <div className="text-center lg:w-[min(30vw,420px)]">
-          <h2 id="titolo-divisa" className="text-[2.1rem] font-bold leading-[0.98] tracking-[-0.04em] lg:text-[3.1rem]">Una foto, due persone contente.</h2>
+          <h2 id="titolo-divisa" className="text-[1.9rem] font-bold leading-[0.98] tracking-[-0.04em] lg:text-[3.1rem]">Una foto, due persone contente.</h2>
           <p className="mx-auto mt-2 max-w-[300px] text-[0.95rem] text-muted lg:mt-4 lg:text-[1.05rem]">Revoca quando vuole, vale subito. Decide lei a cosa dice no.</p>
         </div>
+      </div>
       </div>
     </section>
   );

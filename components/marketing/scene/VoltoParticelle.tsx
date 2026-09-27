@@ -7,26 +7,27 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 // ──────────────────────────────────────────────────────────────────────────
-// SCENA 0, IL VOLTO DI PUNTI (27/9/2026, "manca qualcosa di assurdo"). Il
-// ritratto vero di Gabriella fatto di migliaia di punti. La sezione si ferma e,
-// mentre scorri, i punti sparsi si ricompongono nel suo volto: senza consenso
-// non c'e' volto, con il suo si' prende forma. Col mouse o col dito i punti
-// scappano e poi tornano. Canvas 2D, niente librerie in piu'.
+// IL VOLTO CHE SI FORMA (27/9/2026, rifatto dopo "bello il concetto, ma fa
+// cagare"). Niente griglia di quadretti e niente scontorno: migliaia di punti
+// sparsi arrivano da un vortice e si posano sul ritratto; quando sono arrivati
+// la foto vera, nitida, prende il loro posto. Col mouse o col dito la foto si
+// sfalda di nuovo in punti: il volto esiste solo col suo si'.
 //
-// Regole: il disegno gira solo quando la sezione e' sullo schermo; densita'
-// ridotta sul telefono; con "riduci animazioni" il volto e' gia' composto e fermo.
+// La scena si ferma con position: sticky (non con il blocco di GSAP): sul
+// telefono lo scorrimento corre su un binario suo e il blocco in JavaScript
+// arrivava in ritardo, la sezione tremava. GSAP qui legge solo quanto hai
+// scorso. Il disegno gira solo quando la scena e' sullo schermo.
 // ──────────────────────────────────────────────────────────────────────────
 
-interface Punto { tx: number; ty: number; sx: number; sy: number; r: number; c: string; ritardo: number; ox: number; oy: number }
+interface Punto { u: number; v: number; a0: number; d0: number; r: number; c: string; ritardo: number; ox: number; oy: number }
 
-
-
-export function VoltoParticelle({ nome, mappa }: { nome: string; mappa: string }) {
+export function VoltoParticelle({ nome, colori, foto }: { nome: string; colori: string; foto: { src640: string; src400: string } }) {
   const radice = useRef<HTMLElement>(null);
   const tela = useRef<HTMLCanvasElement>(null);
-  const stato = useRef({ progresso: 0, px: -9999, py: -9999, visibile: false, fermo: false });
+  const cornice = useRef<HTMLDivElement>(null);
+  const immagine = useRef<HTMLImageElement>(null);
+  const stato = useRef({ progresso: 0, px: -9999, py: -9999, tocco: 0, toccoVerso: 0, visibile: false, fermo: false });
 
-  // Scorrimento: la sezione si ferma e il progresso va da 0 a 1.
   useLayoutEffect(() => {
     const el = radice.current;
     if (!el) return;
@@ -35,13 +36,10 @@ export function VoltoParticelle({ nome, mappa }: { nome: string; mappa: string }
       const st = ScrollTrigger.create({
         trigger: el,
         start: "top top",
-        end: "+=140%",
-        pin: true,
-        scrub: 0.6,
-        anticipatePin: 1,
+        end: "bottom bottom",
         onUpdate: (s) => {
           stato.current.progresso = s.progress;
-          el.style.setProperty("--p", String(s.progress));
+          el.style.setProperty("--p", s.progress.toFixed(3));
         },
       });
       return () => st.kill();
@@ -54,98 +52,112 @@ export function VoltoParticelle({ nome, mappa }: { nome: string; mappa: string }
     return () => mm.revert();
   }, []);
 
-  // Disegno.
   useEffect(() => {
-    const cv = tela.current;
-    const el = radice.current;
-    if (!cv || !el) return;
+    const cv = tela.current, box = cornice.current, img = immagine.current, el = radice.current;
+    if (!cv || !box || !img || !el || stato.current.fermo) return;
     const ctx = cv.getContext("2d");
     if (!ctx) return;
-    let punti: Punto[] = [];
-    let w = 0, h = 0, raf = 0, vivo = true;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const telefono = window.matchMedia("(max-width: 767px)").matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, telefono ? 2 : 1.75);
+    let punti: Punto[] = [];
+    let w = 0, h = 0, fx = 0, fy = 0, fw = 0, fh = 0, raf = 0, vivo = true;
 
-    const img = new Image();
-    img.decoding = "async";
-    img.src = mappa;
+    const mappa = new Image();
+    mappa.decoding = "async";
+    mappa.src = colori;
 
-    function costruisci() {
-      const box = cv!.getBoundingClientRect();
-      w = box.width; h = box.height;
+    function misura() {
+      const c = cv!.getBoundingClientRect();
+      const f = box!.getBoundingClientRect();
+      w = c.width; h = c.height;
+      fx = f.left - c.left; fy = f.top - c.top; fw = f.width; fh = f.height;
       cv!.width = Math.round(w * dpr); cv!.height = Math.round(h * dpr);
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (!img.complete || !img.naturalWidth) return;
-      // La mappa e' gia' pronta (scripts/volto-punti.mjs): una cella = un punto,
-      // fondo trasparente. Sul telefono un punto su quattro, piu' grande.
-      const salto = telefono ? 2 : 1;
-      const colonne = img.naturalWidth, righe = img.naturalHeight;
+    }
+
+    function costruisci() {
+      if (!mappa.naturalWidth) return;
+      const mw = mappa.naturalWidth, mh = mappa.naturalHeight;
       const off = document.createElement("canvas");
-      off.width = colonne; off.height = righe;
+      off.width = mw; off.height = mh;
       const o = off.getContext("2d", { willReadFrequently: true })!;
-      o.drawImage(img, 0, 0);
-      const dati = o.getImageData(0, 0, colonne, righe).data;
-      const passo = Math.min(w / colonne, h / righe);
-      const x0 = (w - colonne * passo) / 2, y0 = (h - righe * passo) / 2;
+      o.drawImage(mappa, 0, 0);
+      const dati = o.getImageData(0, 0, mw, mh).data;
+      const quanti = telefono ? 3400 : 8200;
+      // Il colore dello studio, letto sulla riga in alto: i punti del fondo si
+      // tengono radi (12%), cosi' la sagoma di volto e capelli si legge.
+      let fr = 0, fg = 0, fb = 0;
+      for (let x = 0; x < mw; x++) { fr += dati[x * 4]; fg += dati[x * 4 + 1]; fb += dati[x * 4 + 2]; }
+      fr /= mw; fg /= mw; fb /= mw;
+      const schiarisci = (c: number, crema: number) => Math.round(c + (crema - c) * 0.2);
       punti = [];
-      for (let y = 0; y < righe; y += salto) {
-        for (let x = 0; x < colonne; x += salto) {
-          const i = (y * colonne + x) * 4;
-          if (dati[i + 3] < 128) continue;
-          // Un filo di crema su ogni punto: i capelli scuri restano leggibili sul nero.
-          const schiarisci = (v: number, crema: number) => Math.round(v + (crema - v) * 0.16);
-          const r = schiarisci(dati[i], 244), g = schiarisci(dati[i + 1], 238), b = schiarisci(dati[i + 2], 227);
-          const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-          const ang = Math.random() * Math.PI * 2;
-          const dist = Math.max(w, h) * (0.55 + Math.random() * 0.5);
-          punti.push({
-            tx: x0 + (x + salto / 2) * passo,
-            ty: y0 + (y + salto / 2) * passo,
-            sx: w / 2 + Math.cos(ang) * dist,
-            sy: h / 2 + Math.sin(ang) * dist,
-            r: passo * salto * (0.3 + (1 - lum) * 0.22),
-            c: `rgb(${r},${g},${b})`,
-            ritardo: Math.random() * 0.45 + (y / righe) * 0.2,
-            ox: 0, oy: 0,
-          });
-        }
+      for (let tentativi = 0; punti.length < quanti && tentativi < quanti * 6; tentativi++) {
+        // Punti sparsi a caso, non a griglia: niente effetto "pixel".
+        const u = Math.random(), v = Math.random();
+        const i = ((Math.min(mh - 1, (v * mh) | 0) * mw) + Math.min(mw - 1, (u * mw) | 0)) * 4;
+        const eFondo = Math.abs(dati[i] - fr) + Math.abs(dati[i + 1] - fg) + Math.abs(dati[i + 2] - fb) < 48;
+        if (eFondo && Math.random() > 0.12) continue;
+        punti.push({
+          u, v,
+          a0: Math.random() * Math.PI * 2,
+          d0: 0.6 + Math.random() * 0.9,
+          r: (eFondo ? 0.7 : 1) * ((telefono ? 1.25 : 1.05) + Math.random() * (telefono ? 1.1 : 0.9)),
+          // I capelli scuri, schiariti appena, restano visibili sul nero.
+          c: `rgb(${schiarisci(dati[i], 244)},${schiarisci(dati[i + 1], 236)},${schiarisci(dati[i + 2], 224)})`,
+          ritardo: Math.random() * 0.35,
+          ox: 0, oy: 0,
+        });
       }
     }
 
     const facile = (t: number) => 1 - Math.pow(1 - t, 3);
+    const limita = (x: number) => Math.max(0, Math.min(1, x));
+
     function disegna() {
       if (!vivo) return;
       const s = stato.current;
+      // Il tocco (mouse o dito) si accende e si spegne morbido.
+      s.tocco += (s.toccoVerso - s.tocco) * 0.12;
+      // La foto arriva quando i punti sono posati, e si sfalda se la tocchi.
+      const fotoVis = limita((s.progresso - 0.72) / 0.18) * (1 - s.tocco * 0.92);
+      img!.style.opacity = fotoVis.toFixed(3);
       ctx!.clearRect(0, 0, w, h);
-      const raggio = telefono ? 60 : 110;
-      for (const p of punti) {
-        const k = Math.min(1, Math.max(0, (s.progresso - p.ritardo * 0.6) / 0.55));
-        const e = s.fermo ? 1 : facile(k);
-        let x = p.sx + (p.tx - p.sx) * e;
-        let y = p.sy + (p.ty - p.sy) * e;
-        // Il mouse o il dito spinge via i punti vicini; poi tornano con una molla.
-        const dx = x - s.px, dy = y - s.py;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < raggio * raggio && !s.fermo) {
-          const d = Math.sqrt(d2) || 1;
-          const forza = (1 - d / raggio) * 26;
-          p.ox += (dx / d) * forza * 0.35;
-          p.oy += (dy / d) * forza * 0.35;
+      const cx = fx + fw / 2, cy = fy + fh / 2;
+      const raggio = telefono ? 70 : 120;
+      const alfaPunti = 1 - fotoVis * 0.96;
+      if (alfaPunti > 0.02) {
+        for (const p of punti) {
+          const k = limita((s.progresso - p.ritardo * 0.55) / 0.62);
+          const e = facile(k);
+          const tx = fx + p.u * fw, ty = fy + p.v * fh;
+          // Partenza: un vortice largo attorno alla cornice, che si stringe.
+          const ang = p.a0 + (1 - e) * 2.4;
+          const dist = (1 - e) * p.d0 * Math.max(w, h) * 0.55;
+          let x = tx + (cx - tx) * (1 - e) * 0.35 + Math.cos(ang) * dist;
+          let y = ty + (cy - ty) * (1 - e) * 0.35 + Math.sin(ang) * dist;
+          const dx = x - s.px, dy = y - s.py, d2 = dx * dx + dy * dy;
+          if (d2 < raggio * raggio) {
+            const d = Math.sqrt(d2) || 1;
+            const forza = (1 - d / raggio) * 30;
+            p.ox += (dx / d) * forza * 0.3;
+            p.oy += (dy / d) * forza * 0.3;
+          }
+          p.ox *= 0.9; p.oy *= 0.9;
+          x += p.ox; y += p.oy;
+          ctx!.globalAlpha = alfaPunti * (0.35 + e * 0.65);
+          ctx!.fillStyle = p.c;
+          ctx!.beginPath();
+          ctx!.arc(x, y, p.r, 0, Math.PI * 2);
+          ctx!.fill();
         }
-        p.ox *= 0.9; p.oy *= 0.9;
-        x += p.ox; y += p.oy;
-        ctx!.globalAlpha = 0.25 + e * 0.75;
-        ctx!.fillStyle = p.c;
-        ctx!.beginPath();
-        ctx!.arc(x, y, p.r * (0.6 + e * 0.4), 0, Math.PI * 2);
-        ctx!.fill();
+        ctx!.globalAlpha = 1;
       }
-      ctx!.globalAlpha = 1;
-      raf = s.visibile && !s.fermo ? requestAnimationFrame(disegna) : 0;
+      raf = s.visibile ? requestAnimationFrame(disegna) : 0;
     }
 
-    img.onload = () => { costruisci(); disegna(); };
-    if (img.complete) { costruisci(); disegna(); }
+    const avvia = () => { misura(); costruisci(); if (!raf) raf = requestAnimationFrame(disegna); };
+    mappa.onload = avvia;
+    if (mappa.complete && mappa.naturalWidth) avvia();
 
     const io = new IntersectionObserver(([e]) => {
       stato.current.visibile = e.isIntersecting;
@@ -153,47 +165,57 @@ export function VoltoParticelle({ nome, mappa }: { nome: string; mappa: string }
     });
     io.observe(el);
 
-    const muovi = (cx: number, cy: number) => {
+    const muovi = (e: PointerEvent) => {
       const b = cv.getBoundingClientRect();
-      stato.current.px = cx - b.left; stato.current.py = cy - b.top;
+      stato.current.px = e.clientX - b.left; stato.current.py = e.clientY - b.top;
+      const f = box.getBoundingClientRect();
+      const dentro = e.clientX > f.left && e.clientX < f.right && e.clientY > f.top && e.clientY < f.bottom;
+      stato.current.toccoVerso = dentro ? 1 : 0;
     };
-    const suMouse = (e: PointerEvent) => muovi(e.clientX, e.clientY);
-    const esci = () => { stato.current.px = -9999; stato.current.py = -9999; };
-    cv.addEventListener("pointermove", suMouse);
-    cv.addEventListener("pointerdown", suMouse);
+    const esci = () => { stato.current.px = -9999; stato.current.py = -9999; stato.current.toccoVerso = 0; };
+    cv.addEventListener("pointermove", muovi);
+    cv.addEventListener("pointerdown", muovi);
     cv.addEventListener("pointerleave", esci);
     cv.addEventListener("pointerup", esci);
-    const ro = new ResizeObserver(() => { costruisci(); if (!raf) disegna(); });
+    cv.addEventListener("pointercancel", esci);
+    const ro = new ResizeObserver(() => misura());
     ro.observe(cv);
 
     return () => {
       vivo = false; cancelAnimationFrame(raf); io.disconnect(); ro.disconnect();
-      cv.removeEventListener("pointermove", suMouse); cv.removeEventListener("pointerdown", suMouse);
-      cv.removeEventListener("pointerleave", esci); cv.removeEventListener("pointerup", esci);
+      cv.removeEventListener("pointermove", muovi); cv.removeEventListener("pointerdown", muovi);
+      cv.removeEventListener("pointerleave", esci); cv.removeEventListener("pointerup", esci); cv.removeEventListener("pointercancel", esci);
     };
-  }, [mappa]);
+  }, [colori]);
 
   return (
-    <section
-      ref={radice}
-      aria-labelledby="titolo-volto"
-      className="volto-scena relative flex h-[100svh] flex-col items-center justify-center overflow-hidden bg-[#110F0B] px-5 text-[#F4EEE3] lg:flex-row lg:gap-16 lg:px-16"
-    >
-      <canvas
-        ref={tela}
-        role="img"
-        aria-label={`Il volto di ${nome} fatto di punti, che si compone mentre scorri`}
-        className="h-[52svh] w-[min(88vw,46svh)] touch-pan-y lg:h-[78svh] lg:w-[min(46vw,66svh)]"
-      />
-      <div className="mt-6 max-w-[30rem] text-center lg:mt-0 lg:text-left">
-        <p className="volto-prima text-[1.05rem] text-white/60">Senza consenso, nessun volto.</p>
-        <h2 id="titolo-volto" className="mt-2 text-[2.3rem] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[3rem] lg:text-[4rem]">
-          Con il suo sì, {nome} prende forma.
-        </h2>
-        <p className="volto-dopo mt-4 text-[1.1rem] text-white/75 sm:text-[1.2rem]">
-          Ogni punto è suo. Si compone solo quando lei dice sì, e ogni volta che viene usato, viene pagata.
-        </p>
-        <p className="mt-5 hidden text-[0.95rem] text-white/45 sm:block">Passaci sopra col mouse.</p>
+    <section ref={radice} aria-labelledby="titolo-volto" className="volto-scena relative h-[250svh] bg-[#110F0B] text-[#F4EEE3] motion-reduce:h-auto">
+      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-5 overflow-hidden px-5 pb-6 pt-[5rem] lg:flex-row lg:gap-20 lg:px-16 lg:pt-[5.5rem] motion-reduce:static motion-reduce:h-auto motion-reduce:py-24">
+        {/* I punti volano su tutta la scena; la foto sta nella cornice. */}
+        <canvas ref={tela} aria-hidden className="absolute inset-0 h-full w-full touch-pan-y motion-reduce:hidden" />
+        <div ref={cornice} className="pointer-events-none relative aspect-[4/5] h-[min(46svh,100vw)] shrink-0 overflow-hidden rounded-[24px] lg:h-[min(72svh,56vw)]">
+          <picture>
+            <source type="image/webp" srcSet={`${foto.src400} 400w, ${foto.src640} 640w`} sizes="(min-width: 1024px) 40vw, 80vw" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              ref={immagine}
+              src={foto.src640}
+              alt={`Ritratto di ${nome}, che si compone di punti mentre scorri`}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover opacity-0 motion-reduce:opacity-100"
+            />
+          </picture>
+        </div>
+        <div className="pointer-events-none relative max-w-[30rem] text-center lg:text-left">
+          <p className="volto-prima text-[1rem] text-white/60 sm:text-[1.05rem]">Senza consenso, nessun volto.</p>
+          <h2 id="titolo-volto" className="mt-1.5 text-[2rem] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[3rem] lg:text-[4rem]">
+            Con il suo sì, {nome} prende forma.
+          </h2>
+          <p className="volto-dopo mt-3 text-[1rem] text-white/75 sm:text-[1.2rem]">
+            Toccala e torna punti. Si ricompone solo col suo sì, e ogni volta che viene usata, viene pagata.
+          </p>
+        </div>
       </div>
     </section>
   );

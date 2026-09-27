@@ -74,7 +74,13 @@ export default async function Home() {
           <DuePorte vetrina={vetrina} />
         </div>
         <FraseAccesa />
-        {vetrina && <VoltoParticelle nome={vetrina.nome} mappa={`/home/volto-punti-${vetrina.handle}.png`} />}
+        {vetrina && (
+          <VoltoParticelle
+            nome={vetrina.nome}
+            colori={`/home/volto-colori-${vetrina.handle}.png`}
+            foto={{ src640: `/home/volto-foto-${vetrina.handle}-640.webp`, src400: `/home/volto-foto-${vetrina.handle}-400.webp` }}
+          />
+        )}
         {voltiProva.length > 0 && (
           <div className="px-5 pb-2 sm:px-8">
             <ProvaGratis volti={voltiProva} compatta />

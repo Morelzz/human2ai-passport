@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -18,6 +18,15 @@ const CHIAVI = new Set(["sì.", "sì", "pagato,"]);
 
 export function FraseAccesa() {
   const radice = useRef<HTMLElement>(null);
+
+  // Una volta per pagina: quando caratteri e immagini hanno finito di
+  // caricare le altezze cambiano, e tutte le scene ricalcolano dove partono.
+  useEffect(() => {
+    const rifai = () => ScrollTrigger.refresh();
+    window.addEventListener("load", rifai);
+    document.fonts?.ready.then(rifai).catch(() => {});
+    return () => window.removeEventListener("load", rifai);
+  }, []);
 
   useLayoutEffect(() => {
     const el = radice.current;
