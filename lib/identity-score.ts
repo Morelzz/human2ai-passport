@@ -18,10 +18,14 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 import { similarityFromDistance } from "@/lib/face-similarity";
+import { coseno, descrittoreArcSicuro, distanzaDaCoseno, impronta as improntaArc } from "@/lib/arcface";
 
 export const DISTANZA_OK = 0.5; // sotto: stessa persona ad alta fedelta'
 export const DISTANZA_MAX_SOGLIA = 0.52; // la soglia non si allarga oltre: la Stella al 64% (d 0,541) del 19/9 va rifatta, era gia' bocciata a occhio
-export const DISTANZA_STESSA_PERSONA = 0.6; // oltre: non e' quella persona
+// 0,6 fino al 27/9: una Stella bionda di Soul 2 misurata 0,565 passava per lei.
+// Sul banco del 27/9 le foto vere stanno sotto 0,44 (face-api) e le sconosciute
+// sopra 0,51; con SFace la stessa soglia vale coseno 0,65 (vedi lib/arcface).
+export const DISTANZA_STESSA_PERSONA = 0.5; // oltre: non e' quella persona
 export const LATO_RICONOSCIBILE = 80; // px: volti piu' piccoli sono folla, non ritratti
 
 export type ModoSomiglianza = "osserva" | "applica";
@@ -29,8 +33,8 @@ export function modoSomiglianza(): ModoSomiglianza {
   return process.env.SOMIGLIANZA_MODO === "applica" ? "applica" : "osserva";
 }
 
-export interface Volto { desc: number[]; lato: number; x?: number } // x = centro del volto, per l'ordine da sinistra
-export interface Riferimento { chiave: string; rif: number[][]; coerenza: number | null }
+export interface Volto { desc: number[]; lato: number; x?: number; arc?: number[] | null } // x = centro del volto, per l'ordine da sinistra; arc = SFace
+export interface Riferimento { chiave: string; rif: number[][]; coerenza: number | null; arc?: number[] | null } // arc = impronta SFace
 
 export function distanza(a: number[], b: number[]): number {
   let s = 0;
@@ -67,7 +71,9 @@ export interface MisuraSomiglianza { persone: EsitoPersona[]; sconosciuti: numbe
 // persona) e conta i volti RICONOSCIBILI che non sono di nessun protagonista.
 export function abbina(volti: Volto[], persone: Riferimento[]): MisuraSomiglianza {
   const coppie: { v: number; p: number; d: number }[] = [];
-  volti.forEach((vv, v) => persone.forEach((pp, p) => coppie.push({ v, p, d: distanzaDaPersona(vv.desc, pp.rif) })));
+  // SFace quando c'e' da tutte e due le parti, se no face-api (stessa scala).
+  const d = (vv: Volto, pp: Riferimento) => (vv.arc && pp.arc ? distanzaDaCoseno(coseno(vv.arc, pp.arc)) : distanzaDaPersona(vv.desc, pp.rif));
+  volti.forEach((vv, v) => persone.forEach((pp, p) => coppie.push({ v, p, d: d(vv, pp) })));
   coppie.sort((a, b) => a.d - b.d);
   const voltoPreso = new Set<number>();
   const personaPresa = new Map<number, { d: number; lato: number }>();
@@ -82,7 +88,7 @@ export function abbina(volti: Volto[], persone: Riferimento[]): MisuraSomiglianz
       chiave: pp.chiave,
       distanza: m ? Math.round(m.d * 1000) / 1000 : null,
       percentuale: m ? similarityFromDistance(m.d) : null,
-      soglia: sogliaPer(pp.coerenza),
+      soglia: pp.arc ? DISTANZA_OK : sogliaPer(pp.coerenza),
       lato: m ? m.lato : null,
     };
   });
@@ -130,7 +136,17 @@ export async function voltiIn(img: Buffer): Promise<Volto[]> {
     // meglio; con volti gia' trovati non si abbassa niente.
     let dets = await cerca(0.5);
     if (dets.length === 0) dets = await cerca(0.35);
-    return dets.map((d) => ({ desc: Array.from(d.descriptor), lato: Math.round(d.detection.box.width), x: Math.round(d.detection.box.x + d.detection.box.width / 2) }));
+    const rgb = new Uint8Array(data);
+    const out: Volto[] = [];
+    for (const d of dets) {
+      out.push({
+        desc: Array.from(d.descriptor),
+        lato: Math.round(d.detection.box.width),
+        x: Math.round(d.detection.box.x + d.detection.box.width / 2),
+        arc: await descrittoreArcSicuro(rgb, info.width, info.height, (d as unknown as { landmarks: { positions: { x: number; y: number }[] } }).landmarks.positions),
+      });
+    }
+    return out;
   } finally {
     t.dispose();
   }
@@ -139,15 +155,20 @@ export async function voltiIn(img: Buffer): Promise<Volto[]> {
 // Descrittori delle foto vere (il volto piu' grande di ognuna) + coerenza.
 export async function riferimentoDa(chiave: string, foto: Buffer[]): Promise<Riferimento | null> {
   const rif: number[][] = [];
+  const arcs: number[][] = [];
   for (const f of foto) {
     try {
       const v = await voltiIn(f);
-      if (v.length) rif.push(v.sort((a, b) => b.lato - a.lato)[0].desc);
+      if (v.length) {
+        const g = v.sort((a, b) => b.lato - a.lato)[0];
+        rif.push(g.desc);
+        if (g.arc) arcs.push(g.arc);
+      }
     } catch {
       /* foto illeggibile: si salta */
     }
   }
-  return rif.length ? { chiave, rif, coerenza: coerenzaInterna(rif) } : null;
+  return rif.length ? { chiave, rif, coerenza: coerenzaInterna(rif), arc: improntaDa(arcs) } : null;
 }
 
 // Cache nel processo (worker): le impronte delle foto vere non cambiano da uno
@@ -171,4 +192,9 @@ export async function misuraScatto(png: Buffer, persone: Riferimento[]): Promise
   } catch {
     return null;
   }
+}
+
+/** L'impronta SFace dalle impronte delle foto vere (null se il misuratore serio non c'era). */
+export function improntaDa(arcs: number[][]): number[] | null {
+  return arcs.length ? improntaArc(arcs) : null;
 }

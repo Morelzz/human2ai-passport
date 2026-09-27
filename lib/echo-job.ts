@@ -19,7 +19,7 @@ import { generaConRipiego, generateEcho, type EchoSize, type EchoQuality } from 
 import { echoCostCentsFromUsage, echoResLabel } from "@/lib/engines/echo-cost";
 import { uploadPublicImage } from "@/lib/storage";
 import { scanGeneratedImageForProtected, outputScanVerdict } from "@/lib/face-scan-server";
-import { misuraScatto, migliore, modoSomiglianza, verdetto as verdettoSomiglianza, type MisuraSomiglianza } from "@/lib/identity-score";
+import { misuraScatto, migliore, modoSomiglianza, verdetto as verdettoSomiglianza, DISTANZA_STESSA_PERSONA, type MisuraSomiglianza } from "@/lib/identity-score";
 import { buildEchoPrompt, type ExtraMeta } from "@/lib/echo-prompt";
 import { consentBlockReason, type LiveConsentState } from "@/lib/consent-gate";
 import { giudicaScatto, verdettoQualita, preferisci, costoGiudizioCent, qualitaPerRegistro, type Giudizio, type VerdettoQualita } from "@/lib/qualita";
@@ -348,6 +348,16 @@ export async function executeEchoJob(admin: Admin, job: EchoJobRow): Promise<voi
     result = scelto.result;
     const misuraFinale = scelto.misura;
     const esitoPersona = misuraFinale?.persone[0] ?? null;
+    // Come nel gruppo (27/9): se nella foto c'e' un volto e non e' lei, la foto
+    // non esce e i crediti tornano. Nessun volto riconoscibile (di spalle, di
+    // profilo stretto) non blocca; misuratore giu' nemmeno.
+    if (misuraFinale && esitoPersona) {
+      const nonELei = esitoPersona.distanza != null ? esitoPersona.distanza > DISTANZA_STESSA_PERSONA : misuraFinale.sconosciuti > 0;
+      if (nonELei) {
+        console.warn(`[ECHO job ${job.id}] volto non tenuto (d ${esitoPersona.distanza ?? "n/d"}, sconosciuti ${misuraFinale.sconosciuti}): non consegnata`);
+        throw new Error("La foto non ha tenuto il volto della persona: non te la consegniamo e non ti addebitiamo nulla. Riprova, magari con il volto più in primo piano.");
+      }
+    }
 
     // Carica il PNG pulito (il download imporrà la filigrana invisibile).
     const cleanUrl = await uploadPublicImage("generations", `${job.avatar_id}/${crypto.randomUUID()}.png`, result.png);

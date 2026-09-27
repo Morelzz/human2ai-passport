@@ -7,7 +7,7 @@
 // SERVER-ONLY.
 
 import { getReferenceSet } from "@/lib/references";
-import { voltiIn, coerenzaInterna, type Riferimento } from "@/lib/identity-score";
+import { voltiIn, coerenzaInterna, improntaDa, type Riferimento } from "@/lib/identity-score";
 import { scegliRiferimenti } from "@/lib/scelta-riferimenti";
 
 export interface RiferimentiScelti {
@@ -27,12 +27,16 @@ export async function riferimentiScelti(handle: string): Promise<RiferimentiScel
   if (c && Date.now() - c.at < ORA) return c.v;
 
   const desc: (number[] | null)[] = [];
+  const arcs: (number[] | null)[] = [];
   for (const f of foto) {
     try {
       const v = await voltiIn(f);
-      desc.push(v.length ? v.sort((a, b) => b.lato - a.lato)[0].desc : null);
+      const g = v.length ? v.sort((a, b) => b.lato - a.lato)[0] : null;
+      desc.push(g ? g.desc : null);
+      arcs.push(g?.arc ?? null);
     } catch {
       desc.push(null); // misuratore non disponibile: la foto resta, non si butta niente
+      arcs.push(null);
     }
   }
   const leggibili = desc.filter(Boolean).length;
@@ -46,7 +50,9 @@ export async function riferimentiScelti(handle: string): Promise<RiferimentiScel
     const rif = s.tenute.map((i) => desc[i]).filter((d): d is number[] => Boolean(d));
     v = {
       foto: tenute.length ? tenute : foto,
-      riferimento: rif.length ? { chiave: handle, rif, coerenza: coerenzaInterna(rif) } : null,
+      riferimento: rif.length
+        ? { chiave: handle, rif, coerenza: coerenzaInterna(rif), arc: improntaDa(s.tenute.map((i) => arcs[i]).filter((a): a is number[] => Boolean(a))) }
+        : null,
       scartate: s.scartate.length,
       coerenza: s.coerenzaDopo,
     };
