@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Semblic, la proposta nuova</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#F7F4EE; --surface:#FFFFFF; --ink:#17150F; --muted:#5B564B; --faint:#8a8377; --edge:#D9D3C5; --amber:#E29A2E; --amber-soft:#F8E9CF; --on-amber:#412402; --amber-ink:#9A4A0B; --ok:#1F7A55; --ok-soft:#DDF2E8; --notte:#17150F; --ease: cubic-bezier(.2,.8,.2,1); }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+  .w { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  .mono { font-family: "Geist Mono", monospace; }
+  img, video { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* le etichette del mockup (non fanno parte del sito) */
+  .nota-mock { background: #17150F; color: #F2E9D8; border-radius: 99px; display: inline-flex; gap: 10px; align-items: center; padding: 6px 14px 6px 6px; font-size: .8rem; margin: 40px 0 14px; }
+  .nota-mock b { background: var(--amber); color: var(--on-amber); width: 26px; height: 26px; border-radius: 99px; display: grid; place-items: center; }
+  .spiega { color: var(--muted); max-width: 72ch; font-size: .98rem; margin: 0 0 22px; }
+  .quadro { border: 1px dashed var(--edge); border-radius: 28px; overflow: hidden; background: var(--bg); }
+
+  /* il sito: navigazione finta, solo per dare il contesto */
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 28px; }
+  .nav .logo { font-weight: 700; letter-spacing: .2em; font-size: .78rem; display: flex; gap: 10px; align-items: center; }
+  .nav .logo i { width: 30px; height: 30px; border-radius: 9px; background: var(--ink); display: block; }
+  .nav .voci { display: flex; gap: 22px; font-size: .9rem; color: var(--muted); }
+  .nav .cta { background: var(--ink); color: var(--bg); border-radius: 99px; padding: 9px 18px; font-weight: 600; font-size: .88rem; }
+
+  /* A: hero */
+  .hero { display: grid; grid-template-columns: 1.08fr .92fr; gap: 56px; align-items: center; padding: 28px 28px 64px; }
+  .hero h1 { font-size: clamp(2.8rem, 6.4vw, 5.4rem); font-weight: 700; letter-spacing: -.055em; line-height: .96; }
+  .hero p.sotto { margin-top: 22px; font-size: 1.2rem; color: var(--muted); max-width: 38ch; line-height: 1.45; }
+  .azioni { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; height: 54px; padding: 0 26px; border-radius: 99px; font-weight: 700; font-size: 1rem; border: 1px solid transparent; transition: transform .25s var(--ease), background-color .25s, border-color .25s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: scale(.98); }
+  .btn.amber { background: var(--amber); color: var(--on-amber); }
+  .btn.amber small { background: rgba(65,36,2,.12); border-radius: 99px; padding: 3px 9px; font-weight: 600; font-size: .78rem; }
+  .btn.linea { border-color: var(--edge); background: var(--surface); color: var(--ink); font-weight: 600; }
+  .piccolo { margin-top: 20px; font-size: .88rem; color: var(--faint); display: flex; gap: 8px; align-items: center; }
+  .piccolo i { width: 7px; height: 7px; border-radius: 99px; background: var(--ok); display: inline-block; }
+  .schermo { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 4/5; background: #E9E2D5; box-shadow: 0 50px 90px -50px rgba(23,21,15,.55); }
+  .schermo video, .schermo img.poster { width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+  .chip-v { position: absolute; display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 13px; border-radius: 99px; font-size: .82rem; color: #F7F1E6; background: rgba(17,14,9,.62); backdrop-filter: blur(8px); }
+  .chip-v i { width: 8px; height: 8px; border-radius: 99px; background: #3DDC97; }
+  .chip-v.b1 { left: 14px; bottom: 14px; }
+  .chip-v.b2 { right: 14px; bottom: 14px; font-family: "Geist Mono", monospace; font-size: .74rem; }
+  .angoli-lente i { position: absolute; width: 26px; height: 26px; border: 2px solid rgba(255,255,255,.85); }
+  .angoli-lente i:nth-child(1) { left: 22%; top: 12%; border-right: 0; border-bottom: 0; border-radius: 6px 0 0 0; }
+  .angoli-lente i:nth-child(2) { right: 22%; top: 12%; border-left: 0; border-bottom: 0; border-radius: 0 6px 0 0; }
+  .angoli-lente i:nth-child(3) { left: 22%; top: 46%; border-right: 0; border-top: 0; border-radius: 0 0 0 6px; }
+  .angoli-lente i:nth-child(4) { right: 22%; top: 46%; border-left: 0; border-top: 0; border-radius: 0 0 6px 0; }
+  .angoli-lente { position: absolute; inset: 0; pointer-events: none; opacity: .0; animation: lente 6s ease-in-out infinite; }
+  @keyframes lente { 0%, 8% { opacity: 0; transform: scale(1.08); } 20%, 70% { opacity: 1; transform: none; } 90%, 100% { opacity: 0; } }
+  .frasi { margin-top: 26px; display: grid; gap: 8px; max-width: 520px; }
+  .frase-opz { display: flex; gap: 12px; align-items: baseline; font-size: .92rem; border-top: 1px solid var(--edge); padding-top: 8px; }
+  .frase-opz span { font-family: "Geist Mono", monospace; font-size: .72rem; color: var(--faint); }
+
+  /* B: una foto, due persone */
+  .due-sez { padding: 56px 28px 70px; text-align: left; }
+  .due-sez h2 { font-size: clamp(2rem, 4.4vw, 3.6rem); font-weight: 700; letter-spacing: -.045em; line-height: 1; max-width: 16ch; }
+  .due-sez p.sotto { margin-top: 14px; color: var(--muted); font-size: 1.08rem; max-width: 46ch; }
+  .scena-2 { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; max-width: 780px; transition: gap .9s var(--ease); }
+  .scena-2.aperta { gap: 28px; }
+  .meta { position: relative; aspect-ratio: 3/4; overflow: hidden; background-image: url(foto/divisa.webp); background-size: 200% 100%; background-position-y: 30%; transition: border-radius .9s var(--ease), transform .9s var(--ease), box-shadow .9s var(--ease); }
+  .meta.sx { background-position-x: 0%; border-radius: 22px 0 0 22px; }
+  .meta.dx { background-position-x: 100%; border-radius: 0 22px 22px 0; }
+  .scena-2.aperta .meta { border-radius: 22px; box-shadow: 0 34px 60px -38px rgba(23,21,15,.5); }
+  .scena-2.aperta .sx { transform: rotate(-1.5deg) translateY(6px); }
+  .scena-2.aperta .dx { transform: rotate(1.5deg) translateY(-6px); }
+  .prezzo-c { position: absolute; left: 14px; right: 14px; bottom: 14px; border-radius: 16px; padding: 12px 14px; background: var(--surface); }
+  .prezzo-c small { color: var(--muted); font-size: .76rem; display: block; }
+  .prezzo-c b { font-size: 1.55rem; letter-spacing: -.03em; }
+  .prezzo-c.persona { background: #17150F; color: #F7F4EE; }
+  .prezzo-c.persona small { color: #bdb3a2; }
+  .prezzo-c.persona b { color: #3DDC97; }
+  .rigira { margin-top: 18px; background: none; border: 1px solid var(--edge); border-radius: 99px; height: 38px; padding: 0 16px; font-size: .85rem; color: var(--muted); }
+
+  /* C: soggetti animati */
+  .anim { padding: 64px 28px 70px; background: var(--notte); color: #F7F4EE; display: grid; grid-template-columns: .95fr 1.05fr; gap: 56px; align-items: center; }
+  .anim h2 { font-size: clamp(2rem, 4.2vw, 3.4rem); font-weight: 700; letter-spacing: -.045em; line-height: 1.02; }
+  .anim p { margin-top: 16px; color: #c9bfae; font-size: 1.06rem; max-width: 44ch; }
+  .anim ul { margin: 22px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .anim li { display: flex; gap: 12px; align-items: baseline; color: #e8dfcf; font-size: .98rem; }
+  .anim li i { width: 7px; height: 7px; border-radius: 99px; background: #3DDC97; flex: none; transform: translateY(-2px); }
+  .toggle { display: inline-flex; background: rgba(255,255,255,.08); border-radius: 99px; padding: 4px; gap: 4px; margin-bottom: 16px; position: relative; }
+  .toggle button { position: relative; z-index: 1; border: 0; background: none; color: #bdb3a2; height: 34px; padding: 0 18px; border-radius: 99px; font-weight: 600; font-size: .88rem; transition: color .3s; }
+  .toggle button[aria-pressed="true"] { color: var(--ink); }
+  .toggle .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: 84px; border-radius: 99px; background: #F7F4EE; transition: transform .45s var(--ease), width .45s var(--ease); }
+  .vetrina { position: relative; border-radius: 24px; overflow: hidden; aspect-ratio: 4/5; max-width: 420px; background: #2a2620; }
+  .vetrina video, .vetrina img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; transition: opacity .6s var(--ease); }
+  .vetrina .v { opacity: 0; } .vetrina.video .v { opacity: 1; } .vetrina.video .f { opacity: 0; }
+  .strisce { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 12px; max-width: 420px; }
+  .strisce div { position: relative; aspect-ratio: 2/3; border-radius: 9px; overflow: hidden; }
+  .strisce img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; }
+  .strisce span { position: absolute; left: 4px; bottom: 4px; font: 500 .56rem "Geist Mono", monospace; background: rgba(0,0,0,.6); border-radius: 99px; padding: 2px 6px; color: #3DDC97; }
+  .did { font-size: .78rem; color: #9d9384; margin-top: 8px; max-width: 420px; }
+
+  /* D: registro */
+  .reg { padding: 60px 0 64px; }
+  .reg .testa { padding: 0 28px; display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
+  .reg h2 { font-size: clamp(2rem, 4.2vw, 3.4rem); font-weight: 700; letter-spacing: -.045em; line-height: 1; }
+  .reg .tutti { border: 1px solid var(--edge); border-radius: 99px; height: 42px; padding: 0 18px; display: inline-flex; align-items: center; font-weight: 600; font-size: .9rem; background: var(--surface); }
+  .fila { display: flex; gap: 14px; overflow-x: auto; padding: 26px 28px 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .fila::-webkit-scrollbar { display: none; }
+  .vol { flex: none; width: 210px; scroll-snap-align: start; }
+  .vol .f { aspect-ratio: 3/4; border-radius: 20px; overflow: hidden; background: #E9E2D5; position: relative; }
+  .vol .f img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; transition: transform .7s var(--ease); }
+  .vol:hover .f img { transform: scale(1.04); }
+  .vol .f em { position: absolute; left: 10px; top: 10px; font-style: normal; font-size: .7rem; background: rgba(255,255,255,.92); border-radius: 99px; padding: 4px 9px; display: inline-flex; gap: 6px; align-items: center; }
+  .vol .f em i { width: 6px; height: 6px; border-radius: 99px; background: var(--ok); }
+  .vol b { display: block; margin-top: 10px; font-size: 1.02rem; }
+  .vol small { color: var(--faint); font-size: .8rem; }
+  .vol .pos { font: 500 .66rem "Geist Mono", monospace; color: var(--amber-ink); }
+
+  /* E: come funziona */
+  .come { padding: 64px 28px 80px; background: var(--surface); border-top: 1px solid var(--edge); border-bottom: 1px solid var(--edge); }
+  .come h2 { font-size: clamp(2rem, 4.6vw, 3.8rem); font-weight: 700; letter-spacing: -.045em; line-height: 1; }
+  .come-g { display: grid; grid-template-columns: .9fr 1.1fr; gap: 64px; margin-top: 40px; align-items: start; }
+  .passi { display: grid; gap: 0; }
+  .passo { padding: 30px 0 34px; border-top: 1px solid var(--edge); min-height: 280px; opacity: .38; transition: opacity .5s var(--ease); }
+  .passo.on { opacity: 1; }
+  .passo .n { font: 500 .78rem "Geist Mono", monospace; color: var(--amber-ink); }
+  .passo h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); letter-spacing: -.035em; line-height: 1.05; margin-top: 8px; }
+  .passo p { margin-top: 12px; color: var(--muted); max-width: 40ch; font-size: 1.04rem; }
+  .pannello { position: sticky; top: 90px; aspect-ratio: 1/1; border-radius: 28px; background: var(--bg); border: 1px solid var(--edge); overflow: hidden; }
+  .vis { position: absolute; inset: 0; padding: 22px; opacity: 0; transform: translateY(14px) scale(.985); transition: opacity .55s var(--ease), transform .55s var(--ease); display: grid; align-content: center; gap: 14px; }
+  .vis.on { opacity: 1; transform: none; }
+  .vis-m { display: none; }
+  /* i visual */
+  .cartaV { background: var(--surface); border: 1px solid var(--edge); border-radius: 20px; padding: 16px; display: flex; gap: 14px; align-items: center; }
+  .cartaV img.rit { width: 96px; height: 120px; border-radius: 14px; object-fit: cover; object-position: 50% 15%; }
+  .cartaV b { font-size: 1.15rem; display: block; }
+  .tag { display: inline-flex; gap: 7px; align-items: center; background: var(--ok-soft); color: var(--ok); border-radius: 99px; padding: 5px 11px; font-size: .78rem; font-weight: 600; margin-top: 6px; }
+  .tag i { width: 7px; height: 7px; border-radius: 99px; background: var(--ok); }
+  .compositore { background: var(--surface); border: 1px solid var(--edge); border-radius: 20px; padding: 16px 18px; }
+  .compositore .tx { font-size: 1.1rem; line-height: 1.4; }
+  .compositore mark { background: none; border-bottom: 2px solid var(--amber); }
+  .pille { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .pille span { height: 32px; border-radius: 99px; border: 1px solid var(--edge); padding: 0 12px; display: inline-flex; align-items: center; font-size: .82rem; }
+  .pille span.on { background: var(--amber-soft); border-color: transparent; color: var(--on-amber); font-weight: 600; }
+  .letta { display: flex; gap: 8px; align-items: center; font-size: .86rem; color: var(--ok); font-weight: 600; }
+  .scatto-v { position: relative; border-radius: 20px; overflow: hidden; height: 100%; max-height: 360px; }
+  .scatto-v img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+  .cert { background: var(--notte); color: #F7F4EE; border-radius: 20px; padding: 18px; display: grid; gap: 10px; }
+  .cert .r { display: flex; justify-content: space-between; align-items: baseline; font-size: .9rem; color: #cfc6b5; border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: 8px; }
+  .cert .r b { color: #F7F4EE; font-weight: 600; }
+  .cert .r b.v { color: #3DDC97; font-size: 1.3rem; letter-spacing: -.02em; }
+
+  /* F: una frase */
+  .frase-sez { padding: 70px 28px 76px; }
+  .frase-sez h2 { font-size: clamp(2rem, 4.6vw, 3.8rem); font-weight: 700; letter-spacing: -.045em; line-height: 1; max-width: 18ch; }
+  .frase-sez p.sotto { margin-top: 14px; color: var(--muted); font-size: 1.08rem; max-width: 50ch; }
+  .set { margin-top: 34px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; align-items: stretch; }
+  .set .comp { background: var(--surface); border: 1px solid var(--edge); border-radius: 28px; padding: 22px 24px; box-shadow: 0 34px 70px -44px rgba(23,21,15,.4); display: flex; flex-direction: column; gap: 14px; }
+  .set .chipv { display: inline-flex; gap: 8px; align-items: center; background: var(--amber-soft); color: var(--on-amber); font-weight: 600; font-size: .9rem; border-radius: 99px; padding: 0 14px 0 6px; height: 40px; width: fit-content; }
+  .set .chipv img { width: 30px; height: 30px; border-radius: 99px; object-fit: cover; object-position: 50% 15%; }
+  .set .digita { font-size: 1.3rem; line-height: 1.45; min-height: 5.8em; }
+  .set .digita mark { background: none; border-bottom: 2px solid var(--amber); }
+  .set .cur { display: inline-block; width: 2px; height: 1.1em; background: var(--ink); vertical-align: -.16em; margin-left: 1px; animation: bat 1s steps(1) infinite; }
+  @keyframes bat { 50% { opacity: 0; } }
+  .set .pille span { opacity: .35; transition: opacity .4s, background-color .4s; }
+  .set .pille span.on { opacity: 1; }
+  .set .esito { position: relative; border-radius: 28px; overflow: hidden; min-height: 420px; background: #E9E2D5; }
+  .set .esito img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; opacity: 0; transform: scale(1.04); transition: opacity .9s var(--ease), transform 1.4s var(--ease); }
+  .set .esito.on img { opacity: 1; transform: none; }
+  .set .esito .ch { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 6px; flex-wrap: wrap; opacity: 0; transition: opacity .6s .5s; }
+  .set .esito.on .ch { opacity: 1; }
+  .set .esito .ch span { background: rgba(17,14,9,.66); color: #F7F1E6; border-radius: 99px; padding: 6px 12px; font-size: .8rem; backdrop-filter: blur(8px); }
+  .poi { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; color: var(--muted); font-size: .92rem; }
+  .poi span { border: 1px solid var(--edge); background: var(--surface); border-radius: 99px; padding: 6px 14px; font-weight: 600; color: var(--ink); font-size: .86rem; }
+
+  /* G: per chi ha un volto */
+  .porte { padding: 60px 28px 70px; }
+  .porte h2 { font-size: clamp(2rem, 4.4vw, 3.6rem); font-weight: 700; letter-spacing: -.045em; line-height: 1; max-width: 20ch; }
+  .porte-g { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .porta { border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 14px; min-height: 380px; }
+  .porta.crea { background: var(--surface); border: 1px solid var(--edge); }
+  .porta.volto { background: var(--notte); color: #F7F4EE; }
+  .porta small { font: 500 .72rem "Geist Mono", monospace; color: var(--amber-ink); letter-spacing: .06em; }
+  .porta.volto small { color: #E5B57A; }
+  .porta h3 { font-size: clamp(1.7rem, 2.8vw, 2.4rem); letter-spacing: -.04em; line-height: 1.04; }
+  .porta ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; color: var(--muted); }
+  .porta.volto ul { color: #cfc6b5; }
+  .porta li { display: flex; gap: 11px; align-items: baseline; font-size: .98rem; }
+  .porta li i { width: 7px; height: 7px; border-radius: 99px; background: var(--amber); flex: none; transform: translateY(-2px); }
+  .porta .btn { margin-top: auto; align-self: flex-start; }
+  .btn.chiaro { background: #F7F4EE; color: var(--ink); }
+
+  .fondo { height: 70px; }
+
+  @media (max-width: 900px) {
+    .hero, .anim, .come-g, .set, .porte-g { grid-template-columns: 1fr; }
+    .hero { gap: 30px; padding: 12px 18px 44px; }
+    .nav .voci { display: none; }
+    .schermo { aspect-ratio: 4/5; max-height: 72svh; }
+    .due-sez, .anim, .come, .frase-sez, .porte { padding-left: 18px; padding-right: 18px; }
+    .scena-2 { max-width: none; }
+    .reg .testa, .fila { padding-left: 18px; padding-right: 18px; }
+    .vol { width: 62vw; }
+    .pannello { display: none; }
+    .vis-m { display: grid; position: relative; opacity: 1; transform: none; margin-top: 20px; padding: 0; }
+    .passo { opacity: 1; min-height: 0; }
+    .set .esito { min-height: 380px; }
+    .porta { min-height: 0; }
+    .strisce { max-width: none; } .vetrina { max-width: none; } .did { max-width: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } .meta { transition: none; } }
+</style>
+</head>
+<body>
+<div class="w">
+
+  <!-- A -->
+  <div class="nota-mock"><b>A</b> L’hero, rifatto: chiaro, un solo gesto, il video di Gabriella</div>
+  <p class="spiega">Via la foto a tutto schermo con il titolo sopra, la lente che gira e il riquadro di verifica: erano troppe cose insieme e leggevano come “sito fatto in AI”. Qui il titolo sta su fondo chiaro, a sinistra; a destra c’è lei, in un loop di 5 secondi preso dal nostro Anima (un clip vero, già fatto dal nostro motore: ha solo una spinta lenta e un sorriso che compare). Sopra, due indicazioni piccole e vere: il consenso e il certificato. Nient’altro.</p>
+  <div class="quadro">
+    <div class="nav"><span class="logo"><i></i>SEMBLIC</span><span class="voci"><span>Registro</span><span>Crea</span><span>Proteggi</span><span>Prezzi</span><span>Academy</span></span><span class="cta">Registrati</span></div>
+    <div class="hero">
+      <div>
+        <h1>Ogni volto qui ha detto sì.</h1>
+        <p class="sotto">Foto e video con persone vere che hanno dato il consenso. Ogni scatto è certificato e paga chi ci mette la faccia.</p>
+        <div class="azioni">
+          <a class="btn amber">Crea con volti veri <small>da 0,21 €</small></a>
+          <a class="btn linea">Metti il tuo volto</a>
+        </div>
+        <p class="piccolo"><i></i>Il consenso si legge prima di ogni scatto, non dopo.</p>
+        <div class="frasi">
+          <p class="mono" style="font-size:.72rem;color:var(--faint)">LA FRASE DEL TITOLO, DA SCEGLIERE</p>
+          <div class="frase-opz"><span>1</span> Ogni volto qui ha detto sì. <em style="color:var(--faint);font-style:normal">(quella di oggi)</em></div>
+          <div class="frase-opz"><span>2</span> Il tuo gemello digitale, con il tuo sì.</div>
+          <div class="frase-opz"><span>3</span> Facce vere, pagate ogni volta che lavorano.</div>
+        </div>
+      </div>
+      <div class="schermo">
+        <img class="poster" src="foto/anima-f0.webp" alt="">
+        <video autoplay muted loop playsinline poster="foto/anima-f0.webp"><source src="foto/anima-gabriella.mp4" type="video/mp4"></video>
+        <div class="angoli-lente"><i></i><i></i><i></i><i></i></div>
+        <span class="chip-v b1"><i></i>Gabriella · consenso attivo</span>
+        <span class="chip-v b2">cert. d20b966b</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="nota-mock"><b>B</b> “Una foto, due persone contente”: senza il vuoto prima, e senza il titolo sopra la foto</div>
+  <p class="spiega">Qui l’animazione ti piaceva: la tengo. Cambia l’aria: il titolo non finisce più sopra le facce, la foto resta una finché non scorri e poi si apre in due, ognuna con il suo conto (chi la crea paga, chi ci mette la faccia riceve). Il vuoto fra hero e questa scena sparisce perché la scena parte appena finisce l’hero. Tocca il bottone per rivedere l’apertura.</p>
+  <div class="quadro">
+    <div class="due-sez">
+      <h2>Una foto, due persone contente.</h2>
+      <p class="sotto">Chi la crea paga il prezzo giusto. Chi ci mette la faccia riceve la sua parte, subito. Revoca quando vuole.</p>
+      <div class="scena-2" id="scena2">
+        <div class="meta sx"><div class="prezzo-c"><small>Chi la crea paga</small><b>0,50 €</b></div></div>
+        <div class="meta dx"><div class="prezzo-c persona"><small>Alessia riceve</small><b>0,11 €</b></div></div>
+      </div>
+      <button class="rigira" id="rigira" type="button">Rivedi l’apertura</button>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="nota-mock"><b>C</b> Il concetto dei soggetti animati, spiegato semplice (nuovo)</div>
+  <p class="spiega">Un solo gesto che fa capire tutto: tocchi “Si muove” e la stessa persona della foto prende vita, per cinque secondi. Sotto, i sei fotogrammi del video, ognuno con il volto misurato. Il messaggio è uno: il sì vale anche per il video, e il video non è un’invenzione, è lei.</p>
+  <div class="quadro" style="border:0">
+    <div class="anim">
+      <div>
+        <h2>Lo scatto si muove. Lei resta lei.</h2>
+        <p>Da uno scatto certificato, cinque o dieci secondi di video. La persona ha detto sì anche al video, e il suo volto viene misurato fotogramma per fotogramma.</p>
+        <ul>
+          <li><i></i>Mai audio, mai parole messe in bocca.</li>
+          <li><i></i>Un fotogramma che non tiene non arriva a te.</li>
+          <li><i></i>La persona è pagata anche per il video.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="toggle" role="group" aria-label="Foto o video"><span class="pill" id="pillT"></span><button type="button" aria-pressed="true" data-m="foto">Foto</button><button type="button" aria-pressed="false" data-m="video">Si muove</button></div>
+        <div class="vetrina" id="vetrina">
+          <img class="f" src="foto/anima-f0.webp" alt="Gabriella, scatto fermo">
+          <video class="v" muted loop playsinline preload="auto"><source src="foto/anima-gabriella.mp4" type="video/mp4"></video>
+        </div>
+        <div class="strisce"><div><img src="foto/anima-f0.webp" alt=""><span>93%</span></div><div><img src="foto/anima-f1.webp" alt=""><span>94%</span></div><div><img src="foto/anima-f2.webp" alt=""><span>93%</span></div><div><img src="foto/anima-f3.webp" alt=""><span>92%</span></div><div><img src="foto/anima-f4.webp" alt=""><span>93%</span></div><div><img src="foto/anima-f5.webp" alt=""><span>94%</span></div></div>
+        <p class="did">Le percentuali sotto i fotogrammi sono un esempio del mockup: nella pagina vera usiamo la misura reale del clip.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="nota-mock"><b>D</b> “Persone, non prompt”: nuovo ordine (Gabriella, Chiara, poi gli altri, Random per ultimo)</div>
+  <p class="spiega">Come hai chiesto. Il resto dell’animazione (la fila che scorre di lato mentre scorri in basso) resta com’è. Sul telefono scorre col dito.</p>
+  <div class="quadro">
+    <div class="reg">
+      <div class="testa"><h2>Persone, non prompt.</h2><span class="tutti">Tutti i 10 volti</span></div>
+      <div class="fila" id="fila"></div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="nota-mock"><b>E</b> “Come funziona” senza carte che si coprono</div>
+  <p class="spiega">Le carte impilate si sovrapponevano: nel punto 3 la carta sotto restava a metà, con il titolo tagliato, sotto quella nera. Qui i quattro passi stanno a sinistra, e a destra c’è quello che succede davvero in ogni passo, con la foto di Gabriella e gli stessi elementi del prodotto. Sul computer il riquadro resta fermo e cambia mentre scorri; sul telefono ogni passo ha il suo disegno sotto, uno dopo l’altro, niente si sovrappone. Nel mockup puoi toccare un passo.</p>
+  <div class="quadro">
+    <div class="come">
+      <h2>Come funziona.</h2>
+      <div class="come-g">
+        <div class="passi" id="passi"></div>
+        <div class="pannello" id="pannello"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F -->
+  <div class="nota-mock"><b>F</b> “Una frase. Il resto lo fa il set”: la frase si scrive davanti a te</div>
+  <p class="spiega">Invece di quattro schede statiche, la scena fa vedere il prodotto: la frase si scrive, il direttore accende le pillole (luce, vestiti, formato) e poco dopo arriva lo scatto, con il volto misurato. La stessa cosa che succede in Crea, in dieci secondi. Sotto, cosa si può fare dopo. Si avvia quando la sezione entra nello schermo; ripartenza col bottone.</p>
+  <div class="quadro">
+    <div class="frase-sez">
+      <h2>Una frase. Il resto lo fa il set.</h2>
+      <p class="sotto">Scrivi cosa succede. Il set sceglie una persona vera del registro, la mette in scena e misura quanto resta se stessa.</p>
+      <div class="set" id="set">
+        <div class="comp">
+          <span class="chipv"><img src="foto/reg-chiara.jpg" alt="">Chiara</span>
+          <p class="digita" id="digita"></p>
+          <div class="pille" id="pille"><span data-k="1">Cinema</span><span data-k="2">Golden hour</span><span data-k="3">Vestiti · 1</span><span data-k="4">Verticale</span></div>
+          <p class="letta" id="letta" style="opacity:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Letta contro i limiti di Chiara: si può fare</p>
+          <button class="rigira" id="rifai" type="button" style="align-self:flex-start;margin-top:auto">Rivedi</button>
+        </div>
+        <div class="esito" id="esito"><img src="foto/ang-occhi.webp" alt="Chiara in una via del centro storico, cappotto color cammello"><div class="ch"><span>Chiara 93%</span><span>Certificato 9b50c5d1</span></div></div>
+      </div>
+      <div class="poi">E poi: <span>una variante</span><span>una serie di sei situazioni</span><span>due persone nella stessa foto</span><span>lo scatto che si muove</span></div>
+    </div>
+  </div>
+
+  <!-- G -->
+  <div class="nota-mock"><b>G</b> Le due porte, con il concetto dell’AI twin per chi ha un volto</div>
+  <p class="spiega">Qui sta la comunicazione che mi chiedi di capire. Oggi “Metti il tuo volto” è un bottone secondario. Propongo di dare alla persona la stessa importanza di chi crea: il suo gemello digitale lavora con il suo sì, lei decide cosa non farà mai, è pagata a ogni scatto e può revocare quando vuole. È l’idea di “AI twin” che si vede nei video, fatta bene: con consenso, controllo e compenso.</p>
+  <div class="quadro">
+    <div class="porte">
+      <h2>Due modi di usare un volto, uno solo di farlo bene.</h2>
+      <div class="porte-g">
+        <div class="porta crea">
+          <small>PER CHI CREA</small>
+          <h3>Foto e video con facce vere, senza rischi legali.</h3>
+          <ul><li><i></i>Persone vere del registro, con il consenso letto prima di ogni scatto.</li><li><i></i>Prezzo in chiaro, e se il volto non tiene non paghi.</li><li><i></i>Certificato pubblico su ogni scatto.</li></ul>
+          <a class="btn amber">Crea con volti veri <small>da 0,21 €</small></a>
+        </div>
+        <div class="porta volto">
+          <small>PER CHI HA UN VOLTO</small>
+          <h3>Il tuo gemello digitale lavora. Tu decidi, e sei pagato.</h3>
+          <ul><li><i></i>Registri il tuo volto una volta e scrivi con parole tue cosa non farà mai.</li><li><i></i>A ogni scatto ricevi la tua parte, ogni volta, con il conto in chiaro.</li><li><i></i>Revochi quando vuoi, e le copie fuori dal registro le cerca Ward.</li></ul>
+          <a class="btn chiaro">Metti il tuo volto</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fondo"></div>
+</div>
+
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// D: il registro nel nuovo ordine
+const ORDINE = [["gabriella","Gabriella"],["chiara","Chiara"],["stella","Stella"],["alessia","Alessia"],["asia","Asia"],["greta","Greta"],["claire","Claire"],["random","Random"]];
+document.getElementById("fila").innerHTML = ORDINE.map(([k, n], i) => `<div class="vol"><div class="f"><img src="foto/reg-${k}.jpg" alt="${n}" loading="lazy"><em><i></i>consenso attivo</em></div><b>${n}</b><span class="pos">${i === 0 ? "prima" : i === ORDINE.length - 1 ? "ultimo" : "posto " + (i + 1)}</span></div>`).join("");
+
+// B: l'apertura della foto in due
+const s2 = document.getElementById("scena2");
+const apri = () => { s2.classList.remove("aperta"); setTimeout(() => s2.classList.add("aperta"), reduce ? 0 : 500); };
+new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { apri(); o.disconnect(); } }, { threshold: .55 }).observe(s2);
+document.getElementById("rigira").onclick = apri;
+
+// C: foto / si muove
+const vet = document.getElementById("vetrina"); const vid = vet.querySelector("video"); const pill = document.getElementById("pillT");
+const bt = [...document.querySelectorAll(".toggle button")];
+function metti(m) {
+  bt.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.m === m)));
+  const b = bt.find((x) => x.dataset.m === m); pill.style.width = b.offsetWidth + "px"; pill.style.transform = `translateX(${b.offsetLeft - 4}px)`;
+  vet.classList.toggle("video", m === "video"); if (m === "video") { vid.currentTime = 0; vid.play(); } else vid.pause();
+}
+bt.forEach((b) => b.onclick = () => metti(b.dataset.m)); metti("foto");
+new IntersectionObserver((e, o) => { if (e[0].isIntersecting && !reduce) { setTimeout(() => metti("video"), 900); o.disconnect(); } }, { threshold: .6 }).observe(vet);
+
+// E: come funziona (visual veri)
+const PASSI = [
+  ["Scegli un volto vero.", "Solo persone che hanno verificato l’identità e detto sì. Nessun volto inventato, nessun volto rubato.",
+    `<div class="cartaV"><img class="rit" src="foto/reg-gabriella.jpg" alt=""><div><b>Gabriella</b><span style="color:var(--muted);font-size:.9rem">scelta 32 volte</span><br><span class="tag"><i></i>consenso attivo, letto adesso</span></div></div><div class="cartaV" style="opacity:.55"><img class="rit" src="foto/reg-chiara.jpg" alt="" style="width:64px;height:80px"><div><b>Chiara</b><br><span class="tag"><i></i>consenso attivo</span></div></div>`],
+  ["Scrivi la scena.", "Prima di spendere un centesimo, Semblic la legge contro i limiti che la persona ha scritto con parole sue. Se non va, non parte.",
+    `<div class="compositore"><p class="tx">in una via del centro storico nel <mark>tardo pomeriggio</mark>, <mark>cappotto color cammello</mark>, maglietta bianca</p><div class="pille"><span>Cinema</span><span class="on">✦ Golden hour</span><span class="on">✦ Vestiti · 1</span><span>Verticale</span></div></div><p class="letta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Letta contro i limiti di Chiara: si può fare</p>`],
+  ["Lo scatto viene controllato.", "Il volto si misura sul risultato e un secondo occhio guarda la qualità. Se non tiene, non lo paghi.",
+    `<div class="scatto-v"><img src="foto/ang-occhi.webp" alt=""><span class="chip-v b1"><i></i>Volto misurato 93%, tiene</span></div>`],
+  ["Certificato, e la persona è pagata.", "Filigrana invisibile, certificato pubblico su Sigil, e la sua parte a ogni scatto. Revoca quando vuole.",
+    `<div class="cert"><div class="r"><span>Certificato</span><b class="mono">9b50c5d1</b></div><div class="r"><span>Filigrana</span><b>invisibile, presente</b></div><div class="r"><span>Chi l’ha creata ha pagato</span><b>0,50 €</b></div><div class="r"><span>Chiara riceve</span><b class="v">0,11 €</b></div></div>`],
+];
+const passi = document.getElementById("passi"), pann = document.getElementById("pannello");
+passi.innerHTML = PASSI.map((p, i) => `<div class="passo" data-i="${i}"><span class="n">${i + 1} di 4</span><h3>${p[0]}</h3><p>${p[1]}</p><div class="vis vis-m">${p[2]}</div></div>`).join("");
+pann.innerHTML = PASSI.map((p, i) => `<div class="vis vis-d" data-i="${i}">${p[2]}</div>`).join("");
+function attiva(i) { document.querySelectorAll(".passo").forEach((e) => e.classList.toggle("on", +e.dataset.i === i)); document.querySelectorAll(".vis-d").forEach((e) => e.classList.toggle("on", +e.dataset.i === i)); }
+attiva(0);
+document.querySelectorAll(".passo").forEach((e) => { e.onclick = () => attiva(+e.dataset.i); });
+document.querySelectorAll(".passo").forEach((e) => new IntersectionObserver((es) => es.forEach((x) => { if (x.isIntersecting && matchMedia("(min-width:901px)").matches) attiva(+e.dataset.i); }), { rootMargin: "-40% 0px -40% 0px" }).observe(e));
+
+// F: la frase si scrive
+const T = "in una via del centro storico nel tardo pomeriggio, cappotto color cammello, maglietta bianca";
+const MARK = [["tardo pomeriggio", 2], ["cappotto color cammello", 3]];
+const dig = document.getElementById("digita"), pil = [...document.querySelectorAll("#pille span")], letta = document.getElementById("letta"), esito = document.getElementById("esito");
+let timer = null;
+function scrivi() {
+  clearInterval(timer); dig.innerHTML = '<span class="cur"></span>'; pil.forEach((p) => p.classList.remove("on")); pil.forEach((p) => p.textContent = p.textContent.replace("✦ ", "")); letta.style.opacity = 0; esito.classList.remove("on");
+  if (reduce) { dig.innerHTML = T.replace(/tardo pomeriggio|cappotto color cammello/g, (m) => `<mark>${m}</mark>`); pil[1].classList.add("on"); pil[2].classList.add("on"); letta.style.opacity = 1; esito.classList.add("on"); return; }
+  let i = 0;
+  timer = setInterval(() => {
+    i++; let h = T.slice(0, i);
+    for (const [m, k] of MARK) { const at = T.indexOf(m); if (i >= at + m.length) h = h.replace(m, `<mark>${m}</mark>`); }
+    dig.innerHTML = h + '<span class="cur"></span>';
+    for (const [m, k] of MARK) if (i === T.indexOf(m) + m.length + 1) { const p = pil[k - 1]; p.classList.add("on"); p.textContent = "✦ " + p.textContent; }
+    if (i >= T.length) { clearInterval(timer); setTimeout(() => { letta.style.opacity = 1; }, 400); setTimeout(() => esito.classList.add("on"), 1300); }
+  }, 38);
+}
+new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { scrivi(); o.disconnect(); } }, { threshold: .5 }).observe(document.getElementById("set"));
+document.getElementById("rifai").onclick = scrivi;
+</script>
+</body>
+</html>

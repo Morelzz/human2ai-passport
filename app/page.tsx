@@ -58,15 +58,26 @@ export default async function Home() {
   // In evidenza (review B1): solo consensi ATTIVI, ordinati per utilizzi :
   // i volti REALI (con galleria: Mario/Random e gli ambassador) restano in
   // testa. I revocati vivono nel catalogo, in fondo.
-  const featured: FeaturedAvatar[] = approved
+  // L'ordine della fila "Persone, non prompt" lo decide Morelz (1/10): per
+  // prima Gabriella, poi Chiara, poi gli altri come prima, e Random per ultimo.
+  // Random va tolto dal taglio e rimesso in coda, altrimenti con piu' di otto
+  // volti uscirebbe dalla fila invece di restare ultimo.
+  const IN_TESTA = ["gabriella", "chiara"];
+  const IN_CODA = ["random"];
+  const attivi = approved
     .filter((a) => !a.revoked_at)
     .sort((a, b) => {
       const ga = galleryFromRow(a.handle, a.gallery_urls).length > 0 ? 1 : 0;
       const gb = galleryFromRow(b.handle, b.gallery_urls).length > 0 ? 1 : 0;
       if (ga !== gb) return gb - ga;
       return (b.usage_count ?? 0) - (a.usage_count ?? 0);
-    })
-    .slice(0, 8)
+    });
+  const posto = (h: string) => (IN_TESTA.includes(h) ? IN_TESTA.indexOf(h) : IN_TESTA.length);
+  const inCoda = attivi.filter((a) => IN_CODA.includes(a.handle));
+  const featured: FeaturedAvatar[] = [
+    ...attivi.filter((a) => !IN_CODA.includes(a.handle)).sort((a, b) => posto(a.handle) - posto(b.handle)).slice(0, 8 - inCoda.length),
+    ...inCoda,
+  ]
     .map((a) => ({
       handle: a.handle,
       alias: a.alias,
