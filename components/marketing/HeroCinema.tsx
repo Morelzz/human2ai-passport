@@ -25,9 +25,11 @@ import type { ScattoVetrina } from "@/lib/vetrina";
 const euro = (cent: number) => (cent / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 const EASE = [0.23, 1, 0.32, 1] as const; // ease-out deciso (Emil Kowalski)
 
-const BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/assets`;
-const VIDEO = `${BASE}/il-set-anima.mp4`;
-const POSTER = `${BASE}/il-set-anima-poster.jpg`;
+// Il clip e il poster stanno nel sito (public/home), non nel bucket di Supabase:
+// la home li scarica a ogni visita e il traffico del bucket e' a pagamento oltre
+// il piano. Sono lo stesso clip della scheda Anima (Gabriella, 5 s, muto).
+const VIDEO = "/home/anima-gabriella.mp4";
+const POSTER = "/home/anima-f0.webp";
 
 export function HeroCinema({ vetrina, prezzoDaCent }: { vetrina: ScattoVetrina | null; prezzoDaCent: number }) {
   const ferma = useReducedMotionSafe();

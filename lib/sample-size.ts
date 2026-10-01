@@ -14,6 +14,11 @@ export function sampleWidth(param: string | null | undefined): SampleWidth | nul
   return (SAMPLE_WIDTHS as readonly number[]).includes(n) ? (n as SampleWidth) : null;
 }
 
+/** La vista leggera di uno scatto: /api/content/<cert>?w=... (miniatura WebP, dalla stessa rotta del download). */
+export function vistaContenuto(certificate: string, width: SampleWidth): string {
+  return `/api/content/${certificate}?w=${width}`;
+}
+
 /** Aggiunge ?w= agli URL della galleria filigranata; gli altri restano come sono. */
 export function sampleSrc(src: string, width: SampleWidth): string {
   return src.startsWith("/api/sample/") ? `${src}?w=${width}` : src;

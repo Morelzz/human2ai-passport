@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { vistaContenuto } from "@/lib/sample-size";
 
 // ──────────────────────────────────────────────────────────────────────────
 // LA SERIE PER LE CAMPAGNE (27/9/2026, mockup C approvato da Morelz).
@@ -89,7 +90,7 @@ export interface SerieDaFare {
 // Una foto finita diventa il riferimento degli altri: ridotta a 1024 px.
 async function comeRiferimento(certificate: string): Promise<string | null> {
   try {
-    const blob = await (await fetch(`/api/content/${certificate}`)).blob();
+    const blob = await (await fetch(vistaContenuto(certificate, 1080))).blob();
     const bmp = await createImageBitmap(blob);
     const k = Math.min(1, 1024 / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas");
@@ -233,7 +234,7 @@ export function SerieAlLavoro({ serie, onNuova, onRicarica }: { serie: SerieDaFa
                   className="group block h-full w-full"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/api/content/${st.certificate}`} alt={serie.situazioni[i]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                  <img src={vistaContenuto(st.certificate, 720)} alt={serie.situazioni[i]} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                   <span className="absolute bottom-2.5 left-2.5 inline-flex h-7 items-center gap-1.5 rounded-full bg-[rgba(12,15,23,0.68)] px-2.5 font-mono text-[0.72rem] text-[#F2E9D8]">
                     {due(i)}{st.somiglianza !== null ? ` · ${st.somiglianza}%` : ""}{st.guida ? " · guida" : ""}
                   </span>

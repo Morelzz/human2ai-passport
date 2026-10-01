@@ -18,6 +18,7 @@ import { Palco } from "./Palco";
 import { Risultato, type Esito } from "./Risultato";
 import { MAX_PERSONE_GRUPPO, prezzoGruppo, scattiPerGruppo } from "@/lib/gruppo-prezzi";
 import { intervalli, type SceltaDirettore } from "@/lib/direttore";
+import { vistaContenuto } from "@/lib/sample-size";
 import { RigaRicette, type Impostazioni } from "./Ricette";
 import { SituazioniSerie, SerieAlLavoro, type SerieDaFare } from "./Serie";
 import { motion } from "framer-motion";
@@ -1329,7 +1330,7 @@ export function CreaClient({
             {sessione.map((s) => (
               <button key={s.certificate} type="button" onClick={() => { setEsito(s); setFase("fatto"); suInizio(); }} className="relative block h-[150px] w-[200px] overflow-hidden rounded-2xl bg-[var(--hairline)] sm:w-auto">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/api/content/${s.certificate}`} alt={`Scatto con ${s.alias}`} loading="lazy" className="h-full w-full object-cover" />
+                <img src={vistaContenuto(s.certificate, 480)} alt={`Scatto con ${s.alias}`} loading="lazy" className="h-full w-full object-cover" />
                 <span className="absolute bottom-2.5 left-2.5 rounded-full bg-[rgba(12,15,23,0.66)] px-2.5 py-1 text-[0.72rem] text-[#F2E9D8]">Certificato</span>
               </button>
             ))}

@@ -15,8 +15,7 @@ import { useReducedMotionSafe } from "@/components/motion/useReducedMotionSafe";
 // Con "riduci animazioni" non parte da solo e resta il fermo immagine.
 // ──────────────────────────────────────────────────────────────────────────
 
-const BASE = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/assets`;
-const VIDEO = `${BASE}/il-set-anima.mp4`;
+const VIDEO = "/home/anima-gabriella.mp4"; // dal sito, non dal bucket (vedi HeroCinema)
 const POSTER = "/home/anima-f0.webp";
 
 export function SoggettiAnimati({ nome }: { nome: string }) {

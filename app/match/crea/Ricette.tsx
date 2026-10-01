@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LOOKS, LUCI, FORMATI } from "./opzioni";
 import { nomeProposto, type Ricetta, type RicettaNuova } from "@/lib/ricette";
+import { vistaContenuto } from "@/lib/sample-size";
 
 // ──────────────────────────────────────────────────────────────────────────
 // Le ricette in Crea (mockup B, 27/9/2026): la riga "Le tue ricette" sopra le
@@ -68,7 +69,7 @@ export function RigaRicette({
               <div className="relative h-[124px] overflow-hidden bg-[var(--hairline)]">
                 {r.certificate && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={`/api/content/${r.certificate}`} alt="" loading="lazy" className="h-full w-full object-cover object-[50%_30%] transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
+                  <img src={vistaContenuto(r.certificate, 480)} alt="" loading="lazy" className="h-full w-full object-cover object-[50%_30%] transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
                 )}
                 <span className="absolute left-2.5 top-2.5 rounded-full bg-[rgba(14,12,9,0.66)] px-2.5 py-1 text-[0.72rem] text-[#F2E9D8]">
                   {attiva === r.id ? "in uso" : "ricetta"}

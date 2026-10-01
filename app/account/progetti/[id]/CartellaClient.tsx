@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MAX_CONTENUTI, postiLiberi } from "@/lib/progetti";
+import { vistaContenuto } from "@/lib/sample-size";
 
 export interface ScattoScegliibile {
   id: string;
@@ -151,7 +152,7 @@ export function CartellaClient({
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={s.certificate ? `/api/content/${s.certificate}` : ""}
+                  src={s.certificate ? vistaContenuto(s.certificate, 480) : ""}
                   alt={s.prompt || s.alias}
                   loading="lazy"
                   className={`block aspect-[3/4] w-full object-cover transition-opacity ${on ? "" : "opacity-80 group-hover:opacity-100"}`}

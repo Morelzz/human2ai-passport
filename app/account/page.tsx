@@ -28,6 +28,7 @@ import { monitoringConsentStatus } from "@/lib/ward/consent";
 import { Quadro, type Numero } from "@/components/account/Quadro";
 import { eOperatore } from "@/lib/operatori";
 import { scegliVoltoDaSorvegliare } from "@/lib/ward/quale-volto";
+import { vistaContenuto } from "@/lib/sample-size";
 
 const ROLE_LABEL: Record<string, string> = {
   buyer: "Compratore",
@@ -165,7 +166,7 @@ export default async function AccountPage() {
           id: String(v.id),
           status: v.status as VideoItem["status"],
           video_url: (v.video_url as string | null) ?? null,
-          poster: c ? `/api/content/${c}` : null,
+          poster: c ? vistaContenuto(String(c), 480) : null,
           certificate: (v.certificate as string | null) ?? null,
           seconds: Number(v.seconds ?? 5),
           somiglianza: typeof v.identity_score === "number" ? v.identity_score : null,

@@ -1,6 +1,8 @@
 import { createServerClient } from "@/lib/supabase";
 import { createAuthClient } from "@/lib/supabase-auth";
 import { embedProvenancePng } from "@/lib/watermark";
+import { sampleWidth } from "@/lib/sample-size";
+import sharp from "sharp";
 
 // Download del contenuto commerciale con la PROVENIENZA impressa nei metadati.
 // Il certificato (hash a 64 cifre) è un capability-token, ma da solo non basta:
@@ -31,6 +33,26 @@ export async function GET(
 
   const av = Array.isArray(gen.avatars) ? gen.avatars[0] : gen.avatars;
   const origin = new URL(request.url).origin;
+
+  // Con ?w= (480, 720 o 1080) si serve la vista leggera per lo schermo: una
+  // miniatura WebP, non il PNG intero. Le miniature, la griglia delle serie e
+  // la foto del risultato pesavano ogni volta qualche MB dal bucket (traffico
+  // di Supabase sforato il 28/9). Il contenuto di un certificato non cambia
+  // mai, quindi il browser la tiene per sempre. Il download resta quello intero
+  // con la provenienza impressa (senza ?w=).
+  const w = sampleWidth(new URL(request.url).searchParams.get("w"));
+  if (w) {
+    try {
+      const res = await fetch(gen.image_url);
+      if (!res.ok) throw new Error(`sorgente ${res.status}`);
+      const vista = await sharp(Buffer.from(await res.arrayBuffer())).rotate().resize({ width: w, withoutEnlargement: true }).webp({ quality: 82 }).toBuffer();
+      return new Response(new Uint8Array(vista), {
+        headers: { "Content-Type": "image/webp", "Cache-Control": "private, max-age=31536000, immutable" },
+      });
+    } catch {
+      return new Response("Errore immagine", { status: 502 });
+    }
+  }
 
   let out: Buffer;
   try {

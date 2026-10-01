@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { formatEur } from "@/lib/wallet";
+import { vistaContenuto } from "@/lib/sample-size";
 import { ShareStoryButton } from "@/components/share/ShareStoryButton";
 import { Anima } from "./Anima";
 import { nomi } from "./opzioni";
@@ -48,7 +49,8 @@ export function Risultato({
   varianteVolt: number | null;
   onRicettaSalvata?: (r: Ricetta) => void;
 }) {
-  const img = `/api/content/${esito.certificate}`;
+  const img = `/api/content/${esito.certificate}`; // il download: intero, con la provenienza
+  const imgVista = vistaContenuto(esito.certificate, 1080); // quello che si guarda
   const [w, h] = (esito.size ?? "1024x1536").split("x").map(Number);
   const proporzione = w && h ? `${w} / ${h}` : "2 / 3";
   const gruppo = esito.persone && esito.persone.length > 1 ? esito.persone : null;
@@ -58,7 +60,7 @@ export function Risultato({
     <section className="grid gap-8 lg:grid-cols-[minmax(0,520px)_1fr] lg:gap-14">
       <div className="relative self-start overflow-hidden rounded-[28px] bg-[var(--hairline)] shadow-[0_40px_80px_-50px_rgba(23,21,15,0.55)]" style={{ aspectRatio: proporzione }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={img} alt={`Scatto con ${esito.alias}: ${esito.riepilogo}`} className="h-full w-full object-cover" />
+        <img src={imgVista} alt={`Scatto con ${esito.alias}: ${esito.riepilogo}`} className="h-full w-full object-cover" />
         <div className="absolute bottom-3 left-3 flex flex-wrap gap-2">
           <span className="inline-flex h-[30px] items-center gap-1.5 rounded-full bg-[rgba(12,15,23,0.68)] px-3 text-[0.8rem] text-[#F2E9D8]">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CC6B2" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M20 6 9 17l-5-5" /></svg>
@@ -142,7 +144,7 @@ export function Risultato({
           <SalvaRicetta key={esito.certificate} certificate={esito.certificate} impostazioni={esito.impostazioni} onSalvata={onRicettaSalvata} />
         )}
 
-        <Anima certificate={esito.certificate} alias={esito.alias} immagine={img} conVolt={Boolean(esito.spent)} gruppo={Boolean(gruppo)} />
+        <Anima certificate={esito.certificate} alias={esito.alias} immagine={imgVista} conVolt={Boolean(esito.spent)} gruppo={Boolean(gruppo)} />
 
         <div className="card mt-3 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
@@ -200,7 +202,7 @@ export function Risultato({
               className={`h-[112px] w-[86px] overflow-hidden rounded-[14px] bg-[var(--hairline)] transition-shadow ${s.certificate === esito.certificate ? "ring-2 ring-amber ring-offset-2 ring-offset-[var(--bg)]" : ""}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/api/content/${s.certificate}`} alt="" className="h-full w-full object-cover" loading="lazy" />
+              <img src={vistaContenuto(s.certificate, 480)} alt="" className="h-full w-full object-cover" loading="lazy" />
             </button>
           ))}
           <button
