@@ -14,7 +14,9 @@ gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
 // ──────────────────────────────────────────────────────────────────────────
-// SCENA 1, LA FOTO CHE SI DIVIDE (27/9/2026). Sul computer la sezione si ferma
+// SCENA 1, LA FOTO CHE SI DIVIDE (27/9/2026; rifatta l'1/10: il titolo sta
+// sempre sopra la foto e non piu' nel varco fra le due meta', e la scena e'
+// piu' corta, cosi' non resta uno schermo vuoto dopo l'hero). Sul computer la sezione si ferma
 // e, mentre scorri, lo scatto si apre in due meta' che si
 // allontanano: a sinistra resta quello che paga chi lo crea, a destra quello
 // che riceve lei. "Una foto, due persone" detto con la foto stessa.
@@ -45,7 +47,6 @@ export function ScenaDivisa({ foto: vetrina }: { foto: FotoDivisa }) {
       tl.fromTo(".sd-foto", { scale: 1.08 }, { scale: 1, duration: 0.25 }, 0)
         .fromTo(".sd-meta-s", { xPercent: 0, rotate: 0 }, { xPercent: -apri, rotate: computer ? -3 : -2, duration: 0.5 }, 0.2)
         .fromTo(".sd-meta-d", { xPercent: 0, rotate: 0 }, { xPercent: apri, rotate: computer ? 3 : 2, duration: 0.5 }, 0.2)
-        .fromTo(".sd-centro", { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.3 }, 0.45)
         .fromTo(".sd-scheda-s", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.25 }, 0.6)
         .fromTo(".sd-scheda-d", { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.25 }, 0.68)
         .to({}, { duration: 0.2 });
@@ -55,10 +56,10 @@ export function ScenaDivisa({ foto: vetrina }: { foto: FotoDivisa }) {
   }, []);
 
   return (
-    <section ref={radice} aria-labelledby="titolo-divisa" className="relative h-[230svh] motion-reduce:hidden lg:h-[270svh]">
+    <section ref={radice} aria-labelledby="titolo-divisa" className="relative h-[180svh] motion-reduce:hidden lg:h-[215svh]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
-      <div className="sd-foto absolute inset-0 flex items-center justify-center pb-[19svh] pt-[16svh] lg:pb-0 lg:pt-[4.75rem]">
-        <div className="relative flex h-[min(38svh,61vw)] w-[min(92vw,57svh)] lg:h-[min(62vh,40vw)] lg:w-[min(93vh,60vw)]">
+      <div className="sd-foto absolute inset-0 flex items-center justify-center pb-[19svh] pt-[29svh] lg:pb-[1.5rem] lg:pt-[13.5rem]">
+        <div className="relative flex h-[min(36svh,61vw)] w-[min(92vw,54svh)] lg:h-[min(54vh,36vw)] lg:w-[min(81vh,54vw)]">
           {(["s", "d"] as const).map((lato) => (
             <div key={lato} className={`sd-meta-${lato} relative h-full w-1/2 overflow-hidden ${lato === "s" ? "rounded-l-[26px]" : "rounded-r-[26px]"} shadow-[0_40px_80px_-40px_rgba(23,21,15,0.55)]`}>
               <picture>
@@ -111,11 +112,11 @@ export function ScenaDivisa({ foto: vetrina }: { foto: FotoDivisa }) {
         </div>
       </div>
 
-      {/* Telefono: la frase in alto. Computer: nel varco fra le due meta'. */}
-      <div className="sd-centro pointer-events-none invisible absolute inset-x-0 top-[calc(4.75rem+1svh)] flex justify-center px-6 lg:inset-0 lg:top-0 lg:items-center lg:px-0">
-        <div className="text-center lg:w-[min(30vw,420px)]">
-          <h2 id="titolo-divisa" className="text-[1.9rem] font-bold leading-[0.98] tracking-[-0.04em] lg:text-[3.1rem]">Una foto, due persone contente.</h2>
-          <p className="mx-auto mt-2 max-w-[300px] text-[0.95rem] text-muted lg:mt-4 lg:text-[1.05rem]">Revoca quando vuole, vale subito. Decide lei a cosa dice no.</p>
+      {/* Il titolo sta sempre in alto, mai sopra le facce. */}
+      <div className="pointer-events-none absolute inset-x-0 top-[5.25rem] px-5 sm:px-8 lg:top-[5.75rem]">
+        <div className="mx-auto max-w-[1180px]">
+          <h2 id="titolo-divisa" className="max-w-[16ch] text-[1.9rem] font-bold leading-[0.98] tracking-[-0.045em] sm:max-w-none sm:text-[2.6rem] lg:text-[3.4rem]">Una foto, due persone contente.</h2>
+          <p className="mt-2 max-w-[42ch] text-[0.95rem] leading-snug text-muted lg:mt-3 lg:text-[1.1rem]">Chi la crea paga il prezzo giusto. Chi ci mette la faccia riceve la sua parte, subito. Revoca quando vuole.</p>
         </div>
       </div>
       </div>

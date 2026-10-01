@@ -7,12 +7,14 @@ import { HeroCinema } from "@/components/marketing/HeroCinema";
 import { ScenaDivisa } from "@/components/marketing/scene/ScenaDivisa";
 import { FraseAccesa } from "@/components/marketing/scene/FraseAccesa";
 import { RegistroInCorsa } from "@/components/marketing/scene/RegistroInCorsa";
-import { PassiImpilati } from "@/components/marketing/scene/PassiImpilati";
+import { ComeFunziona } from "@/components/marketing/scene/ComeFunziona";
+import { SoggettiAnimati } from "@/components/marketing/scene/SoggettiAnimati";
+import { FraseSet } from "@/components/marketing/scene/FraseSet";
+import { PortePersone } from "@/components/marketing/scene/PortePersone";
 import { LenteCertificato } from "@/components/marketing/scene/LenteCertificato";
 import { FORMATI, qualitaPer } from "@/app/match/crea/opzioni";
 import { scattoInVetrina } from "@/lib/vetrina";
 import { ProvaGratis, type VoltoProva } from "@/components/marketing/ProvaGratis";
-import { IlSet } from "@/components/marketing/IlSet";
 import { Trust } from "@/components/marketing/Trust";
 import type { FeaturedAvatar } from "@/components/marketing/Registry";
 import { WardSection } from "@/components/marketing/WardSection";
@@ -39,7 +41,7 @@ export default async function Home() {
     { href: "/ai-act", nome: "AI Act", frase: "Certificato, filigrana e consenso verificabile: la trasparenza che la legge chiede, già dentro.", foto: null },
     { href: "/academy#aziende", nome: "Formazione", frase: "Per le aziende che devono adeguarsi: percorsi a più livelli, sul serio.", foto: "academy" },
   ];
-  const divisa = await fotoPagina("divisa");
+  const [divisa, setFoto, fraseFoto] = await Promise.all([fotoPagina("divisa"), fotoPagina("set"), fotoPagina("entra")]);
   const porte: Porta[] = await Promise.all(
     PORTE.map(async (x) => {
       const c = x.foto ? await fotoPagina(x.foto) : null;
@@ -89,11 +91,18 @@ export default async function Home() {
       gender: (a as { gender?: string | null }).gender ?? null,
     }));
 
+  // Ritratti per i riquadri di "Come funziona" e "Una frase": solo volti con consenso vivo.
+  const ritratto = (handle: string, w: 480 | 720 | 1080 = 480) => {
+    const a = approved.find((x) => x.handle === handle && !x.revoked_at);
+    return a ? sampleSrc(portraitFor(a as never), w) : null;
+  };
+  const prezzoDaCent = Math.min(...FORMATI.flatMap((f) => qualitaPer(f.v).map((q) => q.volt)));
+
   return (
     <div className="relative min-h-screen overflow-x-clip">
       <SiteNav />
       <main>
-        <HeroCinema vetrina={vetrina} prezzoDaCent={Math.min(...FORMATI.flatMap((f) => qualitaPer(f.v).map((q) => q.volt)))} />
+        <HeroCinema vetrina={vetrina} prezzoDaCent={prezzoDaCent} />
         {/* La foto che si divide sul computer; sul telefono (e con "riduci
             animazioni") le due porte che scorrono di lato. */}
         {divisa && (
@@ -102,6 +111,7 @@ export default async function Home() {
         <div className={divisa ? "hidden motion-reduce:block" : ""}>
           <DuePorte vetrina={vetrina} />
         </div>
+        {vetrina?.handle === "gabriella" && <SoggettiAnimati nome={vetrina.nome} />}
         <FraseAccesa />
         {vetrina && (
           <LenteCertificato
@@ -118,8 +128,14 @@ export default async function Home() {
           volti={featured.map((a) => ({ handle: a.handle, alias: a.alias, src: sampleSrc(portraitFor(a as never), 720), utilizzi: a.usage_count }))}
           totale={approved.length}
         />
-        <PassiImpilati />
-        <IlSet />
+        <ComeFunziona
+          ritratti={{ gabriella: ritratto("gabriella") ?? "/semblic-mark.png", chiara: ritratto("chiara") ?? "/semblic-mark.png" }}
+          foto={setFoto ? { src960: setFoto.src960, nome: setFoto.persone[0].alias, certificato: setFoto.certificato, grossCents: setFoto.grossCents, royaltyCents: setFoto.royaltyCents, somiglianza: 93 } : null}
+        />
+        <FraseSet
+          foto={fraseFoto ? { src960: fraseFoto.src960, fuoco: fraseFoto.fuoco, nome: fraseFoto.persone[0].alias, certificato: fraseFoto.certificato, ritratto: ritratto("greta", 480) ?? "/semblic-mark.png" } : null}
+        />
+        <PortePersone prezzoDaCent={prezzoDaCent} />
         <div className="sv"><WardSection /></div>
         <div className="sv"><Trust /></div>
         <div className="sv"><IndicePorte porte={porte} /></div>
