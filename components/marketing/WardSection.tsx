@@ -52,7 +52,7 @@ export function WardSection() {
           <div className="flex items-center gap-4">
             <div className="h-[92px] w-[70px] shrink-0 overflow-hidden rounded-xl bg-elevated">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/api/sample/gabriella/2" alt="" className="h-full w-full object-cover" loading="lazy" />
+              <img src="/api/sample/gabriella/2?w=240" alt="" className="h-full w-full object-cover" loading="lazy" />
             </div>
             <div className="min-w-0">
               <span className="kicker text-[0.6rem] text-faint">Immagine generata · certificato</span>

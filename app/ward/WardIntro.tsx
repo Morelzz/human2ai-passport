@@ -79,7 +79,7 @@ export function WardIntro({ copertina }: { copertina: CopertinaPagina | null }) 
 
       <p className="mt-10 max-w-xl text-sm leading-relaxed text-faint">
         Cerchi invece di non essere generabile dalle AI? Quella è la{" "}
-        <Link href="/tutela" className="text-amber-ink underline-offset-2 hover:underline">
+        <Link href="/tutela" className="text-amber-ink underline underline-offset-2 hover:no-underline">
           protezione identità
         </Link>
         , una cosa diversa: registri il tuo volto per restare fuori dal generativo.

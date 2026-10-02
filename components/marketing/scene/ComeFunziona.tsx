@@ -136,10 +136,12 @@ export function ComeFunziona({ ritratti, foto }: { ritratti: { gabriella: string
             <li
               key={p.t}
               ref={(el) => { passi.current[i] = el; }}
-              className={`border-t border-border py-7 transition-opacity duration-500 sm:py-9 lg:min-h-[58svh] lg:py-12 ${attivo === i ? "lg:opacity-100" : "lg:opacity-40"}`}
+              // Il passo attivo si riconosce da una barra ambra e dal titolo pieno; quelli
+              // spenti restano leggibili (niente opacita': il contrasto resta a norma).
+              className={`relative border-t border-border py-7 sm:py-9 lg:min-h-[58svh] lg:py-12 lg:before:absolute lg:before:-left-5 lg:before:bottom-12 lg:before:top-12 lg:before:w-[3px] lg:before:origin-top lg:before:rounded-full lg:before:bg-amber lg:before:transition-transform lg:before:duration-500 ${attivo === i ? "lg:before:scale-y-100" : "lg:before:scale-y-0"}`}
             >
               <span className="font-mono text-[0.78rem] text-amber-ink">{i + 1} di 4</span>
-              <h3 className="mt-2 text-[1.7rem] font-bold leading-[1.05] tracking-[-0.035em] sm:text-[2.2rem]">{p.t}</h3>
+              <h3 className={`mt-2 text-[1.7rem] font-bold leading-[1.05] tracking-[-0.035em] transition-colors duration-500 sm:text-[2.2rem] ${attivo === i ? "lg:text-foreground" : "lg:text-muted"}`}>{p.t}</h3>
               <p className="mt-3 max-w-[40ch] text-[1.04rem] leading-relaxed text-muted">{p.d}</p>
               {/* Telefono: il disegno del passo sta qui sotto. */}
               <div className="mt-6 lg:hidden">

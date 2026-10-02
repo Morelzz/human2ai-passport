@@ -4,7 +4,7 @@
 // larghezze di questa lista, cosi' la CDN tiene poche varianti per immagine
 // e nessuno puo' chiedere misure arbitrarie.
 
-export const SAMPLE_WIDTHS = [480, 720, 1080] as const;
+export const SAMPLE_WIDTHS = [240, 480, 720, 1080] as const; // 240: le miniature da 70 px
 export type SampleWidth = (typeof SAMPLE_WIDTHS)[number];
 
 /** La larghezza richiesta (?w=) se e' fra quelle ammesse, altrimenti null = originale. */

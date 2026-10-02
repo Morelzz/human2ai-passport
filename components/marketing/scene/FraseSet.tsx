@@ -86,7 +86,9 @@ export function FraseSet({ foto }: { foto: FotoSet | null }) {
               {foto.nome}
             </span>
           )}
-          <p className="min-h-[7.4em] text-[1.25rem] leading-[1.45] sm:min-h-[5.8em] sm:text-[1.4rem]" aria-label={FRASE}>
+          <p className="min-h-[7.4em] text-[1.25rem] leading-[1.45] sm:min-h-[5.8em] sm:text-[1.4rem]">
+            {/* Chi usa uno screen reader legge la frase intera subito; la scrittura a mano e' solo per gli occhi. */}
+            <span className="sr-only">{FRASE}</span>
             <span aria-hidden>
               {prima}
               <span className={dentro ? "border-b-2 border-amber" : ""}>{dentro}</span>

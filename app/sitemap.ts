@@ -8,6 +8,11 @@ import { siteUrl } from "@/lib/site";
 // metadata e og:image dedicati.
 const BASE = siteUrl();
 
+// Si rifa ogni ora, non solo a ogni deploy: un volto rimosso o approvato dal
+// registro deve comparire (o sparire) dalla mappa senza aspettare una build
+// (Luca Agnelli, tolto il 27/9, era rimasto nella mappa fino al deploy dopo).
+export const revalidate = 3600;
+
 // Le pagine legali cambiano di rado: segnale piu' credibile per i motori.
 const YEARLY = new Set(["/privacy", "/termini", "/cookie"]);
 

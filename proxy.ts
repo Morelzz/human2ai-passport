@@ -79,10 +79,12 @@ export async function proxy(request: NextRequest) {
   response.headers.set("Content-Security-Policy-Report-Only", csp);
   response.headers.set("x-nonce", nonce);
   if (request.nextUrl.pathname === "/") {
-    // La foto delle due porte (27/9/2026) e' l'elemento piu' grande della home.
+    // L'elemento piu' grande che si vede subito e' il poster del video dell'hero
+    // (1/10/2026). Prima qui c'era la foto a tutto schermo di Gabriella: l'hero
+    // non la usa piu' e il preload ad alta priorita' rubava banda al poster.
     response.headers.set(
       "Link",
-      `</home/scatto-gabriella-1536.webp>; rel=preload; as=image; type="image/webp"; imagesrcset="/home/scatto-gabriella-760.webp 760w, /home/scatto-gabriella-1200.webp 1200w, /home/scatto-gabriella-1536.webp 1536w"; imagesizes="100vw"; fetchpriority=high`,
+      `</home/anima-f0.webp>; rel=preload; as=image; type="image/webp"; fetchpriority=high`,
     );
   }
 

@@ -113,7 +113,7 @@ export function SoggettiAnimati({ nome }: { nome: string }) {
               </div>
             ))}
           </div>
-          <p className="mt-2 text-[0.8rem] leading-snug text-faint">Sei fotogrammi del clip, ognuno controllato.</p>
+          <p className="mt-2 text-[0.8rem] leading-snug text-muted">Sei fotogrammi del clip, ognuno controllato.</p>
         </div>
       </div>
     </section>
